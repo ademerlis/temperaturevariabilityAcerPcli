@@ -1,0 +1,101 @@
+---
+title: "colorscores"
+author: "allyson_demerlis"
+date: "2022-11-30"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+Rscoredata <- read_csv("Data Collection - Sheet1.csv")
+initialphotometadata <- readxl::read_xlsx("Photo metadata as of August 17 (before Kat did stuff).xlsx")
+april18_metadata <- readxl::read_xlsx("Photo metadata as of August 17 (before Kat did stuff).xlsx", sheet = "april 18")
+
+all_metadata <- readxl::read_xlsx("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/metadata.xlsx")
+```
+
+
+
+```{r}
+all_metadata %>% 
+  dplyr::select(Species:Colony, Treatment) %>% 
+  mutate(`Puck ID` = ID) %>% 
+  mutate(Species = case_when(Species == "Acropora cervicornis" ~ "Acer",
+                             Species == "Pseudodiploria clivosa" ~ "Pcli")) -> species_colony_ID
+
+initialphotometadata %>% 
+  dplyr::select(`Photo ID`, `Puck ID`, Species, `Photo #`, `Coral Position`) -> initialphotometadata
+
+initialphotometadata %>% mutate(Date = "2022-03-10") -> initialphotometadata
+
+april18_metadata %>% 
+  dplyr::select(`Photo ID`, `Puck ID`, Species, `Photo #`, `Coral Position`) -> april18_metadata
+
+april18_metadata %>% mutate(Date = "2022-04-18") -> april18_metadata
+
+full_join(initialphotometadata, april18_metadata) -> photo_metadata
+  
+Rscoredata %>% 
+  dplyr::select(`Image #`, `Coral Position`, Mean) %>% mutate(`Photo ID` = `Image #`) -> Rscoredata
+
+full_join(photo_metadata, Rscoredata, by = c("Photo ID", "Coral Position")) %>% 
+  full_join(., species_colony_ID, by = c("Puck ID", "Species")) %>% 
+  drop_na() %>% 
+  filter(Species == "Acer") %>% 
+  group_by(`Photo ID`, `Puck ID`, Date, Treatment) %>% 
+  mutate(mean_Rintensity = mean(Mean), stdev_Rintensity = sd(Mean)) %>% 
+  ggplot(.,aes(x = Date, y= mean_Rintensity, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() +
+  facet_wrap(~Colony, scales = "free") +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  ylim(0, 255) +
+  labs(y = "R Intensity") +
+  theme(text = element_text(size = 13)) +
+  scale_fill_manual(labels=c("control", "variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_color_manual(labels=c("control", "variable"), values = c( "#60DBDB", "#F54A34"))
+  
+```
+
+
+
+```{r}
+full_join(photo_metadata, Rscoredata, by = c("Photo ID", "Coral Position")) %>% 
+  full_join(., species_colony_ID, by = c("Puck ID", "Species")) %>% 
+  drop_na() %>% 
+  filter(Species == "Pcli") %>% 
+  group_by(`Photo ID`, `Puck ID`, Date, Treatment) %>% 
+  mutate(mean_Rintensity = mean(Mean), stdev_Rintensity = sd(Mean)) %>% 
+  ggplot(.,aes(x = Date, y= mean_Rintensity, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() +
+  facet_wrap(~Colony, scales = "free") +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  ylim(0, 255) +
+  labs(y = "R Intensity") +
+  theme(text = element_text(size = 13)) +
+  scale_fill_manual(labels=c("control", "variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_color_manual(labels=c("control", "variable"), values = c( "#60DBDB", "#F54A34"))
+ 
+```
+
+```{r}
+full_join(photo_metadata, Rscoredata, by = c("Photo ID", "Coral Position")) %>% 
+  full_join(., species_colony_ID, by = c("Puck ID", "Species")) %>% 
+  drop_na() %>% 
+  group_by(`Photo ID`, `Puck ID`, Date, Treatment) %>% 
+  mutate(mean_Rintensity = mean(Mean), stdev_Rintensity = sd(Mean)) %>% 
+  ggplot(.,aes(x = Date, y= mean_Rintensity, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() +
+  facet_wrap(~Species, scales = "free") +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  ylim(0, 255) +
+  labs(y = "R Intensity") +
+  theme(text = element_text(size = 13)) +
+  scale_fill_manual(labels=c("control", "variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_color_manual(labels=c("control", "variable"), values = c( "#60DBDB", "#F54A34"))
+ 
+```
+

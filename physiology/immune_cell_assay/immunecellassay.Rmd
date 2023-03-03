@@ -1,0 +1,206 @@
+---
+title: "immunecellassay"
+author: "allyson_demerlis"
+date: "2023-02-28"
+output: html_document
+---
+
+```{r}
+percent_cells_metadata <- read_csv("stresshardening_master.csv")
+
+adjusted_cells_data <- read_xlsx("stresshardening_master.xlsx", sheet = "Sheet4")
+
+library(tidyverse)
+```
+
+
+```{r}
+#only look at first technical replicate
+percent_cells_metadata %>%
+  filter(Replicate == "r1") %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species, scales = "free") + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+
+#we can't compare percentages across treatments and time because of several limitations:
+# 1) we don't know what a "normal" level of phagocytic cells is, and the "normal" range for individuals can be quite large.
+# 2) the cytometer itself may influence time point
+
+```
+
+
+```{r}
+#without follow up (because that wasn't during the treatment period, it was like a month later)
+
+percent_cells_metadata %>%
+  filter(Replicate == "r1") %>% 
+  filter(!TimePoint=="FollowUp") %>% 
+  mutate(TimePoint = case_when(TimePoint == "T0" ~ "Day 1",
+                               TimePoint == "T1" ~ "Day 7",
+                               TimePoint == "T2" ~ "Day 28")) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "Day 1", "Day 7", "Day 28")) %>% 
+  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species, scales = "free") + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 15)) 
+```
+
+```{r}
+#so what we want to do is use the control group as the "baseline" and calculate the percent difference of the variable group to the control
+#and we can do this for each time point
+
+#maybe try doing a ratio? like variable / control?
+
+percent_cells_metadata %>%
+  filter(Replicate == "r1") %>% 
+  filter(!TimePoint=="FollowUp") %>% 
+  group_by(TimePoint, Species, Treatment) %>% 
+  summarise(avg_percent = mean(Percent)) %>% 
+  pivot_wider(names_from = "Treatment", values_from = "avg_percent") %>% 
+  mutate(TimePoint = case_when(TimePoint == "T0" ~ "Day 1",
+                               TimePoint == "T1" ~ "Day 7",
+                               TimePoint == "T2" ~ "Day 28")) %>% 
+  mutate(TimePoint = as.factor(TimePoint)) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "Day 1", "Day 7", "Day 28")) %>% 
+  mutate("VC_Ratio" = Variable/Control) %>% 
+  mutate(VC_Ratio = VC_Ratio - 1) %>% 
+  mutate(color_assignment = case_when(VC_Ratio > 0 ~ "Variable",
+                                      VC_Ratio < 0 ~ "Control"
+                                      )) %>% 
+  ggplot(., aes(x=TimePoint, y=VC_Ratio, fill = color_assignment)) +
+  geom_col(position = position_dodge()) + 
+  theme_classic() +
+  facet_wrap(~Species) +
+  labs(x = "Time Point", y = "Ratio of Average Phagocytosis Percentage", fill = "Treatment") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 15))
+  
+```
+```{r}
+percent_cells_metadata %>%
+  filter(Replicate == "r1") %>% 
+  filter(!TimePoint=="FollowUp") %>% 
+  select(TimePoint, Species, Percent, Treatment) %>% 
+  pivot_wider(names_from = "TimePoint", values_from = "Percent")
+  mutate(TimePoint = as.factor(TimePoint)) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  mutate("VC_Ratio" = Variable/Control)
+```
+
+using Grace/Benyamin's method of adjusting values based on the average control value for that timepoint+genotype
+```{r}
+jitter <- position_jitter(width = 0.1, height = 0.1)
+
+adjusted_cells_data %>% 
+  group_by(TimePoint, Species, Genotype, Treatment) %>% 
+  summarise(avg_percentage = mean(`Adjusted value (Percent -- Average Control)`), sd = sd(`Adjusted value (Percent -- Average Control)`)) %>% 
+  filter(Species == "Acer") %>% 
+  mutate(TimePoint = as.factor(TimePoint)) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  ggplot(., aes(x=TimePoint, y=avg_percentage, fill = Treatment)) + 
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_errorbar(aes(ymin = avg_percentage - sd, ymax = avg_percentage + sd), width =.2, position = jitter) +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic() +
+  facet_wrap(~Genotype)
+
+```
+
+```{r}
+adjusted_cells_data %>% 
+  group_by(TimePoint, Species, Genotype, Treatment) %>% 
+  summarise(avg_percentage = mean(`Adjusted value (Percent -- Average Control)`), sd = sd(`Adjusted value (Percent -- Average Control)`)) %>% 
+  filter(Species == "Pcli") %>% 
+  mutate(TimePoint = as.factor(TimePoint)) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  ggplot(., aes(x=TimePoint, y=avg_percentage, fill = Treatment)) + 
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_errorbar(aes(ymin = avg_percentage - sd, ymax = avg_percentage + sd), width =.2, position = jitter) +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic() +
+  facet_wrap(~Genotype)
+```
+
+```{r}
+adjusted_cells_data %>% 
+  group_by(TimePoint, Species, Genotype, Treatment) %>% 
+  filter(Species == "Acer") %>% 
+  filter(!TimePoint == "FollowUp") %>% 
+  mutate(TimePoint = as.factor(TimePoint)) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  ggplot(., aes(x=TimePoint, y=`Adjusted value (Percent -- Average Control)`, fill = Treatment)) + 
+  geom_boxplot() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic() +
+  facet_wrap(~Genotype) +
+  theme(text = element_text(size = 13))
+```
+
+
+```{r}
+adjusted_cells_data %>% 
+  group_by(TimePoint, Species, Genotype, Treatment) %>% 
+  filter(!TimePoint=="FollowUp") %>% 
+  filter(Species == "Pcli") %>% 
+  mutate(TimePoint = as.factor(TimePoint)) %>% 
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  ggplot(., aes(x=TimePoint, y=`Adjusted value (Percent -- Average Control)`, fill = Treatment)) + 
+  geom_boxplot() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic() +
+  facet_wrap(~Genotype) +
+  theme(text = element_text(size = 13))
+```
+
+
+
+Stats (attempt to use lmer)
+```{r}
+adjusted_cells_data %>% 
+  filter(Species == "Acer") -> Acer_FACS_df
+
+#model 1 = full model
+Acer_FACS_GLMM_full <- lmer(`Adjusted value (Percent -- Average Control)` ~ Treatment*TimePoint + (1|Genotype) + (1|Tank), data=Acer_FACS_df)
+summary(Acer_FACS_GLMM_full)
+
+qqnorm(resid(Acer_FACS_GLMM_full))
+qqline(resid(Acer_FACS_GLMM_full))
+
+Acer_FACS_aov <- aov(`Adjusted value (Percent -- Average Control)` ~ Treatment*TimePoint*Genotype, data=Acer_FACS_df)
+summary(Acer_FACS_aov)
+
+qqnorm(resid(Acer_FACS_aov))
+```
+
+```{r}
+adjusted_cells_data %>% 
+  filter(Species == "Pcli") -> Pcli_FACS_df
+
+Pcli_FACS_aov <- aov(`Adjusted value (Percent -- Average Control)` ~ Treatment*TimePoint*Genotype, data=Pcli_FACS_df)
+summary(Pcli_FACS_aov)
+
+qqnorm(resid(Pcli_FACS_aov))
+
+pivot_longer(cols = `Trypan )
+
+```
+

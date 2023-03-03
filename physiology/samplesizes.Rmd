@@ -1,0 +1,42 @@
+---
+title: "samplesizes"
+author: "allyson_demerlis"
+date: "2023-02-22"
+output: html_document
+---
+
+```{r}
+metadata <- readxl::read_xlsx("metadata.xlsx")
+
+library(tidyverse)
+library(janitor)
+```
+
+
+```{r}
+#make graph showing number of corals that got tissue sampled at each time point
+#purpose: trying to understand why the final buoyant weight time point has so few Pcli. My rationale was to not weigh corals that were tissue sampled. but then why are there so many more Acer? Shouldn't it be an equal number of Pcli and Acer
+
+metadata %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n()) %>% 
+  ggplot(., aes(x=Colony, y=count, fill = Treatment)) +
+  geom_col() +
+  facet_wrap(~Species, scales = "free")  +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic()
+
+#what are all the tissue sampling time points?
+# 2022-03-22, 2022-03-30, 2022-04-20, 2022-04-22, 2022-06-01
+metadata %>% 
+  drop_na(tissue_sampling_date_1) %>% 
+  group_by(Species,Treatment, tissue_sampling_date_1) %>% 
+  summarise(count = n()) %>% 
+  ggplot(., aes(x=tissue_sampling_date_1, y=count, fill = Treatment)) +
+  geom_col() +
+  facet_wrap(~Species, scales = "free")  +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic()
+
+```
+

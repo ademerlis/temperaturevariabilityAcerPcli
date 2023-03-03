@@ -1,0 +1,61 @@
+---
+title: "coralmortality"
+author: "allyson_demerlis"
+date: "2023-02-20"
+output: html_document
+---
+
+```{r}
+metadata <- readxl::read_xlsx("metadata.xlsx")
+
+library(tidyverse)
+library(janitor)
+```
+
+
+```{r}
+metadata %>% 
+  dplyr::select(Species:Colony, Treatment, Removed_Date, Reason_removed, mortality_date, Notes) -> mortality_data
+
+#fix excel dates
+#columns must be numeric
+mortality_data$Removed_Date <- as.numeric(mortality_data$Removed_Date)
+mortality_data$mortality_date <- as.numeric(mortality_data$mortality_date)
+
+mortality_data$Removed_Date <- excel_numeric_to_date(mortality_data$Removed_Date)
+mortality_data$mortality_date <- excel_numeric_to_date(mortality_data$mortality_date)
+```
+
+
+```{r}
+mortality_data %>% 
+  dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-25") %>% 
+  drop_na(Species, Treatment, Reason_removed) %>% 
+  group_by(Reason_removed, Species, Treatment) %>% 
+  summarize(count = n()) %>% 
+  ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  facet_wrap(~Species, scales = "free")  +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  theme(text = element_text(size = 15)) +
+  labs(x="Category", y="Number of corals") + 
+  coord_flip()
+```
+
+```{r}
+mortality_data %>% 
+  dplyr::filter(Removed_Date == "2022-04-21" | mortality_date == "2022-04-21") %>% 
+  drop_na(Species, Treatment, Reason_removed) %>% 
+  group_by(Reason_removed, Species, Treatment) %>% 
+  summarize(count = n()) %>% 
+  ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  facet_wrap(~Species, scales = "free")  +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  theme(text = element_text(size = 15)) +
+  labs(x="Category", y="Number of corals") + 
+  coord_flip()
+```
+
