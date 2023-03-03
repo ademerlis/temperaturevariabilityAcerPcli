@@ -1,1 +1,1 @@
-We must work to improve the probability of success and long-term survival for reef-building corals outplanted in restoration efforts on Florida’s Coral Reef. I propose utilizing the mechanism of assisted acclimatization through a thermal stress-hardening treatment to enhance coral thermal tolerance. I hypothesize that temperature variability exposure enhances coral thermotolerance by priming the coral’s innate immune system to be prepared for future thermal stress at the molecular level.
+Stress-hardening experiment 
