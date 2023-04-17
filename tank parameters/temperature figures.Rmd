@@ -20,10 +20,8 @@ march7 <- readxl::read_xlsx("Data from LabVIEW/20220307_TemperatureData - Copy.x
 march29 <- readxl::read_xlsx("Data from LabVIEW/20220329_TemperatureData.xlsx")
 april15 <- readxl::read_xlsx("Data from LabVIEW/20220415_TemperatureData.xlsx")
 
-april25 <- read_csv("Data from LabVIEW/20220425_TemperatureData.csv") #had to convert to csv because dates weren't reading in correctly
+april25 <- readxl::read_xlsx("Data from LabVIEW/20220425_TemperatureData (1).xlsx") #had to convert to csv because dates weren't reading in correctly
 
-  april25$Time <- lubridate::mdy_hms(april25$Time)
-  
 CBASS <- readxl::read_xlsx("Data from LabVIEW/CBASS_labview.xlsx")
 
 may11 <- readxl::read_xlsx("Data from LabVIEW/20220511_TemperatureData.xlsx")
