@@ -42,4 +42,6 @@ Recovery tanks combined:
 
 **5) Traditional Heat-Stress Assay**
 
+On June 15, corals were again randomly assigned to a new tank for the traditional heat-stress assay. For the traditional heat stress (gradual ramp then hold at 32ºC), only tanks 3, 4, 7, and 8 were being used. 32ºC was reached on June 25, and then once corals showed signs of bleaching (color score of D1), rapid tissue loss, or were fully tissue sampled and didn't have enough surface area left, then they were moved to the recovery tank, tank 7, which was kept at 28ºC for the entire time. 
+
 
