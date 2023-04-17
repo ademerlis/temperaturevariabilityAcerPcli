@@ -19,10 +19,13 @@ feb23 <- readxl::read_xlsx("Data from LabVIEW/20220223_TemperatureData edited.xl
 march7 <- readxl::read_xlsx("Data from LabVIEW/20220307_TemperatureData - Copy.xlsx")
 march29 <- readxl::read_xlsx("Data from LabVIEW/20220329_TemperatureData.xlsx")
 april15 <- readxl::read_xlsx("Data from LabVIEW/20220415_TemperatureData.xlsx")
-april25 <-readxl::read_xlsx("Data from LabVIEW/20220425_TemperatureData (1).xlsx")
+
 april25 <- read_csv("Data from LabVIEW/20220425_TemperatureData.csv") #had to convert to csv because dates weren't reading in correctly
+
   april25$Time <- lubridate::mdy_hms(april25$Time)
+  
 CBASS <- readxl::read_xlsx("Data from LabVIEW/CBASS_labview.xlsx")
+
 may11 <- readxl::read_xlsx("Data from LabVIEW/20220511_TemperatureData.xlsx")
 may20 <- readxl::read_xlsx("Data from LabVIEW/20220520_TemperatureData.xlsx")
 june10 <- readxl::read_xlsx("Data from LabVIEW/20220610_TemperatureData - Copy.xlsx")
@@ -109,6 +112,7 @@ temptreatment %>%
        y = "Temperature (°C)",
        x = "Date")
 ```
+
 ```{r}
 #summary figure of average tank temp during 24-hr period over the 28 days
 temptreatment$Time <- lubridate::round_date(temptreatment$Time, unit = "15 min")
