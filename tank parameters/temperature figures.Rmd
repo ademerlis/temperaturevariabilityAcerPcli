@@ -291,9 +291,8 @@ heatstressassay %>%
        x = "Date") +
   theme(text = element_text(size = 15)) 
 
-#this is messy because each tank was "stopped" at different times, depending on when all the corals died or not. there was a dip in temps for all of them where they went back down to 28 because of human error in setting the program
+#this is messy because each tank was "stopped" at different times, depending on when all the corals died or not. there was also a dip in temps for all of them where they went back down to 28 because of human error in setting the program
 
-#need to manually edit the Excel sheet to remove the time points once the heat-stress was completed for each tank
 ```
 
 
@@ -305,6 +304,7 @@ heatstressassay %>%
   dplyr::select(Time:T8) %>% 
   pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
   drop_na(Temp) %>% 
+  filter(Time <= as.Date("2022-07-15")) %>% 
   dplyr::group_by(Time) %>% 
   dplyr::summarise(avg_temp = mean(Temp), se = std.error(Temp)) %>% 
   ggplot(., aes(x=Time, y=avg_temp)) + 
