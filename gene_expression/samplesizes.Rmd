@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-metadata <- readxl::read_xlsx("metadata.xlsx")
+metadata <- readxl::read_xlsx("../metadata.xlsx")
 
 library(tidyverse)
 library(janitor)
@@ -14,15 +14,6 @@ library(janitor)
 
 
 ```{r}
-metadata %>% 
-  filter(!is.na(Treatment)) %>% 
-  group_by(Species, Colony, Treatment) %>% 
-  summarise(count = n()) %>% 
-  ggplot(., aes(x=Colony, y=count, fill = Treatment)) +
-  geom_col() +
-  facet_wrap(~Species, scales = "free")  +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic()
 
 #what are all the tissue sampling time points?
 # 2022-03-22, 2022-03-30, 2022-04-20, 2022-04-22, 2022-06-01

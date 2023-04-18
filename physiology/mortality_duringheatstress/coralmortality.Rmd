@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-metadata <- readxl::read_xlsx("metadata.xlsx")
+metadata <- readxl::read_xlsx("../metadata.xlsx")
 
 library(tidyverse)
 library(janitor)
