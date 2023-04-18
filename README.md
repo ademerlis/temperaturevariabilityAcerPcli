@@ -11,6 +11,7 @@ Mean of all tank temperatures:
 <img width="622" alt="Screen Shot 2023-04-17 at 3 49 29 PM" src="https://user-images.githubusercontent.com/56000927/232594990-2cdb6463-c312-434d-a1ac-90e526e157a7.png">
 
 **2) Temperature Treatment**
+March 24 - April 20
 
 The 150 Acer and 150 Pcli fragments were randomly assigned to one of four 90-L glass aquaria and either the stable or variable treatment. The variable treatment involved a 3-h ramp up to 31ºC, followed by a 3-h hold at 31ºC, then a 3-h ramp-down to 28ºC. This cycle occurred twice per day for 28 days. 
 
@@ -24,14 +25,16 @@ Summary of treatment tanks (ribbons are standard error of the mean temperature a
 <img width="628" alt="Screen Shot 2023-04-17 at 3 54 01 PM" src="https://user-images.githubusercontent.com/56000927/232595901-f63b02c9-4e36-4ffd-a3d7-0c2a45e79afa.png">
 
 **3) CBASS**
+April 22
 
 On April 21, the day before the CBASS, coral IDs were randomly assigned to a CBASS temperature and tank. The tank temperatures were randomly assigned as follows: Tank 1 = 36ºC, Tank 2 = 37ºC, Tank 3 = 32 ºC, Tank 4 = 33ºC, Tank 5 = 35ºC, Tank 6 = 30ºC, Tank 7 = 34ºC, Tank 8 = 28ºC. In order to have each coral species and treatment represented at each CBASS tank temp, Acer and Pcli were mixed together. During the one-month temp treatment, however, Acer and Pcli were kept separate.
 
 <img width="622" alt="Screen Shot 2023-04-17 at 3 55 29 PM" src="https://user-images.githubusercontent.com/56000927/232596202-3070a64c-8c9f-4b21-92c1-9cf00ace7e7b.png">
 
 **4) Recovery**
+April 22 - June 21
 
-Following CBASS, corals were kept in their CBASS-assigned tanks at 28ºC until May 17, when they were randomly assigned to new recovery tanks. At this point, only tanks 3,4,6,7, and 8 were being used for recovery. tanks 1, 2, and 5 no longer had corals. 
+Following CBASS, corals were kept in their CBASS-assigned tanks at 28ºC until May 17, when they were randomly assigned to new recovery tanks. At this point, only tanks 3,4,6,7, and 8 were being used for recovery. tanks 1, 2, and 5 no longer had corals. Corals were kept at the recovery temperature of 28ºC until June 21st, when the traditional heat-stress assay began. 
 
 <img width="624" alt="Screen Shot 2023-04-17 at 4 05 06 PM" src="https://user-images.githubusercontent.com/56000927/232598062-5ac19c0e-1968-4fa0-92cc-8596812f571e.png">
 
@@ -41,7 +44,11 @@ Recovery tanks combined:
 
 
 **5) Traditional Heat-Stress Assay**
+June 21 - July 22
 
 On June 15, corals were again randomly assigned to a new tank for the traditional heat-stress assay. For the traditional heat stress (gradual ramp then hold at 32ºC), only tanks 3, 4, 7, and 8 were being used. 32ºC was reached on June 25, and then once corals showed signs of bleaching (color score of D1), rapid tissue loss, or were fully tissue sampled and didn't have enough surface area left, then they were moved to the recovery tank, tank 7, which was kept at 28ºC for the entire time. 
 
+![Screen Shot 2023-04-18 at 9 44 37 AM](https://user-images.githubusercontent.com/56000927/232796754-e375505c-103f-4394-8c38-27187a93fa54.png)
+
+![Screen Shot 2023-04-18 at 9 44 50 AM](https://user-images.githubusercontent.com/56000927/232796813-c410b9aa-eed5-40ec-a524-a73c159d156c.png)
 
