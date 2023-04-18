@@ -10,6 +10,7 @@ metadata <- readxl::read_xlsx("metadata.xlsx")
 
 library(tidyverse)
 library(janitor)
+library(lsr)
 ```
 
 
@@ -45,7 +46,7 @@ mortality_data %>%
 
 ```{r}
 mortality_data %>% 
-  dplyr::filter(Removed_Date == "2022-04-21" | mortality_date == "2022-04-21") %>% 
+  dplyr::filter(Removed_Date == "2022-04-22" | mortality_date == "2022-04-22") %>% 
   drop_na(Species, Treatment, Reason_removed) %>% 
   group_by(Reason_removed, Species, Treatment) %>% 
   summarize(count = n()) %>% 
@@ -59,3 +60,63 @@ mortality_data %>%
   coord_flip()
 ```
 
+```{r}
+#total nunmber of corals per species
+mortality_data %>% 
+  dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "post-CBASS RTL" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL")) %>% 
+  drop_na(Species, Treatment, Reason_removed) %>% 
+  group_by(Reason_removed, Species, Treatment) %>% 
+  summarize(count = n()) %>% 
+  ggplot(., aes(x=Species, y=count, fill = Treatment)) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  theme(text = element_text(size = 15)) +
+  labs(x="Reason Removed", y="Number of corals")
+```
+
+
+```{r}
+#proportion of corals that died during/post-CBASS versus the total number of corals that went into the CBASS
+mortality_data %>% 
+  dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "post-CBASS RTL" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL")) %>% 
+  drop_na(Species, Treatment, Reason_removed) %>% 
+  group_by(Species, Treatment) %>% 
+  summarize(count_RTL = n()) -> RTL_species_treatment_count
+
+mortality_data %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% 
+  group_by(Species, Treatment) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_count) %>% 
+  mutate(proportion_RTL = count_RTL/count_total) %>% 
+  ggplot(., aes(x=Species, y=proportion_RTL, fill = Treatment)) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y="Proportion Removed (RTL)")
+```
+
+
+```{r}
+#chi squared test for comparing mortality numbers
+mortality_data %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% 
+  group_by(Species, Treatment) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_count) %>% 
+  mutate(count_survived = count_total - count_RTL) %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  ungroup() %>% 
+  dplyr::select(Treatment, count_RTL, count_survived) %>% 
+  mutate(Treatment = as.factor(Treatment)) -> Acer_contingencytable
+
+goodnessOfFitTest(Acer_contingencytable)
+```
