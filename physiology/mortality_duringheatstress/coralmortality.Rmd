@@ -106,6 +106,7 @@ mortality_data %>%
   theme(text = element_text(size = 15)) +
   labs(y="% Mortality due to RTL")  + 
   coord_flip()
+ggsave("coralmortalityduetoCBASS.png")
 ```
 
 

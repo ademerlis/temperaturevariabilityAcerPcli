@@ -1,0 +1,19 @@
+---
+title: "map_sampling"
+author: "allyson_demerlis"
+date: "2023-04-19"
+output: html_document
+---
+
+```{r}
+library(ggmap)
+#ggmap::register_google(key = "AIzaSyDuPPc0wa_4OY7iKG_bi6S2OXwxr8m6zRo", write = TRUE)
+
+florida_map <- get_map( getbb('florida'), source="stamen")
+
+locations <- data.frame(lat = c(25.6763, 25.77044),
+                               lon = c(-80.0987, -80.15235))
+
+ggmap(florida_map) + geom_point(data = locations, aes(x = lon, y = lat), color = "orange", size = 4)
+```
+
