@@ -10,8 +10,9 @@ metadata <- readxl::read_xlsx("../metadata.xlsx")
 
 library(tidyverse)
 library(janitor)
-library(lsr)
+library(rstatix)
 ```
+
 
 
 ```{r}
@@ -45,6 +46,8 @@ mortality_data %>%
 ```
 
 ```{r}
+#mortality just on the day of the CBASS
+
 mortality_data %>% 
   dplyr::filter(Removed_Date == "2022-04-22" | mortality_date == "2022-04-22") %>% 
   drop_na(Species, Treatment, Reason_removed) %>% 
@@ -75,7 +78,7 @@ mortality_data %>%
   theme_classic() +
   scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
   theme(text = element_text(size = 15)) +
-  labs(x="Reason Removed", y="Number of corals")
+  labs(y="Number of corals", title = "Mortality post-CBASS due to RTL")
 ```
 
 
@@ -86,22 +89,23 @@ mortality_data %>%
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
                              Reason_removed == "post-CBASS RTL" ~ "RTL",
                              Reason_removed == "RTL" ~ "RTL")) %>% 
-  drop_na(Species, Treatment, Reason_removed) %>% 
+  drop_na(Species, Treatment) %>% 
   group_by(Species, Treatment) %>% 
   summarize(count_RTL = n()) -> RTL_species_treatment_count
 
 mortality_data %>% 
-  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
   group_by(Species, Treatment) %>% 
   summarize(count_total = n()) %>% 
   full_join(., RTL_species_treatment_count) %>% 
-  mutate(proportion_RTL = count_RTL/count_total) %>% 
+  mutate(proportion_RTL = (count_RTL/count_total)*100) %>% #need total number of corals that were alive at that time
   ggplot(., aes(x=Species, y=proportion_RTL, fill = Treatment)) +
   geom_col(position = position_dodge()) +
   theme_classic() +
   scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
   theme(text = element_text(size = 15)) +
-  labs(y="Proportion Removed (RTL)")
+  labs(y="% Mortality due to RTL")  + 
+  coord_flip()
 ```
 
 
@@ -116,7 +120,18 @@ mortality_data %>%
   filter(Species == "Acropora cervicornis") %>% 
   ungroup() %>% 
   dplyr::select(Treatment, count_RTL, count_survived) %>% 
-  mutate(Treatment = as.factor(Treatment)) -> Acer_contingencytable
+  mutate(Treatment = as.factor(Treatment)) %>% 
+  column_to_rownames(var = "Treatment")-> Acer_contingencytable
+
+chisq_test(Acer_contingencytable)
 
 goodnessOfFitTest(Acer_contingencytable)
+
+mortality_data %>% 
+  dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "post-CBASS RTL" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL")) %>% 
+  drop_na(Species, Treatment, Reason_removed) %>% 
+  select(Species, Treatment, Reason_removed)
 ```
