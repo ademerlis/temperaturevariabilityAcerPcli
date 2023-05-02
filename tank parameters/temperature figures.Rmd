@@ -203,7 +203,8 @@ CBASS %>%
   labs(title = "Tank Temperatures",
        y = "Temperature (°C)",
        x = "Hour") +
-  theme(text = element_text(size = 15)) 
+  theme(text = element_text(size = 20)) 
+ggsave("CBASStemps.pdf")
 ```
 
 
