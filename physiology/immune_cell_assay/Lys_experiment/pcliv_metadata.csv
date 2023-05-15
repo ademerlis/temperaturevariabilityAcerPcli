@@ -1,0 +1,217 @@
+Depth,Name,Temperature,Genotype,Replicate,Treatment,Statistic,Num_Cells,Average_Control,Adjusted_Value_T,Adjusted_Value_A
+> > > ,24 bact 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,1,1,ecoli,2.74,260,1.896666667,0.843333333,0.52
+> > > ,24 bact 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,1,2,ecoli,2.5,206,1.896666667,0.603333333,0.28
+> > > ,24 bact 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,1,3,ecoli,2.01,188,1.896666667,0.113333333,-0.21
+> > > ,24 beads 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,1,1,beads,6.46,1439,2.423333333,4.036666667,0.993333333
+> > > ,24 beads 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,1,2,beads,5.73,1280,2.423333333,3.306666667,0.263333333
+> > > ,24 beads 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,1,3,beads,6.11,1364,2.423333333,3.686666667,0.643333333
+> > ,24 c 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,24,1,1,dextrane_c,58.8,13165,57.83333333,0.966666667,-13.5
+> > > ,24 c 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,1,1,ecoli_c,2.18,201,1.896666667,0.283333333,-0.04
+> > > ,24 c 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,1,1,beads_c,2.56,569,2.423333333,0.136666667,-2.906666667
+> > ,24 c 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,24,1,2,dextrane_c,57.3,12616,57.83333333,-0.533333333,-15
+> > > ,24 c 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,1,2,ecoli_c,1.79,156,1.896666667,-0.106666667,-0.43
+> > > ,24 c 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,1,2,beads_c,2.28,498,2.423333333,-0.143333333,-3.186666667
+> > ,24 c 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,24,1,3,dextrane_c,57.4,12128,57.83333333,-0.433333333,-14.9
+> > > ,24 c 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,1,3,ecoli_c,1.72,149,1.896666667,-0.176666667,-0.5
+> > > ,24 c 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,1,3,beads_c,2.43,510,2.423333333,0.006666667,-3.036666667
+> > ,24 dext 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,24,1,1,dextrane,71.7,3181,57.83333333,13.86666667,-0.6
+> > ,24 dext 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,24,1,2,dextrane,72.2,3217,57.83333333,14.36666667,-0.1
+> > ,24 dext 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,24,1,3,dextrane,71.6,2929,57.83333333,13.76666667,-0.7
+> > > ,28 bact 1_Data Source_gene1 - 1 - (1).fcs/not junk/not loose bacteria/phagocytes_ecoli,28,1,1,ecoli,2.46,222,1.593333333,0.866666667,0.24
+> > > ,28 bact 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,1,2,ecoli,2.06,178,1.593333333,0.466666667,-0.16
+> > > ,28 bact 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,1,3,ecoli,2.14,181,1.593333333,0.546666667,-0.08
+> > > ,28 beads 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,1,1,beads,6.17,1728,1.756666667,4.413333333,0.703333333
+> > > ,28 beads 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,1,2,beads,5.13,1474,1.756666667,3.373333333,-0.336666667
+> > > ,28 beads 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,1,3,beads,5.1,1443,1.756666667,3.343333333,-0.366666667
+> > ,28 c 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,28,1,1,dextrane_c,55.1,15453,55.7,-0.6,-17.2
+> > > ,28 c 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,1,1,ecoli_c,1.48,126,1.593333333,-0.113333333,-0.74
+> > > ,28 c 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,1,1,beads_c,1.6,447,1.756666667,-0.156666667,-3.866666667
+> > ,28 c 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,28,1,2,dextrane_c,55.7,15005,55.7,0,-16.6
+> > > ,28 c 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,1,2,ecoli_c,1.64,145,1.593333333,0.046666667,-0.58
+> > > ,28 c 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,1,2,beads_c,1.81,485,1.756666667,0.053333333,-3.656666667
+> > ,28 c 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,28,1,3,dextrane_c,56.3,15342,55.7,0.6,-16
+> > > ,28 c 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,1,3,ecoli_c,1.66,149,1.593333333,0.066666667,-0.56
+> > > ,28 c 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,1,3,beads_c,1.86,504,1.756666667,0.103333333,-3.606666667
+> > ,28 dext 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,28,1,1,dextrane,72.2,4003,55.7,16.5,-0.1
+> > ,28 dext 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,28,1,2,dextrane,72.2,4922,55.7,16.5,-0.1
+> > ,28 dext 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,28,1,3,dextrane,72.5,4197,55.7,16.8,0.2
+> > > ,32 bact 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,1,1,ecoli,1.79,152,1.09,0.7,-0.43
+> > > ,32 bact 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,1,2,ecoli,1.79,158,1.09,0.7,-0.43
+> > > ,32 bact 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,1,3,ecoli,2,169,1.09,0.91,-0.22
+> > > ,32 beads 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,1,1,beads,6.31,1465,1.803333333,4.506666667,0.843333333
+> > > ,32 beads 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,1,2,beads,6.16,1450,1.803333333,4.356666667,0.693333333
+> > > ,32 beads 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,1,3,beads,5.76,1369,1.803333333,3.956666667,0.293333333
+> > ,32 c 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,32,1,1,dextrane_c,63.5,14749,63.6,-0.1,-8.8
+> > > ,32 c 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,1,1,ecoli_c,1.09,99,1.09,0,-1.13
+> > > ,32 c 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,1,1,beads_c,1.75,404,1.803333333,-0.053333333,-3.716666667
+> > ,32 c 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,32,1,2,dextrane_c,63.9,14873,63.6,0.3,-8.4
+> > > ,32 c 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,1,2,ecoli_c,1.07,96,1.09,-0.02,-1.15
+> > > ,32 c 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,1,2,beads_c,1.82,422,1.803333333,0.016666667,-3.646666667
+> > ,32 c 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,32,1,3,dextrane_c,63.4,15157,63.6,-0.2,-8.9
+> > > ,32 c 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,1,3,ecoli_c,1.11,100,1.09,0.02,-1.11
+> > > ,32 c 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,1,3,beads_c,1.84,437,1.803333333,0.036666667,-3.626666667
+> > ,32 dext 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,32,1,1,dextrane,74.5,7380,63.6,10.9,2.2
+> > ,32 dext 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,32,1,2,dextrane,74.8,4624,63.6,11.2,2.5
+> > ,32 dext 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,32,1,3,dextrane,75.7,4205,63.6,12.1,3.4
+> > > ,36 bact 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,1,1,ecoli,2.49,381,0.916666667,1.573333333,0.27
+> > > ,36 bact 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,1,2,ecoli,2.09,293,0.916666667,1.173333333,-0.13
+> > > ,36 bact 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,1,3,ecoli,1.93,183,0.916666667,1.013333333,-0.29
+> > > ,36 beads 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,1,1,beads,4.84,1394,1.486666667,3.353333333,-0.626666667
+> > > ,36 beads 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,1,2,beads,4.58,1234,1.486666667,3.093333333,-0.886666667
+> > > ,36 beads 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,1,3,beads,4.32,1199,1.486666667,2.833333333,-1.146666667
+> > ,36 c 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,36,1,1,dextrane_c,69.5,19553,67.86666667,1.633333333,-2.8
+> > > ,36 c 1_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,1,1,ecoli_c,0.99,97,0.916666667,0.073333333,-1.23
+> > > ,36 c 1_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,1,1,beads_c,1.83,512,1.486666667,0.343333333,-3.636666667
+> > ,36 c 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,36,1,2,dextrane_c,67.4,19467,67.86666667,-0.466666667,-4.9
+> > > ,36 c 2_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,1,2,ecoli_c,1.02,91,0.916666667,0.103333333,-1.2
+> > > ,36 c 2_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,1,2,beads_c,1.34,386,1.486666667,-0.146666667,-4.126666667
+> > ,36 c 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,36,1,3,dextrane_c,66.7,19350,67.86666667,-1.166666667,-5.6
+> > > ,36 c 3_Data Source_gene1 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,1,3,ecoli_c,0.74,65,0.916666667,-0.176666667,-1.48
+> > > ,36 c 3_Data Source_gene1 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,1,3,beads_c,1.29,373,1.486666667,-0.196666667,-4.176666667
+> > ,36 dext 1_Data Source_gene1 - 1.fcs/not junk/dextranepositive,36,1,1,dextrane,79.3,4923,67.86666667,11.43333333,7
+> > ,36 dext 2_Data Source_gene1 - 1.fcs/not junk/dextranepositive,36,1,2,dextrane,79.5,4882,67.86666667,11.63333333,7.2
+> > ,36 dext 3_Data Source_gene1 - 1.fcs/not junk/dextranepositive,36,1,3,dextrane,78.5,4040,67.86666667,10.63333333,6.2
+> > > ,24 bact 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,2,1,ecoli,1.14,88,1.073333333,0.066666667,-0.376666667
+> > > ,24 bact 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,2,2,ecoli,1.45,102,1.073333333,0.376666667,-0.066666667
+> > > ,24 bact 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,2,3,ecoli,1.66,140,1.073333333,0.586666667,0.143333333
+> > > ,24 beads 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,2,1,beads,5.54,1030,1.27,4.27,0.606666667
+> > > ,24 beads 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,2,2,beads,6.29,1209,1.27,5.02,1.356666667
+> > > ,24 beads 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,2,3,beads,5.94,1106,1.27,4.67,1.006666667
+> > ,24 c 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,24,2,1,dextrane_c,50.4,9059,52.6,-2.2,-20.33333333
+> > > ,24 c 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,2,1,ecoli_c,0.95,56,1.073333333,-0.123333333,-0.566666667
+> > > ,24 c 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,2,1,beads_c,0.98,175,1.27,-0.29,-3.953333333
+> > ,24 c 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,24,2,2,dextrane_c,51.4,9661,52.6,-1.2,-19.33333333
+> > > ,24 c 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,2,2,ecoli_c,1.03,68,1.073333333,-0.043333333,-0.486666667
+> > > ,24 c 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,2,2,beads_c,1.02,190,1.27,-0.25,-3.913333333
+> > ,24 c 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,24,2,3,dextrane_c,56,10709,52.6,3.4,-14.73333333
+> > > ,24 c 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,2,3,ecoli_c,1.24,98,1.073333333,0.166666667,-0.276666667
+> > > ,24 c 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,2,3,beads_c,1.81,344,1.27,0.54,-3.123333333
+> > ,24 dext 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,24,2,1,dextrane,69.7,5484,52.6,17.1,-1.03333333
+> > ,24 dext 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,24,2,2,dextrane,71,6784,52.6,18.4,0.26666667
+> > ,24 dext 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,24,2,3,dextrane,70,4092,52.6,17.4,-0.73333333
+> > > ,28 bact 1_Data Source_gene2 - 1 - (1).fcs/not junk/not loose bacteria/phagocytes_ecoli,28,2,1,ecoli,1.5,98,1.006666667,0.493333333,-0.016666667
+> > > ,28 bact 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,2,2,ecoli,1.56,120,1.006666667,0.553333333,0.043333333
+> > > ,28 bact 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,2,3,ecoli,1.49,112,1.006666667,0.483333333,-0.026666667
+> > > ,28 beads 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,2,1,beads,4.97,1108,1.116666667,3.853333333,0.036666667
+> > > ,28 beads 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,2,2,beads,5.2,1159,1.116666667,4.083333333,0.266666667
+> > > ,28 beads 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,2,3,beads,4.63,1047,1.116666667,3.513333333,-0.303333333
+> > ,28 c 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,28,2,1,dextrane_c,53,11227,53.2,-0.2,-17.73333333
+> > > ,28 c 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,2,1,ecoli_c,1.14,79,1.006666667,0.133333333,-0.376666667
+> > > ,28 c 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,2,1,beads_c,1.17,247,1.116666667,0.053333333,-3.763333333
+> > ,28 c 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,28,2,2,dextrane_c,52.8,11027,53.2,-0.4,-17.93333333
+> > > ,28 c 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,2,2,ecoli_c,1.11,77,1.006666667,0.103333333,-0.406666667
+> > > ,28 c 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,2,2,beads_c,1.18,246,1.116666667,0.063333333,-3.753333333
+> > ,28 c 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,28,2,3,dextrane_c,53.8,11309,53.2,0.6,-16.93333333
+> > > ,28 c 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,2,3,ecoli_c,0.77,56,1.006666667,-0.236666667,-0.746666667
+> > > ,28 c 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,2,3,beads_c,1,209,1.116666667,-0.116666667,-3.933333333
+> > ,28 dext 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,28,2,1,dextrane,71.5,7529,53.2,18.3,0.76666667
+> > ,28 dext 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,28,2,2,dextrane,70.3,7075,53.2,17.1,-0.43333333
+> > ,28 dext 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,28,2,3,dextrane,70.4,7795,53.2,17.2,-0.33333333
+> > > ,32 bact 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,2,1,ecoli,1.41,92,0.883333333,0.526666667,-0.106666667
+> > > ,32 bact 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,2,2,ecoli,1.02,67,0.883333333,0.136666667,-0.496666667
+> > > ,32 bact 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,2,3,ecoli,2.53,215,0.883333333,1.646666667,1.013333333
+> > > ,32 beads 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,2,1,beads,3.41,1225,0.903333333,2.506666667,-1.523333333
+> > > ,32 beads 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,2,2,beads,3.19,1110,0.903333333,2.286666667,-1.743333333
+> > > ,32 beads 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,2,3,beads,3.04,1084,0.903333333,2.136666667,-1.893333333
+> > ,32 c 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,32,2,1,dextrane_c,55.1,12249,55.13333333,-0.033333333,-15.63333333
+> > > ,32 c 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,2,1,ecoli_c,0.82,55,0.883333333,-0.063333333,-0.696666667
+> > > ,32 c 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,2,1,beads_c,0.87,193,0.903333333,-0.033333333,-4.063333333
+> > ,32 c 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,32,2,2,dextrane_c,56,12879,55.13333333,0.866666667,-14.73333333
+> > > ,32 c 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,2,2,ecoli_c,0.81,61,0.883333333,-0.073333333,-0.706666667
+> > > ,32 c 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,2,2,beads_c,1.07,244,0.903333333,0.166666667,-3.863333333
+> > ,32 c 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,32,2,3,dextrane_c,54.3,11877,55.13333333,-0.833333333,-16.43333333
+> > > ,32 c 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,2,3,ecoli_c,1.02,62,0.883333333,0.136666667,-0.496666667
+> > > ,32 c 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,2,3,beads_c,0.77,168,0.903333333,-0.133333333,-4.163333333
+> > ,32 dext 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,32,2,1,dextrane,70,8091,55.13333333,14.86666667,-0.73333333
+> > ,32 dext 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,32,2,2,dextrane,69,8447,55.13333333,13.86666667,-1.73333333
+> > ,32 dext 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,32,2,3,dextrane,69.7,6625,55.13333333,14.56666667,-1.03333333
+> > > ,36 bact 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,2,1,ecoli,1.19,98,0.45,0.74,-0.326666667
+> > > ,36 bact 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,2,2,ecoli,1.18,83,0.45,0.73,-0.336666667
+> > > ,36 bact 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,2,3,ecoli,1.13,84,0.45,0.68,-0.386666667
+> > > ,36 beads 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,2,1,beads,6.14,1280,0.513333333,5.626666667,1.206666667
+> > > ,36 beads 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,2,2,beads,4.86,1000,0.513333333,4.346666667,-0.073333333
+> > > ,36 beads 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,2,3,beads,4.64,973,0.513333333,4.126666667,-0.293333333
+> > ,36 c 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,36,2,1,dextrane_c,49,16598,51.03333333,-2.033333333,-21.73333333
+> > > ,36 c 1_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,2,1,ecoli_c,0.51,36,0.45,0.06,-1.006666667
+> > > ,36 c 1_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,2,1,beads_c,0.55,184,0.513333333,0.036666667,-4.383333333
+> > ,36 c 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,36,2,2,dextrane_c,53.3,18229,51.03333333,2.266666667,-17.43333333
+> > > ,36 c 2_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,2,2,ecoli_c,0.49,36,0.45,0.04,-1.026666667
+> > > ,36 c 2_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,2,2,beads_c,0.71,242,0.513333333,0.196666667,-4.223333333
+> > ,36 c 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,36,2,3,dextrane_c,50.8,9161,51.03333333,-0.233333333,-19.93333333
+> > > ,36 c 3_Data Source_gene2 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,2,3,ecoli_c,0.35,11,0.45,-0.1,-1.166666667
+> > > ,36 c 3_Data Source_gene2 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,2,3,beads_c,0.28,50,0.513333333,-0.233333333,-4.653333333
+> > ,36 dext 1_Data Source_gene2 - 1.fcs/not junk/dextranepositive,36,2,1,dextrane,75.1,4118,51.03333333,24.06666667,4.36666667
+> > ,36 dext 2_Data Source_gene2 - 1.fcs/not junk/dextranepositive,36,2,2,dextrane,76.6,8030,51.03333333,25.56666667,5.86666667
+> > ,36 dext 3_Data Source_gene2 - 1.fcs/not junk/dextranepositive,36,2,3,dextrane,75.6,6254,51.03333333,24.56666667,4.86666667
+> > > ,24 bact 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,3,1,ecoli,3.42,273,1.446666667,1.973333333,1.353333333
+> > > ,24 bact 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,3,2,ecoli,1.86,154,1.446666667,0.413333333,-0.206666667
+> > > ,24 bact 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,3,3,ecoli,2.13,142,1.446666667,0.683333333,0.063333333
+> > > ,24 beads 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,3,1,beads,4.15,802,1.97,2.18,-1.226666667
+> > > ,24 beads 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,3,2,beads,5.84,1197,1.97,3.87,0.463333333
+> > > ,24 beads 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,3,3,beads,5.91,1198,1.97,3.94,0.533333333
+> > ,24 c 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,24,3,1,dextrane_c,56.4,11175,57.2,-0.8,-16.66666667
+> > > ,24 c 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,3,1,ecoli_c,1.35,101,1.446666667,-0.096666667,-0.716666667
+> > > ,24 c 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,3,1,beads_c,1.9,375,1.97,-0.07,-3.476666667
+> > ,24 c 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,24,3,2,dextrane_c,58.1,11604,57.2,0.9,-14.96666667
+> > > ,24 c 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,3,2,ecoli_c,1.66,138,1.446666667,0.213333333,-0.406666667
+> > > ,24 c 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,3,2,beads_c,2.11,418,1.97,0.14,-3.266666667
+> > ,24 c 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,24,3,3,dextrane_c,57.1,11348,57.2,-0.1,-15.96666667
+> > > ,24 c 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,24,3,3,ecoli_c,1.33,102,1.446666667,-0.116666667,-0.736666667
+> > > ,24 c 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,24,3,3,beads_c,1.9,376,1.97,-0.07,-3.476666667
+> > ,24 dext 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,24,3,1,dextrane,74.8,7610,57.2,17.6,1.73333333
+> > ,24 dext 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,24,3,2,dextrane,71.1,6997,57.2,13.9,-1.96666667
+> > ,24 dext 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,24,3,3,dextrane,73.1,7143,57.2,15.9,0.03333333
+> > > ,28 bact 1_Data Source_gene3 - 1 - (1).fcs/not junk/not loose bacteria/phagocytes_ecoli,28,3,1,ecoli,1.76,134,1.12,0.64,-0.306666667
+> > > ,28 bact 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,3,2,ecoli,1.59,118,1.12,0.47,-0.476666667
+> > > ,28 bact 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,3,3,ecoli,2.85,264,1.12,1.73,0.783333333
+> > > ,28 beads 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,3,1,beads,6.55,1487,1.38,5.17,1.173333333
+> > > ,28 beads 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,3,2,beads,4.71,1065,1.38,3.33,-0.666666667
+> > > ,28 beads 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,3,3,beads,4.87,1110,1.38,3.49,-0.506666667
+> > ,28 c 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,28,3,1,dextrane_c,60.7,13583,55.8,4.9,-12.36666667
+> > > ,28 c 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,3,1,ecoli_c,1.39,129,1.12,0.27,-0.676666667
+> > > ,28 c 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,3,1,beads_c,2.23,497,1.38,0.85,-3.146666667
+> > ,28 c 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,28,3,2,dextrane_c,53.6,11946,55.8,-2.2,-19.46666667
+> > > ,28 c 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,3,2,ecoli_c,0.97,70,1.12,-0.15,-1.096666667
+> > > ,28 c 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,3,2,beads_c,0.96,212,1.38,-0.42,-4.416666667
+> > ,28 c 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,28,3,3,dextrane_c,53.1,11766,55.8,-2.7,-19.96666667
+> > > ,28 c 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,28,3,3,ecoli_c,1,67,1.12,-0.12,-1.066666667
+> > > ,28 c 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,28,3,3,beads_c,0.95,209,1.38,-0.43,-4.426666667
+> > ,28 dext 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,28,3,1,dextrane,73.8,7978,55.8,18,0.73333333
+> > ,28 dext 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,28,3,2,dextrane,72.3,7844,55.8,16.5,-0.76666667
+> > ,28 dext 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,28,3,3,dextrane,73.1,15765,55.8,17.3,0.03333333
+> > > ,32 bact 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,3,1,ecoli,2.65,232,0.893333333,1.756666667,0.583333333
+> > > ,32 bact 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,3,2,ecoli,0.86,59,0.893333333,-0.033333333,-1.206666667
+> > > ,32 bact 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,3,3,ecoli,1.29,100,0.893333333,0.396666667,-0.776666667
+> > > ,32 beads 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,3,1,beads,5.49,1287,1.42,4.07,0.113333333
+> > > ,32 beads 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,3,2,beads,6.01,1386,1.42,4.59,0.633333333
+> > > ,32 beads 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,3,3,beads,5.25,1232,1.42,3.83,-0.126666667
+> > ,32 c 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,32,3,1,dextrane_c,62.3,13202,60.13333333,2.166666667,-10.76666667
+> > > ,32 c 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,3,1,ecoli_c,1.17,96,0.893333333,0.276666667,-0.896666667
+> > > ,32 c 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,3,1,beads_c,1.94,409,1.42,0.52,-3.436666667
+> > ,32 c 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,32,3,2,dextrane_c,55.2,11348,60.13333333,-4.933333333,-17.86666667
+> > > ,32 c 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,3,2,ecoli_c,0.6,34,0.893333333,-0.293333333,-1.466666667
+> > > ,32 c 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,3,2,beads_c,0.62,126,1.42,-0.8,-4.756666667
+> > ,32 c 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,32,3,3,dextrane_c,62.9,13084,60.13333333,2.766666667,-10.16666667
+> > > ,32 c 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,32,3,3,ecoli_c,0.91,77,0.893333333,0.016666667,-1.156666667
+> > > ,32 c 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,32,3,3,beads_c,1.7,351,1.42,0.28,-3.676666667
+> > ,32 dext 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,32,3,1,dextrane,70,7475,60.13333333,9.866666667,-3.06666667
+> > ,32 dext 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,32,3,2,dextrane,71.1,7479,60.13333333,10.96666667,-1.96666667
+> > ,32 dext 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,32,3,3,dextrane,70.3,7507,60.13333333,10.16666667,-2.76666667
+> > > ,36 bact 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,3,1,ecoli,2.95,335,0.833333333,2.116666667,0.883333333
+> > > ,36 bact 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,3,2,ecoli,0.9,67,0.833333333,0.066666667,-1.166666667
+> > > ,36 bact 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,3,3,ecoli,1.06,72,0.833333333,0.226666667,-1.006666667
+> > > ,36 beads 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,3,1,beads,4.51,934,1.576666667,2.933333333,-0.866666667
+> > > ,36 beads 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,3,2,beads,7.88,1325,1.576666667,6.303333333,2.503333333
+> > > ,36 beads 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,3,3,beads,4.86,1011,1.576666667,3.283333333,-0.516666667
+> > ,36 c 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,36,3,1,dextrane_c,63.2,13231,66.03333333,-2.833333333,-9.86666667
+> > > ,36 c 1_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,3,1,ecoli_c,0.6,41,0.833333333,-0.233333333,-1.466666667
+> > > ,36 c 1_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,3,1,beads_c,0.94,197,1.576666667,-0.636666667,-4.436666667
+> > ,36 c 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,36,3,2,dextrane_c,70.5,14853,66.03333333,4.466666667,-2.56666667
+> > > ,36 c 2_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,3,2,ecoli_c,1.37,130,0.833333333,0.536666667,-0.696666667
+> > > ,36 c 2_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,3,2,beads_c,2.9,608,1.576666667,1.323333333,-2.476666667
+> > ,36 c 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,36,3,3,dextrane_c,64.4,13237,66.03333333,-1.633333333,-8.66666667
+> > > ,36 c 3_Data Source_gene3 - 1.fcs/not junk/not loose bacteria/phagocytes_ecoli,36,3,3,ecoli_c,0.53,38,0.833333333,-0.303333333,-1.536666667
+> > > ,36 c 3_Data Source_gene3 - 1.fcs/not junk/not loose beads/phagocytes_beads,36,3,3,beads_c,0.89,183,1.576666667,-0.686666667,-4.486666667
+> > ,36 dext 1_Data Source_gene3 - 1.fcs/not junk/dextranepositive,36,3,1,dextrane,76.7,15617,66.03333333,10.66666667,3.63333333
+> > ,36 dext 2_Data Source_gene3 - 1.fcs/not junk/dextranepositive,36,3,2,dextrane,76.4,7862,66.03333333,10.36666667,3.33333333
+> > ,36 dext 3_Data Source_gene3 - 1.fcs/not junk/dextranepositive,36,3,3,dextrane,76.6,7650,66.03333333,10.56666667,3.53333333
