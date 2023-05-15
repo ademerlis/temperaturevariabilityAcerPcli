@@ -6,11 +6,24 @@ output: html_document
 ---
 
 ```{r}
-percent_cells_metadata <- read_csv("stresshardening_master.csv")
-
-adjusted_cells_data <- read_xlsx("stresshardening_master.xlsx", sheet = "Sheet4")
+adjusted_cells_data <- read_csv("adjusted_cell_proportions.csv")
+#we can't compare percentages across treatments and time because of several limitations:
+# 1) we don't know what a "normal" level of phagocytic cells is, and the "normal" range for individuals can be quite large.
+# 2) the cytometer itself may influence time point
+#so what we want to do is use the control group as the "baseline" and calculate the percent difference of the variable group to the control
+#and we can do this for each time point
 
 library(tidyverse)
+```
+# subset to compare to Lys's data 
+```{r}
+adjusted_cells_data %>% 
+  filter(Species == "Pcli") %>% 
+  filter(TimePoint == "T0") %>%  #only look at before they were temp treated because in Lys's experiment she combined treated and untreated coral fragments
+  dplyr::rename(Avg_Control = `Average Control (for that given genotype and timepoint)`,
+                Adj_percent = `Adjusted value (Percent -- Average Control)`)
+  group_by(Genotype) %>% 
+  dplyr::summarise(mean_percent = mean(Adj_percent), sd = sd(Adj_percent), count = n())
 ```
 
 
@@ -85,6 +98,8 @@ percent_cells_metadata %>%
   theme(text = element_text(size = 15))
   
 ```
+
+
 ```{r}
 percent_cells_metadata %>%
   filter(Replicate == "r1") %>% 
