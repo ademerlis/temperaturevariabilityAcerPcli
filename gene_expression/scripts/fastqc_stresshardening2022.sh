@@ -1,24 +1,21 @@
 #!/bin/bash
-#~/scratch/projects/and_transcriptomics/Allyson_stresshardening_RNAseq/scripts/fastqc/fastqc_stresshardening2022.job
-#/scratch/projects/and_transcriptomics/Allyson_stresshardening_RNAseq/scripts/fastqc/fastqc_stresshardening2022.job
+#~/scripts/fastqc_stresshardening2022.sh
+#/scratch/projects/and_transcriptomics/Allyson_stresshardening_RNAseq/scripts/fastqc_stresshardening2022.sh
 #purpose: quality checking of raw RNAseq reads using FASTQC on Pegasus compute node
 
-#BSUB -J fastqc
+#BSUB -J stresshardening2022_fastqc
 #BSUB -q general
 #BSUB -P and_transcriptomics
 #BSUB -o fastqc_stresshardening2022.out
 #BSUB -e fastqc_stresshardening2022.err
 #BSUB -n 8
+#BSUB -u allyson.demerlis@earth.miami.edu
+#BSUB -N
 
-and="/scratch/projects/and_transcriptomics/Allyson_stresshardening_RNAseq/" 
+module load fastqc/0.10.1
+
+and="/scratch/projects/and_transcriptomics/Allyson_stresshardening_RNAseq"
 
 cd ${and}
-for SAMP in *.fastq.gz
-
-do
-
-module load java/1.8.0_60
-module load  \
-${and}/$SAMP \
---outdir ${and}/fastqc_results
-done
+fastqc *.fastq.gz
+--outdir ${and}/fastqc/
