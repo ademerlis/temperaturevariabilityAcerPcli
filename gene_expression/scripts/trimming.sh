@@ -5,8 +5,8 @@
 #BSUB -n 16
 #BSUB -W 120:00
 #BSUB -R "rusage[mem=15000]"
-#BSUB -o trim_stresshardeningA%J.out
-#BSUB -e trim_stresshardeningA%J.err
+#BSUB -o trim_stresshardening%J.out
+#BSUB -e trim_stresshardening%J.err
 #BSUB -u allyson.demerlis@earth.miami.edu
 #BSUB -N
 
@@ -14,7 +14,7 @@ conda activate condaenv
 
 and="/scratch/projects/and_transcriptomics/Allyson_stresshardening_RNAseq"
 
-for sample in ${and}/*.gz ; 
+for sample in ${and}/fastq_files/*.gz ; 
 
 do \
 
