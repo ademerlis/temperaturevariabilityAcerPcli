@@ -9,17 +9,21 @@ output: html_document
 library("tximport") #requires BiocManager
 library("readr")
 library("tximportData")
-
+library("readxl")
 
 
 dir <- system.file("extdata", package = "tximportData")
 list.files(dir)
 
-samples <- read.table("../")
+samples <- read_csv("Pcli_samples.csv")
 
-files <- file.path(dir="~/Documents/GitHub/Ch2_temperaturevariability2023/gene_expression/bioinformatics/AS_pipeline/Pcli/", "salmon", "quant.sf")
+files <- file.path(dir="~/Documents/GitHub/Ch2_temperaturevariability2023/gene_expression/bioinformatics/AS_pipeline/Pcli/", "salmon", samples$`Fastq file name`, "quant.sf")
+names(files) <- paste0("sample", 1:6)
+all(file.exists(files))
 
-tximport(files, type = "salmon", tx2gene = tx2gene)
+files
+
+ tximport(files, type = "salmon", tx2gene = tx2gene)
 
 tx2gene <- read_tsv(file = "quant.sf")
 ```
