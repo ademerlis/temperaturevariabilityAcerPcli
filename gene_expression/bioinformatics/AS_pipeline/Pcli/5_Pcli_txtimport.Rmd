@@ -10,21 +10,90 @@ library("tximport") #requires BiocManager
 library("readr")
 library("tximportData")
 library("readxl")
+library(tidyverse)
+library(DESeq2)
+
+main_dir <- file.path("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa/salmon_quant_files/")
+
+#make a list of subdirectories
+sub_dir <- list.dirs(main_dir, recursive = F)
+
+#initialize empty list to store all "quant.sf" file paths
+quant_sf_files <- list()
+
+#Loop through each subdirectory and get file path for "quant.sf"
+for (subdir in sub_dir) {
+  sample_name <- tools::file_path_sans_ext(basename(subdir))
+  quant_sf_path <- file.path(subdir, "quant.sf")
+  quant_sf_files[[subdir]] <- normalizePath(quant_sf_path)
+}
+
+# Extract the file paths from the named list
+file_paths <- unlist(quant_sf_files)
+
+# Check if the files exist
+all_exist <- all(file.exists(file_paths))
+
+#import quant.sf files
+txi_data <- tximport(files = file_paths, type = "salmon", txOut=TRUE)
+#NOTE: you need the txOut=TRUE flag if you want to summarize to transcript-level. The default for tximport is to summarize to gene-level, but we can't do that with this dataset because we are using a de novo transcriptome built via Trinity.
+
+names(txi_data)
+#abundance #counts #length #countsFromAbundance
+```
 
 
-dir <- system.file("extdata", package = "tximportData")
-list.files(dir)
+```{r}
+head(txi_data$counts)
+
+colnames(txi_data$counts)
+
+countsmatrix <- as.data.frame(txi_data$counts)
+
+sample_names <- sub(".*/clean\\.([^_]*)_.*", "\\1", x = quant_sf_files)
+sample_names <- gsub("-", "_", sample_names)
+
+colnames(countsmatrix) <- sample_names
+
+#round each value to the nearest integer (DESeq2 can't take decimals)
+countsmatrix <- apply(countsmatrix, 2, round)
+
+countsmatrix_df <- as.data.frame(countsmatrix)
+
+write_csv(countsmatrix_df, "../../../results/Pcli_transcript_counts_matrix.csv")
+```
+
+
+```{r}
+sample_names
+
+sample_metadata <- as.data.frame(sample_names)
 
 samples <- read_csv("Pcli_samples.csv")
 
-files <- file.path(dir="~/Documents/GitHub/Ch2_temperaturevariability2023/gene_expression/bioinformatics/AS_pipeline/Pcli/", "salmon", samples$`Fastq file name`, "quant.sf")
-names(files) <- paste0("sample", 1:6)
-all(file.exists(files))
+samples %>% 
+  select(colony, treatment, `Fastq file name`) %>% 
+  drop_na() %>% 
+  mutate(sample_names = sub("clean\\.([^_]*)_.*", "\\1", `Fastq file name`)) %>% 
+  mutate(sample_names = gsub("-", "_", sample_names)) %>% 
+  select(!`Fastq file name`) -> samples_tidy
 
-files
+column_to_rownames(samples_tidy, var = "sample_names") -> samples_tidy
+```
 
- tximport(files, type = "salmon", tx2gene = tx2gene)
 
-tx2gene <- read_tsv(file = "quant.sf")
+```{r}
+dds <- DESeqDataSetFromMatrix(countsmatrix, samples_tidy, ~ treatment)
+
+
+
+
+
+
+Pcli_transcriptome_annotations <- read_file("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa/Dip_Host.fna.emapper.annotations")
+
+
+
+
 ```
 
