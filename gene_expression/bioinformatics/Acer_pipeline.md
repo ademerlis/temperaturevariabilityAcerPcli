@@ -4,20 +4,20 @@ Script written by: DeMerlis
 
 Last updated: 20230807
 
+For each step of this analysis, I followed the pipelines of [Jill Ashey](https://github.com/JillAshey/SedimentStress/blob/master/Bioinf/RNASeq_pipeline_FL.md?plain=1), [Dr. Ariana Huffmyer](https://github.com/AHuffmyer/EarlyLifeHistory_Energetics/blob/master/Mcap2020/Scripts/TagSeq/Genome_V3/TagSeq_BioInf_genomeV3.md), [Dr. Sam Gurr](https://github.com/SamGurr/SamGurr.github.io/blob/master/_posts/2021-01-07-Geoduck-TagSeq-Pipeline.md), and [Zoe Dellaert](https://github.com/imkristenbrown/Heron-Pdam-gene-expression/blob/master/BioInf/ZD_Heron-Pdam-gene-expression.md). All code was adapted from them. 
+
 ## 1) Download Data
 
 I downloaded the BaseSpace GUI and downloaded the .fastq files for Acer and Pcli onto an external hard drive. Then, I uploaded them to the UM HPC Pegasus using 'scp'. 
 
 ## 2) QC and Trim Files
 
-I then followed the pipelines of [Dr. Ariana Huffmyer](https://github.com/AHuffmyer/EarlyLifeHistory_Energetics/blob/master/Mcap2020/Scripts/TagSeq/Genome_V3/TagSeq_BioInf_genomeV3.md), [Dr. Sam Gurr](https://github.com/SamGurr/SamGurr.github.io/blob/master/_posts/2021-01-07-Geoduck-TagSeq-Pipeline.md), and [Zoe Dellaert](https://github.com/imkristenbrown/Heron-Pdam-gene-expression/blob/master/BioInf/ZD_Heron-Pdam-gene-expression.md) to QC raw reads, trim adapters and polyA tails, and then QC trimmed reads. 
-
 "This script uses fastp to: 
 - remove TagSeq-specific adapter sequences (--adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA)
 - enable polyX trimming on 3' end at length of 6 (--trim_poly_x 6)
 - filter by minimum phred quality score of >30  (-q 30)
 - enable low complexity filter (-y)
-- set complexity filter threshold of 50% required (-Y 50)"
+- set complexity filter threshold of 50% required (-Y 50)" (explained by Dr. Sam Gurr)
 
 ```{bash}
 #!/bin/bash
@@ -47,7 +47,7 @@ fastqc *.clean.processed
 multiqc .
 ```
 
-MultiQC report can be found in the [temperaturevariability2023 GitHub repositorry](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/AS_pipeline).
+MultiQC reports can be found in the [temperaturevariability2023 GitHub repositorry](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/AS_pipeline).
 
 ## 3) Download Genome [*Acropora cervicornis*](https://usegalaxy.org/u/skitch/h/acervicornis-genome) 
 
