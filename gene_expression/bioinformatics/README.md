@@ -154,7 +154,7 @@ done
 
 Then run multiqc in each directory by just running `multiqc .` (installed it locally on Pegasus scratch space and to PATH variable)
 
-MultiQC reports can be found in the [temperaturevariability2023 GitHub repositorry](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/AS_pipeline).
+MultiQC reports can be found in the [temperaturevariability2023 GitHub repository](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/bioinformatics/multiqc_report_rawreads.html).
 
 ## 3) Download Genome [*Acropora cervicornis*](https://usegalaxy.org/u/skitch/h/acervicornis-genome) 
 
