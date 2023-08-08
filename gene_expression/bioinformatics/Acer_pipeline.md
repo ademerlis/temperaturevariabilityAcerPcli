@@ -29,9 +29,9 @@ and="/scratch/projects/and_transcriptomics"
 
 module load fastqc/0.10.1
 
-cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads
+cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
 
-fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/2_fastqc_files_rawsequences
+fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/fastqc_files_rawsequences
 ```
 
 Install multiqc locally:
@@ -48,7 +48,7 @@ source .bash_profile
 #this runs the bash profile to update the paths
 ```
 
-Then cd into 2_fastqc_files_rawsequences and run `multiqc .`
+Then cd into fastqc_files_rawsequences and run `multiqc .`
 
 I will transfer the multiqc_report.html to my local drive so I can open it and view it.
 
@@ -90,7 +90,7 @@ Then, run script to trim fastq.gz files and rename to "clean.{sample}.fastq.gz".
 
 and="/scratch/projects/and_transcriptomics"
 
-cd ${and}/Ch2_temperaturevariability2023/AS_pipeline/1_fastq_rawreads/
+cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
 array1=($(ls *.fastq.gz)) 
 for sample in ${array1[@]} ;
 do \
@@ -115,9 +115,41 @@ and="/scratch/projects/and_transcriptomics"
 
 module load fastqc/0.10.1
 
-cd ${and}/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/Pcli_fastq_files
+cd ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/Pcli_fastq_files
 
-fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/Pcli_fastq_files/
+fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/Pcli_fastq_files/
+```
+
+I also tried creating a loop for the Acer ones:
+```{bash}
+#BSUB -u and128@miami.edu
+
+#specify variables and paths
+
+and="/scratch/projects/and_transcriptomics"
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files"
+
+data=($(ls *.gz))
+
+for sample in ${data[@]} ;
+
+do \
+echo "FastQC ${sample}"
+
+echo '#!/bin/bash' > "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -q bigmem' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -J '"${sample}"_fastqc'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -o '"${and}"/Ch2_temperaturevariability2023/AS_pipeline/2_trimmed_reads/Acer_fastq_files/"$sample"_fastqc%J.out'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -e '"${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"$sample"_fastqc%J.err'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -n 8' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -N' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo 'module load fastqc/0.10.1
+fastqc '"${sample}" --outdir /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo 'echo' "Fastqc of $sample complete"'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo "Fastqc script of $sample submitted"
+bsub < "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job ; \
+done
 ```
 
 Then run multiqc in each directory by just running `multiqc .` (installed it locally on Pegasus scratch space and to PATH variable)
@@ -157,7 +189,7 @@ module load python/3.8.7
 /scratch/projects/and_transcriptomics/programs/hisat2-2.2.1/hisat2-build -f ${and}/genomes/Acer/Acerv_assembly_v1.0_171209.fasta ${and}/genomes/Acer/Acer_reference_genome_hisat2
 echo "Reference genome indexed. Starting alignment" $(date)
 
-cd /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/
+cd /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files
 array=($(ls *.fastq.gz))
 for i in ${array[@]};
  do \
@@ -233,7 +265,7 @@ module load python/3.8.7
 
 and="/scratch/projects/and_transcriptomics"
 
-cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/Acer_aligned_bam_files"
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/3_Acer_specific/Acer_aligned_bam_files"
 
 data=($(ls *.bam))
 
@@ -262,7 +294,7 @@ module load python/3.8.7
 
 and="/scratch/projects/and_transcriptomics"
 
-cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/Acer_aligned_bam_files"
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/3_Acer_specific/Acer_aligned_bam_files"
 
 ls *.gtf > gtf_list.txt
 
