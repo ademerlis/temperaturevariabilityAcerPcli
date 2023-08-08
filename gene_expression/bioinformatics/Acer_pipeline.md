@@ -10,7 +10,64 @@ For each step of this analysis, I followed the pipelines of [Jill Ashey](https:/
 
 I downloaded the BaseSpace GUI and downloaded the .fastq files for Acer and Pcli onto an external hard drive. Then, I uploaded them to the UM HPC Pegasus using 'scp'. 
 
-## 2) QC and Trim Files
+## 2) QC Raw Reads
+
+Can run FastQC module from Pegasus (version 0.10.1). 
+
+```{bash}
+#!/bin/bash
+#BSUB -J fastqc
+#BSUB -q bigmem
+#BSUB -n 8
+#BSUB -P and_transcriptomics
+#BSUB -o fastqc_%J.out
+#BSUB -e fastqc_%J.err
+#BSUB -u allyson.demerlis@earth.miami.edu
+#BSUB -N
+
+and="/scratch/projects/and_transcriptomics"
+
+module load fastqc/0.10.1
+
+cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads
+
+fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/2_fastqc_files_rawsequences
+```
+
+Install multiqc locally:
+```{bash}
+module load py-pip/20.2
+pip install multiqc
+
+nano ~/.bash_profile
+export PATH=$PATH:/nethome/and128/.local/bin
+
+#then save it and exit nano
+
+source .bash_profile
+#this runs the bash profile to update the paths
+```
+
+Then cd into 2_fastqc_files_rawsequences and run `multiqc .`
+
+I will transfer the multiqc_report.html to my local drive so I can open it and view it.
+
+this code worked from transferring from pegasus to local (first navigated on local to the folder i wanted the report to go in):
+```{bash}
+Allysons-MacBook-Pro-2: allysondemerlis$ scp and128@pegasus.ccs.miami.edu:/scratch/projects/and_transcriptomics/multiqc_report.html .
+```
+
+## 3) Trim Files Using Fastp
+
+First, install Fastp locally:
+```{bash}
+cd programs
+# download the latest build
+wget http://opengene.org/fastp/fastp
+chmod a+x ./fastp
+```
+
+Then, run script to trim fastq.gz files and rename to "clean.{sample}.fastq.gz". 
 
 "This script uses fastp to: 
 - remove TagSeq-specific adapter sequences (--adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA)
@@ -21,13 +78,36 @@ I downloaded the BaseSpace GUI and downloaded the .fastq files for Acer and Pcli
 
 ```{bash}
 #!/bin/bash
-#BSUB -J trim_qc.sh
+#BSUB -J trim.sh
 #BSUB -q bigmem
 #BSUB -n 8
 #BSUB -R "rusage[mem=10000]"
 #BSUB -P and_transcriptomics
-#BSUB -o trim_qc_%J.out
-#BSUB -e trim_qc_%J.err
+#BSUB -o trim_%J.out
+#BSUB -e trim_%J.err
+#BSUB -u allyson.demerlis@earth.miami.edu
+#BSUB -N
+
+and="/scratch/projects/and_transcriptomics"
+
+cd ${and}/Ch2_temperaturevariability2023/AS_pipeline/1_fastq_rawreads/
+array1=($(ls *.fastq.gz)) 
+for sample in ${array1[@]} ;
+do \
+${and}/programs/fastp --in1 ${sample} --out1 clean.${sample} --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50 ; \
+done
+```
+
+## 4) QC Trimmed Reads
+
+```{bash}
+#!/bin/bash
+#BSUB -J fastqc_Pclitrimmed
+#BSUB -q bigmem
+#BSUB -n 8
+#BSUB -P and_transcriptomics
+#BSUB -o fastqc_%J.out
+#BSUB -e fastqc_%J.err
 #BSUB -u allyson.demerlis@earth.miami.edu
 #BSUB -N
 
@@ -35,18 +115,12 @@ and="/scratch/projects/and_transcriptomics"
 
 module load fastqc/0.10.1
 
-cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
-array1=($(ls *.fastq.gz)) 
-for sample in ${array1[@]} ;
-do \
-${and}/programs/fastp --in1 ${sample} --out1 clean.${sample} --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50 \
-fastqc clean.${i} ; \
-done
+cd ${and}/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/Pcli_fastq_files
 
-cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
-
-multiqc .
+fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/AS_pipeline/3_trimmed_fastq_files/Pcli_fastq_files/
 ```
+
+Then run multiqc in each directory by just running `multiqc .` (installed it locally on Pegasus scratch space and to PATH variable)
 
 MultiQC reports can be found in the [temperaturevariability2023 GitHub repositorry](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/AS_pipeline).
 
