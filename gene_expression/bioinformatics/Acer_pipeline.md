@@ -141,16 +141,17 @@ echo '#!/bin/bash' > "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Ace
 echo '#BSUB -q bigmem' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo '#BSUB -J '"${sample}"_fastqc'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo '#BSUB -o '"${and}"/Ch2_temperaturevariability2023/AS_pipeline/2_trimmed_reads/Acer_fastq_files/"$sample"_fastqc%J.out'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -e '"${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/Acer_fastq_files/"$sample"_fastqc%J.err'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+echo '#BSUB -e '"${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"$sample"_fastqc%J.err'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo '#BSUB -n 8' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo '#BSUB -N' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo 'module load fastqc/0.10.1
-fastqc ${sample} --outdir ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
+fastqc '"${sample}" --outdir /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo 'echo' "Fastqc of $sample complete"'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
 echo "Fastqc script of $sample submitted"
 bsub < "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job ; \
 done
 ```
+
 Then run multiqc in each directory by just running `multiqc .` (installed it locally on Pegasus scratch space and to PATH variable)
 
 MultiQC reports can be found in the [temperaturevariability2023 GitHub repositorry](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/AS_pipeline).
