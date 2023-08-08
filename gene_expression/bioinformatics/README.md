@@ -6,6 +6,11 @@ Last updated: 20230807
 
 For each step of this analysis, I followed the pipelines of [Jill Ashey](https://github.com/JillAshey/SedimentStress/blob/master/Bioinf/RNASeq_pipeline_FL.md?plain=1), [Dr. Ariana Huffmyer](https://github.com/AHuffmyer/EarlyLifeHistory_Energetics/blob/master/Mcap2020/Scripts/TagSeq/Genome_V3/TagSeq_BioInf_genomeV3.md), [Dr. Sam Gurr](https://github.com/SamGurr/SamGurr.github.io/blob/master/_posts/2021-01-07-Geoduck-TagSeq-Pipeline.md), and [Zoe Dellaert](https://github.com/imkristenbrown/Heron-Pdam-gene-expression/blob/master/BioInf/ZD_Heron-Pdam-gene-expression.md). All code was adapted from them. 
 
+**A.cervicornis**: [FastQC](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics#2-qc-raw-reads) -> [Fastp](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics#3-trim-files-using-fastp) -> [FastQC](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics#4-qc-trimmed-reads) -> [HISAT2](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics#4-index-acer-genome--align-experiment-reads-to-indexed-genome-using-hisat2) -> [StringTie](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics#6-perform-gene-counts-with-stringtie) -> [DESeq2]()
+
+**P.clivosa**: 
+
+
 ## 1) Download Data
 
 I downloaded the BaseSpace GUI and downloaded the .fastq files for Acer and Pcli onto an external hard drive. Then, I uploaded them to the UM HPC Pegasus using 'scp'. 
