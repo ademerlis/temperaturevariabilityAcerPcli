@@ -35,14 +35,15 @@ and="/scratch/projects/and_transcriptomics"
 
 module load fastqc/0.10.1
 
-for sample in ${and}/Ch2_temperaturevariability2023/fastq_rawreads/*.fastq.gz ;
+cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
+array1=($(ls *.fastq.gz)) 
+for sample in ${array1[@]} ;
 do \
-${and}/programs/fastp --in1 ${sample} --out1 ${sample}.clean.processed --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50 ; \
+${and}/programs/fastp --in1 ${sample} --out1 clean.${sample} --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50 \
+fastqc clean.${i} ; \
 done
 
-cd ${and}/Ch2_temperaturevariability2023/fastq_rawreads/
-
-fastqc *.clean.processed
+cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
 
 multiqc .
 ```
