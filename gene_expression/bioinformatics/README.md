@@ -170,6 +170,18 @@ Transcript file: `Acerv_assembly_v1.0.mRNA.fa`
 
 ## 4) Index Acer Genome + Align Experiment Reads to Indexed Genome Using HISAT2 
 
+Install HISAT2 locally (version 2.2.1)
+```{bash}
+cd programs
+# download the latest build
+wget https://cloud.biohpc.swmed.edu/index.php/s/fE9QCsX3NH4QwBi/download
+cd hisat2-2.2.1/
+make .
+# also add it to your ~/.bash_profile PATH
+```
+
+Then submit this job to Pegasus.
+
 ```{bash}
 #!/bin/bash
 #BSUB -J HISAT2
@@ -200,6 +212,18 @@ for i in ${array[@]};
         rm ${sample_name}.sam ; 
 done
 ```
+
+To obtain mapping percentages (percent alignment):
+```{bash}
+module load samtools/1.3
+
+for i in *.bam; do
+    echo "${i}" >> mapped_reads_counts_Acer
+    samtools flagstat ${i} | grep "mapped (" >> mapped_reads_counts_Acer
+done
+```
+
+Manually copied these percentages into the [RNA extraction and sequencing results csv](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/RNA%20_extraction_sequencing_data.csv).
 
 ## 5) Update .gff3 File for StringTie
 
@@ -249,7 +273,20 @@ write.table(Acerv.gff, file="~/Downloads/Acerv.GFFannotations.fixed_transcript_t
 
 ## 6) Perform Gene Counts with StringTie 
 
-First assemble and estimate reads using aligned .bam files and updated .gff3 file.
+Install Stringtie (version X) and gffcompare (version X) locally onto Pegasus scratch space.
+
+```{bash}
+wget http://ccb.jhu.edu/software/stringtie/dl/stringtie-2.2.1.tar.gz
+tar xvfz stringtie-2.2.1.tar.gz
+cd stringtie-2.2.1
+make release
+
+wget http://ccb.jhu.edu/software/stringtie/dl/gffcompare-0.12.6.Linux_x86_64.tar.gz
+tar xvfz gffcompare-0.12.6.Linux_x86_64.tar.gz
+
+```
+
+Then, assemble and estimate reads using aligned .bam files and updated .gff3 file.
 
 ```{bash}
 #!/bin/bash
