@@ -76,26 +76,43 @@ Then, run script to trim fastq.gz files and rename to "clean.{sample}.fastq.gz".
 - enable low complexity filter (-y)
 - set complexity filter threshold of 50% required (-Y 50)" (explained by Dr. Sam Gurr)
 
+Before submitting the job, make the following subdirectories for the output files:
+
+```{bash}
+mkdir ${and}/Ch2_temperaturevariability2023/fastp_processed/
+mkdir ${and}/Ch2_temperaturevariability2023/trimmed_qc/
+```
+
 ```{bash}
 #!/bin/bash
-#BSUB -J trim.sh
+#BSUB -J trim_fastp.sh
 #BSUB -q bigmem
 #BSUB -n 8
 #BSUB -R "rusage[mem=10000]"
 #BSUB -P and_transcriptomics
-#BSUB -o trim_%J.out
-#BSUB -e trim_%J.err
+#BSUB -o trim_fastp_%J.out
+#BSUB -e trim_fastp_%J.err
 #BSUB -u allyson.demerlis@earth.miami.edu
 #BSUB -N
 
 and="/scratch/projects/and_transcriptomics"
 
-cd ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/
-array1=($(ls *.fastq.gz)) 
-for sample in ${array1[@]} ;
+module load fastqc/0.10.1
+
+for sample in ${and}/Ch2_temperaturevariability2023/fastq_rawreads/*.fastq.gz ;
 do \
-${and}/programs/fastp --in1 ${sample} --out1 clean.${sample} --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50 ; \
+${and}/programs/fastp --in1 ${sample} --out1 ${and}/Ch2_temperaturevariability2023/fastp_processed/clean.${sample} -h report_${sample}.html --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50
+fastqc ${and}/Ch2_temperaturevariability2023/fastp_processed/clean.${sample} -o ${and}/Ch2_temperaturevariability2023/trimmed_qc/ ; \
 done
+
+echo "Read trimming of adapters complete."
+
+multiqc ${and}/Ch2_temperaturevariability2023/trimmed_qc/
+
+mv multiqc_report.html trimmed_qc/
+mv multiqc_data trimmed_qc/
+
+echo "Cleaned MultiQC report generated."
 ```
 
 ## 4) QC Trimmed Reads
