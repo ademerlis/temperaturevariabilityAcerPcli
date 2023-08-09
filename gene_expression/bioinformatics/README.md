@@ -106,7 +106,11 @@ and="/scratch/projects/and_transcriptomics"
 
 module load fastqc/0.10.1
 
-for sample in ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/*.fastq.gz ;
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
+
+data=($(ls *.gz))
+
+for sample in ${data[@]} ;
 do \
 ${and}/programs/fastp --in1 ${sample} --out1 ${and}/Ch2_temperaturevariability2023/fastp_processed/clean.${sample} -h report_${sample}.html --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --trim_poly_x 6 -q 30 -y -Y 50
 fastqc ${and}/Ch2_temperaturevariability2023/fastp_processed/clean.${sample} -o ${and}/Ch2_temperaturevariability2023/trimmed_qc_files/ ; \
