@@ -8,7 +8,7 @@ _________________
 
 <img width="625" alt="Screen Shot 2023-08-07 at 9 14 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c5191154-b2a9-4283-b603-c6657f3814ac">
 
-*Figure 2.* 12 corals per species per time point were sampled during the 28-d temperature treatment. No fragment was ever sampled twice. All sampling occurred at the same temperature (28ºC). ~1cm of tissue was collected using bone cutters, then immediately preserved in 1mL of Zymo DNA/RNA Shield.
+*Figure 2.* 12 corals per species per time point were sampled during the 28-d temperature treatment. All sampling occurred at the same temperature (28ºC). ~1cm of tissue was collected using bone cutters, then immediately preserved in 1mL of Zymo DNA/RNA Shield.
 
 ________________
 
