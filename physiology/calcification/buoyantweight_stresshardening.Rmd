@@ -50,7 +50,7 @@ buoyantweights %>%
 ```{r}
 #initial weights only (unstandardized)
 
-metadata %>% 
+calc_bw %>% 
   dplyr::select(Species, ID, Colony, Treatment, Random_Tank, Bw_initial_raw_mass:bw_final_temp) %>% 
   drop_na(Species) %>% 
   group_by(Species, ID, Colony, Treatment, bw_initial_date) %>% 
@@ -71,7 +71,7 @@ metadata %>%
 ```{r}
 #final weights only (unstandardized)
 
-metadata %>% 
+calc_bw %>% 
   dplyr::select(Species, ID, Colony, Treatment, Random_Tank, bw_final_raw_mass:bw_final_temp) %>% 
   drop_na(Species) %>% 
   group_by(Species, ID, Colony, Treatment, bw_final_date) %>% 
@@ -92,7 +92,7 @@ metadata %>%
 ```{r}
 #final timepoint sample size
 
-metadata %>% 
+calc_bw %>% 
   dplyr::select(Species, ID, Colony, Treatment, Random_Tank, bw_final_raw_mass:bw_final_temp) %>% 
   drop_na(Species) %>% 
   group_by(Species, ID, Colony, Treatment, bw_final_date) %>% 
@@ -203,8 +203,6 @@ TukeyHSD(BW_Pcli_aov)
 BW_Acer_aov <- aov(percent_change ~ Treatment*Colony, data = Acer_BW)
 
 summary(BW_Acer_aov)
-
-
 ```
 
 
