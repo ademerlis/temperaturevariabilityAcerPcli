@@ -25,4 +25,33 @@
 
 <img width="690" alt="Screen Shot 2023-08-14 at 11 45 14 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/8f2658e5-2e2d-4066-996e-1aa1bcbd3d34">
 
+## 3. Alignment rates
 
+<img width="625" alt="Screen Shot 2023-08-14 at 1 32 07 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/95943c60-6a32-47c2-8ee9-3ed0f464629f">
+
+Code made in R:
+```{r}
+sequencing_data <- read.csv("../../RNA_extraction_sequencing_data.csv")
+
+sequencing_data %>% select(Species:Treatment,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  ggplot(., aes(x=Sample.ID, y=percent_alignment, fill=Treatment)) + geom_col() + facet_wrap(~Species) + theme_classic()
+```
+
+## 4. Number of trimmed reads aligned 
+
+<img width="624" alt="Screen Shot 2023-08-14 at 1 30 10 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/9cc119b1-5472-48ab-bb64-98b62b742a1d">
+
+Code made in R:
+```{r}
+sequencing_data <- read.csv("../../RNA_extraction_sequencing_data.csv")
+
+sequencing_data %>% 
+select(Species:Treatment,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  mutate(percent_alignment = percent_alignment / 100) %>% 
+  mutate(million_reads_aligned = (M.Reads.After.Filtering..Trimmed.reads.)*percent_alignment) %>% 
+  ggplot(., aes(x=Sample.ID, y=million_reads_aligned, fill=Treatment)) + geom_col() + facet_wrap(~Species) + theme_classic()
+```
