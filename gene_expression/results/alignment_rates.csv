@@ -1,0 +1,24 @@
+Species,Treatment,Genotype,Experiment.phase,n
+Acer,control,BC-8b,Pre-treatment,4
+Acer,control,BC-8b,last day of treatment,1
+Acer,control,MB-B,Pre-treatment,4
+Acer,control,MB-B,last day of treatment,4
+Acer,control,SI-C,Pre-treatment,4
+Acer,control,SI-C,last day of treatment,4
+Acer,variable,BC-8b,Pre-treatment,4
+Acer,variable,BC-8b,last day of treatment,4
+Acer,variable,MB-B,Pre-treatment,4
+Acer,variable,MB-B,last day of treatment,4
+Acer,variable,SI-C,Pre-treatment,4
+Acer,variable,SI-C,last day of treatment,4
+Pcli,control,A,Pre-treatment,4
+Pcli,control,A,last day of treatment,1
+Pcli,control,B,Pre-treatment,3
+Pcli,control,B,last day of treatment,2
+Pcli,control,C,Pre-treatment,4
+Pcli,control,C,last day of treatment,2
+Pcli,variable,A,Pre-treatment,3
+Pcli,variable,A,last day of treatment,2
+Pcli,variable,B,Pre-treatment,2
+Pcli,variable,B,last day of treatment,3
+Pcli,variable,C,Pre-treatment,3

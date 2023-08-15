@@ -1,0 +1,197 @@
+---
+title: "Obtaining number of aligned reads"
+author: "allyson_demerlis"
+date: "2023-08-14"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(DESeq2)
+library(genefilter) #for filterfun and genefilter
+library(factoextra) #for PCA and eigenvectors
+library(vegan)
+library(pheatmap)
+```
+
+Import and tidy gene counts matrix
+```{r}
+genecounts <- read.csv("../../results/Acer/gene_count_acerv_matrix.csv")
+genecounts %>% column_to_rownames(var = "gene_id") -> genecounts
+
+#tidy column names
+colnames(genecounts) -> genecounts_colnames
+
+gsub("^(.*?)_.*$", "\\1", genecounts_colnames) -> new_colnames
+
+for (i in seq_along(new_colnames)) {
+  colnames(genecounts)[colnames(genecounts) == colnames(genecounts)[i]] <- new_colnames[i]
+}
+```
+
+import aligned reads sample metadata
+```{r}
+sequencing_data <- read.csv("../../RNA_extraction_sequencing_data.csv")
+
+#obtaining list of Acer samples which passed read count
+sequencing_data %>% 
+  select(Species:Treatment,Sequence.File.Sample.Name,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  mutate(percent_alignment = percent_alignment / 100) %>% 
+  mutate(million_reads_aligned = (M.Reads.After.Filtering..Trimmed.reads.)*percent_alignment) %>% 
+  filter(million_reads_aligned > 4) %>% 
+  select(Species:Treatment,Sequence.File.Sample.Name,million_reads_aligned) %>% 
+  filter(Species == "Acer") %>% 
+  mutate(Sequence.File.Sample.Name = gsub("^(.*?)_.*$", "\\1", Sequence.File.Sample.Name)) %>% 
+  mutate(Sequence.File.Sample.Name = gsub("-", ".", Sequence.File.Sample.Name)) -> Acer_samples_4M
+
+#which ones need to be filtered out?
+sequencing_data %>% 
+  select(Species:Treatment,Sequence.File.Sample.Name,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  mutate(percent_alignment = percent_alignment / 100) %>% 
+  mutate(million_reads_aligned = (M.Reads.After.Filtering..Trimmed.reads.)*percent_alignment) %>% 
+  filter(Species == "Acer") %>% 
+  filter(million_reads_aligned < 4)
+#Acer-072, Acer-089, Acer-108
+```
+
+Check that there are no genes with 0 counts across all samples
+```{r}
+dim(genecounts) #33715    48
+nrow(Acer_samples_4M) #45
+#3 samples were filtered out
+
+#Acer-072, Acer-089, Acer-108 from above
+
+#manually remove them because you couldn't figure out how to use code to do it
+
+samples_to_remove <- c("Acer.072", "Acer.089", "Acer.108")
+genecounts_filt <- genecounts %>% select(-one_of(samples_to_remove))
+
+#filter out counts that have zero
+genecounts_filt <-genecounts_filt %>%
+    mutate(Total = rowSums(.[, 1:45]))%>%
+    filter(!Total==0)%>%
+    dplyr::select(!Total)
+nrow(genecounts_filt)
+
+#went from 33715 to 14728 genes
+```
+
+Filter reads by proportion of samples containing cutoff value
+```{r}
+filt <- filterfun(pOverA(0.85,5)) #this means keep 85% of samples that have a count >5
+
+tfil <- genefilter(genecounts_filt, filt)
+
+keep <- genecounts_filt[tfil,]
+
+gn.keep <- rownames(keep)
+
+genecounts_filt <- as.data.frame(genecounts_filt[which(rownames(genecounts_filt) %in% gn.keep),])
+
+#now at 4146 genes
+
+#write.csv(genecounts_filt, "../../results/Acer/genecounts_filtered.csv")
+```
+
+Quality check of datasets to make sure row and column names match
+```{r}
+Acer_samples_4M %>% 
+  column_to_rownames(var = "Sequence.File.Sample.Name") -> Acer_samples_4M
+
+all(rownames(Acer_samples_4M) %in% colnames(genecounts_filt)) #TRUE 
+all(rownames(Acer_samples_4M) == colnames(genecounts_filt)) # FALSE
+```
+
+Display order of metadata and gene count matrix, and reorder columns of genecounts_filt so they match the samples (need to do this before creating DESeq2 object because the rows and columns need to match EXACTLY)
+```{r}
+rownames(Acer_samples_4M)
+colnames(genecounts_filt)
+
+desired_order <- as.vector(rownames(Acer_samples_4M))
+
+genecounts_filt %>% select(matches(desired_order)) -> genecounts_filt_ordered
+
+all(rownames(Acer_samples_4M) == colnames(genecounts_filt_ordered)) #TRUE!
+```
+
+
+set variables in metadata as factors
+```{r}
+Acer_samples_4M$Genotype <- factor(Acer_samples_4M$Genotype)
+Acer_samples_4M$Treatment <- factor(Acer_samples_4M$Treatment)
+
+#change genotype names to not have hyphens because DESeq2 doesn't like that
+Acer_samples_4M$Genotype <- gsub("-", "_", Acer_samples_4M$Genotype)
+#also need to get rid of spaces I think
+Acer_samples_4M$Genotype <- gsub(" ", "", Acer_samples_4M$Genotype)
+
+#make a new column for "Day_0" or "Day_29" to correspond to beginning and end sampling time points
+Acer_samples_4M %>% 
+  mutate(time_point = case_when(Experiment.phase == "Pre-treatment" ~ "Day_0",
+                                Experiment.phase == "last day of treatment" ~ "Day_29")) -> Acer_samples_4M
+
+Acer_samples_4M$time_point <- factor(Acer_samples_4M$time_point)
+```
+
+## DESeq accounting for all variables
+
+create matrix for DESeq
+```{r}
+data <- DESeqDataSetFromMatrix(countData = genecounts_filt_ordered, colData = Acer_samples_4M, design = ~ Genotype + Treatment*time_point)
+```
+
+estimate size factors
+```{r}
+SF.data <- estimateSizeFactors(data)
+SF.data
+print(sizeFactors(SF.data)) # everything is less than 4, so I can use vst
+```
+
+
+Apply variance stabilizing transformation to minimize effects of small counts and normalize wrt library size
+```{r}
+vst <- vst(data, blind = FALSE) #accounts for within group variability
+head(assay(vst), 3)
+```
+
+scree plot for variance
+```{r}
+pca <- prcomp(t(assay(vst)))
+fviz_eig(pca)
+```
+
+PCA
+```{r}
+plotPCA(vst, intgroup = c("Treatment"))
+plotPCA(vst, intgroup = c("Genotype"))
+plotPCA(vst, intgroup = c("time_point"))
+
+vst_PCAdata <- plotPCA(vst, intgroup = c("Treatment", "Genotype", "time_point"), returnData = TRUE)
+percentVar <- round(100*attr(vst_PCAdata, "percentVar")) 
+
+#plot PCA of samples with all data
+pca.centroids <- vst_PCAdata %>% 
+  dplyr::select(Treatment, Genotype, time_point, PC1, PC2)%>%
+  dplyr::group_by(Treatment, Genotype, time_point)%>%
+  dplyr::summarise(PC1.mean = mean(PC1),
+                   PC2.mean = mean(PC2))
+find_hull <- function(vst_PCAdata) vst_PCAdata[chull(vst_PCAdata$PC1, vst_PCAdata$PC2), ]
+hulls <- plyr::ddply(vst_PCAdata, "group", find_hull)
+
+acerv_PCAplot <- ggplot(vst_PCAdata, aes(PC1, PC2, color=Genotype, shape=Treatment, alpha = time_point)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("A. cervicornis - all genes") +
+   theme_bw() + #Set background color
+   theme(panel.border = element_blank(), # Set border
+         axis.line = element_line(colour = "black"), #Set axes color
+         plot.background=element_blank()) #Set the plot background
+acerv_PCAplot
+```
+

@@ -1,0 +1,60 @@
+---
+title: "Obtaining number of aligned reads"
+author: "allyson_demerlis"
+date: "2023-08-14"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+Graphs of alignment rates and reads aligned
+```{r}
+sequencing_data <- read.csv("../../RNA_extraction_sequencing_data.csv")
+
+sequencing_data %>% 
+  select(Species:Treatment,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  ggplot(., aes(x=Sample.ID, y=percent_alignment, fill=Treatment)) + geom_col() + facet_wrap(~Species) + theme_classic()
+
+sequencing_data %>% 
+  select(Species:Treatment,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  mutate(percent_alignment = percent_alignment / 100) %>% 
+  mutate(million_reads_aligned = (M.Reads.After.Filtering..Trimmed.reads.)*percent_alignment) %>% 
+  ggplot(., aes(x=Sample.ID, y=million_reads_aligned, fill=Treatment)) + geom_col() + facet_wrap(~Species) + theme_classic()
+```
+
+Making data frame for reads aligned (to filter out anything less than 4 million reads)
+```{r}
+sequencing_data %>% 
+  select(Species:Treatment,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  mutate(percent_alignment = percent_alignment / 100) %>% 
+  mutate(million_reads_aligned = (M.Reads.After.Filtering..Trimmed.reads.)*percent_alignment) -> alignment_rates
+
+alignment_rates %>% 
+  filter(million_reads_aligned > 4) %>%  # goes from 96 to 74 samples
+  group_by(Species, Treatment, Genotype, Experiment.phase) %>% 
+  summarise(n=n())
+#this table shows the sample sizes of each Species + Treatment + Genotype combination at each time point
+
+alignment_rates %>% 
+  filter(million_reads_aligned > 4) %>%  # goes from 96 to 74 samples
+  mutate(Experiment.phase = factor(Experiment.phase, levels = c("Pre-treatment", "last day of treatment"))) %>% 
+  mutate(Genotype = factor(Genotype, c("A", "B", "C", "BC-8b", "MB-B", "SI-C"))) %>% 
+  group_by(Species, Treatment, Genotype, Experiment.phase) %>% 
+  summarise(n=n()) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x=Genotype, y=n, fill=Treatment)) + 
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  facet_grid(Species ~ Experiment.phase, scales = "free_x") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+```
+
