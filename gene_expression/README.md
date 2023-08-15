@@ -10,16 +10,10 @@ _________________
 
 *Figure 2.* 12 corals per species per time point were sampled during the 28-d temperature treatment. All sampling occurred at the same temperature (28ºC). ~1cm of tissue was collected using bone cutters, then immediately preserved in 1mL of Zymo DNA/RNA Shield.
 
-________________
+_________________
 
-<img width="700" alt="Screen Shot 2023-08-07 at 11 53 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/279d8a32-5159-46f6-bd19-788a8bb407f8">
+<img width="627" alt="Screen Shot 2023-08-14 at 1 51 42 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bb8d002b-d8a9-4a86-af1f-445324571cf0">
 
-*Figure 3.* Phred scores for raw reads. 
-[Multiqc report](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/bioinformatics/multiqc_report_rawreads.html)
+*Figure 3.* The number of samples for each genotype x treatment x time point combination that had greater than 4 million reads that aligned to the reference genome (in the case of Acer) or the de novo transcriptome (in the case of Pcli).
 
-________________
-
-<img width="682" alt="Screen Shot 2023-08-07 at 11 54 41 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/266abbab-9a57-4b78-903d-60564aaff7d4">
-
-*Figure 4.* Overrepresented sequences for raw reads. 
-[Multiqc report](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/bioinformatics/multiqc_report_rawreads.html)
+Specific stats available [in the sample metadata file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/RNA_extraction_sequencing_data.csv) and [the multiqc reports](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/QC). 

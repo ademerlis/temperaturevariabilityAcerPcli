@@ -118,61 +118,11 @@ done
 
 ## 4) QC Trimmed Reads
 
-```{bash}
-#!/bin/bash
-#BSUB -J fastqc_Pclitrimmed
-#BSUB -q bigmem
-#BSUB -n 8
-#BSUB -P and_transcriptomics
-#BSUB -o fastqc_%J.out
-#BSUB -e fastqc_%J.err
-#BSUB -u allyson.demerlis@earth.miami.edu
-#BSUB -N
+I added the fastqc part to the trimming script above. So I just ran `multiqc .` in the directory where those fastqc files were generated.
 
-and="/scratch/projects/and_transcriptomics"
+ (installed it locally on Pegasus scratch space and to PATH variable)
 
-module load fastqc/0.10.1
-
-cd ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/Pcli_fastq_files
-
-fastqc *.fastq.gz --outdir ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/Pcli_fastq_files/
-```
-
-I also tried creating a loop for the Acer ones:
-```{bash}
-#BSUB -u and128@miami.edu
-
-#specify variables and paths
-
-and="/scratch/projects/and_transcriptomics"
-
-cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files"
-
-data=($(ls *.gz))
-
-for sample in ${data[@]} ;
-
-do \
-echo "FastQC ${sample}"
-
-echo '#!/bin/bash' > "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -q bigmem' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -J '"${sample}"_fastqc'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -o '"${and}"/Ch2_temperaturevariability2023/AS_pipeline/2_trimmed_reads/Acer_fastq_files/"$sample"_fastqc%J.out'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -e '"${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"$sample"_fastqc%J.err'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -n 8' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo '#BSUB -N' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo 'module load fastqc/0.10.1
-fastqc '"${sample}" --outdir /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo 'echo' "Fastqc of $sample complete"'' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job
-echo "Fastqc script of $sample submitted"
-bsub < "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/Acer_fastq_files/"${sample}"_fastqc.job ; \
-done
-```
-
-Then run multiqc in each directory by just running `multiqc .` (installed it locally on Pegasus scratch space and to PATH variable)
-
-MultiQC reports can be found in the [temperaturevariability2023 GitHub repository](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/bioinformatics/multiqc_report_rawreads.html).
+MultiQC reports can be found in the [QC folder](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/QC). 
 
 ## 3) Download Genome [*Acropora cervicornis*](https://usegalaxy.org/u/skitch/h/acervicornis-genome) 
 
