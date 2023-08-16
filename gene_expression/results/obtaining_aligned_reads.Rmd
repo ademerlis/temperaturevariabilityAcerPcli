@@ -11,7 +11,7 @@ library(tidyverse)
 
 Graphs of alignment rates and reads aligned
 ```{r}
-sequencing_data <- read.csv("../../RNA_extraction_sequencing_data.csv")
+sequencing_data <- read.csv("../RNA_extraction_sequencing_data.csv")
 
 sequencing_data %>% 
   select(Species:Treatment,Raw.Reads..Million.,M.Reads.After.Filtering..Trimmed.reads.,Mapping.Rate..Post.trimming.alignment.) %>% 
@@ -56,5 +56,27 @@ alignment_rates %>%
   facet_grid(Species ~ Experiment.phase, scales = "free_x") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+```
+
+
+Getting numbers for summary stats (beginning of results section)
+```{r}
+str(sequencing_data)
+
+sequencing_data %>% 
+  mutate(percent_alignment = gsub("%","", Mapping.Rate..Post.trimming.alignment.)) %>% 
+  mutate(percent_alignment = as.numeric(percent_alignment)) %>% 
+  group_by(Species) %>% 
+  summarise(total_raw_reads = sum(Raw.Reads..Million.), 
+            total_trimmed_reads = sum(M.Reads.After.Filtering..Trimmed.reads.), 
+            average_rawreads_persample = mean(Raw.Reads..Million.), stdev_rawreads_persample = sd(Raw.Reads..Million.), 
+            average_trimmedreads_persample = mean(M.Reads.After.Filtering..Trimmed.reads.),
+            stdev_trimmedreads_persample = sd(M.Reads.After.Filtering..Trimmed.reads.),
+            average_alignment_rate = mean(percent_alignment),
+            stdev_alignmentrate = sd(percent_alignment))
+
+#group by Species, Genotype, Experiment.phase, Treatment
+
+# summary stats for Raw.Reads..Million. , M.Reads.After.Filtering..Trimmed.reads. , percent_alignment
 ```
 

@@ -4,7 +4,7 @@ author: "allyson_demerlis"
 date: "2023-07-28"
 output: html_document
 ---
-Load necessary packages
+## Load necessary packages
 ```{r}
 library("tximport") #requires BiocManager
 library("readr")
@@ -16,7 +16,7 @@ library(genefilter) #for filterfun and genefilter
 library(factoextra) #for PCA and eigenvectors
 ```
 
-Import quant.sf files for all Pcli samples
+## Import quant.sf files for all Pcli samples
 ```{r}
 main_dir <- file.path("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa/salmon_quant_files/")
 
@@ -48,7 +48,7 @@ names(txi_data)
 #abundance #counts #length #countsFromAbundance
 ```
 
-Tidy counts matrix and sample names so they match and don't have unnecessary info
+## Tidy counts matrix and sample names so they match and don't have unnecessary info
 ```{r}
 str(txi_data$counts)
 head(txi_data$counts)
@@ -82,7 +82,7 @@ column_to_rownames(samples_tidy, var = "sample_names") -> samples_tidy
 ```
 
 
-Check mapping rates for each sample
+## Check mapping rates for each sample
 ```{r}
 list.dirs(sub_dir)
 
@@ -124,8 +124,13 @@ mapping_rate_data <- data.frame(File_Name = file_names, Mapping_Rate_Line = mapp
 write.table(mapping_rate_data, file = "mapping_rates.txt", sep = "\t", row.names = FALSE)
 ```
 
+## filter out samples with less than 4 million 
+```{r}
 
-Filter out low counts
+```
+
+
+## Filter out low counts
 ```{r}
 nrow(countsmatrix) #731417
 countsmatrix_filt <- countsmatrix %>% 
@@ -166,7 +171,7 @@ samples_tidy$treatment <- as.factor(samples_tidy$treatment)
 ```
 
 
-Create DDS Object
+## Create DDS Object
 ```{r}
 dds <- DESeqDataSetFromMatrix(countData = txcounts_filt, colData = samples_tidy, design = ~ treatment + colony)
 ```
