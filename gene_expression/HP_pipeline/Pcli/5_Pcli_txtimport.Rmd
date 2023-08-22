@@ -1,0 +1,215 @@
+---
+title: "Pcli_txtimport"
+author: "allyson_demerlis"
+date: "2023-07-28"
+output: html_document
+---
+## Load necessary packages
+```{r}
+library("tximport") #requires BiocManager
+library("readr")
+library("tximportData")
+library("readxl")
+library(tidyverse)
+library(DESeq2)
+library(genefilter) #for filterfun and genefilter
+library(factoextra) #for PCA and eigenvectors
+```
+
+## Import quant.sf files for all Pcli samples
+```{r}
+main_dir <- file.path("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa/salmon_quant_files/")
+
+#make a list of subdirectories
+sub_dir <- list.dirs(main_dir, recursive = F)
+
+#initialize empty list to store all "quant.sf" file paths
+quant_sf_files <- list()
+
+#Loop through each subdirectory and get file path for "quant.sf"
+for (subdir in sub_dir) {
+  sample_name <- tools::file_path_sans_ext(basename(subdir))
+  quant_sf_path <- file.path(subdir, "quant.sf")
+  quant_sf_files[[subdir]] <- normalizePath(quant_sf_path)
+}
+
+# Extract the file paths from the named list
+file_paths <- unlist(quant_sf_files)
+
+# Check if the files exist
+all_exist <- all(file.exists(file_paths))
+
+#import quant.sf files
+txi_data <- tximport(files = file_paths, type = "salmon", txOut=TRUE, countsFromAbundance = "lengthScaledTPM")
+#NOTE: you need the txOut=TRUE flag if you want to summarize to transcript-level. The default for tximport is to summarize to gene-level, but we can't do that with this dataset because we are using a de novo transcriptome built via Trinity.
+#you also need to use countsFromAbundance = "lengthScaledTPM" in order to un-normalize the counts - as a default the TPM values are not converted to raw counts.
+
+names(txi_data)
+#abundance #counts #length #countsFromAbundance
+```
+
+## Tidy counts matrix and sample names so they match and don't have unnecessary info
+```{r}
+str(txi_data$counts)
+head(txi_data$counts)
+
+colnames(txi_data$counts)
+
+countsmatrix <- as.data.frame(txi_data$counts)
+
+sample_names <- sub(".*/clean\\.([^_]*)_.*", "\\1", x = quant_sf_files)
+sample_names <- gsub("-", "_", sample_names)
+
+colnames(countsmatrix) <- sample_names
+
+#round each value to the nearest integer (DESeq2 can't take decimals)
+countsmatrix <- apply(countsmatrix, 2, round)
+
+sample_names
+
+sample_metadata <- as.data.frame(sample_names)
+
+samples <- read_csv("Pcli_samples.csv")
+
+samples %>% 
+  select(colony, treatment, `Fastq file name`) %>% 
+  drop_na() %>% 
+  mutate(sample_names = sub("clean\\.([^_]*)_.*", "\\1", `Fastq file name`)) %>% 
+  mutate(sample_names = gsub("-", "_", sample_names)) %>% 
+  select(!`Fastq file name`) -> samples_tidy
+
+column_to_rownames(samples_tidy, var = "sample_names") -> samples_tidy
+```
+
+
+## Check mapping rates for each sample
+```{r}
+list.dirs(sub_dir)
+
+#make a list of directories for logs
+log_dir <- list.dirs(sub_dir, recursive = F)
+
+log_files <- list.files(log_dir, pattern = "\\.log$", full.names = T)
+
+# Initialize an empty vector to store the mapping rates
+mapping_rate_lines <- character()
+file_names <- character()
+
+for (log_file in log_files) {
+  # Read all lines from the log file
+  log_lines <- readLines(log_file)
+  
+  # Find the line containing the mapping rate using the stringr package
+  mapping_rate_line <- log_lines[str_detect(log_lines, "Mapping rate")]
+  
+  # If the line is found, extract the mapping rate value
+  if (length(mapping_rate_line) > 0) {
+    mapping_rate_line <- gsub("\\[.*?\\]", "", mapping_rate_line)
+
+    # Modify the log_file name using sub
+    modified_log_file <- sub(".*/clean\\.([^_]*)_.*", "\\1", log_file)
+    
+    file_names <-c(file_names, modified_log_file) 
+    mapping_rate_lines <- c(mapping_rate_lines, mapping_rate_line)
+  }
+}
+
+# Print the mapping rates
+print(mapping_rate_lines)
+
+#create data frame with file names and mapping rate lines as separate columns
+mapping_rate_data <- data.frame(File_Name = file_names, Mapping_Rate_Line = mapping_rate_lines)
+
+# Write the data frame to a tab-separated file
+write.table(mapping_rate_data, file = "mapping_rates.txt", sep = "\t", row.names = FALSE)
+```
+
+## filter out samples with less than 4 million 
+```{r}
+
+```
+
+
+## Filter out low counts
+```{r}
+nrow(countsmatrix) #731417
+countsmatrix_filt <- countsmatrix %>% 
+  as.data.frame(.) %>% 
+  mutate(Total = rowSums(.[, 1:48]))%>%
+    filter(!Total==0)%>% #getting rid of any transcripts that are 0 in all samples
+    dplyr::select(!Total)
+nrow(countsmatrix_filt) #238366
+
+filt <- filterfun(pOverA(0.85,5)) #this means keep 85% of samples that have a count >5
+
+tfil <- genefilter(countsmatrix_filt, filt)
+
+keep <- countsmatrix_filt[tfil,]
+
+gn.keep <- rownames(keep)
+
+txcounts_filt <- as.data.frame(countsmatrix_filt[which(rownames(countsmatrix_filt) %in% gn.keep),])
+
+nrow(txcounts_filt) #2670 transcripts left
+
+#write.csv(txcounts_filt, "../../../results/Pcli_transcript_counts_matrix.csv")
+```
+
+Check that all samples are present and match
+```{r}
+all(rownames(samples_tidy) %in% colnames(txcounts_filt)) #TRUE
+all(rownames(samples_tidy) == colnames(txcounts_filt)) #TRUE
+
+rownames(samples_tidy)
+colnames(txcounts_filt) #they match in order too
+```
+
+Set colony and treatment as factors
+```{r}
+samples_tidy$colony <- as.factor(samples_tidy$colony)
+samples_tidy$treatment <- as.factor(samples_tidy$treatment)
+```
+
+
+## Create DDS Object
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = txcounts_filt, colData = samples_tidy, design = ~ treatment + colony)
+```
+
+Estimate size factors (must be less than 4 if you want to use variance stabilizing transformation (VST))
+```{r}
+SF.data <- estimateSizeFactors(dds)
+SF.data
+print(sizeFactors(SF.data)) # a couple of them are 4 but I think that's okay
+#can do the analysis with and without them and see how much the results change -- also are the samples biologically relevant and that could explain the higher sequencing depth?
+
+#Plot column sums according to size factor
+plot(sizeFactors(SF.data), colSums(counts(SF.data)))
+abline(lm(colSums(counts(SF.data)) ~ sizeFactors(SF.data) + 0))
+#this is showing differences in sequencing depth
+```
+
+```{r}
+vst <- vst(dds, blind = FALSE) #accounts for within group variability
+head(assay(vst), 3)
+
+pca <- prcomp(t(assay(vst)))
+fviz_eig(pca)
+```
+
+```{r}
+plotPCA(vst, intgroup = c("treatment"))
+plotPCA(vst, intgroup = c("colony"))
+
+```
+
+
+
+
+
+
+
+```{r}
+Pcli_transcriptome_annotations <- read_file("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa/Dip_Host.fna.emapper.annotations")
+```
+

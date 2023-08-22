@@ -1,0 +1,11 @@
+PASS	Basic Statistics	Pcli-114_S108_L001_R1_001.fastq.gz
+PASS	Per base sequence quality	Pcli-114_S108_L001_R1_001.fastq.gz
+PASS	Per sequence quality scores	Pcli-114_S108_L001_R1_001.fastq.gz
+FAIL	Per base sequence content	Pcli-114_S108_L001_R1_001.fastq.gz
+FAIL	Per base GC content	Pcli-114_S108_L001_R1_001.fastq.gz
+FAIL	Per sequence GC content	Pcli-114_S108_L001_R1_001.fastq.gz
+PASS	Per base N content	Pcli-114_S108_L001_R1_001.fastq.gz
+PASS	Sequence Length Distribution	Pcli-114_S108_L001_R1_001.fastq.gz
+FAIL	Sequence Duplication Levels	Pcli-114_S108_L001_R1_001.fastq.gz
+WARN	Overrepresented sequences	Pcli-114_S108_L001_R1_001.fastq.gz
+FAIL	Kmer Content	Pcli-114_S108_L001_R1_001.fastq.gz
