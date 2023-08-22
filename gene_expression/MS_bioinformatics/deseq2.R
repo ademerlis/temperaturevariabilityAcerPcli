@@ -72,7 +72,7 @@ str(design)
 #### MODEL DESIGN and OUTLIERS ####
 
 # make big dataframe including all factors and interaction, getting normalized data for outlier detection
-dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group)
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)
 
 # reorders fate factor according to "control" vs "treatment" levels
 dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
@@ -85,7 +85,7 @@ library(Biobase)
 e=ExpressionSet(assay(Vsd), AnnotatedDataFrame(as.data.frame(colData(Vsd))))
 
 # running outlier detection
-arrayQualityMetrics(e,intgroup=c("group"),force=T)
+arrayQualityMetrics(e,intgroup=c("group", "Genotype"),force=T)
 # open the directory "arrayQualityMetrics report for e" in your working directory and open index.html
 # Array metadata and outlier detection overview gives a report of all samples, and which are likely outliers according to the 3 methods tested.
 #I typically remove the samples that violate *1 (distance between arrays).
@@ -111,7 +111,7 @@ save(dds,design,countData,Vsd,counts4wgcna,file="initial.RData")
 # generating normalized variance-stabilized data for PCoA, heatmaps, etc
 vsd=assay(Vsd)
 # takes the sample IDs and factor levels from the design to create new column names for the dataframe
-snames=paste(colnames(countData),design[,4],design[,6],sep=".")
+snames=paste(colnames(countData),design[,7],design[,6],sep=".")
 # renames the column names
 colnames(vsd)=snames
 
@@ -178,7 +178,7 @@ plot(tre,cex=0.8)
 dev.off()
 
 # formal analysis of variance in distance matricies: 
-ad=adonis2(t(vsd)~time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd)~time_point*Treatment + Genotype,data=conditions,method="manhattan",permutations=1e6)
 ad
 
 
