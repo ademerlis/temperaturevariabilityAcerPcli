@@ -28,7 +28,7 @@ library(arrayQualityMetrics)
 library(tidyverse)
 
 #read in counts
-counts = readxl::read_xlsx("../Bioinformatics/acer/libro/allcounts_acer.xlsx")
+counts = readxl::read_xlsx("../Bioinformatics/acer/libro/allcounts_acer.xlsx") #Libro et al. 2013 genome had the best alignment rate, so that is what we will use
 
 column_to_rownames(counts, var ="...1") -> counts
 
