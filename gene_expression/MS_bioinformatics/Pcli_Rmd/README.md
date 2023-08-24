@@ -143,11 +143,3 @@ Specific contrasts:
 
 <img width="605" alt="Screen Shot 2023-08-24 at 1 49 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f4d287ce-ed29-4bea-a509-79722870c896">
 
-
-
-
-
-
-
-
-
