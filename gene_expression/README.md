@@ -12,8 +12,3 @@ _________________
 
 _________________
 
-<img width="627" alt="Screen Shot 2023-08-14 at 1 51 42 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bb8d002b-d8a9-4a86-af1f-445324571cf0">
-
-*Figure 3.* The number of samples for each genotype x treatment x time point combination that had greater than 4 million reads that aligned to the reference genome (in the case of Acer) or the de novo transcriptome (in the case of Pcli).
-
-Specific stats available [in the sample metadata file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/RNA_extraction_sequencing_data.csv) and [the multiqc reports](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/bioinformatics/QC). 
