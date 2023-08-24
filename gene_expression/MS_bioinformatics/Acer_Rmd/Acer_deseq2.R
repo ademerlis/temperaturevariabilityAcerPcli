@@ -85,7 +85,7 @@ library(Biobase)
 e=ExpressionSet(assay(Vsd), AnnotatedDataFrame(as.data.frame(colData(Vsd))))
 
 # running outlier detection
-arrayQualityMetrics(e,intgroup=c("group", "Genotype"),force=T)
+arrayQualityMetrics(e,intgroup=c("group"),force=T) #Genotype is not included as an intgroup because it is not the main factors of interest.
 # open the directory "arrayQualityMetrics report for e" in your working directory and open index.html
 # Array metadata and outlier detection overview gives a report of all samples, and which are likely outliers according to the 3 methods tested.
 #I typically remove the samples that violate *1 (distance between arrays).
@@ -159,7 +159,7 @@ dev.off()
 # the number of black points above the line of red crosses (random model) corresponds to the number of good PC's
 #there are 3 "good PCs" based on this figure
 
-# plotting PCoA by fate and time
+# plotting PCoA by treatment and time
 pdf(file="PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
@@ -184,7 +184,6 @@ ad
 summary(ad)
 as.data.frame(ad)
 
-
 # creating pie chart to represent ANOVA results
 cols=c("blue","orange","lightblue","grey80")
 pdf(file="ANOVA_pie.pdf", width=6, height=6)
@@ -192,99 +191,9 @@ pie(ad$R2[1:4],labels=row.names(as.data.frame(ad)),col=cols,main="time vs treatm
 dev.off()
 
 
-#### DAPC ####
-
-library(adegenet)
-library(parallel)
-# detectCores()
-library(dplyr)
-library(tidyr)
-library(stringr)
-load("vsd.RData")
-
-conditions=design
-conditions$treatment.time <- factor(conditions$treatment.time, levels = c("sctld.0","sctld.1","control.0","control.1"))
-
-# runs simulations on randomly-chosen datasets of 90% of the total dataset to test the number of PCs to retain
-set.seed(999)
-# by depth, excluding transplants
-xvalDapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"], n.rep=100, parallel="multicore", ncpus= 12)
-# This tells us 15 PCs is the most successful in terms of correct assignment, but we need to test again with a smaller range of possible PCs and more reps
-xvalDapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"], n.rep=1000, n.pca=10:20, parallel="multicore", ncpus= 12)
-# 15 PCs 
-
-# now running the dapc without transplants
-dp=dapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"],n.pca=15, n.da=1)
-
-# can we predict depth treatment for the transplants?
-pred=predict.dapc(dp,newdata=(t(vsd[,conditions$treatment.time=="sctld.1"])))
-pred$posterior
-# look at the posterior section for assignments by probability
-write.csv(pred$posterior, file = "dapc_intervention_host.csv")
-
-# creating a new dapc object to add in transplants for plotting
-amox=dp
-amox$ind.coord=pred$ind.scores
-amox$posterior=pred$posterior
-amox$assign=pred$assign
-amox$grp<-as.factor(c("sctld.1","sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1"))
-
-# now exporting side by side figures of controls vs transplants
-# use Adobe Illustrator to overlay transplants curve onto controls
-pdf(file="DAPC_intervention_host.pdf", width=12, height=6)
-par(mfrow=c(1,2))
-scatter(dp, bg="white",scree.da=FALSE,legend=TRUE,solid=0.6, col= c("red","orange","greenyellow","green"))
-scatter(amox, bg="white",scree.da=FALSE,legend=FALSE,solid=0.6, col= "orange")
-dev.off()
-
-# rearranging for significance testing below
-dpc=data.frame(rbind(dp$ind.coord,pred$ind.scores))
-dpc$sampleid <- rownames(dpc)
-
-# adding factor column
-conditions %>%
-  unite('sampleid', id, treatment.time, genotype, sep=".", remove = FALSE) %>%
-  mutate(sampleid = str_replace(sampleid,'-','.'))-> conditions
-
-conditions %>%
-  select(sampleid, treatment.time) -> lookup
-
-dpc <- left_join(dpc, lookup)
-
-# testing significance of DFA differences with MCMCglmm
-# install.packages("MCMCglmm")
-library(MCMCglmm)
-
-# sets prior distribution and creates a glm
-prior = list(R = list(V = 1, nu = 0.002), G = list(G1 = list(V=1, nu=0.002,alpha.mu=0, alpha.V=1000)))
-glm <-MCMCglmm(LD1~treatment.time,random=~sampleid, family="gaussian", data=dpc,prior=prior,nitt=75000,thin=25,burnin=5000)
-summary(glm)
-# post.mean l-95% CI u-95% CI eff.samp  pMCMC    
-# (Intercept)                -1.517   -1.960   -1.040     2404 <4e-04 ***
-#   treatment.timesctld.1       1.319    0.685    1.978     2404 <4e-04 ***
-#   treatment.timecontrol.0     2.569    1.899    3.219     2630 <4e-04 ***
-#   treatment.timecontrol.1     1.972    1.272    2.573     2575 <4e-04 ***
-# check to make sure you don't have autocorrelation with the reps (shown as "walks" in model traces)
-plot(glm)
-
-# calculating difference in magnitudes of t1 treated state and t1 healthy state using sampled sets of parameters
-delta=abs(glm$Sol[,"treatment.timesctld.1"])-abs(glm$Sol[,"treatment.timecontrol.1"])
-# 95% credible interval
-HPDinterval(delta)
-# lower      upper
-# var1 -1.2965 0.02663611
-
-# MCMC p-value
-if (is.na(table(delta<0)[2])) {
-  cat("p <",signif(1/length(delta),1))
-} else { cat("p =",signif(table(delta<0)[2]/length(delta),2)) }
-# p = 0.98
-# non significant p value indicates treated corals are indistinguishable from healthy controls at t1
-
-
 #### DESEQ ####
 
-# with multi-factor, multi-level design - using LRT
+# with multi-factor, multi-level design
 load("initial_fullddsdesigncountsVsdcountsWGCNA.RData")
 library(DESeq2)
 library(BiocParallel)
@@ -456,6 +365,97 @@ head(control0_control29.p)
 write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
 save(control0_control29.p,file="control0_control29_lpv.RData")
 
+#### DAPC ####
+
+library(adegenet)
+library(parallel)
+# detectCores()
+library(dplyr)
+library(tidyr)
+library(stringr)
+load("vsd.RData")
+
+conditions=design
+conditions$group <- as.factor(conditions$group)
+
+# runs simulations on randomly-chosen datasets of 90% of the total dataset to test the number of PCs to retain
+set.seed(999)
+# by time, excluding treated corals on day 0
+xvalDapc(t(vsd[,conditions$group!="variable_Day_0"]),conditions$group[conditions$group!="variable_Day_0"], n.rep=100, parallel="multicore", ncpus= 12)
+
+# This tells us 15 PCs is the most successful in terms of correct assignment, but we need to test again with a smaller range of possible PCs and more reps
+xvalDapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"], n.rep=1000, n.pca=10:20, parallel="multicore", ncpus= 12)
+# 15 PCs 
+
+# now running the dapc without transplants
+dp=dapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"],n.pca=15, n.da=1)
+
+# can we predict depth treatment for the transplants?
+pred=predict.dapc(dp,newdata=(t(vsd[,conditions$treatment.time=="sctld.1"])))
+pred$posterior
+# look at the posterior section for assignments by probability
+write.csv(pred$posterior, file = "dapc_intervention_host.csv")
+
+# creating a new dapc object to add in transplants for plotting
+amox=dp
+amox$ind.coord=pred$ind.scores
+amox$posterior=pred$posterior
+amox$assign=pred$assign
+amox$grp<-as.factor(c("sctld.1","sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1"))
+
+# now exporting side by side figures of controls vs transplants
+# use Adobe Illustrator to overlay transplants curve onto controls
+pdf(file="DAPC_intervention_host.pdf", width=12, height=6)
+par(mfrow=c(1,2))
+scatter(dp, bg="white",scree.da=FALSE,legend=TRUE,solid=0.6, col= c("red","orange","greenyellow","green"))
+scatter(amox, bg="white",scree.da=FALSE,legend=FALSE,solid=0.6, col= "orange")
+dev.off()
+
+# rearranging for significance testing below
+dpc=data.frame(rbind(dp$ind.coord,pred$ind.scores))
+dpc$sampleid <- rownames(dpc)
+
+# adding factor column
+conditions %>%
+  unite('sampleid', id, treatment.time, genotype, sep=".", remove = FALSE) %>%
+  mutate(sampleid = str_replace(sampleid,'-','.'))-> conditions
+
+conditions %>%
+  select(sampleid, treatment.time) -> lookup
+
+dpc <- left_join(dpc, lookup)
+
+# testing significance of DFA differences with MCMCglmm
+# install.packages("MCMCglmm")
+library(MCMCglmm)
+
+# sets prior distribution and creates a glm
+prior = list(R = list(V = 1, nu = 0.002), G = list(G1 = list(V=1, nu=0.002,alpha.mu=0, alpha.V=1000)))
+glm <-MCMCglmm(LD1~treatment.time,random=~sampleid, family="gaussian", data=dpc,prior=prior,nitt=75000,thin=25,burnin=5000)
+summary(glm)
+# post.mean l-95% CI u-95% CI eff.samp  pMCMC    
+# (Intercept)                -1.517   -1.960   -1.040     2404 <4e-04 ***
+#   treatment.timesctld.1       1.319    0.685    1.978     2404 <4e-04 ***
+#   treatment.timecontrol.0     2.569    1.899    3.219     2630 <4e-04 ***
+#   treatment.timecontrol.1     1.972    1.272    2.573     2575 <4e-04 ***
+# check to make sure you don't have autocorrelation with the reps (shown as "walks" in model traces)
+plot(glm)
+
+# calculating difference in magnitudes of t1 treated state and t1 healthy state using sampled sets of parameters
+delta=abs(glm$Sol[,"treatment.timesctld.1"])-abs(glm$Sol[,"treatment.timecontrol.1"])
+# 95% credible interval
+HPDinterval(delta)
+# lower      upper
+# var1 -1.2965 0.02663611
+
+# MCMC p-value
+if (is.na(table(delta<0)[2])) {
+  cat("p <",signif(1/length(delta),1))
+} else { cat("p =",signif(table(delta<0)[2]/length(delta),2)) }
+# p = 0.98
+# non significant p value indicates treated corals are indistinguishable from healthy controls at t1
+
+#### Allyson's PCA code
 
 
 #### CHERRY PICKING ####
