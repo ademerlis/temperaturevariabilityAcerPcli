@@ -28,12 +28,12 @@ library(arrayQualityMetrics)
 library(tidyverse)
 
 #read in counts
-counts = readxl::read_xlsx("../Bioinformatics/acer/libro/allcounts_acer.xlsx") #Libro et al. 2013 genome had the best alignment rate, so that is what we will use
+counts = readxl::read_xlsx("../Bioinformatics/pcli/magana/allcounts_pcli.xlsx") #alignment to Avila-Magana et al. 2021 transcriptome 
 
 column_to_rownames(counts, var ="...1") -> counts
 
 # how many genes we have total?
-nrow(counts) #57358
+nrow(counts) #59947
 ncol(counts) #48 samples
 
 # how does the data look? 
@@ -42,22 +42,22 @@ head(counts)
 # filtering out low-count genes
 keep <- rowSums(counts) >= 10
 countData <- counts[keep,]
-nrow(countData) #47882
+nrow(countData) #34300
 ncol(countData) #48
-#write.csv(countData, file = "Acer_countdata.csv")
+#write.csv(countData, file = "results_csv/Pcli_countdata.csv")
 
 # for WCGNA: removing all genes with counts of <10 in more than 90 % of samples
 counts4wgcna = counts[apply(counts,1,function(x) sum(x<10))<ncol(counts)*0.9,]
-nrow(counts4wgcna) #27829
+nrow(counts4wgcna) #13867
 ncol(counts4wgcna) #48
-#write.csv(counts4wgcna, file="Acer_counts4wgcna.csv")
+#write.csv(counts4wgcna, file="results_csv/Pcli_counts4wgcna.csv")
 
 # importing a design .csv file
 design = read.csv("../../RNA_extraction_sequencing_data.csv", head=TRUE)
 
 design %>% 
   select(Species:Treatment) %>% 
-  filter(Species == "Acer") -> design
+  filter(Species == "Pcli") -> design
 
 design$Genotype <- as.factor(design$Genotype)
 design$Treatment <- as.factor(design$Treatment)
@@ -95,7 +95,7 @@ arrayQualityMetrics(e,intgroup=c("group"),force=T) #Genotype is not included as 
 # use the array number for removal in the following section
 
 # if there were outliers:
-outs=c(20,22,28) #these numbers were taken from the index.html report from arrayQualityMetrics Figure 2 "Outlier detection"
+outs=c(5,23,39,46) #these numbers were taken from the index.html report from arrayQualityMetrics Figure 2 "Outlier detection"
 countData=countData[,-outs]
 Vsd=Vsd[,-outs]
 counts4wgcna=counts4wgcna[,-outs]
@@ -106,7 +106,7 @@ dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group
 dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 
 # save all these dataframes as an Rdata package so you don't need to rerun each time
-save(dds,design,countData,Vsd,counts4wgcna,file="initial_fullddsdesigncountsVsdcountsWGCNA.RData")
+save(dds,design,countData,Vsd,counts4wgcna,file="Rdata_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
 
 # generating normalized variance-stabilized data for PCoA, heatmaps, etc
 vsd=assay(Vsd)
@@ -115,7 +115,7 @@ snames=paste(colnames(countData),design[,2],design[,8],sep=".")
 # renames the column names
 colnames(vsd)=snames
 
-save(vsd,design,file="vsd.RData")
+save(vsd,design,file="Rdata_files/vsd.RData")
 
 # more reduced stabilized dataset for WGCNA
 wg = DESeqDataSetFromMatrix(countData=counts4wgcna, colData=design, design=~ group + Genotype)
@@ -123,16 +123,16 @@ vsd.wg=assay(varianceStabilizingTransformation(wg), blind=TRUE)
 # vsd.wg=assay(rlog(wg), blind=TRUE)
 head(vsd.wg)
 colnames(vsd.wg)=snames
-save(vsd.wg,design,file="data4wgcna.RData")
+save(vsd.wg,design,file="Rdata_files/data4wgcna.RData")
 
 
 #### PCOA and PERMANOVA ####
 
 # heatmap and hierarchical clustering:
-load("vsd.RData")
+load("Rdata_files/vsd.RData")
 library(pheatmap)
 # similarity among samples
-pdf(file="heatmap_fullmodel.pdf", width=15, height=15)
+pdf(file="plots/heatmap_fullmodel.pdf", width=15, height=15)
 pheatmap(cor(vsd))
 dev.off()
 
@@ -152,7 +152,7 @@ dds.pcoa$values
 
 # how many good PC's do we have? Compared to random ("broken stick") model
 # plotting PCoA eigenvalues 
-pdf(file="PCoA_Manhattan.pdf", width=6, height=6)
+pdf(file="plots/PCoA_Manhattan.pdf", width=6, height=6)
 plot(dds.pcoa$values$Relative_eig)
 points(dds.pcoa$values$Broken_stick,col="red",pch=3)
 dev.off()
@@ -160,7 +160,7 @@ dev.off()
 #there are 3 "good PCs" based on this figure
 
 # plotting PCoA by treatment and time
-pdf(file="PCoA.pdf", width=12, height=6)
+pdf(file="plots/PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
 ordispider(scores, conditions$fate, label=F, col=c("red","green","orange"))
@@ -173,7 +173,7 @@ legend("topright", legend=c("Control", "Variable"), pch=c(15,17,25), bty="n")
 dev.off()
 
 # neighbor-joining tree of samples (based on significant PCo's):
-pdf(file="PCoA_tree.pdf", width=10, height=10)
+pdf(file="plots/PCoA_tree.pdf", width=10, height=10)
 tre=nj(dist(scores[,1:4]))
 plot(tre,cex=0.8)
 dev.off()
@@ -186,7 +186,7 @@ as.data.frame(ad)
 
 # creating pie chart to represent ANOVA results
 cols=c("blue","orange","lightblue","grey80")
-pdf(file="ANOVA_pie.pdf", width=6, height=6)
+pdf(file="plots/ANOVA_pie.pdf", width=6, height=6)
 pie(ad$R2[1:4],labels=row.names(as.data.frame(ad)),col=cols,main="time vs treatment")
 dev.off()
 
@@ -202,7 +202,7 @@ library(BiocParallel)
 dds=DESeq(dds, parallel=TRUE)
 
 # saving all models
-save(dds,file="realModels_Acer.RData")
+save(dds,file="Rdata_files/realModels_Pcli.RData")
 
 
 #### DEGs and CONTRASTS ####
@@ -234,7 +234,7 @@ control0_control29=results(dds,contrast=c("group","control_Day_0","control_Day_2
 summary(control0_control29)
 degs_control0_control29=row.names(control0_control29)[control0_control29$padj<0.1 & !(is.na(control0_control29$padj))]
 
-save(treatment_time,variable29_control29,variable0_control0,variable0_variable29,control0_control29, degs_variable29_control29,degs_variable0_control0, degs_variable0_variable29, degs_control0_control29, file="pvals.RData")
+save(treatment_time,variable29_control29,variable0_control0,variable0_variable29,control0_control29, degs_variable29_control29,degs_variable0_control0, degs_variable0_variable29, degs_control0_control29, file="Rdata_files/pvals.RData")
 
 # density plots: are my DEGs high-abundant or low-abundant?
 load("vsd.RData")
@@ -242,15 +242,14 @@ load("pvals.RData")
 
 means=apply(vsd,1,mean)
 
-pdf(file="DEG_density_treatment.time.pdf", height=5, width=5)
+pdf(file="plots/DEG_density_treatmenttime.pdf", height=5, width=5)
 plot(density(means))
 lines(density(means[degs_variable29_control29]),col="blue")
-lines(density(means[degs_variable0_control0]),col="orange")
 lines(density(means[degs_variable0_variable29]),col="lightblue")
 lines(density(means[degs_control0_control29]),col="yellow")
 legend("topright", title = "Factor", 
-       legend=c("variable29_control29","variable0_control0","variable0_variable29","control0_control29"), 
-       fill = c("blue","orange","lightblue","yellow"))
+       legend=c("variable29_control29","variable0_variable29","control0_control29"), 
+       fill = c("blue","lightblue","yellow"))
 dev.off()
 
 
@@ -281,14 +280,14 @@ venn=venn.diagram(
   cat.fontfamily = "sans",
   cat.just = list(c(0,0.5),c(0.75,0.5),c(0.5,0.5),c(0.5,0.5))
 )
-pdf(file="Venn_Acer.pdf", height=10, width=12)
+pdf(file="Venn_Pcli.pdf", height=10, width=12)
 grid.draw(venn)
 dev.off()
 
 
 #### GO/KOG EXPORT ####
 
-load("realModels_Acer.RData")
+load("realModels.RData")
 load("pvals.RData")
 
 # fold change (fc) can only be used for binary factors, such as control/treatment, or specific contrasts comparing two factor levels
@@ -300,16 +299,16 @@ source=variable29_control29[!is.na(variable29_control29$pvalue),]
 variable29_control29.fc=data.frame("gene"=row.names(source))
 variable29_control29.fc$lfc=source[,"log2FoldChange"]
 head(variable29_control29.fc)
-write.csv(variable29_control29.fc,file="variable29_control29_fc.csv",row.names=F,quote=F)
-save(variable29_control29.fc,file="variable29_control29_fc.RData")
+write.csv(variable29_control29.fc,file="results_csv/variable29_control29_fc.csv",row.names=F,quote=F)
+save(variable29_control29.fc,file="Rdata_files/variable29_control29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable29_control29.p=data.frame("gene"=row.names(source))
 variable29_control29.p$lpv=-log(source[,"pvalue"],10)
 variable29_control29.p$lpv[source$stat<0]=variable29_control29.p$lpv[source$stat<0]*-1
 head(variable29_control29.p)
-write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-save(variable29_control29.p,file="variable29_control29_lpv.RData")
+write.csv(variable29_control29.p,file="results_csv/variable29_control29_lpv.csv",row.names=F,quote=F)
+save(variable29_control29.p,file="Rdata_files/variable29_control29_lpv.RData")
 
 
 # variable0 vs control0
@@ -318,16 +317,16 @@ source=variable0_control0[!is.na(variable0_control0$pvalue),]
 variable0_control0.fc=data.frame("gene"=row.names(source))
 variable0_control0.fc$lfc=source[,"log2FoldChange"]
 head(variable0_control0.fc)
-write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
-save(variable0_control0.fc,file="variable0_control0_fc.RData")
+write.csv(variable0_control0.fc,file="results_csv/variable0_control0_fc.csv",row.names=F,quote=F)
+save(variable0_control0.fc,file="Rdata_files/variable0_control0_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable0_control0.p=data.frame("gene"=row.names(source))
 variable0_control0.p$lpv=-log(source[,"pvalue"],10)
 variable0_control0.p$lpv[source$stat<0]=variable0_control0.p$lpv[source$stat<0]*-1
 head(variable0_control0.p)
-write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
-save(variable0_control0.p,file="variable0_control0_lpv.RData")
+write.csv(variable0_control0.p,file="results_csv/variable0_control0_lpv.csv",row.names=F,quote=F)
+save(variable0_control0.p,file="Rdata_files/variable0_control0_lpv.RData")
 
 
 #variable0 vs variable29
@@ -336,16 +335,16 @@ source=variable0_variable29[!is.na(variable0_variable29$pvalue),]
 variable0_variable29.fc=data.frame("gene"=row.names(source))
 variable0_variable29.fc$lfc=source[,"log2FoldChange"]
 head(variable0_variable29.fc)
-write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
-save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
+write.csv(variable0_variable29.fc,file="results_csv/variable0_variable29_fc.csv",row.names=F,quote=F)
+save(variable0_variable29.fc,file="Rdata_files/variable0_variable29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable0_variable29.p=data.frame("gene"=row.names(source))
 variable0_variable29.p$lpv=-log(source[,"pvalue"],10)
 variable0_variable29.p$lpv[source$stat<0]=variable0_variable29.p$lpv[source$stat<0]*-1
 head(variable0_variable29.p)
-write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
-save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
+write.csv(variable0_variable29.p,file="results_csv/variable0_variable29_lpv.csv",row.names=F,quote=F)
+save(variable0_variable29.p,file="Rdata_files/variable0_variable29_lpv.RData")
 
 
 # control0_control29
@@ -354,16 +353,16 @@ source=control0_control29[!is.na(control0_control29$pvalue),]
 control0_control29.fc=data.frame("gene"=row.names(source))
 control0_control29.fc$lfc=source[,"log2FoldChange"]
 head(control0_control29.fc)
-write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
-save(control0_control29.fc,file="control0_control29_fc.RData")
+write.csv(control0_control29.fc,file="results_csv/control0_control29_fc.csv",row.names=F,quote=F)
+save(control0_control29.fc,file="Rdata_files/control0_control29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 control0_control29.p=data.frame("gene"=row.names(source))
 control0_control29.p$lpv=-log(source[,"pvalue"],10)
 control0_control29.p$lpv[source$stat<0]=control0_control29.p$lpv[source$stat<0]*-1
 head(control0_control29.p)
-write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
-save(control0_control29.p,file="control0_control29_lpv.RData")
+write.csv(control0_control29.p,file="results_csv/control0_control29_lpv.csv",row.names=F,quote=F)
+save(control0_control29.p,file="Rdata_files/control0_control29_lpv.RData")
 
 #### DAPC ####
 

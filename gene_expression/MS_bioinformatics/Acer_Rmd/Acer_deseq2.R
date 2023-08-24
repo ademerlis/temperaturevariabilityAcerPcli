@@ -455,8 +455,6 @@ if (is.na(table(delta<0)[2])) {
 # p = 0.98
 # non significant p value indicates treated corals are indistinguishable from healthy controls at t1
 
-#### Allyson's PCA code
-
 
 #### CHERRY PICKING ####
 
