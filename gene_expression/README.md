@@ -1,14 +1,7 @@
-### Summary figures for ex-situ temperature treatment
+There are three completely different pipelines that exist within this "gene_expression" directory, which came from trials and tribulations of trying to understand different pipelines and programs.
 
-<img width="375" alt="Screen Shot 2023-08-07 at 9 08 45 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/998286ae-9b02-4862-96e1-126479438f6b">
+My most up-to-date pipeline that I plan to publish with is the "MS_Bioinformatics" folder, which originated from [Dr. Michael Studivan](https://github.com/mstudiva). 
 
-*Figure 1.* Temperatures recorded using LabView (ref) every 15-min for 28 d. Red line depicts fluctuating temperature regime (variable) and blue depicts untreated (control) held at 28ºC for the entire period. Arrows at bottom depict time points of tissue sampling (T0 = initial, T1 = one week into treatment, and T2 = one month into treatment). 
+The "HP_pipeline" comes from Dr. Hollie Putnam's lab, and within that folder is an archive folder which contains "NJ_Pipeline", which came from [Dr. Natalia Andrade](https://github.com/China2302) and [Jill Ashey](https://github.com/JillAshey). Ultimately I tried many different programs, but Michael helped me identify PCR duplicates with his custom perl/python scripts which were adapted from [Dr. Mikhail Matz](https://github.com/z0on), who developed 3' TagSeq for corals (I think [Meyer et al. 2011](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2011.05205.x) is the publication for that) and we had gotten our samples sequenced from the same facility that he works at, [UT Austin GSAF](https://wikis.utexas.edu/display/GSAF/About+Us). All this is to say, there is no one "correct" pipeline, just an abundance of different tools that seem to work best depending on the species used, type of sequencing performed, quality of sequencing data, and quality/availability of your species' genome or transcriptome. 
 
-_________________
-
-<img width="625" alt="Screen Shot 2023-08-07 at 9 14 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c5191154-b2a9-4283-b603-c6657f3814ac">
-
-*Figure 2.* 12 corals per species per time point were sampled during the 28-d temperature treatment. All sampling occurred at the same temperature (28ºC). ~1cm of tissue was collected using bone cutters, then immediately preserved in 1mL of Zymo DNA/RNA Shield.
-
-_________________
-
+I wanted to credit everyone who has helped me along the way as I learn bioinformatics and gene expression analysis, and provide links to GitHubs that had well-annotated code that helped me immensely!
