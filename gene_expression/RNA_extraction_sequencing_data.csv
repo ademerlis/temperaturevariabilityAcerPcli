@@ -1,97 +1,97 @@
-﻿Species,Genotype,Sample ID,Sample_ID,Date Sampled,Experiment phase,Treatment,RNA Qubit Date,Qubit RNA Sample Input Quantity (uL),RNA Broad Range Qubit Concentration (ng/uL),Nanodrop Date (RNA only),A-260 (RNA),A-280 (RNA),260/280 (RNA),260/230 (RNA),Nanodrop RNA concentration (ng/uL),,,,,,,,,,,,,,,
-Acer,SI-C,5,Acer-005,3/22/22,Pre-treatment,control,12/1/22,5,35.6,1/4/23,0.978,0.474,2.06,0.59,39.11,,,,,,,,,,,,,,,
-Acer,BC-8b,9,Acer-009,3/22/22,Pre-treatment,variable,1/6/23,2,90.1,1/6/23,2.616,1.23,2.13,1.99,104.6,,,,,,,,,,,,,,,
-Acer,BC-8b,19,Acer-019,3/22/22,Pre-treatment,variable,1/6/23,2,118,1/6/23,3.189,1.5,2.13,1.22,127.6,,,,,,,,,,,,,,,
-Acer,MB-B,21,Acer-021,3/22/22,Pre-treatment,variable,,,,1/12/23,1.838,0.864,2.13,1.94,73.52,,,,,,,,,,,,,,,
-Acer,BC-8b,22,Acer-022,3/22/22,Pre-treatment,control,1/6/23,2,134,1/6/23,3.784,1.778,2.13,2.04,151.3,,,,,,,,,,,,,,,
-Acer,SI-C,29,Acer-029,3/22/22,Pre-treatment,variable,1/6/23,2,140,1/6/23,3.668,1.71,2.15,2.09,146.7,,,,,,,,,,,,,,,
-Acer,BC-8b,30,Acer-030,4/20/22,last day of treatment,variable,12/1/22,5,128,1/4/23,3.046,1.439,12.12,2,121.9,,,,,,,,,,,,,,,
-Acer,SI-C,34,Acer-034,3/22/22,Pre-treatment,control,12/1/22,5,137,1/4/23,3.174,1.487,2.13,2,127,,,,,,,,,,,,,,,
-Acer,MB-B,38,Acer-038,4/20/22,last day of treatment,variable,,,,1/12/23,1.022,0.495,2.07,1.73,40.9,,,,,,,,,,,,,,,
-Acer,MB-B,41,Acer-041,4/20/22,last day of treatment,variable,12/1/22,5,91.2,1/4/23,2.823,1.425,1.98,1.61,112.9,,,,,,,,,,,,,,,
-Acer,MB-B,42,Acer-042,3/22/22,Pre-treatment,control,1/6/23,2,102,1/6/23,2.586,1.218,2.12,1.87,103.4,,,,,,,,,,,,,,,
-Acer,BC-8b,43,Acer-043,3/22/22,Pre-treatment,control,1/6/23,2,129,1/6/23,3.113,1.444,2.16,1.82,124.5,,,,,,,,,,,,,,,
-Acer,BC-8b,45,Acer-045,3/22/22,Pre-treatment,variable,,,,1/12/23,1.658,0.801,2.07,1.89,66.33,,,,,,,,,,,,,,,
-Acer,MB-B,55,Acer-055,3/22/22,Pre-treatment,variable,1/6/23,2,89.6,1/6/23,2.1,0.9801,2.14,1.97,84.01,,,,,,,,,,,,,,,
-Acer,MB-B,56,Acer-056,4/20/22,last day of treatment,control,,,,1/12/23,0.85,0.411,2.07,1.72,34.02,,,,,,,,,,,,,,,
-Acer,MB-B,57,Acer-057,4/20/22,last day of treatment,control,,,,1/12/23,0.9,0.44,2.05,1.77,36.01,,,,,,,,,,,,,,,
-Acer,MB-B,59,Acer-059,4/20/22,last day of treatment,variable,,,,1/12/23,1.118,0.537,2.08,1.7,44.73,,,,,,,,,,,,,,,
-Acer,BC-8b,63,Acer-063,3/22/22,Pre-treatment,control,1/6/23,2,160,1/6/23,3.563,1.664,2.14,2.08,142.5,,,,,,,,,,,,,,,
-Acer,SI-C,64,Acer-064,3/22/22,Pre-treatment,variable,1/6/23,2,52.2,1/6/23,1.392,0.657,2.12,1.84,55.67,,,,,,,,,,,,,,,
-Acer,BC-8b,68,Acer-068,4/20/22,last day of treatment,variable,,,,1/12/23,0.949,0.456,2.08,1.73,37.97,,,,,,,,,,,,,,,
-Acer,SI-C,69,Acer-069,4/20/22,last day of treatment,variable,,,,1/12/23,0.825,0.393,2.1,1.66,33.01,,,,,,,,,,,,,,,
-Acer,BC-8b,72,Acer-072,4/20/22,last day of treatment,control,,,,1/12/23,1.15,0.556,2.07,1.78,46,,,,,,,,,,,,,,,
-Acer,MB-B,74,Acer-074,4/20/22,last day of treatment,variable,,,,1/12/23,1.081,0.524,2.06,1.83,43.23,,,,,,,,,,,,,,,
-Acer,SI-C,78,Acer-078,3/22/22,Pre-treatment,control,12/1/22,5,154,1/4/23,4.411,2.069,2.13,2.12,176.4,,,,,,,,,,,,,,,
-Acer,SI-C,79,Acer-079,3/22/22,Pre-treatment,variable,,,,1/12/23,1.404,0.675,2.08,1.79,56.15,,,,,,,,,,,,,,,
-Acer,SI-C,82,Acer-082,4/20/22,last day of treatment,control,,,,1/12/23,0.589,0.295,1.99,1.57,23.58,,,,,,,,,,,,,,,
-Acer,MB-B,83,Acer-083,3/22/22,Pre-treatment,variable,1/6/23,2,117,1/6/23,2.921,1.376,2.12,1.96,116.8,,,,,,,,,,,,,,,
-Acer,BC-8b,89,Acer-089,4/20/22,last day of treatment,control,12/1/22,5,87.2,1/4/23,1.859,0.902,2.06,1.96,74.37,,,,,,,,,,,,,,,
-Acer,BC-8b,91,Acer-091,4/20/22,last day of treatment,variable,,,,1/12/23,1.025,0.495,2.07,1.83,40.99,,,,,,,,,,,,,,,
-Acer,MB-B,94,Acer-094,3/22/22,Pre-treatment,variable,1/6/23,2,136,1/6/23,3.524,1.646,2.14,2.01,140.9,,,,,,,,,,,,,,,
-Acer,SI-C,95,Acer-095,3/22/22,Pre-treatment,control,1/6/23,2,98.6,1/6/23,2.187,1.026,2.13,1.85,87.47,,,,,,,,,,,,,,,
-Acer,SI-C,96,Acer-096,4/20/22,last day of treatment,variable,12/1/22,5,23.9,1/4/23,0.4339,0.2158,2.01,1.81,17.36,,,,,,,,,,,,,,,
-Acer,MB-B,97,Acer-097,4/20/22,last day of treatment,control,,,,1/12/23,1.078,0.51,2.12,1.77,43.13,,,,,,,,,,,,,,,
-Acer,MB-B,102,Acer-102,3/22/22,Pre-treatment,control,12/1/22,5,107,1/4/23,2.573,1.208,2.13,1.87,102.9,,,,,,,,,,,,,,,
-Acer,SI-C,106,Acer-106,4/20/22,last day of treatment,control,12/1/22,5,109,1/4/23,2.791,1.322,2.11,2.01,111.6,,,,,,,,,,,,,,,
-Acer,BC-8b,108,Acer-108,4/20/22,last day of treatment,control,,,,1/12/23,0.807,0.391,2.07,1.86,32.3,,,,,,,,,,,,,,,
-Acer,BC-8b,110,Acer-110,3/22/22,Pre-treatment,variable,1/6/23,2,119,1/6/23,2.785,1.311,2.12,1.9,111.4,,,,,,,,,,,,,,,
-Acer,MB-B,112,Acer-112,3/22/22,Pre-treatment,control,12/1/22,5,16.4,1/4/23,0.4573,0.2282,2,1.52,18.29,,,,,,,,,,,,,,,
-Acer,SI-C,113,Acer-113,4/20/22,last day of treatment,variable,,,,1/12/23,0.841,0.396,2.12,1.75,33.62,,,,,,,,,,,,,,,
-Acer,SI-C,114,Acer-114,4/20/22,last day of treatment,control,,,,1/12/23,1.173,0.563,2.08,1.85,46.93,,,,,,,,,,,,,,,
-Acer,SI-C,123,Acer-123,4/20/22,last day of treatment,control,,,,1/12/23,0.92,0.434,2.12,1.68,36.8,,,,,,,,,,,,,,,
-Acer,BC-8b,124,Acer-124,3/22/22,Pre-treatment,control,12/1/22,5,167,1/4/23,0.393,0.2071,1.9,1.4,15.72,,,,,,,,,,,,,,,
-Acer,BC-8b,137,Acer-137,4/20/22,last day of treatment,variable,12/1/22,5,73.2,1/4/23,1.874,0.8858,2.12,1.82,74.96,,,,,,,,,,,,,,,
-Acer,SI-C,139,Acer-139,3/22/22,Pre-treatment,variable,1/6/23,2,38.5,1/6/23,0.903,0.416,2.17,1.76,36.11,,,,,,,,,,,,,,,
-Acer,SI-C,141,Acer-141,4/20/22,last day of treatment,variable,,,,1/12/23,1.035,0.496,2.09,1.79,41.41,,,,,,,,,,,,,,,
-Acer,MB-B,143,Acer-143,4/20/22,last day of treatment,control,,,,1/12/23,1.648,0.799,2.06,1.94,65.94,,,,,,,,,,,,,,,
-Acer,BC-8b,146,Acer-146,4/20/22,last day of treatment,control,,,,1/12/23,0.911,0.447,2.04,2.01,36.45,,,,,,,,,,,,,,,
-Acer,MB-B,150,Acer-150,3/22/22,Pre-treatment,control,1/6/23,2,129,1/6/23,2.501,1.178,2.12,1.66,100.1,,,,,,,,,,,,,,,
-Pcli,C,3,,4/20/22,last day of treatment,control,12/1/22,5,122,1/4/23,4.007,1.895,2.11,1.57,160.3,,,,,,,,,,,,,,,
-Pcli,A,4,,4/20/22,last day of treatment,control,,,,1/12/23,2.729,1.437,1.9,0.91,109.1,,,,,,,,,,,,,,,
-Pcli,B,6,,4/20/22,last day of treatment,variable,,,,1/12/23,4.642,2.312,2.01,1.19,185.7,,,,,,,,,,,,,,,
-Pcli,A,8,,4/20/22,last day of treatment,variable,,,,1/12/23,1.557,0.737,2.11,1.47,62.28,,,,,,,,,,,,,,,
-Pcli,A,11,,3/22/22,Pre-treatment,variable,1/6/23,2,325,1/6/23,9.518,4.467,2.05,1.39,366.3,,,,,,,,,,,,,,,
-Pcli,C,15,,4/20/22,last day of treatment,variable,12/1/22,5,too low :(,1/4/23,7.414,3.574,2.07,1.3,296.5,,,,,,,,,,,,,,,
-Pcli,C,18,,4/20/22,last day of treatment,variable,,,,1/12/23,3.313,1.647,2.01,1.13,132.5,,,,,,,,,,,,,,,
-Pcli,B,24,,4/20/22,last day of treatment,control,,,,1/12/23,3.634,1.759,2.07,1.39,145.4,,,,,,,,,,,,,,,
-Pcli,A,26,,3/22/22,Pre-treatment,control,1/6/23,2,295,1/6/23,8.791,4.163,2.11,1.62,351.6,,,,,,,,,,,,,,,
-Pcli,C,28,,3/22/22,Pre-treatment,control,12/1/22,2,230,1/4/23,7.245,3.421,2.12,1.68,289.8,,,,,,,,,,,,,,,
-Pcli,B,29,,3/22/22,Pre-treatment,control,12/1/22,5,143,1/4/23,4.203,1.976,2.13,1.65,168.1,,,,,,,,,,,,,,,
-Pcli,A,33,,3/22/22,Pre-treatment,control,,,,1/12/23,5.093,2.405,2.12,1.62,203.7,,,,,,,,,,,,,,,
-Pcli,C,38,,4/20/22,last day of treatment,control,12/1/22,5,118,1/4/23,4.117,1.896,2.17,1.65,164.7,,,,,,,,,,,,,,,
-Pcli,C,39,,4/20/22,last day of treatment,variable,,,,1/12/23,3.204,1.569,2.04,1.22,128.1,,,,,,,,,,,,,,,
-Pcli,C,40,,3/22/22,Pre-treatment,variable,1/6/23,2,241,1/6/23,7.436,3.626,2.05,1.34,297.4,,,,,,,,,,,,,,,
-Pcli,B,45,,3/22/22,Pre-treatment,variable,,,,1/12/23,3.751,1.945,1.93,0.98,150,,,,,,,,,,,,,,,
-Pcli,B,49,,4/20/22,last day of treatment,control,,,,1/12/23,2.299,1.206,1.91,0.9,91.95,,,,,,,,,,,,,,,
-Pcli,A,50,,4/20/22,last day of treatment,control,12/1/22,5,182,1/4/23,5.816,2.767,2.1,1.62,232.6,,,,,,,,,,,,,,,
-Pcli,B,52,,3/22/22,Pre-treatment,control,1/6/23,2,371,1/6/23,11.03,5.298,2.08,1.63,441.2,,,,,,,,,,,,,,,
-Pcli,B,55,,3/22/22,Pre-treatment,control,,,,1/12/23,2.362,1.25,1.89,0.9,94.49,,,,,,,,,,,,,,,
-Pcli,A,58,,4/20/22,last day of treatment,control,,,,1/12/23,2.695,1.423,1.89,0.87,107.8,,,,,,,,,,,,,,,
-Pcli,C,64,,4/20/22,last day of treatment,control,,,,1/12/23,2.326,1.297,1.79,0.69,93.04,,,,,,,,,,,,,,,
-Pcli,B,66,,4/20/22,last day of treatment,control,,,,1/12/23,2.142,1.239,1.73,0.64,85.66,,,,,,,,,,,,,,,
-Pcli,C,67,,3/22/22,Pre-treatment,variable,,,,1/12/23,2.533,1.38,1.84,0.77,101.3,,,,,,,,,,,,,,,
-Pcli,A,69,,4/20/22,last day of treatment,control,,,,1/12/23,3.688,1.925,1.92,0.92,147.5,,,,,,,,,,,,,,,
-Pcli,B,70,,3/22/22,Pre-treatment,control,1/6/23,2,263,1/6/23,7.468,3.496,2.14,1.67,298.7,,,,,,,,,,,,,,,
-Pcli,A,75,,3/22/22,Pre-treatment,variable,1/6/23,2,247,1/6/23,7.562,3.507,2.16,1.81,302.5,,,,,,,,,,,,,,,
-Pcli,C,76,,4/20/22,last day of treatment,variable,,,,1/12/23,2.914,1.442,2.02,1.16,116.6,,,,,,,,,,,,,,,
-Pcli,A,77,,3/22/22,Pre-treatment,variable,12/1/22,5,189,1/4/23,5.935,2.801,2.12,1.74,237.4,,,,,,,,,,,,,,,
-Pcli,B,79,,4/20/22,last day of treatment,variable,,,,1/12/23,3.121,1.748,1.79,0.72,124.8,,,,,,,,,,,,,,,
-Pcli,C,91,,3/22/22,Pre-treatment,control,,,,1/12/23,3.111,1.588,1.96,0.99,124.5,,,,,,,,,,,,,,,
-Pcli,C,94,,3/22/22,Pre-treatment,variable,1/6/23,2,280,1/6/23,7.996,3.788,2.11,1.56,319.9,,,,,,,,,,,,,,,
-Pcli,B,96,,4/20/22,last day of treatment,variable,,,,1/12/23,2.371,1.24,1.91,0.91,94.84,,,,,,,,,,,,,,,
-Pcli,A,101,,4/20/22,last day of treatment,variable,,,,1/12/23,3.75,1.932,1.94,1.04,150,,,,,,,,,,,,,,,
-Pcli,C,103,,3/22/22,Pre-treatment,variable,1/6/23,2,244,1/6/23,6.75,3.18,2.12,1.61,270,,,,,,,,,,,,,,,
-Pcli,B,105,,3/22/22,Pre-treatment,variable,12/1/22,5,192,1/4/23,6.04,2.802,2.16,2,241.6,,,,,,,,,,,,,,,
-Pcli,B,109,,4/20/22,last day of treatment,variable,12/1/22,5,193,1/4/23,7.825,3.617,2.16,1.95,313,,,,,,,,,,,,,,,
-Pcli,A,111,,3/22/22,Pre-treatment,control,,,,1/12/23,3.871,1.879,2.06,1.34,154.8,,,,,,,,,,,,,,,
-Pcli,B,114,,3/22/22,Pre-treatment,variable,12/1/22,5,28.6,1/4/23,1.039,0.546,1.9,0.82,41.56,,,,,,,,,,,,,,,
-Pcli,C,115,,3/22/22,Pre-treatment,control,,,,1/12/23,5.121,2.455,2.09,1.45,204.8,,,,,,,,,,,,,,,
-Pcli,B,120,,3/22/22,Pre-treatment,variable,1/6/23,2,223,1/6/23,6.963,3.241,2.15,1.72,278.5,,,,,,,,,,,,,,,
-Pcli,B,124,,4/20/22,last day of treatment,control,12/1/22,5,232,1/4/23,10.46,5.021,2.08,1.72,418.2,,,,,,,,,,,,,,,
-Pcli,A,126,,3/22/22,Pre-treatment,control,,,,1/12/23,6.23,2.879,2.16,1.82,249.2,,,,,,,,,,,,,,,
-Pcli,A,128,,3/22/22,Pre-treatment,variable,12/1/22,5,115,1/4/23,3.95,1.816,2.18,2.04,158,,,,,,,,,,,,,,,
-Pcli,A,130,,4/20/22,last day of treatment,variable,,,,1/12/23,5.157,2.452,2.1,1.53,206.3,,,,,,,,,,,,,,,
-Pcli,A,132,,4/20/22,last day of treatment,variable,,,,1/12/23,4.33,2.172,1.99,1.07,173.2,,,,,,,,,,,,,,,
-Pcli,C,135,,4/20/22,last day of treatment,control,,,,1/12/23,2.529,1.299,1.95,1.01,101.1,,,,,,,,,,,,,,,
-Pcli,C,148,,3/22/22,Pre-treatment,control,,,,1/12/23,3.699,1.772,2.09,1.47,148,,,,,,,,,,,,,,,
+﻿Species,Genotype,Sample ID,Sample_ID,Date Sampled,Experiment phase,Treatment,RNA Qubit Date,Qubit RNA Sample Input Quantity (uL),RNA Broad Range Qubit Concentration (ng/uL),Nanodrop Date (RNA only),A-260 (RNA),A-280 (RNA),260/280 (RNA),260/230 (RNA),Nanodrop RNA concentration (ng/uL)
+Acer,SI-C,5,Acer-005,3/22/22,Pre-treatment,control,12/1/22,5,35.6,1/4/23,0.978,0.474,2.06,0.59,39.11
+Acer,BC-8b,9,Acer-009,3/22/22,Pre-treatment,variable,1/6/23,2,90.1,1/6/23,2.616,1.23,2.13,1.99,104.6
+Acer,BC-8b,19,Acer-019,3/22/22,Pre-treatment,variable,1/6/23,2,118,1/6/23,3.189,1.5,2.13,1.22,127.6
+Acer,MB-B,21,Acer-021,3/22/22,Pre-treatment,variable,,,,1/12/23,1.838,0.864,2.13,1.94,73.52
+Acer,BC-8b,22,Acer-022,3/22/22,Pre-treatment,control,1/6/23,2,134,1/6/23,3.784,1.778,2.13,2.04,151.3
+Acer,SI-C,29,Acer-029,3/22/22,Pre-treatment,variable,1/6/23,2,140,1/6/23,3.668,1.71,2.15,2.09,146.7
+Acer,BC-8b,30,Acer-030,4/20/22,last day of treatment,variable,12/1/22,5,128,1/4/23,3.046,1.439,12.12,2,121.9
+Acer,SI-C,34,Acer-034,3/22/22,Pre-treatment,control,12/1/22,5,137,1/4/23,3.174,1.487,2.13,2,127
+Acer,MB-B,38,Acer-038,4/20/22,last day of treatment,variable,,,,1/12/23,1.022,0.495,2.07,1.73,40.9
+Acer,MB-B,41,Acer-041,4/20/22,last day of treatment,variable,12/1/22,5,91.2,1/4/23,2.823,1.425,1.98,1.61,112.9
+Acer,MB-B,42,Acer-042,3/22/22,Pre-treatment,control,1/6/23,2,102,1/6/23,2.586,1.218,2.12,1.87,103.4
+Acer,BC-8b,43,Acer-043,3/22/22,Pre-treatment,control,1/6/23,2,129,1/6/23,3.113,1.444,2.16,1.82,124.5
+Acer,BC-8b,45,Acer-045,3/22/22,Pre-treatment,variable,,,,1/12/23,1.658,0.801,2.07,1.89,66.33
+Acer,MB-B,55,Acer-055,3/22/22,Pre-treatment,variable,1/6/23,2,89.6,1/6/23,2.1,0.9801,2.14,1.97,84.01
+Acer,MB-B,56,Acer-056,4/20/22,last day of treatment,control,,,,1/12/23,0.85,0.411,2.07,1.72,34.02
+Acer,MB-B,57,Acer-057,4/20/22,last day of treatment,control,,,,1/12/23,0.9,0.44,2.05,1.77,36.01
+Acer,MB-B,59,Acer-059,4/20/22,last day of treatment,variable,,,,1/12/23,1.118,0.537,2.08,1.7,44.73
+Acer,BC-8b,63,Acer-063,3/22/22,Pre-treatment,control,1/6/23,2,160,1/6/23,3.563,1.664,2.14,2.08,142.5
+Acer,SI-C,64,Acer-064,3/22/22,Pre-treatment,variable,1/6/23,2,52.2,1/6/23,1.392,0.657,2.12,1.84,55.67
+Acer,BC-8b,68,Acer-068,4/20/22,last day of treatment,variable,,,,1/12/23,0.949,0.456,2.08,1.73,37.97
+Acer,SI-C,69,Acer-069,4/20/22,last day of treatment,variable,,,,1/12/23,0.825,0.393,2.1,1.66,33.01
+Acer,BC-8b,72,Acer-072,4/20/22,last day of treatment,control,,,,1/12/23,1.15,0.556,2.07,1.78,46
+Acer,MB-B,74,Acer-074,4/20/22,last day of treatment,variable,,,,1/12/23,1.081,0.524,2.06,1.83,43.23
+Acer,SI-C,78,Acer-078,3/22/22,Pre-treatment,control,12/1/22,5,154,1/4/23,4.411,2.069,2.13,2.12,176.4
+Acer,SI-C,79,Acer-079,3/22/22,Pre-treatment,variable,,,,1/12/23,1.404,0.675,2.08,1.79,56.15
+Acer,SI-C,82,Acer-082,4/20/22,last day of treatment,control,,,,1/12/23,0.589,0.295,1.99,1.57,23.58
+Acer,MB-B,83,Acer-083,3/22/22,Pre-treatment,variable,1/6/23,2,117,1/6/23,2.921,1.376,2.12,1.96,116.8
+Acer,BC-8b,89,Acer-089,4/20/22,last day of treatment,control,12/1/22,5,87.2,1/4/23,1.859,0.902,2.06,1.96,74.37
+Acer,BC-8b,91,Acer-091,4/20/22,last day of treatment,variable,,,,1/12/23,1.025,0.495,2.07,1.83,40.99
+Acer,MB-B,94,Acer-094,3/22/22,Pre-treatment,variable,1/6/23,2,136,1/6/23,3.524,1.646,2.14,2.01,140.9
+Acer,SI-C,95,Acer-095,3/22/22,Pre-treatment,control,1/6/23,2,98.6,1/6/23,2.187,1.026,2.13,1.85,87.47
+Acer,SI-C,96,Acer-096,4/20/22,last day of treatment,variable,12/1/22,5,23.9,1/4/23,0.4339,0.2158,2.01,1.81,17.36
+Acer,MB-B,97,Acer-097,4/20/22,last day of treatment,control,,,,1/12/23,1.078,0.51,2.12,1.77,43.13
+Acer,MB-B,102,Acer-102,3/22/22,Pre-treatment,control,12/1/22,5,107,1/4/23,2.573,1.208,2.13,1.87,102.9
+Acer,SI-C,106,Acer-106,4/20/22,last day of treatment,control,12/1/22,5,109,1/4/23,2.791,1.322,2.11,2.01,111.6
+Acer,BC-8b,108,Acer-108,4/20/22,last day of treatment,control,,,,1/12/23,0.807,0.391,2.07,1.86,32.3
+Acer,BC-8b,110,Acer-110,3/22/22,Pre-treatment,variable,1/6/23,2,119,1/6/23,2.785,1.311,2.12,1.9,111.4
+Acer,MB-B,112,Acer-112,3/22/22,Pre-treatment,control,12/1/22,5,16.4,1/4/23,0.4573,0.2282,2,1.52,18.29
+Acer,SI-C,113,Acer-113,4/20/22,last day of treatment,variable,,,,1/12/23,0.841,0.396,2.12,1.75,33.62
+Acer,SI-C,114,Acer-114,4/20/22,last day of treatment,control,,,,1/12/23,1.173,0.563,2.08,1.85,46.93
+Acer,SI-C,123,Acer-123,4/20/22,last day of treatment,control,,,,1/12/23,0.92,0.434,2.12,1.68,36.8
+Acer,BC-8b,124,Acer-124,3/22/22,Pre-treatment,control,12/1/22,5,167,1/4/23,0.393,0.2071,1.9,1.4,15.72
+Acer,BC-8b,137,Acer-137,4/20/22,last day of treatment,variable,12/1/22,5,73.2,1/4/23,1.874,0.8858,2.12,1.82,74.96
+Acer,SI-C,139,Acer-139,3/22/22,Pre-treatment,variable,1/6/23,2,38.5,1/6/23,0.903,0.416,2.17,1.76,36.11
+Acer,SI-C,141,Acer-141,4/20/22,last day of treatment,variable,,,,1/12/23,1.035,0.496,2.09,1.79,41.41
+Acer,MB-B,143,Acer-143,4/20/22,last day of treatment,control,,,,1/12/23,1.648,0.799,2.06,1.94,65.94
+Acer,BC-8b,146,Acer-146,4/20/22,last day of treatment,control,,,,1/12/23,0.911,0.447,2.04,2.01,36.45
+Acer,MB-B,150,Acer-150,3/22/22,Pre-treatment,control,1/6/23,2,129,1/6/23,2.501,1.178,2.12,1.66,100.1
+Pcli,C,3,Pcli-003,4/20/22,last day of treatment,control,12/1/22,5,122,1/4/23,4.007,1.895,2.11,1.57,160.3
+Pcli,A,4,Pcli-004,4/20/22,last day of treatment,control,,,,1/12/23,2.729,1.437,1.9,0.91,109.1
+Pcli,B,6,Pcli-006,4/20/22,last day of treatment,variable,,,,1/12/23,4.642,2.312,2.01,1.19,185.7
+Pcli,A,8,Pcli-008,4/20/22,last day of treatment,variable,,,,1/12/23,1.557,0.737,2.11,1.47,62.28
+Pcli,A,11,Pcli-011,3/22/22,Pre-treatment,variable,1/6/23,2,325,1/6/23,9.518,4.467,2.05,1.39,366.3
+Pcli,C,15,Pcli-015,4/20/22,last day of treatment,variable,12/1/22,5,too low :(,1/4/23,7.414,3.574,2.07,1.3,296.5
+Pcli,C,18,Pcli-018,4/20/22,last day of treatment,variable,,,,1/12/23,3.313,1.647,2.01,1.13,132.5
+Pcli,B,24,Pcli-024,4/20/22,last day of treatment,control,,,,1/12/23,3.634,1.759,2.07,1.39,145.4
+Pcli,A,26,Pcli-026,3/22/22,Pre-treatment,control,1/6/23,2,295,1/6/23,8.791,4.163,2.11,1.62,351.6
+Pcli,C,28,Pcli-028,3/22/22,Pre-treatment,control,12/1/22,2,230,1/4/23,7.245,3.421,2.12,1.68,289.8
+Pcli,B,29,Pcli-029,3/22/22,Pre-treatment,control,12/1/22,5,143,1/4/23,4.203,1.976,2.13,1.65,168.1
+Pcli,A,33,Pcli-033,3/22/22,Pre-treatment,control,,,,1/12/23,5.093,2.405,2.12,1.62,203.7
+Pcli,C,38,Pcli-038,4/20/22,last day of treatment,control,12/1/22,5,118,1/4/23,4.117,1.896,2.17,1.65,164.7
+Pcli,C,39,Pcli-039,4/20/22,last day of treatment,variable,,,,1/12/23,3.204,1.569,2.04,1.22,128.1
+Pcli,C,40,Pcli-040,3/22/22,Pre-treatment,variable,1/6/23,2,241,1/6/23,7.436,3.626,2.05,1.34,297.4
+Pcli,B,45,Pcli-045,3/22/22,Pre-treatment,variable,,,,1/12/23,3.751,1.945,1.93,0.98,150
+Pcli,B,49,Pcli-049,4/20/22,last day of treatment,control,,,,1/12/23,2.299,1.206,1.91,0.9,91.95
+Pcli,A,50,Pcli-050,4/20/22,last day of treatment,control,12/1/22,5,182,1/4/23,5.816,2.767,2.1,1.62,232.6
+Pcli,B,52,Pcli-052,3/22/22,Pre-treatment,control,1/6/23,2,371,1/6/23,11.03,5.298,2.08,1.63,441.2
+Pcli,B,55,Pcli-055,3/22/22,Pre-treatment,control,,,,1/12/23,2.362,1.25,1.89,0.9,94.49
+Pcli,A,58,Pcli-058,4/20/22,last day of treatment,control,,,,1/12/23,2.695,1.423,1.89,0.87,107.8
+Pcli,C,64,Pcli-064,4/20/22,last day of treatment,control,,,,1/12/23,2.326,1.297,1.79,0.69,93.04
+Pcli,B,66,Pcli-066,4/20/22,last day of treatment,control,,,,1/12/23,2.142,1.239,1.73,0.64,85.66
+Pcli,C,67,Pcli-067,3/22/22,Pre-treatment,variable,,,,1/12/23,2.533,1.38,1.84,0.77,101.3
+Pcli,A,69,Pcli-069,4/20/22,last day of treatment,control,,,,1/12/23,3.688,1.925,1.92,0.92,147.5
+Pcli,B,70,Pcli-070,3/22/22,Pre-treatment,control,1/6/23,2,263,1/6/23,7.468,3.496,2.14,1.67,298.7
+Pcli,A,75,Pcli-075,3/22/22,Pre-treatment,variable,1/6/23,2,247,1/6/23,7.562,3.507,2.16,1.81,302.5
+Pcli,C,76,Pcli-076,4/20/22,last day of treatment,variable,,,,1/12/23,2.914,1.442,2.02,1.16,116.6
+Pcli,A,77,Pcli-077,3/22/22,Pre-treatment,variable,12/1/22,5,189,1/4/23,5.935,2.801,2.12,1.74,237.4
+Pcli,B,79,Pcli-079,4/20/22,last day of treatment,variable,,,,1/12/23,3.121,1.748,1.79,0.72,124.8
+Pcli,C,91,Pcli-091,3/22/22,Pre-treatment,control,,,,1/12/23,3.111,1.588,1.96,0.99,124.5
+Pcli,C,94,Pcli-094,3/22/22,Pre-treatment,variable,1/6/23,2,280,1/6/23,7.996,3.788,2.11,1.56,319.9
+Pcli,B,96,Pcli-096,4/20/22,last day of treatment,variable,,,,1/12/23,2.371,1.24,1.91,0.91,94.84
+Pcli,A,101,Pcli-101,4/20/22,last day of treatment,variable,,,,1/12/23,3.75,1.932,1.94,1.04,150
+Pcli,C,103,Pcli-103,3/22/22,Pre-treatment,variable,1/6/23,2,244,1/6/23,6.75,3.18,2.12,1.61,270
+Pcli,B,105,Pcli-105,3/22/22,Pre-treatment,variable,12/1/22,5,192,1/4/23,6.04,2.802,2.16,2,241.6
+Pcli,B,109,Pcli-109,4/20/22,last day of treatment,variable,12/1/22,5,193,1/4/23,7.825,3.617,2.16,1.95,313
+Pcli,A,111,Pcli-111,3/22/22,Pre-treatment,control,,,,1/12/23,3.871,1.879,2.06,1.34,154.8
+Pcli,B,114,Pcli-114,3/22/22,Pre-treatment,variable,12/1/22,5,28.6,1/4/23,1.039,0.546,1.9,0.82,41.56
+Pcli,C,115,Pcli-115,3/22/22,Pre-treatment,control,,,,1/12/23,5.121,2.455,2.09,1.45,204.8
+Pcli,B,120,Pcli-120,3/22/22,Pre-treatment,variable,1/6/23,2,223,1/6/23,6.963,3.241,2.15,1.72,278.5
+Pcli,B,124,Pcli-124,4/20/22,last day of treatment,control,12/1/22,5,232,1/4/23,10.46,5.021,2.08,1.72,418.2
+Pcli,A,126,Pcli-126,3/22/22,Pre-treatment,control,,,,1/12/23,6.23,2.879,2.16,1.82,249.2
+Pcli,A,128,Pcli-128,3/22/22,Pre-treatment,variable,12/1/22,5,115,1/4/23,3.95,1.816,2.18,2.04,158
+Pcli,A,130,Pcli-130,4/20/22,last day of treatment,variable,,,,1/12/23,5.157,2.452,2.1,1.53,206.3
+Pcli,A,132,Pcli-132,4/20/22,last day of treatment,variable,,,,1/12/23,4.33,2.172,1.99,1.07,173.2
+Pcli,C,135,Pcli-135,4/20/22,last day of treatment,control,,,,1/12/23,2.529,1.299,1.95,1.01,101.1
+Pcli,C,148,Pcli-148,3/22/22,Pre-treatment,control,,,,1/12/23,3.699,1.772,2.09,1.47,148
