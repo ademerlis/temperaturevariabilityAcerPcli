@@ -1,0 +1,35 @@
+---
+title: "FvFm"
+author: "allyson_demerlis"
+date: "2023-08-28"
+output: html_document
+---
+
+```{r}
+ipam_tidy_data <- read.csv("")
+```
+
+
+
+
+### PAM data during 28-day temperature treatment
+```{r, echo = F, warning = F, include = T, fig.cap = "Fv/Fm values of corals within the control or variable treatment during the one-month treatment period (March 23-April 20)."}
+#what are the differences in Fv/Fm between treatments? (pre-CBASS)
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% 
+  mutate(Date = as.factor(Date)) %>% 
+  dplyr::group_by(Treatment, Date, Species) %>% 
+  ggplot(., aes(x=Date, y=fvfm, fill = Treatment)) + 
+  geom_boxplot() + 
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  facet_wrap(~Species) + 
+  scale_x_discrete(labels = c("Mar 16", "Mar 21", "Apr 6", "Apr 20")) + 
+  theme_classic() + labs(y = "Fv/Fm") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 15)) 
+```
