@@ -304,12 +304,7 @@ ipam_data %>%
   mutate(Species = case_when(grepl("A", Puck) ~ "Acervicornis",
                              grepl("P", Puck) ~ "Pclivosa")) -> ipam_tidy_data
 
-ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>% 
-  dplyr::filter(is.na(Treatment))
-#11 rows come up with NA for their metadata. this is because they were not annotated when they were PAMed, so we  don't know  their identities. so drop them from the dataset
-
-write.csv(ipam_tidy_data, "ipam_tidy_data.csv")
+#write.csv(ipam_tidy_data, "ipam_tidy_data.csv")
 ```
 
 
@@ -326,5 +321,8 @@ ipam_tidy_data %>%
   drop_na(CBASS_temp) %>% 
   distinct() -> metadata_CBASS #281 corals
 ```
+
+
+
 
 

@@ -5,14 +5,22 @@ date: "2023-08-28"
 output: html_document
 ---
 
+## Import data and load libraries
+
 ```{r}
-ipam_tidy_data <- read.csv("")
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
 ```
 
+```{r}
+library(tidyverse)
+library(plotrix)
+library(glmmTMB)
+library(emmeans)
+```
 
+## FvFm during 28-day temperature treatment
 
-
-### PAM data during 28-day temperature treatment
+### Boxplot over time
 ```{r, echo = F, warning = F, include = T, fig.cap = "Fv/Fm values of corals within the control or variable treatment during the one-month treatment period (March 23-April 20)."}
 #what are the differences in Fv/Fm between treatments? (pre-CBASS)
 ipam_tidy_data %>% 
@@ -33,3 +41,273 @@ ipam_tidy_data %>%
   scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
   theme(text = element_text(size = 15)) 
 ```
+
+### mean FvFm over time
+```{r}
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% 
+  #mutate(Date = as.factor(Date)) %>% 
+  dplyr::group_by(Treatment, Date, Species) %>% 
+  mutate(mean_fvfm = mean(fvfm)) %>% 
+  mutate(stderr_fvfm = std.error(fvfm)) %>% 
+  ggplot(., aes(x=Date, y=mean_fvfm, color = Treatment)) + 
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_fvfm - stderr_fvfm, ymax = mean_fvfm + stderr_fvfm), width =.5) +
+  theme_classic() +
+  facet_wrap(~Species) + 
+  scale_x_date(
+    date_labels = "%d %b",
+    date_breaks = "15 day") +
+  theme_classic() + labs(y = "Fv/Fm") +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+```
+### normalized FvFm to initial value
+```{r}
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(normalized_fvfm = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
+  select(Colony:Species, normalized_fvfm) -> ipam_normalized_data
+```
+
+### visualizing normalized fvfm from start to end of treatment period
+
+```{r}
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+   mutate(normalized_fvfm_start = case_when(Species == "Acervicornis" ~ `2022-03-16`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-03-21`/`2022-03-21`)) %>% 
+  mutate(normalized_fvfm_end = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
+  pivot_longer(normalized_fvfm_start:normalized_fvfm_end, names_to = "fvfm_timepoint", values_to = "normalized_fvfm") %>% 
+  mutate(numDays = case_when(fvfm_timepoint == "normalized_fvfm_start" ~ 0,
+                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_end" ~ 30,
+                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_end" ~ 35)) %>% 
+  mutate(numDays = as.factor(numDays)) %>% 
+  ggplot(., aes(x=numDays, y=normalized_fvfm, fill = Treatment)) + 
+  geom_violin() + 
+  facet_wrap(~Species) + 
+  theme_classic() + labs(y = "Normalized Fv/Fm", x="Days in Treatment") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 15)) 
+```
+
+
+```{r}
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+   mutate(normalized_fvfm_start = case_when(Species == "Acervicornis" ~ `2022-03-16`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-03-21`/`2022-03-21`)) %>% 
+  mutate(normalized_fvfm_end = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
+  pivot_longer(normalized_fvfm_start:normalized_fvfm_end, names_to = "fvfm_timepoint", values_to = "normalized_fvfm") %>% 
+  mutate(numDays = case_when(fvfm_timepoint == "normalized_fvfm_start" ~ 0,
+                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_end" ~ 30,
+                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_end" ~ 35)) %>% 
+  drop_na(normalized_fvfm) %>% 
+  dplyr::group_by(Treatment, Species, numDays) %>% 
+  mutate(mean_fvfm = mean(normalized_fvfm)) %>% 
+  mutate(stderr_fvfm = std.error(normalized_fvfm)) %>% 
+  ggplot(., aes(x=numDays, y=mean_fvfm, color = Treatment)) + 
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_fvfm - stderr_fvfm, ymax = mean_fvfm + stderr_fvfm), width =.5) +
+  theme_classic() +
+  facet_wrap(~Species) + 
+  theme_classic() + labs(y = "Fv/Fm") +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  labs(x= "Days in Treatment", y = "Normalized Fv/Fm")
+```
+
+
+```{r}
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+   mutate(normalized_fvfm_start = case_when(Species == "Acervicornis" ~ `2022-03-16`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-03-21`/`2022-03-21`)) %>% 
+  mutate(normalized_fvfm_end = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
+  pivot_longer(normalized_fvfm_start:normalized_fvfm_end, names_to = "fvfm_timepoint", values_to = "normalized_fvfm") %>% 
+  mutate(numDays = case_when(fvfm_timepoint == "normalized_fvfm_start" ~ 0,
+                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_end" ~ 30,
+                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_end" ~ 35)) %>% 
+  drop_na(normalized_fvfm) %>% 
+  dplyr::group_by(Treatment, Colony, Species, numDays) %>% 
+  mutate(mean_fvfm = mean(normalized_fvfm)) %>% 
+  mutate(stderr_fvfm = std.error(normalized_fvfm)) %>% 
+  ggplot(., aes(x=numDays, y=mean_fvfm, color = Colony, lty = Treatment)) + 
+  geom_point() +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_fvfm - stderr_fvfm, ymax = mean_fvfm + stderr_fvfm), width =.5) +
+  theme_classic() +
+  facet_wrap(~Species) + 
+  theme_classic() + labs(y = "Fv/Fm") +
+  labs(x= "Days in Treatment", y = "Normalized Fv/Fm")
+```
+
+
+
+
+### Statistics: LRT function
+
+```{r}
+## Model comparison function (from Dr. Kevin Wong: https://github.com/kevinhwong1/Thermal_Transplant_2017-2018/blob/master/scripts/Larval_2018_Statistics.R)
+#two *nested* models as input, in this case obj1 is the model without the predictor variable and obj2 is the model with the predictor variable 
+lrt <- function (obj1, obj2) {
+  L0 <- logLik(obj1)
+  L1 <- logLik(obj2)
+  L01 <- as.vector(- 2 * (L0 - L1))
+  df <- attr(L1, "df") - attr(L0, "df")
+  list(L01 = L01, df = df,
+       "p-value" = pchisq(L01, df, lower.tail = FALSE))
+}
+```
+
+
+### Acer GLM 
+
+```{r}
+ipam_normalized_data %>% 
+  filter(Species == "Acervicornis") %>% 
+  drop_na() -> ipam_data_28d_Acer
+
+#model 1 = full model Treatment*time_point + (1|Colony) + (1|Tank)
+glmm_Acer_full <- glmmTMB(normalized_fvfm ~ Treatment + (1|Colony) + (1|Tank), family=beta_family(link = "logit"), data=ipam_data_28d_Acer)
+
+summary(glmm_Acer_full) 
+
+qqnorm(resid(glmm_Acer_full))
+qqline(resid(glmm_Acer_full))
+
+boxplot(resid(glmm_Acer_full)~ipam_data_28d_Acer$Treatment)
+boxplot(resid(glmm_Acer_full)~ipam_data_28d_Acer$Colony)
+boxplot(resid(glmm_Acer_full)~ipam_data_28d_Acer$Tank)
+
+#model 2 = Treatment*time_point + (1|Colony)
+Acer_fvfm_GLMM_Colony <- glmmTMB::glmmTMB(normalized_fvfm ~ Treatment + (1|Colony), family=beta_family(link = "logit"), data=ipam_data_28d_Acer)
+summary(Acer_fvfm_GLMM_Colony)
+
+#need to check normality and variance visually (boxplots of fixed effects only)
+qqnorm(resid(Acer_fvfm_GLMM_Colony))
+qqline(resid(Acer_fvfm_GLMM_Colony))
+
+boxplot(resid(Acer_fvfm_GLMM_Colony)~ipam_data_28d_Acer$Treatment) 
+boxplot(resid(Acer_fvfm_GLMM_Colony)~ipam_data_28d_Acer$Colony)
+
+#model 3 = Treatment*Date + (1|Tank)
+Acer_fvfm_GLMM_Tank <- glmmTMB::glmmTMB(normalized_fvfm ~ Treatment + (1|Tank), family=beta_family(link = "logit"), data=ipam_data_28d_Acer)
+summary(Acer_fvfm_GLMM_Tank)
+
+qqnorm(resid(Acer_fvfm_GLMM_Tank)) #looks great
+qqline(resid(Acer_fvfm_GLMM_Tank))
+
+boxplot(resid(Acer_fvfm_GLMM_Tank)~ipam_data_28d_Acer$Treatment) 
+boxplot(resid(Acer_fvfm_GLMM_Tank)~ipam_data_28d_Acer$Tank)
+
+lrt(Acer_fvfm_GLMM_Colony, glmm_Acer_full)
+
+lrt(Acer_fvfm_GLMM_Tank, glmm_Acer_full)
+
+# GLMM Acer Full: AIC =  -366.2
+# GLMM Acer Colony: AIC =  -335.9, LRT to full model p-value = 1.345583e-08
+# GLMM Acer Tank: AIC =  -358.2, LRT to full model p-value = 0.001634789
+
+#based on AIC and LRT p-values (lowest AIC is best, if p-value is significant that means there is a significant difference in the full model versus the reduced model), the full model is the best model.
+```
+
+
+```{r}
+Anova(glmm_Acer_full, type = "II")
+
+emmeans(glmm_Acer_full, specs = pairwise ~ Treatment)
+```
+
+### Pcli GLM 
+
+```{r}
+ipam_normalized_data %>% 
+  filter(Species == "Pclivosa") %>% 
+  drop_na() %>% 
+  filter(normalized_fvfm < 1) -> ipam_data_28d_Pcli
+
+#model 1 = full model Treatment*time_point + (1|Colony) + (1|Tank)
+glmm_Pcli_full <- glmmTMB(normalized_fvfm ~ Treatment + (1|Colony) + (1|Tank), family=beta_family(link = "logit"), data=ipam_data_28d_Pcli)
+
+summary(glmm_Pcli_full) 
+
+qqnorm(resid(glmm_Pcli_full))
+qqline(resid(glmm_Pcli_full))
+
+boxplot(resid(glmm_Pcli_full)~ipam_data_28d_Pcli$Treatment)
+boxplot(resid(glmm_Pcli_full)~ipam_data_28d_Pcli$Colony)
+boxplot(resid(glmm_Pcli_full)~ipam_data_28d_Pcli$Tank)
+
+#model 2 = Treatment*time_point + (1|Colony)
+Pcli_fvfm_GLMM_Colony <- glmmTMB::glmmTMB(normalized_fvfm ~ Treatment + (1|Colony), family=beta_family(link = "logit"), data=ipam_data_28d_Pcli)
+summary(Pcli_fvfm_GLMM_Colony)
+
+#need to check normality and variance visually (boxplots of fixed effects only)
+qqnorm(resid(Pcli_fvfm_GLMM_Colony))
+qqline(resid(Pcli_fvfm_GLMM_Colony))
+
+boxplot(resid(Pcli_fvfm_GLMM_Colony)~ipam_data_28d_Pcli$Treatment) 
+boxplot(resid(Pcli_fvfm_GLMM_Colony)~ipam_data_28d_Pcli$Colony)
+
+#model 3 = Treatment*Date + (1|Tank)
+Pcli_fvfm_GLMM_Tank <- glmmTMB::glmmTMB(normalized_fvfm ~ Treatment + (1|Tank), family=beta_family(link = "logit"), data=ipam_data_28d_Pcli)
+summary(Pcli_fvfm_GLMM_Tank)
+
+qqnorm(resid(Pcli_fvfm_GLMM_Tank))
+qqline(resid(Pcli_fvfm_GLMM_Tank))
+
+boxplot(resid(Pcli_fvfm_GLMM_Tank)~ipam_data_28d_Pcli$Treatment) 
+boxplot(resid(Pcli_fvfm_GLMM_Tank)~ipam_data_28d_Pcli$Tank)
+
+lrt(Pcli_fvfm_GLMM_Colony, glmm_Pcli_full)
+
+lrt(Pcli_fvfm_GLMM_Tank, glmm_Pcli_full)
+
+# GLMM Pcli Full: AIC =   -466.4
+# GLMM Pcli Colony: AIC =  -374.0 , LRT to full model p-value = 2.571284e-22
+# GLMM Pcli Tank: AIC =  -458.9 , LRT to full model p-value = 0.002067941
+
+#based on AIC and LRT p-values (lowest AIC is best, if p-value is significant that means there is a significant difference in the full model versus the reduced model), the full model is the best model.
+```
+
+
+```{r}
+Pcli_aov <- Anova(glmm_Pcli_full, type = "II")
+
+Pcli_aov$`Pr(>Chisq)`
+
+emmeans(glmm_Pcli_full, specs = pairwise ~ Treatment)
+```
+
+
+## CBASS FvFm
