@@ -11,13 +11,12 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#5-density-plot-for-degs)
 6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#6-venn-diagram-for-degs)
 7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
-8. Volcano Plots
-9. KOG-MWU heatmaps
-10. KOG-MWU correlations
-11. GO-MWU Analysis
+8. KOG-MWU heatmaps
+9. KOG-MWU correlation plots
+10. GO-MWU Analysis
+11. Volcano Plots
 12. WGCNA
 13. Orthofinder
-
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
 
@@ -181,6 +180,23 @@ Then I looked at PC axes 2 and 3, and there was still a separation of genotype, 
 
 <img width="631" alt="Screen Shot 2023-09-16 at 7 51 35 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5b8b671c-4b0c-4cd1-bbcb-24610ecbcd46">
 
+### 8) KOG-MWU Heatmaps
+
+1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed p-values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+    
+<img width="605" alt="Screen Shot 2023-09-16 at 8 03 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0d5300c4-4f92-4d73-9543-f7bcb2f7cc9e">
+
+2. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **fold change**. Note that the scale of the heatmap is not fold change, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+
+<img width="579" alt="Screen Shot 2023-09-16 at 8 06 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/071364f7-a0b5-465f-b804-b74b7b4f64f1">
 
 
+### 9) KOG-MWU Correlation plots
 
+1. Correlation plots for pairwise comparisons of treatment_time based on KOG enrichment for **log-transformed p-values**.
+   
+<img width="692" alt="Screen Shot 2023-09-16 at 8 08 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bd2c6b13-afa6-4b0e-a1c0-8462e09e312f">
+
+2. Correlation plots for pairwise comparisons of treatment_time based on KOG enrichment for **fold change**.
+   
+<img width="689" alt="Screen Shot 2023-09-16 at 8 08 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0f1604ff-079f-466d-9766-7e9ddaf46b10">
