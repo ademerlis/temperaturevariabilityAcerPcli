@@ -175,5 +175,12 @@ Separating each genotype out:
 
 Too few samples on Day 29 to create an ellipse.
 
+Then I looked at PC axes 2 and 3, and there was still a separation of genotype, but also a clear separation of time point.
+
+<img width="622" alt="Screen Shot 2023-09-16 at 7 51 19 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/914f1a47-729f-4316-8ea7-bbc904893d86">
+
+<img width="631" alt="Screen Shot 2023-09-16 at 7 51 35 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5b8b671c-4b0c-4cd1-bbcb-24610ecbcd46">
+
+
 
 
