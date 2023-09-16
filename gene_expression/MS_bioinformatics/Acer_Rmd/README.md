@@ -4,6 +4,21 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 
 ## Results
 
+1. [Heatmap](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#1-heatmap)
+2. [PCoA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#2-pcoa)
+3. [PERMANOVA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#3-permanova-for-variance-in-distance-matrices)
+4. [DESeq2](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#4-deseq2)
+5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#5-density-plot-for-degs)
+6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#6-venn-diagram-for-degs)
+7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
+8. Volcano Plots
+9. KOG-MWU heatmaps
+10. KOG-MWU correlations
+11. GO-MWU Analysis
+12. WGCNA
+13. Orthofinder
+
+
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
 
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)`
