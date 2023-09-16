@@ -4,6 +4,21 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 
 ## Results
 
+1. [Heatmap](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#1-heatmap)
+2. [PCoA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#2-pcoa)
+3. [PERMANOVA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#3-permanova-for-variance-in-distance-matrices)
+4. [DESeq2](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#4-deseq2)
+5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#5-density-plot-for-degs)
+6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#6-venn-diagram-for-degs)
+7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
+8. Volcano Plots
+9. KOG-MWU heatmaps
+10. KOG-MWU correlations
+11. GO-MWU Analysis
+12. WGCNA
+13. Orthofinder
+
+
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
 
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)`
@@ -138,8 +153,27 @@ Specific contrasts:
 
 <img width="628" alt="Screen Shot 2023-08-24 at 2 39 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/9f8b6e55-a573-4252-9c6d-84ddddc1710f">
 
+Separating each genotype out:
 
+1. SI-C
 
+<img width="629" alt="Screen Shot 2023-09-16 at 7 10 27 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e72fa911-130e-44cd-a478-9af22be82e36">
+
+<img width="629" alt="Screen Shot 2023-09-16 at 7 10 57 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/1abd1c9f-d34f-4bee-a6bb-b180f2f76f31">
+
+2. MB-B
+
+<img width="623" alt="Screen Shot 2023-09-16 at 7 12 15 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/16286689-f9e3-4790-a9cb-b11223c996c5">
+
+<img width="629" alt="Screen Shot 2023-09-16 at 7 12 38 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/67760487-2401-4e98-8ec8-b8139426ae52">
+
+3. BC-8b
+
+<img width="623" alt="Screen Shot 2023-09-16 at 7 13 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/83b12325-7d5d-4621-b724-3d1f1d290e6c">
+
+<img width="624" alt="Screen Shot 2023-09-16 at 7 14 25 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/908c3d1f-e72e-45c0-b201-4bd5ccb1940f">
+
+Too few samples on Day 29 to create an ellipse.
 
 
 
