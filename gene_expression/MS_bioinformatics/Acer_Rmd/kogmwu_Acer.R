@@ -7,47 +7,41 @@ library(KOGMWU)
 #### pairwise treatments (lpv) ####
 
 # loading KOG annotations
-gene2kog=read.table("Mcavernosa2015_iso2kogClass.tab",sep="\t", fill=T)
+gene2kog=read.table("~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2kogClass.tab",sep="\t", fill=T) #iso2kogClass.tab not iso2kogClass1.tab because that file has an "error" when you try to view it using the terminal
 head(gene2kog)
 
-healthy1_healthy0=load('healthy1_healthy0_lpv.RData')
-healthy1_healthy0 # names of datasets in the package
-lpv.healthy1_healthy0=kog.mwu(healthy1_healthy0.p,gene2kog) 
-lpv.healthy1_healthy0 
+setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd")
+load("RData_files/pvals.RData")
 
-diseased0_healthy0=load('diseased0_healthy0_lpv.RData')
-diseased0_healthy0 # names of datasets in the package
-lpv.diseased0_healthy0=kog.mwu(diseased0_healthy0.p,gene2kog) 
-lpv.diseased0_healthy0 
+control0_control29=load('RData_files/control0_control29_lpv.RData')
+control0_control29 # names of datasets in the package
+lpv.control0_control29=kog.mwu(control0_control29.p,gene2kog) 
+lpv.control0_control29 
 
-treated1_healthy1=load('treated1_healthy1_lpv.RData')
-treated1_healthy1 # names of datasets in the package
-lpv.treated1_healthy1=kog.mwu(treated1_healthy1.p,gene2kog) 
-lpv.treated1_healthy1
+variable0_control0=load('RData_files/variable0_control0_lpv.RData')
+variable0_control0 # names of datasets in the package
+lpv.variable0_control0=kog.mwu(variable0_control0.p,gene2kog) 
+lpv.variable0_control0
 
-treated1_healthy0=load('treated1_healthy0_lpv.RData')
-treated1_healthy0 # names of datasets in the package
-lpv.treated1_healthy0=kog.mwu(treated1_healthy0.p,gene2kog) 
-lpv.treated1_healthy0 
+variable29_control29=load('RData_files/variable29_control29_lpv.RData')
+variable29_control29 # names of datasets in the package
+lpv.variable29_control29=kog.mwu(variable29_control29.p,gene2kog) 
+lpv.variable29_control29
 
-treated1_diseased0=load('treated1_diseased0_lpv.RData')
-treated1_diseased0 # names of datasets in the package
-lpv.treated1_diseased0=kog.mwu(treated1_diseased0.p,gene2kog) 
-lpv.treated1_diseased0
+variable0_variable29=load('RData_files/variable0_variable29_lpv.RData')
+variable0_variable29 # names of datasets in the package
+lpv.variable0_variable29=kog.mwu(variable0_variable29.p,gene2kog) 
+lpv.variable0_variable29
 
-diseased0_healthy1=load('diseased0_healthy1_lpv.RData')
-diseased0_healthy1 # names of datasets in the package
-lpv.diseased0_healthy1=kog.mwu(diseased0_healthy1.p,gene2kog) 
-lpv.diseased0_healthy1
 
 # compiling a table of delta-ranks to compare these results:
-ktable=makeDeltaRanksTable(list("diseased0_healthy0"=lpv.diseased0_healthy0,"healthy1_healthy0"=lpv.healthy1_healthy0,"treated1_healthy1"=lpv.treated1_healthy1,"treated1_healthy0"=lpv.treated1_healthy0,"treated1_diseased0"=lpv.treated1_diseased0,"diseased0_healthy1"=lpv.diseased0_healthy1))
+ktable=makeDeltaRanksTable(list("control0_control29"=lpv.control0_control29,"variable0_control0"=lpv.variable0_control0,"variable0_variable29"=lpv.variable0_variable29,"variable29_control29"=lpv.variable29_control29))
 
 library(RColorBrewer)
 color = colorRampPalette(rev(c(brewer.pal(n = 7, name ="RdBu"),"royalblue","darkblue")))(100)
 
 # Making a heatmap with hierarchical clustering trees: 
-pdf(file="KOG_intervention_mcav_host_lpv.pdf", width=7, height=8)
+pdf(file="KOG_Acer_host_lpv.pdf", width=7, height=8)
 pheatmap(as.matrix(ktable),clustering_distance_cols="correlation",color=color, cellwidth=15, cellheight=15, border_color="white") 
 while (!is.null(dev.list()))  dev.off()
 
@@ -55,70 +49,57 @@ while (!is.null(dev.list()))  dev.off()
 pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
 #scatterplots between pairs
 # p-values of these correlations in the upper panel:
-pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval)
+pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval) 
 
 # creating a pub-ready corr plot
-pdf(file="KOG_intervention_mcav_host_corr_lpv.pdf", width=10, height=10)
+pdf(file="KOG_intervention_Acer_corr_lpv.pdf", width=10, height=10)
 par(mfrow=c(4,4))
-corrPlot(x="diseased0_healthy0",y="healthy1_healthy0",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_healthy1",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_healthy0",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="diseased0_healthy0",y="diseased0_healthy1",ktable)
-corrPlot(x="healthy1_healthy0",y="treated1_healthy1",ktable)
-corrPlot(x="healthy1_healthy0",y="treated1_healthy0",ktable)
-corrPlot(x="healthy1_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="healthy1_healthy0",y="diseased0_healthy1",ktable)
-corrPlot(x="treated1_healthy1",y="treated1_healthy0",ktable)
-corrPlot(x="treated1_healthy1",y="treated1_diseased0",ktable)
-corrPlot(x="treated1_healthy1",y="diseased0_healthy1",ktable)
-corrPlot(x="treated1_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="treated1_healthy0",y="diseased0_healthy1",ktable)
+corrPlot(x="control0_control29",y="variable0_control0",ktable)
+corrPlot(x="control0_control29",y="variable0_variable29",ktable)
+corrPlot(x="control0_control29",y="variable29_control29",ktable)
+
+corrPlot(x="variable0_control0",y="variable0_variable29",ktable)
+corrPlot(x="variable0_control0",y="variable29_control29",ktable)
+
+corrPlot(x="variable0_variable29",y="variable29_control29",ktable)
+
 dev.off()
 
 
 #### pairwise treatments (fc) ####
 
-healthy1_healthy0=load('healthy1_healthy0_fc.RData')
-healthy1_healthy0 # names of datasets in the package
-fc.healthy1_healthy0=kog.mwu(healthy1_healthy0.fc,gene2kog) 
-fc.healthy1_healthy0 
+variable0_control0=load('RData_files/variable0_control0_fc.RData')
+variable0_control0 # names of datasets in the package
+fc.variable0_control0=kog.mwu(variable0_control0.fc,gene2kog) 
+fc.variable0_control0 
 
-diseased0_healthy0=load('diseased0_healthy0_fc.RData')
-diseased0_healthy0 # names of datasets in the package
-fc.diseased0_healthy0=kog.mwu(diseased0_healthy0.fc,gene2kog) 
-fc.diseased0_healthy0 
+control0_control29=load('RData_files/control0_control29_fc.RData')
+control0_control29 # names of datasets in the package
+fc.control0_control29=kog.mwu(control0_control29.fc,gene2kog) 
+fc.control0_control29
 
-treated1_healthy1=load('treated1_healthy1_fc.RData')
-treated1_healthy1 # names of datasets in the package
-fc.treated1_healthy1=kog.mwu(treated1_healthy1.fc,gene2kog) 
-fc.treated1_healthy1
+variable0_variable29=load('RData_files/variable0_variable29_fc.RData')
+variable0_variable29 # names of datasets in the package
+fc.variable0_variable29=kog.mwu(variable0_variable29.fc,gene2kog) 
+fc.variable0_variable29
 
-treated1_healthy0=load('treated1_healthy0_fc.RData')
-treated1_healthy0 # names of datasets in the package
-fc.treated1_healthy0=kog.mwu(treated1_healthy0.fc,gene2kog) 
-fc.treated1_healthy0 
-
-treated1_diseased0=load('treated1_diseased0_fc.RData')
-treated1_diseased0 # names of datasets in the package
-fc.treated1_diseased0=kog.mwu(treated1_diseased0.fc,gene2kog) 
-fc.treated1_diseased0
-
-diseased0_healthy1=load('diseased0_healthy1_fc.RData')
-diseased0_healthy1 # names of datasets in the package
-fc.diseased0_healthy1=kog.mwu(diseased0_healthy1.fc,gene2kog) 
-fc.diseased0_healthy1
+variable29_control29=load('RData_files/variable29_control29_fc.RData')
+variable29_control29 # names of datasets in the package
+fc.variable29_control29=kog.mwu(variable29_control29.fc,gene2kog) 
+fc.variable29_control29
 
 # compiling a table of delta-ranks to compare these results:
-ktable=makeDeltaRanksTable(list("diseased0_healthy0"=fc.diseased0_healthy0,"healthy1_healthy0"=fc.healthy1_healthy0,"treated1_healthy1"=fc.treated1_healthy1,"treated1_healthy0"=fc.treated1_healthy0,"treated1_diseased0"=fc.treated1_diseased0,"diseased0_healthy1"=fc.diseased0_healthy1))
+ktable=makeDeltaRanksTable(list("variable0_control0"=fc.variable0_control0,"control0_control29"=fc.control0_control29,
+                                "variable0_variable29"=fc.variable0_variable29,"variable29_control29"=fc.variable29_control29))
 
 library(RColorBrewer)
 color = colorRampPalette(rev(c(brewer.pal(n = 7, name ="RdBu"),"royalblue","darkblue")))(100)
 
 # Making a heatmap with hierarchical clustering trees: 
-pdf(file="KOG_intervention_mcav_host_fc.pdf", width=7, height=8)
+pdf(file="KOG_Acer_host_fc.pdf")
 pheatmap(as.matrix(ktable),clustering_distance_cols="correlation",color=color, cellwidth=15, cellheight=15, border_color="white") 
 while (!is.null(dev.list()))  dev.off()
+#this wasn't working so I manually saved it as a PDF by right clicking it in the R plot panel
 
 # exploring correlations between datasets
 pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
@@ -127,106 +108,15 @@ pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
 pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval)
 
 # creating a pub-ready corr plot
-pdf(file="KOG_intervention_mcav_host_corr_fc.pdf", width=10, height=10)
-par(mfrow=c(4,4))
-corrPlot(x="diseased0_healthy0",y="healthy1_healthy0",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_healthy1",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_healthy0",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="diseased0_healthy0",y="diseased0_healthy1",ktable)
-corrPlot(x="healthy1_healthy0",y="treated1_healthy1",ktable)
-corrPlot(x="healthy1_healthy0",y="treated1_healthy0",ktable)
-corrPlot(x="healthy1_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="healthy1_healthy0",y="diseased0_healthy1",ktable)
-corrPlot(x="treated1_healthy1",y="treated1_healthy0",ktable)
-corrPlot(x="treated1_healthy1",y="treated1_diseased0",ktable)
-corrPlot(x="treated1_healthy1",y="diseased0_healthy1",ktable)
-corrPlot(x="treated1_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="treated1_healthy0",y="diseased0_healthy1",ktable)
-dev.off()
+pdf(file="KOG_Acer_host_corr_fc.pdf", width=10, height=10)
+par(mfrow=c(2,3))
+corrPlot(x="control0_control29",y="variable0_control0",ktable)
+corrPlot(x="control0_control29",y="variable0_variable29",ktable)
+corrPlot(x="control0_control29",y="variable29_control29",ktable)
 
+corrPlot(x="variable0_control0",y="variable0_variable29",ktable)
+corrPlot(x="variable0_control0",y="variable29_control29",ktable)
 
-#### filtered treatments (lpv) ####
+corrPlot(x="variable0_variable29",y="variable29_control29",ktable)
 
-diseased0_healthy0=load('diseased0_healthy0_lpv.RData')
-diseased0_healthy0 # names of datasets in the package
-lpv.diseased0_healthy0=kog.mwu(diseased0_healthy0.p,gene2kog) 
-lpv.diseased0_healthy0 
-
-treated1_diseased0=load('treated1_diseased0_lpv.RData')
-treated1_diseased0 # names of datasets in the package
-lpv.treated1_diseased0=kog.mwu(treated1_diseased0.p,gene2kog) 
-lpv.treated1_diseased0 
-
-treated1_healthy1=load('treated1_healthy1_lpv.RData')
-treated1_healthy1 # names of datasets in the package
-lpv.treated1_healthy1=kog.mwu(treated1_healthy1.p,gene2kog) 
-lpv.treated1_healthy1
-
-# compiling a table of delta-ranks to compare these results:
-ktable=makeDeltaRanksTable(list("diseased0_healthy0"=lpv.diseased0_healthy0,"treated1_diseased0"=lpv.treated1_diseased0,"treated1_healthy1"=lpv.treated1_healthy1))
-
-library(RColorBrewer)
-color = colorRampPalette(rev(c(brewer.pal(n = 7, name ="RdBu"),"royalblue","darkblue")))(100)
-
-# Making a heatmap with hierarchical clustering trees: 
-pdf(file="KOG_intervention_mcav_host_filtered_lpv.pdf", width=7, height=8)
-pheatmap(as.matrix(ktable),clustering_distance_cols="correlation",color=color, cellwidth=15, cellheight=15, border_color="white") 
-while (!is.null(dev.list()))  dev.off()
-
-# exploring correlations between datasets
-pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
-#scatterplots between pairs
-# p-values of these correlations in the upper panel:
-pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval)
-
-# creating a pub-ready corr plot
-pdf(file="KOG_intervention_mcav_host_filtered_corr_lpv.pdf", width=7, height=2.5)
-par(mfrow=c(1,3))
-corrPlot(x="diseased0_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_healthy1",ktable)
-corrPlot(x="treated1_diseased0",y="treated1_healthy1",ktable)
-dev.off()
-
-
-#### filtered treatments (fc) ####
-
-diseased0_healthy0=load('diseased0_healthy0_fc.RData')
-diseased0_healthy0 # names of datasets in the package
-fc.diseased0_healthy0=kog.mwu(diseased0_healthy0.fc,gene2kog) 
-fc.diseased0_healthy0 
-
-treated1_diseased0=load('treated1_diseased0_fc.RData')
-treated1_diseased0 # names of datasets in the package
-fc.treated1_diseased0=kog.mwu(treated1_diseased0.fc,gene2kog) 
-fc.treated1_diseased0 
-
-treated1_healthy1=load('treated1_healthy1_fc.RData')
-treated1_healthy1 # names of datasets in the package
-fc.treated1_healthy1=kog.mwu(treated1_healthy1.fc,gene2kog) 
-fc.treated1_healthy1
-
-# compiling a table of delta-ranks to compare these results:
-ktable=makeDeltaRanksTable(list("diseased0_healthy0"=fc.diseased0_healthy0,"treated1_diseased0"=fc.treated1_diseased0,"treated1_healthy1"=fc.treated1_healthy1))
-
-library(RColorBrewer)
-color = colorRampPalette(rev(c(brewer.pal(n = 7, name ="RdBu"),"royalblue","darkblue")))(100)
-
-# Making a heatmap with hierarchical clustering trees: 
-pdf(file="KOG_intervention_mcav_host_filtered_fc.pdf", width=7, height=8)
-pheatmap(as.matrix(ktable),clustering_distance_cols="correlation",color=color, cellwidth=15, cellheight=15, border_color="white") 
-while (!is.null(dev.list()))  dev.off()
-
-# exploring correlations between datasets
-pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
-#scatterplots between pairs
-# p-values of these correlations in the upper panel:
-pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval)
-
-# creating a pub-ready corr plot
-pdf(file="KOG_intervention_mcav_host_filtered_corr_fc.pdf", width=7, height=2.5)
-par(mfrow=c(1,3))
-corrPlot(x="diseased0_healthy0",y="treated1_diseased0",ktable)
-corrPlot(x="diseased0_healthy0",y="treated1_healthy1",ktable)
-corrPlot(x="treated1_diseased0",y="treated1_healthy1",ktable)
 dev.off()

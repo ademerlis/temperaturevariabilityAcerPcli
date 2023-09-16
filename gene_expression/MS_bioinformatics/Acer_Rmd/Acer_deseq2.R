@@ -163,7 +163,7 @@ dev.off()
 pdf(file="PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
-ordispider(scores, conditions$fate, label=F, col=c("red","green","orange"))
+ordispider(scores, conditions$Treatment, label=F, col=c("red","blue"))
 legend("topright", legend=c("Control", "Variable"), fill = c("red","blue"), bty="n")
 legend("topleft", legend=c("Day_0", "Day_29"), pch=c(1,19), bty="n")
 plot(scores[,1], scores[,2],col=c("grey","black")[as.numeric(as.factor(conditions$time_point))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Time")
@@ -288,8 +288,8 @@ dev.off()
 
 #### GO/KOG EXPORT ####
 
-load("realModels_Acer.RData")
-load("pvals.RData")
+load("RData_files/realModels_Acer.RData")
+load("RData_files/pvals.RData")
 
 # fold change (fc) can only be used for binary factors, such as control/treatment, or specific contrasts comparing two factor levels
 # log p value (lpv) is for multi-level factors, including binary factors
@@ -300,16 +300,16 @@ source=variable29_control29[!is.na(variable29_control29$pvalue),]
 variable29_control29.fc=data.frame("gene"=row.names(source))
 variable29_control29.fc$lfc=source[,"log2FoldChange"]
 head(variable29_control29.fc)
-write.csv(variable29_control29.fc,file="variable29_control29_fc.csv",row.names=F,quote=F)
-save(variable29_control29.fc,file="variable29_control29_fc.RData")
+#write.csv(variable29_control29.fc,file="variable29_control29_fc.csv",row.names=F,quote=F)
+#save(variable29_control29.fc,file="variable29_control29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable29_control29.p=data.frame("gene"=row.names(source))
 variable29_control29.p$lpv=-log(source[,"pvalue"],10)
 variable29_control29.p$lpv[source$stat<0]=variable29_control29.p$lpv[source$stat<0]*-1
 head(variable29_control29.p)
-write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-save(variable29_control29.p,file="variable29_control29_lpv.RData")
+#write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
+#save(variable29_control29.p,file="variable29_control29_lpv.RData")
 
 
 # variable0 vs control0
@@ -318,16 +318,16 @@ source=variable0_control0[!is.na(variable0_control0$pvalue),]
 variable0_control0.fc=data.frame("gene"=row.names(source))
 variable0_control0.fc$lfc=source[,"log2FoldChange"]
 head(variable0_control0.fc)
-write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
-save(variable0_control0.fc,file="variable0_control0_fc.RData")
+#write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
+#save(variable0_control0.fc,file="variable0_control0_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable0_control0.p=data.frame("gene"=row.names(source))
 variable0_control0.p$lpv=-log(source[,"pvalue"],10)
 variable0_control0.p$lpv[source$stat<0]=variable0_control0.p$lpv[source$stat<0]*-1
 head(variable0_control0.p)
-write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
-save(variable0_control0.p,file="variable0_control0_lpv.RData")
+#write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
+#save(variable0_control0.p,file="variable0_control0_lpv.RData")
 
 
 #variable0 vs variable29
@@ -336,16 +336,16 @@ source=variable0_variable29[!is.na(variable0_variable29$pvalue),]
 variable0_variable29.fc=data.frame("gene"=row.names(source))
 variable0_variable29.fc$lfc=source[,"log2FoldChange"]
 head(variable0_variable29.fc)
-write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
-save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
+#write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
+#save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable0_variable29.p=data.frame("gene"=row.names(source))
 variable0_variable29.p$lpv=-log(source[,"pvalue"],10)
 variable0_variable29.p$lpv[source$stat<0]=variable0_variable29.p$lpv[source$stat<0]*-1
 head(variable0_variable29.p)
-write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
-save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
+#write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
+#save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
 
 
 # control0_control29
@@ -354,16 +354,16 @@ source=control0_control29[!is.na(control0_control29$pvalue),]
 control0_control29.fc=data.frame("gene"=row.names(source))
 control0_control29.fc$lfc=source[,"log2FoldChange"]
 head(control0_control29.fc)
-write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
-save(control0_control29.fc,file="control0_control29_fc.RData")
+#write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
+#save(control0_control29.fc,file="control0_control29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 control0_control29.p=data.frame("gene"=row.names(source))
 control0_control29.p$lpv=-log(source[,"pvalue"],10)
 control0_control29.p$lpv[source$stat<0]=control0_control29.p$lpv[source$stat<0]*-1
 head(control0_control29.p)
-write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
-save(control0_control29.p,file="control0_control29_lpv.RData")
+#write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
+#save(control0_control29.p,file="control0_control29_lpv.RData")
 
 #### DAPC ####
 
@@ -377,6 +377,8 @@ load("vsd.RData")
 
 conditions=design
 conditions$group <- as.factor(conditions$group)
+
+#THIS FUNCTION TAKES A REALLY LONG TIME
 
 # runs simulations on randomly-chosen datasets of 90% of the total dataset to test the number of PCs to retain
 set.seed(999)
@@ -458,28 +460,27 @@ if (is.na(table(delta<0)[2])) {
 
 #### CHERRY PICKING ####
 
-diseased0_healthy0.p %>%
+variable0_control0.p %>%
   filter(abs(lpv) >= 1) %>%
-  left_join(read.table(file = "../../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
+  left_join(read.table(file = "../Bioinformatics/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
+  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) -> cherrypicking
+write.csv(cherrypicking, file = "variable0control0_cherrypicking.csv")
+
+variable29_control29.p %>%
+  filter(abs(lpv) >= 1) %>%
+  left_join(read.table(file = "../Bioinformatics/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
   filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) -> cherrypicking
-write.csv(cherrypicking, file = "inter_d0h0_cherrypicking.csv")
-
-treated1_diseased0.p %>%
-  filter(abs(lpv) >= 1) %>%
-  left_join(read.table(file = "../../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
-  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) -> cherrypicking
-write.csv(cherrypicking, file = "inter_t1d0_cherrypicking.csv")
-
+write.csv(cherrypicking, file = "variable29control29_cherrypicking.csv")
 
 
 #### GENE BOXPLOTS ####
@@ -492,62 +493,4 @@ load("realModels.RData")
 Mcavernosa9810 <- plotCounts(dds, gene="Mcavernosa9810", intgroup="fate", returnData=TRUE)
 write.csv(Mcavernosa9810, file = "Mcavernosa9810.csv")
 
-Mcavernosa43816 <- plotCounts(dds, gene="Mcavernosa43816", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa43816, file = "Mcavernosa43816.csv")
 
-Mcavernosa14879 <- plotCounts(dds, gene="Mcavernosa14879", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa14879, file = "Mcavernosa14879.csv")
-
-Mcavernosa12872 <- plotCounts(dds, gene="Mcavernosa12872", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa12872, file = "Mcavernosa12872.csv")
-
-Mcavernosa47647 <- plotCounts(dds, gene="Mcavernosa47647", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa47647, file = "Mcavernosa47647.csv")
-
-Mcavernosa50735 <- plotCounts(dds, gene="Mcavernosa50735", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa50735, file = "Mcavernosa50735.csv")
-
-Mcavernosa10679 <- plotCounts(dds, gene="Mcavernosa10679", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa10679, file = "Mcavernosa10679.csv")
-
-Mcavernosa61972 <- plotCounts(dds, gene="Mcavernosa61972", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa61972, file = "Mcavernosa61972.csv")
-
-Mcavernosa49779 <- plotCounts(dds, gene="Mcavernosa49779", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa49779, file = "Mcavernosa49779.csv")
-
-Mcavernosa5069 <- plotCounts(dds, gene="Mcavernosa5069", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa5069, file = "Mcavernosa5069.csv")
-
-Mcavernosa184695 <- plotCounts(dds, gene="Mcavernosa184695", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa184695, file = "Mcavernosa184695.csv")
-
-Mcavernosa102943 <- plotCounts(dds, gene="Mcavernosa102943", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa102943, file = "Mcavernosa102943.csv")
-
-Mcavernosa29964 <- plotCounts(dds, gene="Mcavernosa29964", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa29964, file = "Mcavernosa29964.csv")
-
-Mcavernosa20827 <- plotCounts(dds, gene="Mcavernosa20827", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa20827, file = "Mcavernosa20827.csv")
-
-Mcavernosa71973 <- plotCounts(dds, gene="Mcavernosa71973", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa71973, file = "Mcavernosa71973.csv")
-
-Mcavernosa126229 <- plotCounts(dds, gene="Mcavernosa126229", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa126229, file = "Mcavernosa126229.csv")
-
-Mcavernosa96261 <- plotCounts(dds, gene="Mcavernosa96261", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa96261, file = "Mcavernosa96261.csv")
-
-Mcavernosa162020 <- plotCounts(dds, gene="Mcavernosa162020", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa162020, file = "Mcavernosa162020.csv")
-
-Mcavernosa317111 <- plotCounts(dds, gene="Mcavernosa317111", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa317111, file = "Mcavernosa317111.csv")
-
-Mcavernosa43057 <- plotCounts(dds, gene="Mcavernosa43057", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa43057, file = "Mcavernosa43057.csv")
-
-Mcavernosa10151 <- plotCounts(dds, gene="Mcavernosa10151", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa10151, file = "Mcavernosa10151.csv")
