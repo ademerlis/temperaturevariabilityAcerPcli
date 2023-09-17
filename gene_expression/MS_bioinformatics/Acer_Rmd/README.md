@@ -200,3 +200,18 @@ Then I looked at PC axes 2 and 3, and there was still a separation of genotype, 
 2. Correlation plots for pairwise comparisons of treatment_time based on KOG enrichment for **fold change**.
    
 <img width="689" alt="Screen Shot 2023-09-16 at 8 08 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0f1604ff-079f-466d-9766-7e9ddaf46b10">
+
+### 10) GO-MWU Plots
+
+### 11) Volcano Plots
+
+<img width="1227" alt="Screen Shot 2023-09-17 at 6 25 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e46aba63-8ebd-4811-b40e-87efae869026">
+
+<img width="1235" alt="Screen Shot 2023-09-17 at 6 29 05 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/19419923-7fe5-47c2-9ff3-a09ba3909f0f">
+
+<img width="1227" alt="Screen Shot 2023-09-17 at 6 31 30 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0a04e1a4-d2c5-4b4c-9a59-457ffd882d5e">
+
+<img width="1230" alt="Screen Shot 2023-09-17 at 6 32 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/aa450d8c-31c5-46c1-a0d9-d606d3d68a9f">
+
+
+
