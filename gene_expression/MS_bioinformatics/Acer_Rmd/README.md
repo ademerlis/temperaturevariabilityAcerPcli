@@ -11,8 +11,8 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#5-density-plot-for-degs)
 6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#6-venn-diagram-for-degs)
 7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
-8. KOG-MWU heatmaps
-9. KOG-MWU correlation plots
+8. [KOG-MWU heatmaps](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#8-kog-mwu-heatmaps)
+9. [KOG-MWU correlation plots](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#9-kog-mwu-correlation-plots)
 10. GO-MWU Analysis
 11. Volcano Plots
 12. WGCNA
