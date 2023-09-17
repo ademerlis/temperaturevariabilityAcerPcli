@@ -13,9 +13,9 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
 8. [KOG-MWU heatmaps](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#8-kog-mwu-heatmaps)
 9. [KOG-MWU correlation plots](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#9-kog-mwu-correlation-plots)
-10. GO-MWU Analysis
-11. Volcano Plots
-12. WGCNA
+10. [Volcano Plots]()
+11. WGCNA
+12. GO-MWU Analysis of WGCNA Modules 
 13. Orthofinder
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
@@ -201,9 +201,7 @@ Then I looked at PC axes 2 and 3, and there was still a separation of genotype, 
    
 <img width="689" alt="Screen Shot 2023-09-16 at 8 08 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0f1604ff-079f-466d-9766-7e9ddaf46b10">
 
-### 10) GO-MWU Plots
-
-### 11) Volcano Plots
+### 10) Volcano Plots
 
 <img width="1227" alt="Screen Shot 2023-09-17 at 6 25 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e46aba63-8ebd-4811-b40e-87efae869026">
 
