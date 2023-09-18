@@ -11,13 +11,12 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#5-density-plot-for-degs)
 6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#6-venn-diagram-for-degs)
 7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
-8. Volcano Plots
-9. KOG-MWU heatmaps
-10. KOG-MWU correlations
-11. GO-MWU Analysis
-12. WGCNA
+8. [KOG-MWU heatmaps](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#8-kog-mwu-heatmaps)
+9. [KOG-MWU correlation plots](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#9-kog-mwu-correlation-plots)
+10. [Volcano Plots](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#10-volcano-plots)
+11. WGCNA
+12. GO-MWU Analysis of WGCNA Modules 
 13. Orthofinder
-
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
 
@@ -174,6 +173,43 @@ Separating each genotype out:
 <img width="624" alt="Screen Shot 2023-09-16 at 7 14 25 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/908c3d1f-e72e-45c0-b201-4bd5ccb1940f">
 
 Too few samples on Day 29 to create an ellipse.
+
+Then I looked at PC axes 2 and 3, and there was still a separation of genotype, but also a clear separation of time point.
+
+<img width="622" alt="Screen Shot 2023-09-16 at 7 51 19 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/914f1a47-729f-4316-8ea7-bbc904893d86">
+
+<img width="631" alt="Screen Shot 2023-09-16 at 7 51 35 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5b8b671c-4b0c-4cd1-bbcb-24610ecbcd46">
+
+### 8) KOG-MWU Heatmaps
+
+1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed p-values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+    
+<img width="605" alt="Screen Shot 2023-09-16 at 8 03 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0d5300c4-4f92-4d73-9543-f7bcb2f7cc9e">
+
+2. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **fold change**. Note that the scale of the heatmap is not fold change, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+
+<img width="579" alt="Screen Shot 2023-09-16 at 8 06 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/071364f7-a0b5-465f-b804-b74b7b4f64f1">
+
+
+### 9) KOG-MWU Correlation plots
+
+1. Correlation plots for pairwise comparisons of treatment_time based on KOG enrichment for **log-transformed p-values**.
+   
+<img width="692" alt="Screen Shot 2023-09-16 at 8 08 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bd2c6b13-afa6-4b0e-a1c0-8462e09e312f">
+
+2. Correlation plots for pairwise comparisons of treatment_time based on KOG enrichment for **fold change**.
+   
+<img width="689" alt="Screen Shot 2023-09-16 at 8 08 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0f1604ff-079f-466d-9766-7e9ddaf46b10">
+
+### 10) Volcano Plots
+
+<img width="1227" alt="Screen Shot 2023-09-17 at 6 25 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e46aba63-8ebd-4811-b40e-87efae869026">
+
+<img width="1235" alt="Screen Shot 2023-09-17 at 6 29 05 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/19419923-7fe5-47c2-9ff3-a09ba3909f0f">
+
+<img width="1227" alt="Screen Shot 2023-09-17 at 6 31 30 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0a04e1a4-d2c5-4b4c-9a59-457ffd882d5e">
+
+<img width="1230" alt="Screen Shot 2023-09-17 at 6 32 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/aa450d8c-31c5-46c1-a0d9-d606d3d68a9f">
 
 
 
