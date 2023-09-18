@@ -236,6 +236,7 @@ degs_control0_control29=row.names(control0_control29)[control0_control29$padj<0.
 
 save(treatment_time,variable29_control29,variable0_control0,variable0_variable29,control0_control29, degs_variable29_control29,degs_variable0_control0, degs_variable0_variable29, degs_control0_control29, file="pvals.RData")
 
+
 # density plots: are my DEGs high-abundant or low-abundant?
 load("vsd.RData")
 load("pvals.RData")
@@ -458,39 +459,82 @@ if (is.na(table(delta<0)[2])) {
 # non significant p value indicates treated corals are indistinguishable from healthy controls at t1
 
 
-#### CHERRY PICKING ####
 
-variable0_control0.p %>%
-  filter(abs(lpv) >= 1) %>%
-  left_join(read.table(file = "../Bioinformatics/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+#### ANNOTATING DGES ####
+load("RData_files/realModels_Acer.RData")
+load("RData_files/pvals.RData")
+
+as.data.frame(control0_control29) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
-  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) -> cherrypicking
-write.csv(cherrypicking, file = "variable0control0_cherrypicking.csv")
+  write_csv("control0_control29_annotatedDGEs.csv")
+  
 
-variable29_control29.p %>%
-  filter(abs(lpv) >= 1) %>%
-  left_join(read.table(file = "../Bioinformatics/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+as.data.frame(variable29_control29) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
-  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) -> cherrypicking
-write.csv(cherrypicking, file = "variable29control29_cherrypicking.csv")
+  write_csv("variable29_control29_annotatedDGEs.csv")
+
+as.data.frame(variable0_control0) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
+  write_csv("variable0_control0_annotatedDGEs.csv")
+
+as.data.frame(variable0_variable29) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
+  write_csv("variable0_variable29_annotatedDGEs.csv")
 
 
-#### GENE BOXPLOTS ####
+#### CHERRY PICKING ####
 
-library(DESeq2)
-library(ggpubr)
-load("realModels.RData")
+load("RData_files/variable0_control0_lpv.RData")
+variable0_control0.p %>%
+  filter(abs(lpv) >= 1) %>%
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
+  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
+  write.csv("variable0control0_cherrypicking.csv")
 
-# exporting counts of specific genes from immune-related searches
-Mcavernosa9810 <- plotCounts(dds, gene="Mcavernosa9810", intgroup="fate", returnData=TRUE)
-write.csv(Mcavernosa9810, file = "Mcavernosa9810.csv")
+load("RData_files/variable29_control29_lpv.RData")
+variable29_control29.p %>%
+  filter(abs(lpv) >= 1) %>%
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
+  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
+  write.csv("variable29control29_cherrypicking.csv")
+
 
 

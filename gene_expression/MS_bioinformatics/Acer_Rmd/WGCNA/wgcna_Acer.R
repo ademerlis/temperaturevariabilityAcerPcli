@@ -30,54 +30,31 @@ nrow(datt) #45
 head(design)
 str(design)
 
+#change treatment to be binary (control = 0, variable = 1)
+variable = as.numeric(design$Treatment=="variable")
+control = as.numeric(design$Treatment == "control")
+
 # assembling table of traits
 
 # coding genotype as binary (0/1, yes/no)
-# g302=as.numeric(design$genotype=="302")
-# g308=as.numeric(design$genotype=="308")
-# g314=as.numeric(design$genotype=="314")
-# g328A=as.numeric(design$genotype=="328A")
-# g337=as.numeric(design$genotype=="337")
-# g345=as.numeric(design$genotype=="345")
-# g367=as.numeric(design$genotype=="367")
-# g368=as.numeric(design$genotype=="368")
-# g381=as.numeric(design$genotype=="381")
-# g384=as.numeric(design$genotype=="384")
-# g386=as.numeric(design$genotype=="386")
-# g387=as.numeric(design$genotype=="387")
-# g388=as.numeric(design$genotype=="388")
-# g396=as.numeric(design$genotype=="396")
-# g397=as.numeric(design$genotype=="397")
-# g398=as.numeric(design$genotype=="398")
-# g406=as.numeric(design$genotype=="406")
-# g410=as.numeric(design$genotype=="410")
-# g415=as.numeric(design$genotype=="415")
-# g416=as.numeric(design$genotype=="416")
-# g417=as.numeric(design$genotype=="417")
-# g418=as.numeric(design$genotype=="418")
-# g419=as.numeric(design$genotype=="419")
-# g420=as.numeric(design$genotype=="420")
-# g426=as.numeric(design$genotype=="426")
-# g427=as.numeric(design$genotype=="427")
-# g428=as.numeric(design$genotype=="428")
-# g430=as.numeric(design$genotype=="430")
-# g434=as.numeric(design$genotype=="434")
-# g435=as.numeric(design$genotype=="435")
-# g447=as.numeric(design$genotype=="447")
-# g448=as.numeric(design$genotype=="448")
-# g449=as.numeric(design$genotype=="449")
-# g450=as.numeric(design$genotype=="450")
+design$Genotype
+SI_C = as.numeric(design$Genotype == "SI-C")
+BC_8b = as.numeric(design$Genotype == "BC-8b")
+MB_B = as.numeric(design$Genotype == "MB-B")
 
-# t0=as.numeric(design$time=="0")
-# t1=as.numeric(design$time=="1")
+#change time point to be binary (for day0, when time_point = Day_0 it encodes it as "1". for day_29 same thing)
+Day0 = as.numeric(design$time_point=="Day_0")
+Day29 =as.numeric(design$time_point=="Day_29")
 
-healthy0=as.numeric(design$treatment.time=="control.0")
-healthy1=as.numeric(design$treatment.time=="control.1")
-diseased=as.numeric(design$treatment.time=="sctld.0")
-treated=as.numeric(design$treatment.time=="sctld.1")
+#change group to be binary
+design$group
+control_Day0 = as.numeric(design$group=="control_Day_0")
+control_Day29 = as.numeric(design$group=="control_Day_29")
+variable_Day0 = as.numeric(design$group=="variable_Day_0")
+variable_Day29 = as.numeric(design$group=="variable_Day_29")
 
-# traits <- data.frame(cbind(g302, g308, g314, g328A, g337, g345, g367, g368, g381, g384, g386, g387, g388, g396, g397, g398, g406, g410, g415, g416, g417, g418, g419, g420, g426, g427, g428, g430, g434, g435, g447, g448, g449, g450, t0, t1, healthy0, healthy1, diseased, treated))
-traits <- data.frame(cbind(healthy0, healthy1, diseased, treated))
+traits <- data.frame(cbind(variable, control, SI_C,BC_8b, MB_B, Day0, Day29, control_Day0, control_Day29, variable_Day0, variable_Day29))
+#traits <- data.frame(cbind(healthy0, healthy1, diseased, treated))
 traits
 
 
@@ -86,6 +63,7 @@ traits
 # identifies outlier genes
 gsg = goodSamplesGenes(datt, verbose = 3);
 gsg$allOK #if TRUE, no outlier genes
+#TRUE!
 
 # calculates mean expression per array, then the number of missing values per array
 meanExpressionByArray=apply( datt,1,mean, na.rm=T)
@@ -95,11 +73,11 @@ NumberMissingByArray
 # in this case, all samples OK
 
 # plots mean expression across all samples
-pdf("sample mean expression.pdf",height=4, width=8)
+pdf("sample_mean_expression.pdf",height=4, width=8)
 barplot(meanExpressionByArray,
         xlab = "Sample", ylab = "Mean expression",
         main ="Mean expression across samples",
-        names.arg = c(1:60), cex.names = 0.7)
+        names.arg = c(1:45), cex.names = 0.7)
 dev.off()
 # look for any obvious deviations in expression across samples
 
@@ -125,7 +103,7 @@ plotDendroAndColors(sampleTree,groupLabels=names(datColors), colors=datColors,ma
 # Remove outlying samples from expression and trait data
 remove.samples= Z.k<thresholdZ.k | is.na(Z.k)
 datt=datt[!remove.samples,]
-traits=traits[!remove.samples,]
+traits=traits[!remove.samples,] #1 sample removed
 
 # following eigengene sanity checks (below), found several outliers
 # use these to remove, then rerun as before
