@@ -205,6 +205,8 @@ Then I looked at PC axes 2 and 3, and there was still a separation of genotype, 
 
 ### 10) Volcano Plots
 
+NOTE: for all volcano plots, the y-axis is p-adjusted value, I just didn't change the label to say that and got lazy.
+
 <img width="1227" alt="Screen Shot 2023-09-17 at 6 25 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e46aba63-8ebd-4811-b40e-87efae869026">
 
 <img width="1235" alt="Screen Shot 2023-09-17 at 6 29 05 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/19419923-7fe5-47c2-9ff3-a09ba3909f0f">
