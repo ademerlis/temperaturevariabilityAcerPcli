@@ -303,3 +303,9 @@ Eigengene sanity check -- look and see if any of the significant modules are dri
 
 <img width="871" alt="Screen Shot 2023-09-19 at 1 46 13 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/254b1c80-72e5-484e-b10e-e5f96572e45d">
 
+Then you can make a heatmap for the top 30 genes in each module.
+
+Here is the heatmap for turquoise. This seems way too hard to read as a heatmap so idk how useful it is. Would probably be bettr if the samples on the x axis were clustered.
+
+<img width="1301" alt="Screen Shot 2023-09-19 at 3 13 20 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b6eaba87-0365-4101-8f4e-1d6f9c1e5772">
+
