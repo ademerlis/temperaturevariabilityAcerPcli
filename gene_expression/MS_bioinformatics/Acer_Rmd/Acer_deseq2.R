@@ -129,7 +129,7 @@ save(vsd.wg,design,file="data4wgcna.RData")
 #### PCOA and PERMANOVA ####
 
 # heatmap and hierarchical clustering:
-load("vsd.RData")
+load("~/OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/RData_files/vsd.RData")
 library(pheatmap)
 # similarity among samples
 pdf(file="heatmap_fullmodel.pdf", width=15, height=15)
@@ -160,7 +160,7 @@ dev.off()
 #there are 3 "good PCs" based on this figure
 
 # plotting PCoA by treatment and time
-pdf(file="PCoA.pdf", width=12, height=6)
+pdf(file="OneDrive - University of Miami/GitHub/PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
 ordispider(scores, conditions$Treatment, label=F, col=c("red","blue"))

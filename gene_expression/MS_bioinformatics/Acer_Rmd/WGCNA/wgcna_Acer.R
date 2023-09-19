@@ -122,12 +122,12 @@ library(flashClust)
 library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
-load("wgcnaData.RData")
+load("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/RData_files/wgcnaData.RData")
 
 # Try different betas ("soft threshold") - power factor for calling connections between genes
 powers = c(seq(from = 2, to=26, by=1))
 # Call the network topology analysis function
-sft = pickSoftThreshold(datt, powerVector = powers, verbose = 5,networkType="signed")
+sft = pickSoftThreshold(datt, powerVector = powers, verbose = 8,networkType="signed")
 
 # Plot the results:
 # Run from the line below to dev.off()
@@ -160,13 +160,18 @@ dev.off()
 # take a look at the threshold plots produced above, and the output table from the pickSoftThreshold command
 # pick the power that corresponds with a SFT.R.sq value above 0.90
 
+#none of them are above 0.90....the closest is 0.897 and that corresponds to sft power of 21
+
 # run from the line below to the save command
-s.th=17 # re-specify according to previous section
+s.th=21 # re-specify according to previous section
 adjacency = adjacency(datt, power = s.th,type="signed");
 TOM = TOMsimilarity(adjacency,TOMType="signed");
+rm(adjacency) #for memory space
 dissTOM = 1-TOM
+rm(TOM)
 # Call the hierarchical clustering function
 geneTree = flashClust(as.dist(dissTOM), method = "average")
+
 plot(geneTree, xlab="", sub="", main="Gene Clustering on TOM-based dissimilarity", labels= FALSE,hang=0.04)
 
 # We like large modules, so we set the minimum module size relatively high:
@@ -180,10 +185,7 @@ table(dynamicColors)
 # Calculate eigengenes
 MEList = moduleEigengenes(datt, colors = dynamicColors)
 MEs = MEList$eigengenes
-# the grey module contains unassigned genes and is not considered a real module
-# if you have error messages trying to generate the eigengene correlations, run this below
-# check MEs, if grey shows NaN for all samples, then make sure to eliminate it using removeGreyME
-# MEs = removeGreyME(MEs, greyMEName = paste(moduleColor.getMEprefix(), "grey", sep=""))
+
 # Calculate dissimilarity of module eigengenes
 MEDiss = 1-cor(MEs);
 METree = flashClust(as.dist(MEDiss), method = "average");
@@ -231,10 +233,7 @@ MEs = mergedMEs;
 
 # Calculate dissimilarity of module eigengenes
 quartz()
-# the grey module contains unassigned genes and is not considered a real module
-# if you have error messages trying to generate the eigengene correlations, run this below
-# check MEs, if grey shows NaN for all samples, then make sure to eliminate it using removeGreyME
-# MEs = removeGreyME(MEs, greyMEName = paste(moduleColor.getMEprefix(), "grey", sep=""))
+
 MEDiss = 1-cor(MEs);
 # Cluster module eigengenes
 METree = flashClust(as.dist(MEDiss), method = "average");
@@ -255,8 +254,8 @@ load(file = "networkdata_signed.RData")
 load(file = "wgcnaData.RData");
 
 # Define numbers of genes and samples
-nGenes = ncol(datt);
-nSamples = nrow(datt);
+nGenes = ncol(datt); #27829
+nSamples = nrow(datt); #44
 # Recalculate MEs with color labels
 MEs0 = moduleEigengenes(datt, moduleColors)$eigengenes
 MEs = orderMEs(MEs0)
@@ -302,7 +301,6 @@ textMatrix = cors;
 # paste(cors, "\n(",ps, ")", sep = "");
 textMatrix[ps>0.05]="-"
 dim(textMatrix) = dim(moduleTraitCor)
-
 par(mar = c(6, 8.5, 3, 3));
 # Display the correlation values within a heatmap plot
 labeledHeatmap(Matrix = moduleTraitCor,
@@ -315,18 +313,20 @@ labeledHeatmap(Matrix = moduleTraitCor,
                setStdMargins = FALSE,
                cex.text = 0.7,
                zlim = c(-0.7,0.7),
-               main = paste("M. cavernosa Module-Trait correlations"))
+               main = paste("A.cervicornis Module-Trait correlations"))
 
 # module size barplot
-labelShift=750 # increase to move module size labels to the right
 quartz()
+labelShift=750 # increase to move module size labels to the right
 par(mar = c(6, 8.5, 3, 3));
 mct=table(moduleColors)
 mct[modLabels]
 x=barplot(mct[rev(modLabels)],horiz=T,las=1,xlim=c(0,16000),col=rev(modLabels))
 text(mct[rev(modLabels)]+labelShift,y=x,mct[rev(modLabels)],cex=0.9) 
 
-# If it was first pass with no module merging, this is where you examine your heatmap and dendrogram of module eigengenes to see where you would like to set cut height (MEDissThres parameter) in the previous section to merge modules that are telling the same story for your trait data 
+# If it was first pass with no module merging, this is where you examine your heatmap and dendrogram of module eigengenes 
+#to see where you would like to set cut height (MEDissThres parameter) 
+#in the previous section to merge modules that are telling the same story for your trait data 
 # A good way to do it is to find a group of similar modules in the heat map and then see at which tree height they connect in the dendrogram
 
 #### GO BACK AND MERGE ####
@@ -341,9 +341,10 @@ traits
 table(moduleColors)
 
 # run for each of these statements individually
-# whichTrait="healthy0"
-# whichTrait="healthy1"
-# whichTrait="diseased"
+whichTrait="control_Day0"
+
+whichTrait="healthy1"
+whichTrait="diseased"
 whichTrait="treated"
 
 nGenes = ncol(datt);
@@ -362,27 +363,27 @@ names(geneTraitSignificance) = paste("GS.", names(selTrait), sep="");
 names(GSPvalue) = paste("p.GS.", names(selTrait), sep="");
 
 # selecting specific modules to plot (change depending on which trait you're looking at)
-# moduleCols=c("greenyellow","darkred", "purple","salmon") # for healthy0
+moduleCols=c("purple","salmon") # for control_Day0
 # moduleCols=c("darkred","salmon") # for healthy1
 # moduleCols=c("greenyellow", "grey60","purple","darkgreen","pink") # for diseased
 moduleCols=c("pink","grey") # for treated
 
 quartz()
 # set par to be big enough for all significant module correlations, then run the next whichTrait and moduleCols statements above and repeat from the 'for' loop
-# par(mfrow=c(1,4)) # for healthy0
+par(mfrow=c(1,2)) # for control_Day0
 # par(mfrow=c(1,2)) # for healthy1
 # par(mfrow=c(1,5)) # for diseased
 par(mfrow=c(1,2)) # for treated
 
 counter=0
 # shows correlations for all modules
-# for(module in modNames[1:length(modNames)]){
-# counter=counter+1
-# if (counter>9) {
-# 	quartz()
-# 	par(mfrow=c(3,3))
-# 	counter=1
-# }
+for(module in modNames[1:length(modNames)]){
+counter=counter+1
+if (counter>9) {
+quartz()
+	par(mfrow=c(3,3))
+	counter=1
+ }}
 # shows correlations for significant modules only as specified above
 for (module in moduleCols) {
   column = match(module, modNames);
