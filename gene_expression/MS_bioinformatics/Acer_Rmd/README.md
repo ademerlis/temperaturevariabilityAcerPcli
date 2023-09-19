@@ -93,7 +93,8 @@ How many good PCs are there? Look for the number of black points above the line 
 
 Now plot the PCoA by treatment and time point.
 
-<img width="701" alt="Screen Shot 2023-08-24 at 10 47 46 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b2a85929-dcc6-4f1d-852f-8518a511ab2a">
+<img width="773" alt="Screen Shot 2023-09-19 at 12 52 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/51edd2bf-6ffd-4f65-8f1f-aec5f7db8cb4">
+
 
 Neighbor-joining tree of samples (based on significant PCoA's).
 
