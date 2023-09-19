@@ -452,7 +452,7 @@ names(allkME)=gsub("kME","",names(allkME))
 
 # run for each of these statements individually
 
-which.module="turquoise"
+#which.module="turquoise"
 #which.module="midnightblue"
 #which.module="darkred"
 #which.module="pink"
@@ -474,27 +474,29 @@ write.csv(combo,file=paste(which.module,".csv",sep=""),row.names=F,quote=F)
 
 # plotting heatmap for named top-kME genes
 library(WGCNA)
-load(file = "networkdata_signed.RData")
-load(file = "data4wgcna.RData") 
-load(file = "wgcnaData.RData");
+load(file = "RData_files/networkdata_signed.RData")
+load(file = "RData_files/data4wgcna.RData") 
+load(file = "RData_files/wgcnaData.RData");
 allkME =as.data.frame(signedKME(datt, MEs))
-gg=read.delim(file="Mcavernosa2015_iso2geneName.tab",sep="\t")
+gg=read.delim(file="~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",sep="\t")
 library(pheatmap)
 
-whichModule="greenyellow"
-# whichModule="darkred"
-# whichModule="grey60"
-# whichModule="purple"
-# whichModule="salmon"
-# whichModule="darkgreen"
-# whichModule="pink"
+which.module="turquoise"
+#which.module="midnightblue"
+#which.module="darkred"
+#which.module="pink"
+#which.module="cyan"
+#which.module="green"
+#which.module="purple"
+#which.module="grey"
+which.module="salmon"
 
 top=30 # number of named top-kME genes to plot
 
 datME=MEs
 datExpr=datt
-modcol=paste("kME",whichModule,sep="")
-sorted=vsd.wg[order(allkME[,modcol],decreasing=T),]
+modcol=paste("kME",which.module,sep="")
+sorted=vsd.wg[order(allkME[modcol,],decreasing=T),] #Warning message:In xtfrm.data.frame(x) : cannot xtfrm data frames
 head(sorted)
 # selection top N names genes, attaching gene names
 gnames=c();counts=0;hubs=c()
@@ -517,27 +519,9 @@ contrasting = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","c
 # contrasting2 = colorRampPalette(rev(c("chocolate1","chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
 # contrasting3 = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan","cyan")))(100)
 
-pdf(file="heatmap_top30_greenyellow.pdf", height=6, width=18)
+pdf(file="heatmap_top30_turquoise.pdf", height=6, width=18)
 pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
 dev.off()
-# pdf(file="heatmap_top30_darkred.pdf", height=6, width=16)
-# pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
-# dev.off()
-# pdf(file="heatmap_top30_grey60.pdf", height=6, width=22)
-# pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
-# dev.off()
-# pdf(file="heatmap_top30_purple.pdf", height=6, width=17)
-# pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
-# dev.off()
-# pdf(file="heatmap_top30_salmon.pdf", height=6, width=18)
-# pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
-# dev.off()
-# pdf(file="heatmap_top30_darkgreen.pdf", height=6, width=15)
-# pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
-# dev.off()
-# pdf(file="heatmap_top30_pink.pdf", height=6, width=14)
-# pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
-# dev.off()
 
 
 #### HUB GENES ####
@@ -559,11 +543,11 @@ hubgenes
 hubgenes %>%
   rename("gene" = 
            hubgenes) %>%
-  left_join(read.table(file = "../../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     annot_mcav = V2) %>%
+                     annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene") -> hubgenes
 hubgenes
 
