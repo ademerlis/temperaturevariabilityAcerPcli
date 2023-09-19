@@ -263,9 +263,43 @@ Module size barplot:
 
 <img width="656" alt="Screen Shot 2023-09-18 at 3 20 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/93ce5182-6d94-495c-8488-4609561d10e7">
 
+Correlations for significant modules:
 
+1. Control_Day0
 
+<img width="1034" alt="Screen Shot 2023-09-19 at 1 30 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f86c1d1a-2800-4b4f-b32c-190b1ef0b233">
 
+2. Control_Day29
 
+<img width="886" alt="Screen Shot 2023-09-19 at 1 33 33 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/152a78f8-ad42-41f4-89ec-8637f48460af">
 
+3. Variable_Day0
+
+<img width="999" alt="Screen Shot 2023-09-19 at 1 35 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2c9b6e31-a829-4ea5-8a15-a31efa95f8e0">
+
+4. Variable_Day29
+
+<img width="1144" alt="Screen Shot 2023-09-19 at 1 38 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ec9fac6b-15dc-4a72-8fcb-c0bf857c8ea6">
+
+Eigengene sanity check -- look and see if any of the significant modules are driven by one sample. This means the sample is likely an outlier and the module should be dropped from downstream analysis.
+
+<img width="856" alt="Screen Shot 2023-09-19 at 1 40 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/96a34b5d-9bd2-426f-845a-620cf2623f6b">
+
+<img width="851" alt="Screen Shot 2023-09-19 at 1 41 25 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b11db88e-6465-4b92-96cd-1b5b93fa8ddc">
+
+<img width="868" alt="Screen Shot 2023-09-19 at 1 41 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d44eabfd-85f2-4375-b142-c8396aa05ce2">
+
+<img width="856" alt="Screen Shot 2023-09-19 at 1 42 38 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/1b43339d-5bb2-4051-ad12-6d654e4b0164">
+
+<img width="868" alt="Screen Shot 2023-09-19 at 1 43 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d3d80fb-07de-4f97-a86f-0109d6369f5a">
+
+<img width="865" alt="Screen Shot 2023-09-19 at 1 43 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/24986a4c-8ecc-4fd1-a8dc-c036bb6d7635">
+
+<img width="857" alt="Screen Shot 2023-09-19 at 1 44 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/da0ad340-a7b5-4210-8f5b-f093e0eb3673">
+
+<img width="863" alt="Screen Shot 2023-09-19 at 1 44 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3e9bb541-c5a0-49c4-8349-493a6107527c">
+
+<img width="864" alt="Screen Shot 2023-09-19 at 1 45 35 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/740dcf19-a528-4982-bed3-46c345e5f406">
+
+<img width="871" alt="Screen Shot 2023-09-19 at 1 46 13 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/254b1c80-72e5-484e-b10e-e5f96572e45d">
 
