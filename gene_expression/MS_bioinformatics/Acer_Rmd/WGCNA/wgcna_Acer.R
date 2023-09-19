@@ -17,6 +17,7 @@ library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
 
+setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
 
 #### DATA IMPORT and TRAITS ####
 
@@ -73,7 +74,7 @@ NumberMissingByArray
 # in this case, all samples OK
 
 # plots mean expression across all samples
-pdf("sample_mean_expression.pdf",height=4, width=8)
+pdf("~/OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/WGCNA/sample_mean_expression.pdf",height=4, width=8)
 barplot(meanExpressionByArray,
         xlab = "Sample", ylab = "Mean expression",
         main ="Mean expression across samples",
@@ -250,8 +251,8 @@ save(MEs, geneTree, moduleLabels, moduleColors, file = "networkdata_signed.RData
 
 #### MODULE CORRELATIONS ####
 # plotting correlations with traits:
-load(file = "networkdata_signed.RData")
-load(file = "wgcnaData.RData");
+load(file = "RData_files/networkdata_signed.RData")
+load(file = "RData_files/wgcnaData.RData");
 
 # Define numbers of genes and samples
 nGenes = ncol(datt); #27829
@@ -330,22 +331,21 @@ text(mct[rev(modLabels)]+labelShift,y=x,mct[rev(modLabels)],cex=0.9)
 # A good way to do it is to find a group of similar modules in the heat map and then see at which tree height they connect in the dendrogram
 
 #### GO BACK AND MERGE ####
-
+#done!
 
 #### MODULE MEMBERSHIP SCATTERPLOTS ####
 
 # scatterplots of gene significance (correlation-based) vs kME
-load(file = "networkdata_signed.RData")
-load(file = "wgcnaData.RData");
+load(file = "RData_files/networkdata_signed.RData")
+load(file = "RData_files/wgcnaData.RData");
 traits
 table(moduleColors)
 
 # run for each of these statements individually
-whichTrait="control_Day0"
-
-whichTrait="healthy1"
-whichTrait="diseased"
-whichTrait="treated"
+#whichTrait="control_Day0"
+#whichTrait="control_Day29"
+#whichTrait="variable_Day0"
+whichTrait="variable_Day29"
 
 nGenes = ncol(datt);
 nSamples = nrow(datt);
@@ -363,27 +363,27 @@ names(geneTraitSignificance) = paste("GS.", names(selTrait), sep="");
 names(GSPvalue) = paste("p.GS.", names(selTrait), sep="");
 
 # selecting specific modules to plot (change depending on which trait you're looking at)
-moduleCols=c("purple","salmon") # for control_Day0
-# moduleCols=c("darkred","salmon") # for healthy1
-# moduleCols=c("greenyellow", "grey60","purple","darkgreen","pink") # for diseased
-moduleCols=c("pink","grey") # for treated
+#moduleCols=c("turquoise","midnightblue", "darkred") # for control_Day0
+#moduleCols=c("pink","turquoise", "cyan", "green", "purple", "grey") # for control_Day29
+#moduleCols=c("green", "darkorange","turquoise","pink") # for variable_Day0
+moduleCols=c("grey", "turquoise", "cyan", "green", "darkred", "salmon", "midnightblue") # for variable_Day29
 
 quartz()
-# set par to be big enough for all significant module correlations, then run the next whichTrait and moduleCols statements above and repeat from the 'for' loop
-par(mfrow=c(1,2)) # for control_Day0
-# par(mfrow=c(1,2)) # for healthy1
-# par(mfrow=c(1,5)) # for diseased
-par(mfrow=c(1,2)) # for treated
+# set par to be big enough for all significant module correlations, 
+#then run the next whichTrait and moduleCols statements above and repeat from the 'for' loop
+#par(mfrow=c(1,4)) # for control_Day0
+#par(mfrow=c(3,3)) # for control_Day29
+#par(mfrow=c(1,4)) # for variable_Day0
+par(mfrow=c(3,3)) # for variable_Day29
 
 counter=0
 # shows correlations for all modules
 for(module in modNames[1:length(modNames)]){
-counter=counter+1
-if (counter>9) {
+counter=counter+1}
+
 quartz()
 	par(mfrow=c(3,3))
-	counter=1
- }}
+
 # shows correlations for significant modules only as specified above
 for (module in moduleCols) {
   column = match(module, modNames);
@@ -403,18 +403,21 @@ col = "grey50",mgp=c(2.3,1,0))
 
 # eigengene-heatmap plot (sanity check - is the whole module driven by just one crazy sample?)
 # note: this part does not make much sense for unsigned modules
-load(file = "networkdata_signed.RData")
-load(file = "wgcnaData.RData");
+load(file = "RData_files/networkdata_signed.RData")
+load(file = "RData_files/wgcnaData.RData");
 
 # run for each of these statements individually
-# which.module="greenyellow"
-# which.module="darkred"
-# which.module="grey60"
-# which.module="purple"
-# which.module="salmon"
-# which.module="darkgreen"
-# which.module="pink"
-which.module="grey"
+#which.module="turquoise"
+#which.module="midnightblue"
+#which.module="darkred"
+#which.module="pink"
+#which.module="cyan"
+#which.module="green"
+#which.module="purple"
+#which.module="grey"
+#which.module="darkorange"
+which.module="salmon"
+
 
 datME=MEs
 datExpr=datt
@@ -431,37 +434,40 @@ ylab="eigengene expression",xlab="sample")
 length(datExpr[1,moduleColors==which.module ]) # number of genes in chosen module
 
 # If individual samples appear to be driving expression of significant modules, they are likely outliers
-# dropping grey module
+
+# idk they all look fine
 
 
 #### GO/KOG EXPORT ####
 
 # saving selected modules for GO and KOG analysis (two-parts: Fisher test, MWU test within-module)
 library(WGCNA)
-load(file = "networkdata_signed.RData") # moduleColors, MEs
-load(file = "wgcnaData.RData") # vsd table
-load(file = "data4wgcna.RData") # vsd table
+load(file = "RData_files/networkdata_signed.RData") # moduleColors, MEs
+load(file = "RData_files/wgcnaData.RData") # vsd table
+load(file = "RData_files/data4wgcna.RData") # vsd table
 
 # calculating modul memberships for all genes for all modules
 allkME =as.data.frame(signedKME(datt, MEs)) 
 names(allkME)=gsub("kME","",names(allkME))
 
 # run for each of these statements individually
-# not exporting red since it was driven by one outlier sample
-# whichModule="greenyellow"
-whichModule="darkred"
-# whichModule="grey60"
-# whichModule="purple"
-# whichModule="salmon"
-# whichModule="darkgreen"
-# whichModule="pink"
 
-table(moduleColors==whichModule) # how many genes are in it?
+which.module="turquoise"
+#which.module="midnightblue"
+#which.module="darkred"
+#which.module="pink"
+#which.module="cyan"
+#which.module="green"
+#which.module="purple"
+#which.module="grey"
+which.module="salmon"
+
+table(moduleColors==which.module) # how many genes are in it?
 
 # Saving data for Fisher-MWU combo test (GO_MWU)
-inModuleBinary=as.numeric(moduleColors==whichModule)
-combo=data.frame("gene"=row.names(vsd.wg),"Fish_kME"=allkME[,whichModule]*inModuleBinary)
-write.csv(combo,file=paste(whichModule,".csv",sep=""),row.names=F,quote=F)
+inModuleBinary=as.numeric(moduleColors==which.module)
+combo=data.frame("gene"=row.names(vsd.wg),"Fish_kME"=allkME[,which.module]*inModuleBinary)
+write.csv(combo,file=paste(which.module,".csv",sep=""),row.names=F,quote=F)
 
 
 #### HEATMAPS ####
