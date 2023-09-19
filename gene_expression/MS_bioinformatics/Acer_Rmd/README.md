@@ -95,6 +95,7 @@ Now plot the PCoA by treatment and time point.
 
 <img width="773" alt="Screen Shot 2023-09-19 at 12 52 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/51edd2bf-6ffd-4f65-8f1f-aec5f7db8cb4">
 
+Based on the dds.pcoa table, the % variation explained by each axis is 19.1% for axis 1 and 10.9% for axis 2.
 
 Neighbor-joining tree of samples (based on significant PCoA's).
 
