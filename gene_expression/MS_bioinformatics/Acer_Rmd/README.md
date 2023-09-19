@@ -93,7 +93,9 @@ How many good PCs are there? Look for the number of black points above the line 
 
 Now plot the PCoA by treatment and time point.
 
-<img width="701" alt="Screen Shot 2023-08-24 at 10 47 46 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b2a85929-dcc6-4f1d-852f-8518a511ab2a">
+<img width="773" alt="Screen Shot 2023-09-19 at 12 52 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/51edd2bf-6ffd-4f65-8f1f-aec5f7db8cb4">
+
+Based on the dds.pcoa table, the % variation explained by each axis is 19.1% for axis 1 and 10.9% for axis 2.
 
 Neighbor-joining tree of samples (based on significant PCoA's).
 
@@ -203,6 +205,8 @@ Then I looked at PC axes 2 and 3, and there was still a separation of genotype, 
 
 ### 10) Volcano Plots
 
+NOTE: for all volcano plots, the y-axis is p-adjusted value, I just didn't change the label to say that and got lazy.
+
 <img width="1227" alt="Screen Shot 2023-09-17 at 6 25 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e46aba63-8ebd-4811-b40e-87efae869026">
 
 <img width="1235" alt="Screen Shot 2023-09-17 at 6 29 05 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/19419923-7fe5-47c2-9ff3-a09ba3909f0f">
@@ -211,5 +215,91 @@ Then I looked at PC axes 2 and 3, and there was still a separation of genotype, 
 
 <img width="1230" alt="Screen Shot 2023-09-17 at 6 32 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/aa450d8c-31c5-46c1-a0d9-d606d3d68a9f">
 
+### 11) WGCNA
 
+Code for WGCNA is found [here](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/WGCNA/wgcna_Acer.R). 
+
+First part of WGCNA is outlier detection using goodSamplesGenes. No outliers detected here. Then plot the log-transformed variance-stabilized gene expression across all samples and look for any obvious deviations (there are none). 
+
+<img width="736" alt="Screen Shot 2023-09-19 at 1 03 49 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/86d46996-0de1-45e8-96b8-c525a481d8cc">
+
+Then plot a sample dendrogram to look for outliers.
+
+<img width="868" alt="Screen Shot 2023-09-19 at 1 05 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d324cbe2-2e92-408b-aa83-03568f03d115">
+
+One outlier was found, which was then removed using this code:
+
+```{r}
+remove.samples= Z.k<thresholdZ.k | is.na(Z.k)
+datt=datt[!remove.samples,]
+traits=traits[!remove.samples,] #1 sample removed
+```
+
+Next is the soft threshold. 
+
+<img width="769" alt="Screen Shot 2023-09-19 at 1 06 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2f1f7521-cf54-483a-9f9c-a9bf531fe938">
+
+The goal is to get something that corresponds to an R^2 cutoff of 0.90, but none of mine reached that. The closest is a sft power of 21 which had an sft R^2 of 0.897. 
+
+Then run adjacency -> TOM -> dissTOM to make a gene tree. Then make modules (started with minimum module size of 30), and then calculate eigengenes from there. 
+
+Do 2 passes of module generation, cluster dendrogram, and module correlations. In the first pass, don't set a threshold for module eigengene dissimilarity because we want to see how the module-trait heatmap is generated, then decide which modules look really similar and can be merged. 
+
+<img width="769" alt="Screen Shot 2023-09-19 at 1 11 36 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a4cb57b8-a840-4f61-8620-65f261a40f56">
+
+In the second pass, the ME dissimilarity threshold was set to 0.4 because that's what Michael used and it also looked like a good cut-off point. 
+
+<img width="753" alt="Screen Shot 2023-09-19 at 1 11 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b940d281-d63b-4f71-a834-0e878aa33ad9">
+
+Here are the unmerged vs merged modules in the dendrogram.
+
+<img width="759" alt="Screen Shot 2023-09-19 at 1 12 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/efbde41c-6be0-403d-97f3-af624a826138">
+
+Next, we correlate the modules to all the "traits" (conditions in the DESeq2 formula). 
+
+<img width="728" alt="Screen Shot 2023-09-19 at 1 14 23 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/fc26f843-c583-483d-8937-b0cafe03049a">
+
+Module size barplot: 
+
+<img width="656" alt="Screen Shot 2023-09-18 at 3 20 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/93ce5182-6d94-495c-8488-4609561d10e7">
+
+Correlations for significant modules:
+
+1. Control_Day0
+
+<img width="1034" alt="Screen Shot 2023-09-19 at 1 30 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f86c1d1a-2800-4b4f-b32c-190b1ef0b233">
+
+2. Control_Day29
+
+<img width="886" alt="Screen Shot 2023-09-19 at 1 33 33 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/152a78f8-ad42-41f4-89ec-8637f48460af">
+
+3. Variable_Day0
+
+<img width="999" alt="Screen Shot 2023-09-19 at 1 35 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2c9b6e31-a829-4ea5-8a15-a31efa95f8e0">
+
+4. Variable_Day29
+
+<img width="1144" alt="Screen Shot 2023-09-19 at 1 38 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ec9fac6b-15dc-4a72-8fcb-c0bf857c8ea6">
+
+Eigengene sanity check -- look and see if any of the significant modules are driven by one sample. This means the sample is likely an outlier and the module should be dropped from downstream analysis.
+
+<img width="856" alt="Screen Shot 2023-09-19 at 1 40 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/96a34b5d-9bd2-426f-845a-620cf2623f6b">
+
+<img width="851" alt="Screen Shot 2023-09-19 at 1 41 25 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b11db88e-6465-4b92-96cd-1b5b93fa8ddc">
+
+<img width="868" alt="Screen Shot 2023-09-19 at 1 41 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d44eabfd-85f2-4375-b142-c8396aa05ce2">
+
+<img width="856" alt="Screen Shot 2023-09-19 at 1 42 38 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/1b43339d-5bb2-4051-ad12-6d654e4b0164">
+
+<img width="868" alt="Screen Shot 2023-09-19 at 1 43 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d3d80fb-07de-4f97-a86f-0109d6369f5a">
+
+<img width="865" alt="Screen Shot 2023-09-19 at 1 43 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/24986a4c-8ecc-4fd1-a8dc-c036bb6d7635">
+
+<img width="857" alt="Screen Shot 2023-09-19 at 1 44 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/da0ad340-a7b5-4210-8f5b-f093e0eb3673">
+
+<img width="863" alt="Screen Shot 2023-09-19 at 1 44 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3e9bb541-c5a0-49c4-8349-493a6107527c">
+
+<img width="864" alt="Screen Shot 2023-09-19 at 1 45 35 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/740dcf19-a528-4982-bed3-46c345e5f406">
+
+<img width="871" alt="Screen Shot 2023-09-19 at 1 46 13 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/254b1c80-72e5-484e-b10e-e5f96572e45d">
 
