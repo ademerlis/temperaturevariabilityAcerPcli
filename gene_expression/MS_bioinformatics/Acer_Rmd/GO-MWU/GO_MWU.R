@@ -25,15 +25,16 @@
 # First, press command-D on mac or ctrl-shift-H in Rstudio and navigate to the directory containing scripts and input files. 
 #Then edit, mark and execute the following bits of code, one after another.
 
+setwd("GO-MWU/")
 
 # Edit these to match your data file names: 
-input="salmon.csv" # two columns of comma-separated values: gene id, continuous measure of significance. 
+input="cyan.csv" # two columns of comma-separated values: gene id, continuous measure of significance. 
 #To perform standard GO enrichment analysis based on Fisher's exact test, use binary measure (0 or 1, i.e., either sgnificant or not).
-goAnnotations="Mcavernosa2015_iso2go.tab" # two-column, tab-delimited, one line per gene, 
+goAnnotations="Acervicornis_iso2go.tab" # two-column, tab-delimited, one line per gene, 
 #multiple GO terms separated by semicolon. If you have multiple lines per gene, use nrify_GOtable.pl prior to running this script.
 goDatabase="go.obo" # download from http://www.geneontology.org/GO.downloads.ontology.shtml
 goDivision="BP" # either MF, or BP, or CC
-source("GO-MWU/gomwu.functions.R")
+source("gomwu.functions.R")
 
 
 # Calculating stats. It might take ~3 min for MF and BP. Do not rerun it if you just want to replot the data with different cutoffs, 
@@ -49,6 +50,10 @@ Module=TRUE,Alternative="g" # un-remark this if you are analyzing a SIGNED WGCNA
 #	Module=TRUE # un-remark this if you are analyzing an UNSIGNED WGCNA module 
 )
 # do not continue if the printout shows that no GO terms pass 10% FDR.
+
+#salmon CC - 0 GO terms at 10% FDR
+#salmon MF - 0 GO terms at 10% FDR
+#salmon BP - taking way too long
 
 # Plotting results
 quartz()
