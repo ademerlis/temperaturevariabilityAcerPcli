@@ -81,8 +81,9 @@ How many good PCs are there? Look for the number of black points above the line 
 
 Now plot the PCoA by treatment and time point.
 
-<img width="700" alt="Screen Shot 2023-08-24 at 1 34 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/1f327ca2-8f62-475d-9e36-914b9b8c8a22">
+<img width="1118" alt="Screen Shot 2023-09-20 at 12 58 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5d0311c1-4da9-4f54-b872-36dc41a666e2">
 
+Axis 1 is 14.7% of the variance, and axis 2 is 6.0% of the variance.
 
 Neighbor-joining tree of samples (based on significant PCoA's).
 
