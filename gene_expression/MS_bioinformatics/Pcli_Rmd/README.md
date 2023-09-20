@@ -1,4 +1,4 @@
-# Bioinformatics pipelines for *P.clivosa*
+# Bioinformatics pipeline for *P.clivosa*
 
 To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com/mstudiva/tag-based_RNAseq/blob/master/tagSeq_processing_README.txt)  that he ran in his HPC.
 
