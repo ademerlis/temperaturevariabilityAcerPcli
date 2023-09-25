@@ -1,5 +1,7 @@
 # Bioinformatics pipeline for *A.cervicornis*
 
+ARCHIVED because I ran the DESeq2 model backwards (~group + Genotype) instead of (~Genotype + group) because apparently you want the variable you care most about to come last in the model design. Also not all of these figures are useful anyways after going through all the results with Michael, so i'll make a new README.md file that has the more updated data and relevant results. Note that the at least so far in the re-do of the DESeq2 analysis, the results are very similar but some of the PERMANOVA numbers were a bit different (on the order of 0.001) so I'm still going to redo the entire analysis so I have the most up-to-date results.
+
 To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com/mstudiva/tag-based_RNAseq/blob/master/tagSeq_processing_README.txt)  that he ran in his HPC.
 
 ## Results
