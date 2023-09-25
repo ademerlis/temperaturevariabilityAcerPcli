@@ -67,20 +67,12 @@ design$Genotype <- as.factor(design$Genotype)
 design$Treatment <- as.factor(design$Treatment)
 design$group <- factor(paste0(design$Treatment, "_", design$time_point))
 
-design
-
-# order design file so that all variables are grouped in order in the csv itself (i.e. control x t0 x genet 1, control x t0 x genet 2, etc)
-
-design %>% 
-  arrange(Genotype, Treatment, time_point) -> design
-
-
-#### FULL MODEL DESIGN (group + Genotype) and OUTLIERS ####
+#### FULL MODEL DESIGN (Genotype + group) and OUTLIERS ####
 
 # make big dataframe including all factors and interaction, getting normalized data for outlier detection
-dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
 
-# reorders fate factor according to "control" vs "treatment" levels
+# reorders factor according to "control" vs "treatment" levels
 dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 
 # for large datasets, rlog may take too much time, especially for an unfiltered dataframe
@@ -108,7 +100,7 @@ counts4wgcna=counts4wgcna[,-outs]
 design=design[-outs,]
 
 # remaking model with outliers removed from dataset
-dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
 dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 
 # save all these dataframes as an Rdata package so you don't need to rerun each time
@@ -124,7 +116,7 @@ colnames(vsd)=snames
 save(vsd,design,file="vsd.RData")
 
 # more reduced stabilized dataset for WGCNA
-wg = DESeqDataSetFromMatrix(countData=counts4wgcna, colData=design, design=~ group + Genotype)
+wg = DESeqDataSetFromMatrix(countData=counts4wgcna, colData=design, design=~ Genotype + group)
 vsd.wg=assay(varianceStabilizingTransformation(wg), blind=TRUE)
 # vsd.wg=assay(rlog(wg), blind=TRUE)
 head(vsd.wg)
@@ -166,7 +158,7 @@ dev.off()
 #there are 3 "good PCs" based on this figure
 
 # plotting PCoA by treatment and time
-pdf(file="OneDrive - University of Miami/GitHub/PCoA.pdf", width=12, height=6)
+pdf(file="PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
 ordispider(scores, conditions$Treatment, label=F, col=c("red","blue"))
@@ -185,7 +177,7 @@ plot(tre,cex=0.8)
 dev.off()
 
 # formal analysis of variance in distance matricies: 
-ad=adonis2(t(vsd)~time_point*Treatment + Genotype,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd)~Genotype + time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 summary(ad)
 as.data.frame(ad)
