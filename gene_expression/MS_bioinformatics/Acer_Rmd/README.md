@@ -14,7 +14,7 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 8. [KOG-MWU heatmaps](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#8-kog-mwu-heatmaps)
 9. [KOG-MWU correlation plots](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#9-kog-mwu-correlation-plots)
 10. [Volcano Plots](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#10-volcano-plots)
-11. WGCNA
+11. [WGCNA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#11-wgcna)
 12. GO-MWU Analysis of WGCNA Modules 
 13. Orthofinder
 
@@ -305,7 +305,28 @@ Eigengene sanity check -- look and see if any of the significant modules are dri
 
 Then you can make a heatmap for the top 30 genes in each module.
 
-Here is the heatmap for turquoise. This seems way too hard to read as a heatmap so idk how useful it is. Would probably be bettr if the samples on the x axis were clustered.
+Here is the heatmap for turquoise. This seems way too hard to read as a heatmap so idk how useful it is. Would probably be better if the samples on the x axis were clustered.
 
 <img width="1301" alt="Screen Shot 2023-09-19 at 3 13 20 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b6eaba87-0365-4101-8f4e-1d6f9c1e5772">
 
+The grey and cyan modules are the only ones that are doing opposite things in variable_day29 and control_day29, so maybe look at those. 
+
+### 12) GO-MWU 
+
+### 13) Orthofinder
+
+1. Up- and down-regulated DGEs (pvalue not padj < 0.1) shared across variable_day0 vs control_day0 and variable_day29 vs control_day29, grouped by shared KOG terms
+
+<img width="729" alt="Screen Shot 2023-09-20 at 11 21 53 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/9405db4c-49aa-4734-bca7-33c8d59aed1d">
+
+2. Up- and down-regulated DGEs (pvalue not padj < 0.1) shared across control_day0 vs control_day29 and variable_day0 vs variable_day29, grouped by shared KOG terms
+
+ <img width="918" alt="Screen Shot 2023-09-20 at 11 39 30 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2ce920bd-f8f3-4c95-8560-3aeedcf221e8">
+
+Shared DGEs (up vs down) for v0c0 and v29c29 (pvalue < 0.1). 
+
+<img width="579" alt="Screen Shot 2023-09-20 at 12 01 31 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/9f5511b1-db00-467e-ab44-353d2d75c3a6">
+
+Shared DGEs (up vs down) for  and v29c29 (pvalue < 0.1). 
+
+<img width="635" alt="Screen Shot 2023-09-20 at 12 11 25 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/41f2331b-9544-4ba4-b8d3-642eea0dc95c">

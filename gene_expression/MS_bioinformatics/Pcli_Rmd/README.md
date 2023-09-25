@@ -81,8 +81,9 @@ How many good PCs are there? Look for the number of black points above the line 
 
 Now plot the PCoA by treatment and time point.
 
-<img width="700" alt="Screen Shot 2023-08-24 at 1 34 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/1f327ca2-8f62-475d-9e36-914b9b8c8a22">
+<img width="1118" alt="Screen Shot 2023-09-20 at 12 58 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5d0311c1-4da9-4f54-b872-36dc41a666e2">
 
+Axis 1 is 14.7% of the variance, and axis 2 is 6.0% of the variance.
 
 Neighbor-joining tree of samples (based on significant PCoA's).
 
@@ -148,5 +149,19 @@ Specific contrasts:
 <img width="622" alt="Screen Shot 2023-08-29 at 4 47 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d0c77eaf-88ff-406d-84c4-1517a15cc785">
 
 <img width="623" alt="Screen Shot 2023-08-29 at 4 47 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/84c6fe60-7919-4297-8756-55798456010a">
+
+<img width="618" alt="Screen Shot 2023-09-20 at 1 07 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/931961ca-3ac8-4071-a1cf-6732035bc210">
+
+<img width="622" alt="Screen Shot 2023-09-20 at 1 08 09 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/028043e8-dd07-417c-9ee2-8717aab7a4b7">
+
+<img width="627" alt="Screen Shot 2023-09-20 at 1 08 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2182201f-2302-4eec-9124-ef503b4d4c25">
+
+<img width="618" alt="Screen Shot 2023-09-20 at 1 08 45 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bac6761f-9286-4574-ad9e-f4b60cd9d264">
+
+<img width="621" alt="Screen Shot 2023-09-20 at 1 09 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/00150278-6da9-408c-9faa-00b0ffd33268">
+
+<img width="626" alt="Screen Shot 2023-09-20 at 1 09 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d326aa26-6eda-49b2-a10e-5b7c1dec0462">
+
+
 
 
