@@ -8,295 +8,208 @@ library(RColorBrewer)
 
 
 #### DESEQ IMPORT ####
+setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
 
-trans_diseased_healthy_lpv <- read.csv(file = "../../transmission/DESeq2/mcav2015/diseased_nai_lpv.csv") %>%
-  select(gene, lpv) %>%
-  rename("lpv_dh" = lpv)
+load("RData_files/control0_control29_lpv.RData")
+control0_control29.p <- control0_control29.p %>% rename("lpv_c0c29" = lpv)
 
-inter_diseased0_healthy0_lpv <- read.csv(file = "../DESeq2/mcav2015/diseased0_healthy0_lpv.csv") %>%
-  select(gene, lpv) %>%
-  rename("lpv_d0h0" = lpv)
+load("RData_files/variable0_control0_lpv.RData")
+variable0_control0.p <- variable0_control0.p %>% rename("lpv_v0c0" = lpv)
 
-inter_treated1_healthy1_lpv <- read.csv(file = "../DESeq2/mcav2015/treated1_healthy1_lpv.csv") %>%
-  select(gene, lpv) %>%
-  rename("lpv_t1h1" = lpv)
+load("RData_files/variable0_variable29_lpv.RData")
+variable0_variable29.p <- variable0_variable29.p %>% rename("lpv_v0v29" = lpv)
 
-inter_treated1_diseased0_lpv <- read.csv(file = "../DESeq2/mcav2015/treated1_diseased0_lpv.csv") %>%
-  select(gene, lpv) %>%
-  rename("lpv_t1d0" = lpv)
-
+load("RData_files/variable29_control29_lpv.RData")
+variable29_control29.p <- variable29_control29.p %>% rename("lpv_v29c29" = lpv)
 
 #### DEG MATCHING ####
 
-# These sections of code do several things: 1) join common DEGs across experiments with -log10(pval), 2) filter by 0.1 pval cutoff (log10(0.1)=1), 3)  adds mcav gene annotations, and 4) then pulls on corresponding KOG classes
+# These sections of code do several things: 1) join common DEGs across experiments with -log10(pval), 
+#2) filter by 0.1 pval cutoff (log10(0.1)=1), 3)  adds gene annotations, and 4) then pulls on corresponding KOG classes
 
-# diseased vs healthy for both experiments
-trans_diseased_healthy_lpv %>%
-  inner_join(inter_diseased0_healthy0_lpv, by = "gene") %>%
-  filter(abs(lpv_dh) >= 1 & abs(lpv_d0h0) >= 1) %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
+# first see if there are any shared genes with control0vs29 and variable0vs29
+control0_control29.p %>%
+  inner_join(variable0_variable29.p, by = "gene") %>%
+  filter(abs(lpv_c0c29) >= 1 & abs(lpv_v0v29) >= 1) %>%
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     annot_mcav = V2) %>%
+                     annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene") %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2kogClass.tab",
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2kogClass.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     KOG_mcav = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") -> diseased_healthy
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") -> c0c29_v0v29 #there are ~10,000 shared genes (cut-off is p-value of 0.1 -- NOT p-adjusted but raw p-value, idk why)
 
-# treated vs healthy for intervention experiment
-trans_diseased_healthy_lpv %>%
-  inner_join(inter_treated1_healthy1_lpv, by = "gene") %>%
-  filter(abs(lpv_dh) >= 1 & abs(lpv_t1h1) >= 1) %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
+# next look at variable0vscontrol0 and variable29vscontrol29
+variable0_control0.p %>%
+  inner_join(variable29_control29.p, by = "gene") %>%
+  filter(abs(lpv_v0c0) >= 1 & abs(lpv_v29c29) >= 1) %>%
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     annot_mcav = V2) %>%
+                     annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene") %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2kogClass.tab",
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2kogClass.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     KOG_mcav = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") -> treated_healthy
-
-# treated vs diseased for intervention experiment
-trans_diseased_healthy_lpv %>%
-  inner_join(inter_treated1_diseased0_lpv, by = "gene") %>%
-  filter(abs(lpv_dh) >= 1 & abs(lpv_t1d0) >= 1) %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot_mcav = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2kogClass.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     KOG_mcav = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") -> treated_diseased
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") -> v0c0_v29c29 #~1500 shared genes
 
 
 #### KOG MATCHING ####
 
-# filtering and summarizing DEGs by KOG class for high-level comparisons between experiments
-diseased_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_up" = n) -> KOG_trans_up
+# filtering and summarizing DEGs by KOG class for high-level comparisons
+v0c0_v29c29 %>%
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_v0c0 >= 1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "v0c0_up" = n) -> KOG_v0c0_up
 
-diseased_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_down" = n) -> KOG_trans_down
+v0c0_v29c29 %>%
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_v0c0 <= -1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "v0c0_down" = n) -> KOG_v0c0_down
 
-diseased_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_d0h0 >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "dh_up" = n) -> KOG_dh_up
+v0c0_v29c29 %>%
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_v29c29 >= 1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "v29c29_up" = n) -> KOG_v29c29_up
 
-diseased_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_d0h0 <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "dh_down" = n) -> KOG_dh_down
+v0c0_v29c29 %>%
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_v29c29 <= -1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "v29c29_down" = n) -> KOG_v29c29_down
 
-# joining all KOG class sums in a single dataframe
-KOG_trans_up %>%
-  inner_join(KOG_dh_up, by = "KOG") %>%
-  inner_join(KOG_trans_down, by = "KOG") %>%
-  inner_join(KOG_dh_down, by = "KOG") -> KOG_dh_match
+c0c29_v0v29 %>% 
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_c0c29 >= 1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "c0c29_up" = n) -> KOG_c0c29_up
+
+c0c29_v0v29 %>% 
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_c0c29 <= -1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "c0c29_down" = n) -> KOG_c0c29_down
+
+c0c29_v0v29 %>% 
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_v0v29 >= 1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "v0v29_up" = n) -> KOG_v0v29_up
+
+c0c29_v0v29 %>% 
+  mutate(KOG = replace(KOG, KOG == "", NA)) %>%
+  filter(lpv_v0v29 <= -1) %>%
+  count(KOG) %>%
+  rename("KOG" = KOG, "v0v29_down" = n) -> KOG_v0v29_down
+
+# 1) v0c0_v29c29 KOG class sums in a single dataframe
+
+#v0c0 vs. v29c29
+KOG_v0c0_up %>%
+  inner_join(KOG_v0c0_down, by = "KOG") %>%
+  inner_join(KOG_v29c29_down, by = "KOG") %>% 
+  inner_join(KOG_v29c29_up, by = "KOG") -> KOG_v0c0_v29c29_match
+
+#c0c29 vs v0v29
+KOG_c0c29_down %>%
+  inner_join(KOG_c0c29_up, by = "KOG") %>%
+  inner_join(KOG_v0v29_up, by = "KOG") %>%
+  inner_join(KOG_v0v29_down, by = "KOG") -> KOG_c0c29_v0v29_match
 
 # melting dataframe for plotting
-KOG_dh_match %>%
-  melt(id = "KOG") %>%
-  rename(comparison = variable, sum = value) -> KOG_dh_melt
+KOG_v0c0_v29c29_match %>% 
+  melt(id = "KOG") %>% 
+  rename(comparison = variable, sum = value) -> KOG_v0c0_v29c29_melt
+
+KOG_c0c29_v0v29_match %>% 
+  melt(id = "KOG") %>% 
+  rename(comparison = variable, sum = value) -> KOG_c0c29_v0v29_melt
 
 # creating a custom color palette
-colorCount = length(unique(KOG_dh_match$KOG))
+colorCount = length(unique(KOG_v0c0_v29c29_match$KOG))
 getPalette = colorRampPalette(brewer.pal(8, "Accent"))
 
 # relative abundance plot
-KOG_dh_sum <- ggplot(KOG_dh_melt, aes(fill = KOG, y = sum, x = comparison)) +
+KOG_v0c0_v29c29_sum <- ggplot(KOG_v0c0_v29c29_melt, aes(fill = KOG, y = sum, x = comparison)) +
   geom_bar(position="stack", stat="identity") +
   scale_fill_manual(values = colorRampPalette(brewer.pal(8, "Accent"))(colorCount)) +
   labs(x = "Comparison",
        y = "Proportion of DEGs") +
-  theme_classic()
-KOG_dh_sum
-ggsave("orthofinder KOG dh abundance.pdf", plot= KOG_dh_sum, width=8, height=6, units="in", dpi=300)
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+KOG_v0c0_v29c29_sum
+ggsave("common genes KOG v0c0_v29c29 abundance.pdf", plot= KOG_v0c0_v29c29_sum, width=8, height=6, units="in", dpi=300)
 
 
-#### KOG MATCH TREATED ####
-
-# filtering and summarizing DEGs by KOG class for high-level comparisons between experiments
-treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_up" = n) -> KOG_trans_up2
-
-treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_down" = n) -> KOG_trans_down2
-
-treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_t1h1 >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "th_up" = n) -> KOG_th_up
-
-treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_t1h1 <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "th_down" = n) -> KOG_th_down
-
-# joining all KOG class sums in a single dataframe
-KOG_trans_up2 %>%
-  inner_join(KOG_th_up, by = "KOG") %>%
-  inner_join(KOG_trans_down2, by = "KOG") %>%
-  inner_join(KOG_th_down, by = "KOG") -> KOG_th_match
-
-# melting dataframe for plotting
-KOG_th_match %>%
-  melt(id = "KOG") %>%
-  rename(comparison = variable, sum = value) -> KOG_th_melt
+# 2) c0c29_v0v29 plotting
 
 # creating a custom color palette
-colorCount = length(unique(KOG_th_match$KOG))
+colorCount = length(unique(KOG_c0c29_v0v29_match$KOG))
 getPalette = colorRampPalette(brewer.pal(8, "Accent"))
 
 # relative abundance plot
-KOG_th_sum <- ggplot(KOG_th_melt, aes(fill = KOG, y = sum, x = comparison)) +
+KOG_c0c29_v0v29_sum <- ggplot(KOG_c0c29_v0v29_melt, aes(fill = KOG, y = sum, x = comparison)) +
   geom_bar(position="stack", stat="identity") +
   scale_fill_manual(values = colorRampPalette(brewer.pal(8, "Accent"))(colorCount)) +
   labs(x = "Comparison",
        y = "Proportion of DEGs") +
-  theme_classic()
-KOG_th_sum
-ggsave("orthofinder KOG th abundance.pdf", plot= KOG_th_sum, width=8, height=6, units="in", dpi=300)
-
-
-#### KOG MATCH TREATED 2 ####
-
-# filtering and summarizing DEGs by KOG class for high-level comparisons between experiments
-treated_diseased %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_up" = n) -> KOG_trans_up3
-
-treated_diseased %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_down" = n) -> KOG_trans_down3
-
-treated_diseased %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_t1d0 >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "td_up" = n) -> KOG_td_up
-
-treated_diseased %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_t1d0 <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "td_down" = n) -> KOG_td_down
-
-# joining all KOG class sums in a single dataframe
-KOG_trans_up3 %>%
-  inner_join(KOG_td_up, by = "KOG") %>%
-  inner_join(KOG_trans_down3, by = "KOG") %>%
-  inner_join(KOG_td_down, by = "KOG") -> KOG_td_match
-
-# melting dataframe for plotting
-KOG_td_match %>%
-  melt(id = "KOG") %>%
-  rename(comparison = variable, sum = value) -> KOG_td_melt
-
-# creating a custom color palette
-colorCount = length(unique(KOG_td_match$KOG))
-getPalette = colorRampPalette(brewer.pal(8, "Accent"))
-
-# relative abundance plot
-KOG_td_sum <- ggplot(KOG_td_melt, aes(fill = KOG, y = sum, x = comparison)) +
-  geom_bar(position="stack", stat="identity") +
-  scale_fill_manual(values = colorRampPalette(brewer.pal(8, "Accent"))(colorCount)) +
-  labs(x = "Comparison",
-       y = "Proportion of DEGs") +
-  theme_classic()
-KOG_td_sum
-ggsave("orthofinder KOG td abundance.pdf", plot= KOG_td_sum, width=8, height=6, units="in", dpi=300)
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+KOG_c0c29_v0v29_sum
+ggsave("common genes KOG c0c29_v0v29 abundance.pdf", plot= KOG_c0c29_v0v29_sum, width=8, height=6, units="in", dpi=300)
 
 
 #### VENN DIAGRAMS ####
 
-# first creating a set of up/downregulated DEGs by diseased vs healthy for each experiment
-diseased_healthy %>%
-  filter(lpv_dh >= 1) %>%
-  pull(gene) -> trans_up
+# first creating a set of up/downregulated DEGs by v0c0 and v29c29
+v0c0_v29c29 %>%
+  filter(lpv_v0c0 >= 1) %>%
+  pull(gene) -> v0c0_up
 
-diseased_healthy %>%
-  filter(lpv_dh <= -1) %>%
-  pull(gene) -> trans_down
+v0c0_v29c29 %>%
+  filter(lpv_v0c0 <= -1) %>%
+  pull(gene) -> v0c0_down
 
-diseased_healthy %>%
-  filter(lpv_d0h0 >= 1) %>%
-  pull(gene) -> dis_up
+v0c0_v29c29 %>%
+  filter(lpv_v29c29 >= 1) %>%
+  pull(gene) -> v29c29_up
 
-diseased_healthy %>%
-  filter(lpv_d0h0 <= -1) %>%
-  pull(gene) -> dis_down
+v0c0_v29c29 %>%
+  filter(lpv_v29c29 <= -1) %>%
+  pull(gene) -> v29c29_down
 
-# then creating a second set for treated vs healthy
-treated_healthy %>%
-  filter(lpv_dh >= 1) %>%
-  pull(gene) -> trans_up2
+# then creating a second set for c0c29_v0v29
+c0c29_v0v29 %>%
+  filter(lpv_c0c29 >= 1) %>%
+  pull(gene) -> c0c29_up
 
-treated_healthy %>%
-  filter(lpv_dh <= -1) %>%
-  pull(gene) -> trans_down2
+c0c29_v0v29 %>%
+  filter(lpv_c0c29 <= -1) %>%
+  pull(gene) -> c0c29_down
 
-treated_healthy %>%
-  filter(lpv_t1h1 >= 1) %>%
-  pull(gene) -> treat_up
+c0c29_v0v29 %>%
+  filter(lpv_v0v29 >= 1) %>%
+  pull(gene) -> v0v29_up
 
-treated_healthy %>%
-  filter(lpv_t1h1 <= -1) %>%
-  pull(gene) -> treat_down
+c0c29_v0v29 %>%
+  filter(lpv_v0v29 <= -1) %>%
+  pull(gene) -> v0v29_down
 
-# then creating a final set for treated vs diseased
-treated_diseased %>%
-  filter(lpv_dh >= 1) %>%
-  pull(gene) -> trans_up3
 
-treated_diseased %>%
-  filter(lpv_dh <= -1) %>%
-  pull(gene) -> trans_down3
-
-treated_diseased %>%
-  filter(lpv_t1d0 >= 1) %>%
-  pull(gene) -> treat_up2
-
-treated_diseased %>%
-  filter(lpv_t1d0 <= -1) %>%
-  pull(gene) -> treat_down2
-
-# diseased vs healthy by experiment
-venn_dh=h=venn.diagram(
-  x = list("Trans up"=trans_up, "Trans down"=trans_down,"Inter up"=dis_up, "Inter down"=dis_down),
+# v0c0_v29c29
+venn_v0c0v29c29=venn.diagram(
+  x = list("V0/C0 up"=v0c0_up, "V0/C0 down"=v0c0_down,"V29/C29 up"=v29c29_up, "V29/C29 down"=v29c29_down),
   filename=NULL,
   col = "transparent",
   fill = c("#ca0020", "#0571b0", "#f4a582", "#92c5de"),
@@ -311,13 +224,13 @@ venn_dh=h=venn.diagram(
   cat.fontfamily = "sans",
   cat.just = list(c(0,0.5),c(0.75,0.5),c(0.5,0.5),c(0.5,0.5))
 )
-pdf(file="Venn_diseased_healthy.pdf", height=10, width=12)
-grid.draw(venn_dh)
+pdf(file="venn_v0c0v29c29.pdf", height=10, width=12)
+grid.draw(venn_v0c0v29c29)
 dev.off()
 
-# treated vs healthy by experiment
-venn_th=h=venn.diagram(
-  x = list("Trans up"=trans_up2, "Trans down"=trans_down2,"Inter up"=treat_up, "Inter down"=treat_down),
+# c0c29_v0v29
+venn_c0c29_v0v29=venn.diagram(
+  x = list("C0/C29 up"=c0c29_up, "C0/C29 down"=c0c29_down,"V0/V29 up"=v0v29_up, "V0/V29 down"=v0v29_down),
   filename=NULL,
   col = "transparent",
   fill = c("#ca0020", "#0571b0", "#f4a582", "#92c5de"),
@@ -332,29 +245,8 @@ venn_th=h=venn.diagram(
   cat.fontfamily = "sans",
   cat.just = list(c(0,0.5),c(0.75,0.5),c(0.5,0.5),c(0.5,0.5))
 )
-pdf(file="Venn_treated_healthy.pdf", height=10, width=12)
-grid.draw(venn_th)
-dev.off()
-
-# treated vs healthy by experiment
-venn_td=h=venn.diagram(
-  x = list("Trans up"=trans_up3, "Trans down"=trans_down3,"Inter up"=treat_up2, "Inter down"=treat_down2),
-  filename=NULL,
-  col = "transparent",
-  fill = c("#ca0020", "#0571b0", "#f4a582", "#92c5de"),
-  alpha = 0.5,
-  label.col = c("red3","white","cornflowerblue","black","white","white","white", "black","darkred","grey25","white","white","grey25","darkblue","white"),
-  cex = 3.5,
-  fontfamily = "sans",
-  fontface = "bold",
-  cat.default.pos = "text",
-  cat.col =c("darkred", "darkblue", "red3", "cornflowerblue"),
-  cat.cex = 3.5,
-  cat.fontfamily = "sans",
-  cat.just = list(c(0,0.5),c(0.75,0.5),c(0.5,0.5),c(0.5,0.5))
-)
-pdf(file="Venn_treated_diseased.pdf", height=10, width=12)
-grid.draw(venn_td)
+pdf(file="venn_c0c29_v0v29.pdf", height=10, width=12)
+grid.draw(venn_c0c29_v0v29)
 dev.off()
 
 

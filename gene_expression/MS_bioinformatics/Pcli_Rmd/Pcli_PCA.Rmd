@@ -63,3 +63,75 @@ ggplot(vst_nogeno_PCAdata, aes(PC1, PC2, color=group)) +
   scale_color_manual(values = c("#00CCCC","#33CCCC", "#FF6633", "#FF3333"))
 ```
 
+# separate genotype and plot treatment x time for each 
+
+```{r}
+vst_PCA_A <- vst_PCAdata %>% 
+  filter(Genotype == "A")
+
+vst_PCA_B <- vst_PCAdata %>% 
+  filter(Genotype == "B")
+
+vst_PCA_C <- vst_PCAdata %>% 
+  filter(Genotype == "C")
+
+#A
+ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("Pcli Colony A") +
+   theme_bw() + 
+   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+
+ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("Pcli Colony A") +
+   theme_bw() + 
+   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm") +
+   facet_wrap(~time_point) +
+   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+
+
+#B
+ggplot(vst_PCA_B, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("Pcli Colony B") +
+   theme_bw() + 
+   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+
+ggplot(vst_PCA_B, aes(PC1, PC2, color=Treatment)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("Pcli Colony B") +
+   theme_bw() + 
+   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm") +
+   facet_wrap(~time_point) +
+   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+
+#C
+ggplot(vst_PCA_C, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("Pcli Colony C") +
+   theme_bw() + 
+   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+
+ggplot(vst_PCA_C, aes(PC1, PC2, color=Treatment)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("Pcli Colony C") +
+   theme_bw() + 
+   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm") +
+   facet_wrap(~time_point) +
+   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+
+  
+```
