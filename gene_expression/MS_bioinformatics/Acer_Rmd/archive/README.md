@@ -6,17 +6,17 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 
 ## Results
 
-1. [Heatmap](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#1-heatmap)
-2. [PCoA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#2-pcoa)
-3. [PERMANOVA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#3-permanova-for-variance-in-distance-matrices)
-4. [DESeq2](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#4-deseq2)
-5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#5-density-plot-for-degs)
-6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#6-venn-diagram-for-degs)
-7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#7-pca)
-8. [KOG-MWU heatmaps](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#8-kog-mwu-heatmaps)
-9. [KOG-MWU correlation plots](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/README.md#9-kog-mwu-correlation-plots)
-10. [Volcano Plots](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#10-volcano-plots)
-11. [WGCNA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd#11-wgcna)
+1. [Heatmap](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#1-heatmap)
+2. [PCoA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#2-pcoa)
+3. [PERMANOVA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#3-permanova-for-variance-in-distance-matrices)
+4. [DESeq2](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#4-deseq2)
+5. [Density plot](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#5-density-plot-for-degs)
+6. [Venn Diagram of DGEs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#6-venn-diagram-for-degs)
+7. [PCAs](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#7-pca)
+8. [KOG-MWU heatmaps](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive/README.md#8-kog-mwu-heatmaps)
+9. [KOG-MWU correlation plots](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive/README.md#9-kog-mwu-correlation-plots)
+10. [Volcano Plots](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#10-volcano-plots)
+11. [WGCNA](https://github.com/ademerlis/temperaturevariability2023/tree/main/gene_expression/MS_bioinformatics/Acer_Rmd/archive#11-wgcna)
 12. GO-MWU Analysis of WGCNA Modules 
 13. Orthofinder
 
