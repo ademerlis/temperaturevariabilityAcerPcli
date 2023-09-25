@@ -59,14 +59,20 @@ design %>%
   select(Species:Treatment) %>% 
   filter(Species == "Acer") -> design
 
-design$Genotype <- as.factor(design$Genotype)
-design$Treatment <- as.factor(design$Treatment)
 design %>% 
   mutate(time_point = case_when(Experiment.phase == "Pre-treatment" ~ "Day_0",
                                 Experiment.phase == "last day of treatment" ~ "Day_29")) -> design
 column_to_rownames(design, var="Sample_ID") -> design
+design$Genotype <- as.factor(design$Genotype)
+design$Treatment <- as.factor(design$Treatment)
 design$group <- factor(paste0(design$Treatment, "_", design$time_point))
-str(design)
+
+design
+
+# order design file so that all variables are grouped in order in the csv itself (i.e. control x t0 x genet 1, control x t0 x genet 2, etc)
+
+design %>% 
+  arrange(Genotype, Treatment, time_point) -> design
 
 
 #### FULL MODEL DESIGN (group + Genotype) and OUTLIERS ####
