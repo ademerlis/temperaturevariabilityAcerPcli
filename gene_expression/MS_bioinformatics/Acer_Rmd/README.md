@@ -4,7 +4,7 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 
 ## Results
 
-Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
+Code to create these graphs is from [this R file]. 
 
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment_timepoint)`
 
@@ -60,6 +60,11 @@ dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","vari
 <img width="773" alt="Screen Shot 2023-09-19 at 12 52 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/51edd2bf-6ffd-4f65-8f1f-aec5f7db8cb4">
 
 Based on the dds.pcoa table, the % variation explained by each axis is 19.1% for axis 1 and 10.9% for axis 2.
+
+PCoA axes 2 and 3:
+
+![Screen Shot 2023-09-26 at 12 58 33 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/cad3af59-4021-4e14-9500-62b97a90bf83)
+
 
 ### 2. PERMANOVA
 
@@ -135,5 +140,14 @@ PC axes 2 and 3 show clearer separation of time point (but not treatment):
 
 ![Screen Shot 2023-09-26 at 11 45 46 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c67bbffc-bdad-4df0-8baf-7c74cedaadd6)
 
+### 7) Common Genes
+
+The main comparison of interest is C0/C29 versus V0/V29. This is because the differential gene expression found in both of these contrasts are solely due to the treatment over time. 
+
+We can find the number of genes that are shared by both these contrasts as well as ones that are unique. The unique ones imply that they are genes specifically changed by the treatment itself (i.e. a DGE in C0/C29 but not in V0/V29 means that the control (untreated) corals resulted in a significant change of expression for that gene but that response was not observed in the variable temperature-treated corals). 
+
+Definition of unique genes: when I look at the lpv table for C0/C29 and V0/V29, they both have the same length = 47,866 isogroups. This is after filtering out all the p-values that are NA. So maybe "unique" isn't the right word, but uniquely significantly differentially expressed is a more specific phrase. 
+
+Venn Diagram of DGEs common in both C0/C29 and V0/V29:
 
 
