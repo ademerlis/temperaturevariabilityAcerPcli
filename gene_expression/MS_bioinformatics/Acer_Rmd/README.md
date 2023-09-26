@@ -4,7 +4,7 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 
 ## Results
 
-Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/Acer_deseq2.R). 
+Code to create these graphs is from [this R file]. 
 
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment_timepoint)`
 
@@ -149,20 +149,5 @@ We can find the number of genes that are shared by both these contrasts as well 
 Definition of unique genes: when I look at the lpv table for C0/C29 and V0/V29, they both have the same length = 47,866 isogroups. This is after filtering out all the p-values that are NA. So maybe "unique" isn't the right word, but uniquely significantly differentially expressed is a more specific phrase. 
 
 Venn Diagram of DGEs common in both C0/C29 and V0/V29:
-
-
-
-
-
-### 8) KOG-MWU Heatmaps
-
-1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed p-values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
-    
-<img width="605" alt="Screen Shot 2023-09-16 at 8 03 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0d5300c4-4f92-4d73-9543-f7bcb2f7cc9e">
-
-2. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **fold change**. Note that the scale of the heatmap is not fold change, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
-
-<img width="579" alt="Screen Shot 2023-09-16 at 8 06 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/071364f7-a0b5-465f-b804-b74b7b4f64f1">
-
 
 
