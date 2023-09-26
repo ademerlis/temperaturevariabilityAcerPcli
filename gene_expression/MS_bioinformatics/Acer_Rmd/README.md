@@ -125,5 +125,15 @@ PC axes 2 and 3 show clearer separation of time point (but not treatment):
 
 ![Screen Shot 2023-09-26 at 10 57 22 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b8c89b5c-f6ae-4542-b0f3-5a56a450d4c4)
 
+### 6. Volcano Plots
+
+![Screen Shot 2023-09-26 at 11 43 42 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a929b4d6-d595-44c5-95a5-2c4feb540719)
+
+![Screen Shot 2023-09-26 at 11 44 23 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4458fff2-1323-4693-86e4-b00413a84072)
+
+![Screen Shot 2023-09-26 at 11 45 12 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4c42360e-e8c5-4d3b-840c-17f21d281c31)
+
+![Screen Shot 2023-09-26 at 11 45 46 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c67bbffc-bdad-4df0-8baf-7c74cedaadd6)
+
 
 
