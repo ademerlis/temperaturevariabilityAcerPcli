@@ -42,7 +42,28 @@ control0_control29.p %>%
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      KOG = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") -> c0c29_v0v29 #there are ~10,000 shared genes (cut-off is p-value of 0.1 -- NOT p-adjusted but raw p-value, idk why)
+              dplyr::select(-V1, -V2), by = "gene") -> c0c29_v0v29 #there are ~11,000 shared genes (cut-off is p-value of 0.1 -- NOT p-adjusted but raw p-value, idk why)
+
+# list of genes (FDR p-adj < 0.1) shared by C0/C29 and V0/V29
+
+control0_control29.p %>%
+  inner_join(variable0_variable29.p, by = "gene") %>%
+  filter(abs(lpv_c0c29) >= 1 & abs(lpv_v0v29) >= 1) %>%
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene")
+
+# what about genes unique to c0c29 and v0v29?
+
+str(control0_control29.p) #47866 isogroups
+str(variable0_variable29.p) #47866 isogroups
+
+
+
+
 
 # next look at variable0vscontrol0 and variable29vscontrol29
 variable0_control0.p %>%
@@ -149,7 +170,7 @@ KOG_v0c0_v29c29_sum <- ggplot(KOG_v0c0_v29c29_melt, aes(fill = KOG, y = sum, x =
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 KOG_v0c0_v29c29_sum
-ggsave("common genes KOG v0c0_v29c29 abundance.pdf", plot= KOG_v0c0_v29c29_sum, width=8, height=6, units="in", dpi=300)
+#ggsave("common genes KOG v0c0_v29c29 abundance.pdf", plot= KOG_v0c0_v29c29_sum, width=8, height=6, units="in", dpi=300)
 
 
 # 2) c0c29_v0v29 plotting
@@ -167,7 +188,8 @@ KOG_c0c29_v0v29_sum <- ggplot(KOG_c0c29_v0v29_melt, aes(fill = KOG, y = sum, x =
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 KOG_c0c29_v0v29_sum
-ggsave("common genes KOG c0c29_v0v29 abundance.pdf", plot= KOG_c0c29_v0v29_sum, width=8, height=6, units="in", dpi=300)
+#ggsave("common genes KOG c0c29_v0v29 abundance.pdf", plot= KOG_c0c29_v0v29_sum, width=8, height=6, units="in", dpi=300)
+
 
 
 #### VENN DIAGRAMS ####
@@ -248,102 +270,6 @@ venn_c0c29_v0v29=venn.diagram(
 pdf(file="venn_c0c29_v0v29.pdf", height=10, width=12)
 grid.draw(venn_c0c29_v0v29)
 dev.off()
-
-
-#### COMBINE TREATMENTS ####
-
-# diseased vs healthy vs treated for both experiments
-trans_diseased_healthy_lpv %>%
-  inner_join(inter_diseased0_healthy0_lpv, by = "gene") %>%
-  inner_join(inter_treated1_healthy1_lpv, by = "gene") %>%
-  filter(abs(lpv_dh) >= 1 & abs(lpv_d0h0) >= 1 & abs(lpv_t1h1) >= 1) %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     gene_name = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") %>%
-  left_join(read.table(file = "../../annotate/mcav2015/Mcavernosa2015_iso2kogClass.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     KOG_mcav = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") -> diseased_treated_healthy
-
-
-# first creating a column of combined gene names from both species, then removing unannotated genes
-diseased_treated_healthy %>%
-  mutate(gene_name = str_replace(gene_name, "NA","")) %>%
-  mutate(gene_name = str_replace(gene_name, "-","")) %>%
-  mutate(gene_name = na_if(gene_name,"")) %>%
-  filter(!is.na(gene_name)) ->  diseased_treated_healthy
-
-
-#### KOG MATCH ALL TREATMENTS ####
-
-# filtering and summarizing DEGs by KOG class for high-level comparisons between experiments
-diseased_treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_up" = n) -> KOG_trans_up4
-
-diseased_treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_dh <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "trans_down" = n) -> KOG_trans_down4
-
-diseased_treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_d0h0 >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "dh_up" = n) -> KOG_dh_up2
-
-diseased_treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_d0h0 <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "dh_down" = n) -> KOG_dh_down2
-
-diseased_treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_t1h1 >= 1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "th_up" = n) -> KOG_th_up2
-
-diseased_treated_healthy %>%
-  mutate(KOG_mcav = replace(KOG_mcav, KOG_mcav == "", NA)) %>%
-  filter(lpv_t1h1 <= -1) %>%
-  count(KOG_mcav) %>%
-  rename("KOG" = KOG_mcav, "th_down" = n) -> KOG_th_down2
-
-# joining all KOG class sums in a single dataframe
-KOG_trans_up4 %>%
-  inner_join(KOG_dh_up2, by = "KOG") %>%
-  inner_join(KOG_th_up2, by = "KOG") %>%
-  inner_join(KOG_trans_down4, by = "KOG") %>%
-  inner_join(KOG_dh_down2, by = "KOG") %>%
-  inner_join(KOG_th_down2, by = "KOG") -> KOG_all_match
-
-# melting dataframe for plotting
-KOG_all_match %>%
-  melt(id = "KOG") %>%
-  rename(comparison = variable, sum = value) -> KOG_all_melt
-
-# creating a custom color palette
-colorCount = length(unique(KOG_all_match$KOG))
-getPalette = colorRampPalette(brewer.pal(8, "Accent"))
-
-# relative abundance plot
-KOG_all_sum <- ggplot(KOG_all_melt, aes(fill = KOG, y = sum, x = comparison)) +
-  geom_bar(position="stack", stat="identity") +
-  scale_fill_manual(values = colorRampPalette(brewer.pal(8, "Accent"))(colorCount)) +
-  labs(x = "Comparison",
-       y = "Proportion of DEGs") +
-  theme_classic()
-KOG_all_sum
-ggsave("orthofinder KOG all abundance.pdf", plot= KOG_all_sum, width=10, height=6, units="in", dpi=300)
 
 
 #### VSD by EXPERIMENT/TREATMENT ####

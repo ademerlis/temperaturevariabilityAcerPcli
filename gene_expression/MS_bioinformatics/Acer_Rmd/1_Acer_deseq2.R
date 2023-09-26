@@ -157,7 +157,7 @@ dev.off()
 # the number of black points above the line of red crosses (random model) corresponds to the number of good PC's
 #there are 3 "good PCs" based on this figure
 
-# plotting PCoA by treatment and time
+# plotting PCoA by treatment and time (axes 1 and 2)
 pdf(file="PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
@@ -166,6 +166,19 @@ legend("topright", legend=c("Control", "Variable"), fill = c("red","blue"), bty=
 legend("topleft", legend=c("Day_0", "Day_29"), pch=c(1,19), bty="n")
 plot(scores[,1], scores[,2],col=c("grey","black")[as.numeric(as.factor(conditions$time_point))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Time")
 ordispider(scores, conditions$time, label=F, col=c("grey","black"))
+legend("topleft", legend=c("Day_0", "Day_29"), fill = c("grey","black"), bty="n")
+legend("topright", legend=c("Control", "Variable"), pch=c(15,17,25), bty="n")
+dev.off()
+
+# plotting PCoA by treatment and time (axes 2 and 3)
+pdf(file="PCoA_axes23.pdf", width=12, height=6)
+par(mfrow=c(1,2))
+plot(scores[,2], scores[,3],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 2", ylab="Coordinate 3", main="Treatment")
+ordispider(scores[,2:3], conditions$Treatment, label=F, col=c("red","blue"))
+legend("topright", legend=c("Control", "Variable"), fill = c("red","blue"), bty="n")
+legend("topleft", legend=c("Day_0", "Day_29"), pch=c(1,19), bty="n")
+plot(scores[,2], scores[,3],col=c("grey","black")[as.numeric(as.factor(conditions$time_point))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 2", ylab="Coordinate 3", main="Time")
+ordispider(scores[,2:3], conditions$time, label=F, col=c("grey","black"))
 legend("topleft", legend=c("Day_0", "Day_29"), fill = c("grey","black"), bty="n")
 legend("topright", legend=c("Control", "Variable"), pch=c(15,17,25), bty="n")
 dev.off()
@@ -308,8 +321,17 @@ variable29_control29.p=data.frame("gene"=row.names(source))
 variable29_control29.p$lpv=-log(source[,"pvalue"],10)
 variable29_control29.p$lpv[source$stat<0]=variable29_control29.p$lpv[source$stat<0]*-1
 head(variable29_control29.p)
-write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-save(variable29_control29.p,file="variable29_control29_lpv.RData")
+# write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
+# save(variable29_control29.p,file="variable29_control29_lpv.RData")
+
+# signed log FDR adjusted p-value: -log(padj)* direction:
+source=variable29_control29[variable29_control29$padj,]
+variable29_control29.p=data.frame("gene"=row.names(source))
+variable29_control29.p$lpadj=-log(source[,"padj"],10)
+variable29_control29.p$lpadj[source$stat<0]=variable29_control29.p$lpadj[source$stat<0]*-1
+head(variable29_control29.p)
+# write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
+# save(variable29_control29.p,file="variable29_control29_lpv.RData")
 
 
 # variable0 vs control0
