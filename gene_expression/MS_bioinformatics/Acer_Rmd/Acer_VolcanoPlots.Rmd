@@ -38,7 +38,7 @@ control0_control29_annotated <- as.data.frame(control0_control29) %>%
 
 pdf(file="volcano_control0control29.pdf", width = 12, height = 6)  
   EnhancedVolcano(control0_control29_annotated,
-    lab = control0_control29_annotated$gene,
+    lab = NA,
     title = "Control Day 0 vs. Control Day 29",
     x = 'log2FoldChange',
     y = 'padj',
@@ -49,11 +49,7 @@ pdf(file="volcano_control0control29.pdf", width = 12, height = 6)
     legendIconSize = 5.0,
     labSize = 6.0,
     colCustom = keyvals,
-    colAlpha = 0.5,
-    drawConnectors = TRUE,
-    widthConnectors = 1.0,
-    colConnectors = 'black',
-    max.overlaps = 10) 
+    colAlpha = 0.5) 
 ```
 
 
@@ -79,7 +75,7 @@ keyvals <- ifelse(
 
 pdf(file="volcano_variable0control0.pdf", width = 12, height = 6)  
   EnhancedVolcano(variable0_control0_annotated,
-    lab = variable0_control0_annotated$gene,
+    lab = NA,
     title = "Variable Day 0 vs. Control Day 0",
     x = 'log2FoldChange',
     y = 'padj',
@@ -89,11 +85,7 @@ pdf(file="volcano_variable0control0.pdf", width = 12, height = 6)
     legendIconSize = 5.0,
     labSize = 6.0,
    colCustom = keyvals,
-    colAlpha = 0.5,
-    drawConnectors = TRUE,
-    widthConnectors = 1.0,
-    colConnectors = 'black',
-    max.overlaps = 10) 
+    colAlpha = 0.5) 
 ```
 
 
@@ -119,7 +111,7 @@ keyvals <- ifelse(
 
 pdf(file="volcano_variable0variable29.pdf", width = 12, height = 6)  
   EnhancedVolcano(variable0_variable29_annotated,
-    lab = variable0_variable29_annotated$gene,
+    lab = NA,
     title = "Variable Day 0 vs. Variable Day 29",
     x = 'log2FoldChange',
     y = 'padj',
@@ -129,11 +121,7 @@ pdf(file="volcano_variable0variable29.pdf", width = 12, height = 6)
     legendIconSize = 5.0,
     labSize = 6.0,
    colCustom = keyvals,
-    colAlpha = 0.5,
-    drawConnectors = TRUE,
-    widthConnectors = 1.0,
-    colConnectors = 'black',
-    max.overlaps = 10)
+    colAlpha = 0.5)
 ```
 
 
@@ -160,7 +148,7 @@ keyvals <- ifelse(
 pdf(file="volcano_variable29control29.pdf", width = 12, height = 6)  
   EnhancedVolcano(variable29_control29_annotated,
     title = "Variable Day 29 vs. Control Day 29",
-    lab = variable29_control29_annotated$gene,
+    lab = NA,
     x = 'log2FoldChange',
     y = 'padj',
     legendPosition = 'right',
@@ -169,10 +157,6 @@ pdf(file="volcano_variable29control29.pdf", width = 12, height = 6)
     legendIconSize = 5.0,
     labSize = 6.0,
    colCustom = keyvals,
-    colAlpha = 0.5,
-    drawConnectors = TRUE,
-    widthConnectors = 1.0,
-    colConnectors = 'black',
-    max.overlaps = 10)
+    colAlpha = 0.5)
 ```
 

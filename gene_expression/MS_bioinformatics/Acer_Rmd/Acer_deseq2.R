@@ -268,18 +268,19 @@ venn=venn.diagram(
   x = pairwise,
   filename=NULL,
   col = "transparent",
-  fill = c("#01665e", "#5ab4ac", "#8c510a","#f6e8c3"),
+  fill = c("#ca0020", "#0571b0", "#f4a582", "#92c5de"),
   alpha = 0.5,
-  label.col = c("#8c510a","white","#dfc27d","white","white","black","white", "white","#01665e","white","white","white","white","#35978f","white"),
+  label.col = c("red3","white","cornflowerblue","black","white","white","white", "black","darkred","black","white","white","black","darkblue","white"),
   cex = 3.5,
   fontfamily = "sans",
   fontface = "bold",
   cat.default.pos = "text",
-  cat.col =c("#01665e","#35978f","#8c510a","#dfc27d"),
+  cat.col =c("darkred", "darkblue", "red3", "cornflowerblue"),
   cat.cex = 3.5,
   cat.fontfamily = "sans",
   cat.just = list(c(0,0.5),c(0.75,0.5),c(0.5,0.5),c(0.5,0.5))
 )
+           
 pdf(file="Venn_Acer.pdf", height=10, width=12)
 grid.draw(venn)
 dev.off()
@@ -307,8 +308,8 @@ variable29_control29.p=data.frame("gene"=row.names(source))
 variable29_control29.p$lpv=-log(source[,"pvalue"],10)
 variable29_control29.p$lpv[source$stat<0]=variable29_control29.p$lpv[source$stat<0]*-1
 head(variable29_control29.p)
-#write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-#save(variable29_control29.p,file="variable29_control29_lpv.RData")
+write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
+save(variable29_control29.p,file="variable29_control29_lpv.RData")
 
 
 # variable0 vs control0
@@ -317,16 +318,16 @@ source=variable0_control0[!is.na(variable0_control0$pvalue),]
 variable0_control0.fc=data.frame("gene"=row.names(source))
 variable0_control0.fc$lfc=source[,"log2FoldChange"]
 head(variable0_control0.fc)
-#write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
-#save(variable0_control0.fc,file="variable0_control0_fc.RData")
+# write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
+# save(variable0_control0.fc,file="variable0_control0_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable0_control0.p=data.frame("gene"=row.names(source))
 variable0_control0.p$lpv=-log(source[,"pvalue"],10)
 variable0_control0.p$lpv[source$stat<0]=variable0_control0.p$lpv[source$stat<0]*-1
 head(variable0_control0.p)
-#write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
-#save(variable0_control0.p,file="variable0_control0_lpv.RData")
+# write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
+# save(variable0_control0.p,file="variable0_control0_lpv.RData")
 
 
 #variable0 vs variable29
@@ -335,16 +336,16 @@ source=variable0_variable29[!is.na(variable0_variable29$pvalue),]
 variable0_variable29.fc=data.frame("gene"=row.names(source))
 variable0_variable29.fc$lfc=source[,"log2FoldChange"]
 head(variable0_variable29.fc)
-#write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
-#save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
+# write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
+# save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 variable0_variable29.p=data.frame("gene"=row.names(source))
 variable0_variable29.p$lpv=-log(source[,"pvalue"],10)
 variable0_variable29.p$lpv[source$stat<0]=variable0_variable29.p$lpv[source$stat<0]*-1
 head(variable0_variable29.p)
-#write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
-#save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
+# write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
+# save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
 
 
 # control0_control29
@@ -353,109 +354,16 @@ source=control0_control29[!is.na(control0_control29$pvalue),]
 control0_control29.fc=data.frame("gene"=row.names(source))
 control0_control29.fc$lfc=source[,"log2FoldChange"]
 head(control0_control29.fc)
-#write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
-#save(control0_control29.fc,file="control0_control29_fc.RData")
+# write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
+# save(control0_control29.fc,file="control0_control29_fc.RData")
 
 # signed log p-values: -log(pvalue)* direction:
 control0_control29.p=data.frame("gene"=row.names(source))
 control0_control29.p$lpv=-log(source[,"pvalue"],10)
 control0_control29.p$lpv[source$stat<0]=control0_control29.p$lpv[source$stat<0]*-1
 head(control0_control29.p)
-#write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
-#save(control0_control29.p,file="control0_control29_lpv.RData")
-
-#### DAPC ####
-
-library(adegenet)
-library(parallel)
-# detectCores()
-library(dplyr)
-library(tidyr)
-library(stringr)
-load("vsd.RData")
-
-conditions=design
-conditions$group <- as.factor(conditions$group)
-
-#THIS FUNCTION TAKES A REALLY LONG TIME
-
-# runs simulations on randomly-chosen datasets of 90% of the total dataset to test the number of PCs to retain
-set.seed(999)
-# by time, excluding treated corals on day 0
-xvalDapc(t(vsd[,conditions$group!="variable_Day_0"]),conditions$group[conditions$group!="variable_Day_0"], n.rep=100, parallel="multicore", ncpus= 12)
-
-# This tells us 15 PCs is the most successful in terms of correct assignment, but we need to test again with a smaller range of possible PCs and more reps
-xvalDapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"], n.rep=1000, n.pca=10:20, parallel="multicore", ncpus= 12)
-# 15 PCs 
-
-# now running the dapc without transplants
-dp=dapc(t(vsd[,conditions$treatment.time!="sctld.1"]),conditions$treatment.time[conditions$treatment.time!="sctld.1"],n.pca=15, n.da=1)
-
-# can we predict depth treatment for the transplants?
-pred=predict.dapc(dp,newdata=(t(vsd[,conditions$treatment.time=="sctld.1"])))
-pred$posterior
-# look at the posterior section for assignments by probability
-write.csv(pred$posterior, file = "dapc_intervention_host.csv")
-
-# creating a new dapc object to add in transplants for plotting
-amox=dp
-amox$ind.coord=pred$ind.scores
-amox$posterior=pred$posterior
-amox$assign=pred$assign
-amox$grp<-as.factor(c("sctld.1","sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1", "sctld.1"))
-
-# now exporting side by side figures of controls vs transplants
-# use Adobe Illustrator to overlay transplants curve onto controls
-pdf(file="DAPC_intervention_host.pdf", width=12, height=6)
-par(mfrow=c(1,2))
-scatter(dp, bg="white",scree.da=FALSE,legend=TRUE,solid=0.6, col= c("red","orange","greenyellow","green"))
-scatter(amox, bg="white",scree.da=FALSE,legend=FALSE,solid=0.6, col= "orange")
-dev.off()
-
-# rearranging for significance testing below
-dpc=data.frame(rbind(dp$ind.coord,pred$ind.scores))
-dpc$sampleid <- rownames(dpc)
-
-# adding factor column
-conditions %>%
-  unite('sampleid', id, treatment.time, genotype, sep=".", remove = FALSE) %>%
-  mutate(sampleid = str_replace(sampleid,'-','.'))-> conditions
-
-conditions %>%
-  select(sampleid, treatment.time) -> lookup
-
-dpc <- left_join(dpc, lookup)
-
-# testing significance of DFA differences with MCMCglmm
-# install.packages("MCMCglmm")
-library(MCMCglmm)
-
-# sets prior distribution and creates a glm
-prior = list(R = list(V = 1, nu = 0.002), G = list(G1 = list(V=1, nu=0.002,alpha.mu=0, alpha.V=1000)))
-glm <-MCMCglmm(LD1~treatment.time,random=~sampleid, family="gaussian", data=dpc,prior=prior,nitt=75000,thin=25,burnin=5000)
-summary(glm)
-# post.mean l-95% CI u-95% CI eff.samp  pMCMC    
-# (Intercept)                -1.517   -1.960   -1.040     2404 <4e-04 ***
-#   treatment.timesctld.1       1.319    0.685    1.978     2404 <4e-04 ***
-#   treatment.timecontrol.0     2.569    1.899    3.219     2630 <4e-04 ***
-#   treatment.timecontrol.1     1.972    1.272    2.573     2575 <4e-04 ***
-# check to make sure you don't have autocorrelation with the reps (shown as "walks" in model traces)
-plot(glm)
-
-# calculating difference in magnitudes of t1 treated state and t1 healthy state using sampled sets of parameters
-delta=abs(glm$Sol[,"treatment.timesctld.1"])-abs(glm$Sol[,"treatment.timecontrol.1"])
-# 95% credible interval
-HPDinterval(delta)
-# lower      upper
-# var1 -1.2965 0.02663611
-
-# MCMC p-value
-if (is.na(table(delta<0)[2])) {
-  cat("p <",signif(1/length(delta),1))
-} else { cat("p =",signif(table(delta<0)[2]/length(delta),2)) }
-# p = 0.98
-# non significant p value indicates treated corals are indistinguishable from healthy controls at t1
-
+# write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
+# save(control0_control29.p,file="control0_control29_lpv.RData")
 
 
 #### ANNOTATING DGES ####

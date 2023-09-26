@@ -10,13 +10,15 @@ output: html_document
 library(DESeq2)
 library(tidyverse)
 library(factoextra)
+library(plyr)
+library(dplyr)
 
 load("RData_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
 ```
 
 # create pca object from vst of dds object
 ```{r}
-pca <- prcomp(t(assay(Vsd)))
+pca <- prcomp(t(assay(Vsd)), scale = TRUE, center=TRUE)
 summary(pca)
 fviz_eig(pca)
 ```
@@ -64,15 +66,14 @@ ggplot(vst_PCA_SIC, aes(PC1, PC2, color=Treatment, shape=time_point)) +
    theme_bw() + 
    scale_color_manual(values = c("#00CCCC", "#FF3333"))
 
-ggplot(vst_PCA_SIC, aes(PC1, PC2, color=Treatment)) + 
+ggplot(vst_PCA_SIC, aes(PC1, PC2, color=group)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("Acer genotype SI-C") +
    theme_bw() + 
-   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm") +
-   facet_wrap(~time_point) +
-   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+  scale_color_manual(values = c("lightblue", "darkblue", "red", "darkred")) + 
+  stat_ellipse(aes(PC1, PC2, group= group), type = "norm") 
   
 # MB-B
 ggplot(vst_PCA_MBB, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
@@ -83,15 +84,15 @@ ggplot(vst_PCA_MBB, aes(PC1, PC2, color=Treatment, shape=time_point)) +
    theme_bw() + 
    scale_color_manual(values = c("#00CCCC", "#FF3333"))
 
-ggplot(vst_PCA_MBB, aes(PC1, PC2, color=Treatment)) + 
+ggplot(vst_PCA_MBB, aes(PC1, PC2, color=group)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("Acer genotype MB-B") +
    theme_bw() + 
-   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm") +
-   facet_wrap(~time_point) +
-   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+  scale_color_manual(values = c("lightblue", "darkblue", "red", "darkred")) + 
+  stat_ellipse(aes(PC1, PC2, group= group), type = "norm") 
+
 
 # BC-8b
 ggplot(vst_PCA_BC8b, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
@@ -102,17 +103,15 @@ ggplot(vst_PCA_BC8b, aes(PC1, PC2, color=Treatment, shape=time_point)) +
    theme_bw() + 
    scale_color_manual(values = c("#00CCCC", "#FF3333"))
 
-ggplot(vst_PCA_BC8b, aes(PC1, PC2, color=Treatment)) + 
+  ggplot(vst_PCA_BC8b, aes(PC1, PC2, color=group)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
-   ggtitle("Acer genotype BC-8b") +
+   ggtitle("Acer genotype Bc=8b") +
    theme_bw() + 
-   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm") +
-   facet_wrap(~time_point) +
-   scale_color_manual(values = c("#00CCCC", "#FF3333"))
+  scale_color_manual(values = c("lightblue", "darkblue", "red", "darkred")) + 
+  stat_ellipse(aes(PC1, PC2, group= group), type = "norm") 
 
-  
 ```
 
 # PC axes 2 and 3
@@ -173,5 +172,6 @@ ggplot(pca23, aes(PC2, PC3, color=Treatment, shape = time_point)) +
    scale_color_manual(values = c("#00CCCC", "#FF3333"))
 
 ```
+
 
 
