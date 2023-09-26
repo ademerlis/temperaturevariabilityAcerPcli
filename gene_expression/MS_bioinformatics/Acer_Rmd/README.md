@@ -61,6 +61,11 @@ dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","vari
 
 Based on the dds.pcoa table, the % variation explained by each axis is 19.1% for axis 1 and 10.9% for axis 2.
 
+PCoA axes 2 and 3:
+
+![Screen Shot 2023-09-26 at 12 58 33 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/cad3af59-4021-4e14-9500-62b97a90bf83)
+
+
 ### 2. PERMANOVA
 
 <img width="834" alt="Screen Shot 2023-09-25 at 6 32 32 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/903e9e41-5e3f-4e4a-962a-49e66c500d37">
@@ -134,6 +139,30 @@ PC axes 2 and 3 show clearer separation of time point (but not treatment):
 ![Screen Shot 2023-09-26 at 11 45 12 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4c42360e-e8c5-4d3b-840c-17f21d281c31)
 
 ![Screen Shot 2023-09-26 at 11 45 46 AM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c67bbffc-bdad-4df0-8baf-7c74cedaadd6)
+
+### 7) Common Genes
+
+The main comparison of interest is C0/C29 versus V0/V29. This is because the differential gene expression found in both of these contrasts are solely due to the treatment over time. 
+
+We can find the number of genes that are shared by both these contrasts as well as ones that are unique. The unique ones imply that they are genes specifically changed by the treatment itself (i.e. a DGE in C0/C29 but not in V0/V29 means that the control (untreated) corals resulted in a significant change of expression for that gene but that response was not observed in the variable temperature-treated corals). 
+
+Definition of unique genes: when I look at the lpv table for C0/C29 and V0/V29, they both have the same length = 47,866 isogroups. This is after filtering out all the p-values that are NA. So maybe "unique" isn't the right word, but uniquely significantly differentially expressed is a more specific phrase. 
+
+Venn Diagram of DGEs common in both C0/C29 and V0/V29:
+
+
+
+
+
+### 8) KOG-MWU Heatmaps
+
+1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed p-values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+    
+<img width="605" alt="Screen Shot 2023-09-16 at 8 03 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0d5300c4-4f92-4d73-9543-f7bcb2f7cc9e">
+
+2. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **fold change**. Note that the scale of the heatmap is not fold change, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+
+<img width="579" alt="Screen Shot 2023-09-16 at 8 06 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/071364f7-a0b5-465f-b804-b74b7b4f64f1">
 
 
 
