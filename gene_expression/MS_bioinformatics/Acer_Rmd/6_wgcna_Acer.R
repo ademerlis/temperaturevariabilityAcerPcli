@@ -11,13 +11,14 @@
 # run these above commands once, then comment out
 
 # always run these before running any of the following script chunks
+library(tidyverse)
 library(WGCNA)
 library(flashClust)
 library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
 
-setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
+#setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
 
 #### DATA IMPORT and TRAITS ####
 
@@ -30,6 +31,10 @@ nrow(datt) #45
 
 head(design)
 str(design)
+
+#reorder design table so that variables are grouped together (this will be important later for the heatmaps)
+# design %>% 
+#   arrange(Genotype, Treatment, time_point) -> design
 
 #change treatment to be binary (control = 0, variable = 1)
 variable = as.numeric(design$Treatment=="variable")
@@ -84,6 +89,10 @@ dev.off()
 
 # sample dendrogram and trait heat map showing outliers
 A=adjacency(t(datt),type="signed")                 #SELECT SIGNED OR UNSIGNED HERE
+#I am going with signed because if you pick unsigned, it mixes negatively and positiviely correlated nodes together and 
+#direction of correlation does matter for downstream analysis. 
+#(full explanation here: https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/)
+
 # this calculates the whole network connectivity
 k=as.numeric(apply(A,2,sum))-1
 # standardized connectivity
@@ -105,11 +114,6 @@ plotDendroAndColors(sampleTree,groupLabels=names(datColors), colors=datColors,ma
 remove.samples= Z.k<thresholdZ.k | is.na(Z.k)
 datt=datt[!remove.samples,]
 traits=traits[!remove.samples,] #1 sample removed
-
-# following eigengene sanity checks (below), found several outliers
-# use these to remove, then rerun as before
-# datt=datt[-c(2,34,44,54,61),]
-# traits=traits[-c(2,34,44,54,61),]
   
 write.csv(traits, file="traits.csv")
 
@@ -118,12 +122,19 @@ save(datt,traits,file="wgcnaData.RData")
 
 #### SOFT THRESHOLDS ####
 
+library(tidyverse)
 library(WGCNA)
 library(flashClust)
 library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
-load("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/RData_files/wgcnaData.RData")
+
+load("RData_files/data4wgcna.RData")
+
+design %>% 
+  arrange(Genotype, Treatment, time_point) -> design
+
+datt=t(vsd.wg)
 
 # Try different betas ("soft threshold") - power factor for calling connections between genes
 powers = c(seq(from = 2, to=26, by=1))
@@ -161,7 +172,7 @@ dev.off()
 # take a look at the threshold plots produced above, and the output table from the pickSoftThreshold command
 # pick the power that corresponds with a SFT.R.sq value above 0.90
 
-#none of them are above 0.90....the closest is 0.897 and that corresponds to sft power of 21
+#none of them are above 0.90....the closest is 0.895 and that corresponds to sft power of 21
 
 # run from the line below to the save command
 s.th=21 # re-specify according to previous section
