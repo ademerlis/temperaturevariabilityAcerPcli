@@ -8,7 +8,7 @@ library(RColorBrewer)
 
 
 #### DESEQ IMPORT ####
-setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
+load("ZRData_files/pvals.RData")
 
 load("RData_files/control0_control29_lpv.RData")
 control0_control29.p <- control0_control29.p %>% rename("lpv_c0c29" = lpv)
@@ -46,7 +46,7 @@ control0_control29.p %>%
 
 # list of genes (FDR p-adj < 0.1) shared by C0/C29 and V0/V29
 
-control0_control29.p %>%
+deg_control %>%
   inner_join(variable0_variable29.p, by = "gene") %>%
   filter(abs(lpv_c0c29) >= 1 & abs(lpv_v0v29) >= 1) %>%
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
@@ -55,6 +55,18 @@ control0_control29.p %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene")
+
+as.data.frame(control0_control29) %>% 
+  mutate(contrast = "control0_control29") %>% 
+  rownames_to_column("gene") %>% 
+  filter(padj < 0.1) -> df_C0C29
+
+as.data.frame(variable0_variable29) %>% 
+  mutate(contrast = "variable0_variable29") %>% 
+  rownames_to_column("gene") -> df_V0V29
+
+df_C0C29 %>% inner_join(df_V0V29, by = "gene")
+  
 
 # what about genes unique to c0c29 and v0v29?
 
