@@ -150,4 +150,15 @@ Definition of unique genes: when I look at the lpv table for C0/C29 and V0/V29, 
 
 Venn Diagram of DGEs common in both C0/C29 and V0/V29:
 
+### 8) KOG-MWU Heatmaps
+
+1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed p-values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+
+<img width="605" alt="Screen Shot 2023-09-16 at 8 03 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0d5300c4-4f92-4d73-9543-f7bcb2f7cc9e">
+
+2. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **fold change**. Note that the scale of the heatmap is not fold change, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+
+<img width="579" alt="Screen Shot 2023-09-16 at 8 06 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/071364f7-a0b5-465f-b804-b74b7b4f64f1">
+
+
 
