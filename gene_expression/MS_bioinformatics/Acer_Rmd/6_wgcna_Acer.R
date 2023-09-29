@@ -31,6 +31,17 @@ nrow(datt) #45
 
 head(design)
 str(design)
+colnames(vsd.wg)
+
+all.equal(colnames(vsd.wg), rownames(design)) #FALSE
+
+#change rownames to match colnames
+
+rownames(design) <- colnames(vsd.wg)
+
+head(design)
+
+all.equal(colnames(vsd.wg), rownames(design)) #TRUE
 
 #reorder design table so that variables are grouped together (this will be important later for the heatmaps)
 # design %>% 
@@ -44,9 +55,9 @@ control = as.numeric(design$Treatment == "control")
 
 # coding genotype as binary (0/1, yes/no)
 design$Genotype
-SI_C = as.numeric(design$Genotype == "SI-C")
-BC_8b = as.numeric(design$Genotype == "BC-8b")
-MB_B = as.numeric(design$Genotype == "MB-B")
+SI_C = as.numeric(design$Genotype == "SI_C")
+BC_8b = as.numeric(design$Genotype == "BC_8b")
+MB_B = as.numeric(design$Genotype == "MB_B")
 
 #change time point to be binary (for day0, when time_point = Day_0 it encodes it as "1". for day_29 same thing)
 Day0 = as.numeric(design$time_point=="Day_0")
@@ -60,9 +71,10 @@ variable_Day0 = as.numeric(design$group=="variable_Day_0")
 variable_Day29 = as.numeric(design$group=="variable_Day_29")
 
 traits <- data.frame(cbind(variable, control, SI_C,BC_8b, MB_B, Day0, Day29, control_Day0, control_Day29, variable_Day0, variable_Day29))
-#traits <- data.frame(cbind(healthy0, healthy1, diseased, treated))
-traits
 
+head(traits)
+
+table(rownames(traits)==rownames(datt))
 
 #### OUTLIER DETECTION ####
 
@@ -215,7 +227,7 @@ lnames=load('wgcnaData.RData')
 
 quartz()
 
-MEDissThres = 0.4 # in the first pass, set this to 0 - no merging (we want to see the module-traits heatmap first, then decide which modules are telling us the same story and better be merged)
+MEDissThres = 0 # in the first pass, set this to 0 - no merging (we want to see the module-traits heatmap first, then decide which modules are telling us the same story and better be merged)
 sizeGrWindow(7, 6)
 plot(METree, main = "Clustering of module eigengenes",
 xlab = "", sub = "")
