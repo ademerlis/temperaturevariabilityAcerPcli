@@ -39,6 +39,9 @@ ncol(counts) #48 samples
 # how does the data look? 
 head(counts)
 
+colnames(counts) # sample IDs (i.e. Acer-005). You need to keep track of column names and row names of data frames throughout this analysis because they MUST MATCH 
+rownames(counts) #gene names (but not actual gene names, arbitrary gene names like Acropora000001. To get "actual" gene names, need annotation files)
+
 # filtering out low-count genes
 keep <- rowSums(counts) >= 10
 countData <- counts[keep,]
@@ -52,6 +55,8 @@ nrow(counts4wgcna) #27829
 ncol(counts4wgcna) #48
 #write.csv(counts4wgcna, file="Acer_counts4wgcna.csv")
 
+colnames(counts4wgcna) #still same sample ID names "Acer-005" etc
+
 # importing a design .csv file
 design = read.csv("../../RNA_extraction_sequencing_data.csv", head=TRUE)
 
@@ -64,10 +69,19 @@ design %>%
                                 Experiment.phase == "last day of treatment" ~ "Day_29")) -> design
 column_to_rownames(design, var="Sample_ID") -> design
 design$Genotype <- as.factor(design$Genotype)
+design$Genotype <- factor(gsub("-", "_", design$Genotype)) #DESeq2 does not like hyphens in factor names
 design$Treatment <- as.factor(design$Treatment)
 design$group <- factor(paste0(design$Treatment, "_", design$time_point))
 
+
+colnames(design) #"Species"   "Genotype"   "Sample.ID"  "Date.Sampled" "Experiment.phase" "Treatment"   "time_point"  "group" 
+rownames(design) #"Acer-005" etc
+
 #### FULL MODEL DESIGN (Genotype + group) and OUTLIERS ####
+
+#when making dds formula, it is CRITICAL that you put the right order of variables in the design. The design indicates how to model the samples, 
+#(here: design = ~batch + condition), 
+#that we want to measure the effect of the condition, controlling for batch differences. The two factor variables batch and condition should be columns of coldata.
 
 # make big dataframe including all factors and interaction, getting normalized data for outlier detection
 dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
@@ -78,6 +92,8 @@ dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","vari
 # for large datasets, rlog may take too much time, especially for an unfiltered dataframe
 # vsd is much faster and still works for outlier detection
 Vsd=varianceStabilizingTransformation(dds)
+
+colnames(Vsd)
 
 library(Biobase)
 e=ExpressionSet(assay(Vsd), AnnotatedDataFrame(as.data.frame(colData(Vsd))))
@@ -103,13 +119,22 @@ design=design[-outs,]
 dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
 dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 
+#These values should all be the same:
+colnames(dds)
+rownames(design)
+colnames(countData)
+colnames(counts4wgcna)
+
 # save all these dataframes as an Rdata package so you don't need to rerun each time
 save(dds,design,countData,Vsd,counts4wgcna,file="initial_fullddsdesigncountsVsdcountsWGCNA.RData")
 
 # generating normalized variance-stabilized data for PCoA, heatmaps, etc
 vsd=assay(Vsd)
+colnames(vsd)
 # takes the sample IDs and factor levels from the design to create new column names for the dataframe
-snames=paste(colnames(countData),design[,2],design[,8],sep=".")
+snames=paste(colnames(countData),design[,2], design[,8],sep=".")
+snames #i.e. Acer-005.SI_C.control_Day_0
+
 # renames the column names
 colnames(vsd)=snames
 
@@ -117,12 +142,15 @@ save(vsd,design,file="vsd.RData")
 
 # more reduced stabilized dataset for WGCNA
 wg = DESeqDataSetFromMatrix(countData=counts4wgcna, colData=design, design=~ Genotype + group)
-vsd.wg=assay(varianceStabilizingTransformation(wg), blind=TRUE)
-# vsd.wg=assay(rlog(wg), blind=TRUE)
+vsd.wg=assay(varianceStabilizingTransformation(wg), blind=FALSE) #blind=TRUE is the default, and it is a fully unsupervised transformation. However, the creator of DESeq2,
+#Michael Love, recommends using blind=FALSE for downstream analyses because when transforming data, the full use of the design information should be made. If many genes have
+#large differences in counts due to experimental design, then blind=FALSE will account for that.
+
 head(vsd.wg)
 colnames(vsd.wg)=snames
+colnames(vsd.wg)
+colnames(vsd)
 save(vsd.wg,design,file="data4wgcna.RData")
-
 
 #### PCOA and PERMANOVA ####
 
@@ -141,6 +169,10 @@ library(ape)
 
 conditions=design
 conditions$group <- factor(conditions$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
+
+colnames(vsd)
+rownames(conditions)
+#while the names aren't equal, they are in the same order, so when doing the PCoA and using conditions it still should work
 
 # creating a PCoA eigenvalue matrix
 dds.pcoa=pcoa(dist(t(vsd),method="manhattan")/1000)
@@ -190,6 +222,10 @@ plot(tre,cex=0.8)
 dev.off()
 
 # formal analysis of variance in distance matricies: 
+#do the results of the PERMANOVA change depending on whether the column and row names match?
+rownames(conditions) = snames 
+rownames(conditions)
+conditions
 ad=adonis2(t(vsd)~Genotype + time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 summary(ad)
@@ -210,6 +246,9 @@ library(DESeq2)
 library(BiocParallel)
 
 # Running full model for contrast statements
+#dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
+rownames(design)
+colnames(countData)
 dds=DESeq(dds, parallel=TRUE)
 
 # saving all models
@@ -225,25 +264,34 @@ library(DESeq2)
 treatment_time=results(dds) 
 summary(treatment_time) 
 degs_treatment_time=row.names(treatment_time)[treatment_time$padj<0.1 & !(is.na(treatment_time$padj))]
+#list of gene names that are significant at p < 0.1
+length(degs_treatment_time) #12,836 genes
 
 resultsNames(dds)
+#"Intercept"                              "Genotype_MB_B_vs_BC_8b"                 "Genotype_SI_C_vs_BC_8b"                
+#"group_control_Day_29_vs_control_Day_0"  "group_variable_Day_0_vs_control_Day_0"  "group_variable_Day_29_vs_control_Day_0"
+#there are more contrasts though, so you have to specify 
 
 # treatment and time contrasts
 variable29_control29=results(dds,contrast=c("group","variable_Day_29","control_Day_29"))
 summary(variable29_control29)
 degs_variable29_control29=row.names(variable29_control29)[variable29_control29$padj<0.1 & !(is.na(variable29_control29$padj))]
+length(degs_variable29_control29) #4,060 genes
 
 variable0_control0=results(dds,contrast=c("group","variable_Day_0","control_Day_0"))
 summary(variable0_control0)
 degs_variable0_control0=row.names(variable0_control0)[variable0_control0$padj<0.1 & !(is.na(variable0_control0$padj))]
+length(degs_variable0_control0) #149 genes
 
 variable0_variable29=results(dds,contrast=c("group","variable_Day_0","variable_Day_29"))
 summary(variable0_variable29)
 degs_variable0_variable29=row.names(variable0_variable29)[variable0_variable29$padj<0.1 & !(is.na(variable0_variable29$padj))]
+length(degs_variable0_variable29) #10,540 genes
 
 control0_control29=results(dds,contrast=c("group","control_Day_0","control_Day_29"))
 summary(control0_control29)
 degs_control0_control29=row.names(control0_control29)[control0_control29$padj<0.1 & !(is.na(control0_control29$padj))]
+length(degs_control0_control29) #16,022 genes
 
 save(treatment_time,variable29_control29,variable0_control0,variable0_variable29,control0_control29, degs_variable29_control29,degs_variable0_control0, degs_variable0_variable29, degs_control0_control29, file="pvals.RData")
 
@@ -309,139 +357,187 @@ load("RData_files/pvals.RData")
 
 # variable 29 vs control 29
 # log2 fold changes:
-source=variable29_control29[!is.na(variable29_control29$pvalue),]
+source=variable29_control29[!is.na(variable29_control29$padj),]
 variable29_control29.fc=data.frame("gene"=row.names(source))
 variable29_control29.fc$lfc=source[,"log2FoldChange"]
 head(variable29_control29.fc)
-#write.csv(variable29_control29.fc,file="variable29_control29_fc.csv",row.names=F,quote=F)
-#save(variable29_control29.fc,file="variable29_control29_fc.RData")
+write.csv(variable29_control29.fc,file="variable29_control29_fc.csv",row.names=F,quote=F)
+save(variable29_control29.fc,file="variable29_control29_fc.RData")
 
-# signed log p-values: -log(pvalue)* direction:
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
 variable29_control29.p=data.frame("gene"=row.names(source))
-variable29_control29.p$lpv=-log(source[,"pvalue"],10)
+variable29_control29.p$lpv=-log(source[,"padj"],10)
 variable29_control29.p$lpv[source$stat<0]=variable29_control29.p$lpv[source$stat<0]*-1
 head(variable29_control29.p)
-# write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-# save(variable29_control29.p,file="variable29_control29_lpv.RData")
+write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
+save(variable29_control29.p,file="variable29_control29_lpv.RData")
 
-# signed log FDR adjusted p-value: -log(padj)* direction:
-source=variable29_control29[variable29_control29$padj,]
-variable29_control29.p=data.frame("gene"=row.names(source))
-variable29_control29.p$lpadj=-log(source[,"padj"],10)
-variable29_control29.p$lpadj[source$stat<0]=variable29_control29.p$lpadj[source$stat<0]*-1
-head(variable29_control29.p)
-# write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-# save(variable29_control29.p,file="variable29_control29_lpv.RData")
-
+#length of both variable29_control29 data frames = 30,233 genes. This is not a list of significant genes, 
+#but a list of all genes with p-adj and log2foldchange values that are not NA
 
 # variable0 vs control0
 # log2 fold changes:
-source=variable0_control0[!is.na(variable0_control0$pvalue),]
+source=variable0_control0[!is.na(variable0_control0$padj),]
 variable0_control0.fc=data.frame("gene"=row.names(source))
 variable0_control0.fc$lfc=source[,"log2FoldChange"]
 head(variable0_control0.fc)
-# write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
-# save(variable0_control0.fc,file="variable0_control0_fc.RData")
+write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
+save(variable0_control0.fc,file="variable0_control0_fc.RData")
 
-# signed log p-values: -log(pvalue)* direction:
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
 variable0_control0.p=data.frame("gene"=row.names(source))
-variable0_control0.p$lpv=-log(source[,"pvalue"],10)
+variable0_control0.p$lpv=-log(source[,"padj"],10)
 variable0_control0.p$lpv[source$stat<0]=variable0_control0.p$lpv[source$stat<0]*-1
 head(variable0_control0.p)
-# write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
-# save(variable0_control0.p,file="variable0_control0_lpv.RData")
+write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
+save(variable0_control0.p,file="variable0_control0_lpv.RData")
 
+#length of both variable0_control0 data frames = 20,952 genes. This is not a list of significant genes, 
+#but a list of all genes with p-adj and log2foldchange values that are not NA
 
 #variable0 vs variable29
 # log2 fold changes:
-source=variable0_variable29[!is.na(variable0_variable29$pvalue),]
+source=variable0_variable29[!is.na(variable0_variable29$padj),]
 variable0_variable29.fc=data.frame("gene"=row.names(source))
 variable0_variable29.fc$lfc=source[,"log2FoldChange"]
 head(variable0_variable29.fc)
-# write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
-# save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
+write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
+save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
 
-# signed log p-values: -log(pvalue)* direction:
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
 variable0_variable29.p=data.frame("gene"=row.names(source))
-variable0_variable29.p$lpv=-log(source[,"pvalue"],10)
+variable0_variable29.p$lpv=-log(source[,"padj"],10)
 variable0_variable29.p$lpv[source$stat<0]=variable0_variable29.p$lpv[source$stat<0]*-1
 head(variable0_variable29.p)
-# write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
-# save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
+nrows(variable0_variable29.p)
+write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
+save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
 
+#length of both variable0_variable29 data frames = 36,731 genes. This is not a list of significant genes, 
+#but a list of all genes with p-adj and log2foldchange values that are not NA
 
 # control0_control29
 # log2 fold changes:
-source=control0_control29[!is.na(control0_control29$pvalue),]
+source=control0_control29[!is.na(control0_control29$padj),]
 control0_control29.fc=data.frame("gene"=row.names(source))
 control0_control29.fc$lfc=source[,"log2FoldChange"]
 head(control0_control29.fc)
-# write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
-# save(control0_control29.fc,file="control0_control29_fc.RData")
+write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
+save(control0_control29.fc,file="control0_control29_fc.RData")
 
-# signed log p-values: -log(pvalue)* direction:
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
 control0_control29.p=data.frame("gene"=row.names(source))
-control0_control29.p$lpv=-log(source[,"pvalue"],10)
+control0_control29.p$lpv=-log(source[,"padj"],10)
 control0_control29.p$lpv[source$stat<0]=control0_control29.p$lpv[source$stat<0]*-1
 head(control0_control29.p)
-# write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
-# save(control0_control29.p,file="control0_control29_lpv.RData")
+write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
+save(control0_control29.p,file="control0_control29_lpv.RData")
+
+#length of both control0_control29 data frames = 40,443 genes. This is not a list of significant genes, 
+#but a list of all genes with p-adj and log2foldchange values that are not NA
 
 
 #### ANNOTATING DGES ####
 load("RData_files/realModels_Acer.RData")
 load("RData_files/pvals.RData")
 
+#Control_Day0 vs Control_Day29
 as.data.frame(control0_control29) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  filter(padj < 0.1) %>% 
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
-  write_csv("control0_control29_annotatedDGEs.csv")
-  
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("control0_control29_annotatedDGEs.csv")
+#16,022 genes 
 
-as.data.frame(variable29_control29) %>%
+as.data.frame(control0_control29) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  filter(padj < 0.1 & abs(log2FoldChange) >2) %>% 
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
-  write_csv("variable29_control29_annotatedDGEs.csv")
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("control0_control29_annot_padjL2FC.csv")
+#864 genes
 
-as.data.frame(variable0_control0) %>%
+#Variable Day 0 vs Variable Day 29
+as.data.frame(variable0_variable29) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  filter(padj < 0.1) %>% 
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
-  write_csv("variable0_control0_annotatedDGEs.csv")
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_variable29_annotatedDGEs.csv")
+#10,540 genes
 
 as.data.frame(variable0_variable29) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05 & abs(log2FoldChange) >= 2) %>% 
+  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>%
-  write_csv("variable0_variable29_annotatedDGEs.csv")
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_variable29_annot_padjL2FC.csv")
+#273 genes
+
+#Variable_Day29 vs Control_Day29
+as.data.frame(variable29_control29) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.1) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable29_control29_annotatedDGEs.csv")
+#4,060 genes
+
+as.data.frame(variable29_control29) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable29_control29_annot_padjL2FC.csv")
+#126 genes
+
+#Variable Day 0 vs Control Day 0
+as.data.frame(variable0_control0) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.1) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_control0_annotatedDGEs.csv")
+#149 genes
+
+as.data.frame(variable0_control0) %>%
+  rownames_to_column(var="gene") %>% 
+  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_control0_annot_padjL2FC.csv")
+# 1 gene
 
 
 #### CHERRY PICKING ####
 
 load("RData_files/variable0_control0_lpv.RData")
-variable0_control0.p %>%
+variable0_variable29.p %>%
   filter(abs(lpv) >= 1) %>%
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
@@ -450,10 +546,10 @@ variable0_control0.p %>%
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
   filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
-  write.csv("variable0control0_cherrypicking.csv")
+  write.csv("variable0variable29_cherrypicking.csv")
 
 load("RData_files/variable29_control29_lpv.RData")
-variable29_control29.p %>%
+control0_control29.p %>%
   filter(abs(lpv) >= 1) %>%
   left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
                        sep = "\t",
@@ -462,7 +558,7 @@ variable29_control29.p %>%
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
   filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
-  write.csv("variable29control29_cherrypicking.csv")
+  write.csv("control0control29_cherrypicking.csv")
 
 
 

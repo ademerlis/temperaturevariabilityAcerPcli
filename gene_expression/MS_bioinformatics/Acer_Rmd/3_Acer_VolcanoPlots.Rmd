@@ -26,6 +26,7 @@ control0_control29_annotated <- as.data.frame(control0_control29) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene"))
+str(control0_control29_annotated) #47,882 x 8
 
   keyvals <- ifelse(
     control0_control29_annotated$log2FoldChange < -2 & control0_control29_annotated$padj < 0.05, 'royalblue',

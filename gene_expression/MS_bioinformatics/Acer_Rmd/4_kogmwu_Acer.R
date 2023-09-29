@@ -13,26 +13,28 @@ head(gene2kog)
 #setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd")
 load("RData_files/pvals.RData")
 
-control0_control29=load('RData_files/control0_control29_lpv.RData')
+control0_control29=load('RData_files/control0_control29_lpv.RData') #40,443 genes
 control0_control29 # names of datasets in the package
 lpv.control0_control29=kog.mwu(control0_control29.p,gene2kog) 
 lpv.control0_control29 
+#
 
-variable0_control0=load('RData_files/variable0_control0_lpv.RData')
+variable0_control0=load('RData_files/variable0_control0_lpv.RData') #20,952 genes
 variable0_control0 # names of datasets in the package
 lpv.variable0_control0=kog.mwu(variable0_control0.p,gene2kog) 
 lpv.variable0_control0
 
-variable29_control29=load('RData_files/variable29_control29_lpv.RData')
+variable29_control29=load('RData_files/variable29_control29_lpv.RData') #30,233 genes
 variable29_control29 # names of datasets in the package
 lpv.variable29_control29=kog.mwu(variable29_control29.p,gene2kog) 
 lpv.variable29_control29
 
-variable0_variable29=load('RData_files/variable0_variable29_lpv.RData')
+variable0_variable29=load('RData_files/variable0_variable29_lpv.RData') #36,731 genes
 variable0_variable29 # names of datasets in the package
 lpv.variable0_variable29=kog.mwu(variable0_variable29.p,gene2kog) 
 lpv.variable0_variable29
 
+#each lpv table has 25 KOG terms. Not sure if that's the limit set by kog.mwu or not
 
 # compiling a table of delta-ranks to compare these results:
 ktable=makeDeltaRanksTable(list("control0_control29"=lpv.control0_control29,"variable0_control0"=lpv.variable0_control0,"variable0_variable29"=lpv.variable0_variable29,"variable29_control29"=lpv.variable29_control29))
@@ -68,22 +70,22 @@ dev.off()
 
 #### pairwise treatments (fc) ####
 
-variable0_control0=load('RData_files/variable0_control0_fc.RData')
+variable0_control0=load('RData_files/variable0_control0_fc.RData') #20,952 genes
 variable0_control0 # names of datasets in the package
 fc.variable0_control0=kog.mwu(variable0_control0.fc,gene2kog) 
 fc.variable0_control0 
 
-control0_control29=load('RData_files/control0_control29_fc.RData')
+control0_control29=load('RData_files/control0_control29_fc.RData') #40,443 genes
 control0_control29 # names of datasets in the package
 fc.control0_control29=kog.mwu(control0_control29.fc,gene2kog) 
 fc.control0_control29
 
-variable0_variable29=load('RData_files/variable0_variable29_fc.RData')
+variable0_variable29=load('RData_files/variable0_variable29_fc.RData') #36,731 genes
 variable0_variable29 # names of datasets in the package
 fc.variable0_variable29=kog.mwu(variable0_variable29.fc,gene2kog) 
 fc.variable0_variable29
 
-variable29_control29=load('RData_files/variable29_control29_fc.RData')
+variable29_control29=load('RData_files/variable29_control29_fc.RData') #30,233 genes
 variable29_control29 # names of datasets in the package
 fc.variable29_control29=kog.mwu(variable29_control29.fc,gene2kog) 
 fc.variable29_control29

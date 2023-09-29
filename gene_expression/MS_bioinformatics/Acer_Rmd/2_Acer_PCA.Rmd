@@ -44,18 +44,30 @@ ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
          axis.line = element_line(colour = "black"), #Set axes color
          plot.background=element_blank()) + 
   stat_ellipse(aes(PC1, PC2, group=time_point, lty = time_point), type = "norm")
+
+ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+   ggtitle("A. cervicornis") +
+   theme_bw() + #Set background color
+   theme(panel.border = element_blank(), # Set border
+         axis.line = element_line(colour = "black"), #Set axes color
+         plot.background=element_blank()) + 
+  stat_ellipse(aes(PC1, PC2, group=Genotype, lty = Genotype), type = "norm")
+
 ```
 
 # separate genotypes and plot treatment and time for each
 ```{r}
 vst_PCA_SIC <- vst_PCAdata %>% 
-  filter(Genotype == "SI-C")
+  filter(Genotype == "SI_C")
 
 vst_PCA_MBB <- vst_PCAdata %>% 
-  filter(Genotype == "MB-B")
+  filter(Genotype == "MB_B")
 
 vst_PCA_BC8b <- vst_PCAdata %>% 
-  filter(Genotype == "BC-8b")
+  filter(Genotype == "BC_8b")
 
 # SI-C 
 ggplot(vst_PCA_SIC, aes(PC1, PC2, color=Treatment, shape=time_point)) + 
