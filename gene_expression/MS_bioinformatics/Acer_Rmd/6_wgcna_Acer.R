@@ -43,9 +43,7 @@ head(design)
 
 all.equal(colnames(vsd.wg), rownames(design)) #TRUE
 
-#reorder design table so that variables are grouped together (this will be important later for the heatmaps)
-# design %>% 
-#   arrange(Genotype, Treatment, time_point) -> design
+rownames(datt)
 
 #change treatment to be binary (control = 0, variable = 1)
 variable = as.numeric(design$Treatment=="variable")
@@ -73,8 +71,6 @@ variable_Day29 = as.numeric(design$group=="variable_Day_29")
 traits <- data.frame(cbind(variable, control, SI_C,BC_8b, MB_B, Day0, Day29, control_Day0, control_Day29, variable_Day0, variable_Day29))
 
 head(traits)
-
-table(rownames(traits)==rownames(datt))
 
 #### OUTLIER DETECTION ####
 
@@ -222,8 +218,8 @@ save(dynamicMods,dynamicColors,MEs,METree,geneTree,file="1stPassModules.RData")
 mm=load('1stPassModules.RData')
 mm
 lnames=load('wgcnaData.RData')
-# traits
-# head(datt)
+traits
+head(datt)
 
 quartz()
 
