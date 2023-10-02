@@ -169,5 +169,23 @@ Note that the zeros don't mean that there aren't any genes there. That's why I f
 
 <img width="536" alt="Screen Shot 2023-10-02 at 11 38 26 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d7f331c2-962a-443e-ab7e-613558b6fbe3">
 
+### 9) WGCNA
 
+<img width="723" alt="Screen Shot 2023-10-02 at 7 06 51 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/68f8bf04-c9b8-4eb3-b0e5-b023488b830b">
+
+<img width="768" alt="cluster dendrogram" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/700eba57-8d1d-4615-88fa-b22570b1320a">
+
+<img width="768" alt="merged module-trait relationships significant only" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/89a7f35d-79a5-4b92-8091-291ac4e0b11d">
+
+<img width="712" alt="barplot number of genes per module" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0406f5ca-7fee-491a-a52f-c5128e309068">
+
+Dark Turquoise module:
+
+<img width="850" alt="Screen Shot 2023-10-02 at 7 08 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/65b83836-4d37-4030-a26c-7431c315de9c">
+
+Dark Orange module:
+
+<img width="851" alt="Screen Shot 2023-10-02 at 7 09 31 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e6d7e8d4-1a4e-47a6-ab99-7f8f40344769">
+
+I made heatmaps for all the modules but some of them the fonts are too small so i'll have to edit them in Illustrator.
 
