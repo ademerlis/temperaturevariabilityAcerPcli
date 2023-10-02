@@ -150,15 +150,24 @@ Definition of unique genes: when I look at the lpv table for C0/C29 and V0/V29, 
 
 Venn Diagram of DGEs common in both C0/C29 and V0/V29:
 
+<img width="481" alt="Screen Shot 2023-10-02 at 11 39 17 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d6095f57-0623-4ee0-ad1d-5310fca34afc">
+
+Venn Diagram of DGEs common in both C0/V0 and C29/V29:
+
+<img width="652" alt="Screen Shot 2023-10-02 at 11 39 39 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/80335035-e487-411a-8ecf-392e0bfab15a">
+
+Note that the zeros don't mean that there aren't any genes there. That's why I find these venn diagrams a little misleading, because I first filtered for shared genes and then plotted those numbers. Maybe these would be better as bar graphs? 
+
 ### 8) KOG-MWU Heatmaps
 
-1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed p-values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
+1. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **log-transformed FDR p-adjusted values**. Note that the scale of the heatmap is not p-values, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
 
-<img width="605" alt="Screen Shot 2023-09-16 at 8 03 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/0d5300c4-4f92-4d73-9543-f7bcb2f7cc9e">
+<img width="527" alt="Screen Shot 2023-10-02 at 11 38 07 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/848cbe85-95b9-4052-96b9-74f29477c6c2">
+
 
 2. Enrichment of KOG (euKaryotic Orthologous Groups) terms of DGEs with correlations based on **fold change**. Note that the scale of the heatmap is not fold change, but delta-ranks, which are generated based on Mann-Whitney U tests (where the MWU comes from).
 
-<img width="579" alt="Screen Shot 2023-09-16 at 8 06 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/071364f7-a0b5-465f-b804-b74b7b4f64f1">
+<img width="536" alt="Screen Shot 2023-10-02 at 11 38 26 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d7f331c2-962a-443e-ab7e-613558b6fbe3">
 
 
 
