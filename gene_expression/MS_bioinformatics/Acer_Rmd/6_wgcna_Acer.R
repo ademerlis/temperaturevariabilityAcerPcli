@@ -139,9 +139,6 @@ allowWGCNAThreads()
 
 load("RData_files/data4wgcna.RData")
 
-design %>% 
-  arrange(Genotype, Treatment, time_point) -> design
-
 datt=t(vsd.wg)
 
 # Try different betas ("soft threshold") - power factor for calling connections between genes
@@ -215,15 +212,15 @@ save(dynamicMods,dynamicColors,MEs,METree,geneTree,file="1stPassModules.RData")
 
 #### MERGING MODULES ####
 
-mm=load('1stPassModules.RData')
+mm=load('RData_files/1stPassModules.RData')
 mm
-lnames=load('wgcnaData.RData')
+lnames=load('RData_files/wgcnaData.RData')
 traits
 head(datt)
 
 quartz()
 
-MEDissThres = 0 # in the first pass, set this to 0 - no merging (we want to see the module-traits heatmap first, then decide which modules are telling us the same story and better be merged)
+MEDissThres = 0.4 # in the first pass, set this to 0 - no merging (we want to see the module-traits heatmap first, then decide which modules are telling us the same story and better be merged)
 sizeGrWindow(7, 6)
 plot(METree, main = "Clustering of module eigengenes",
 xlab = "", sub = "")
@@ -382,18 +379,18 @@ names(geneTraitSignificance) = paste("GS.", names(selTrait), sep="");
 names(GSPvalue) = paste("p.GS.", names(selTrait), sep="");
 
 # selecting specific modules to plot (change depending on which trait you're looking at)
-#moduleCols=c("turquoise","midnightblue", "darkred") # for control_Day0
-#moduleCols=c("pink","turquoise", "cyan", "green", "purple", "grey") # for control_Day29
-#moduleCols=c("green", "darkorange","turquoise","pink") # for variable_Day0
-moduleCols=c("grey", "turquoise", "cyan", "green", "darkred", "salmon", "midnightblue") # for variable_Day29
+#moduleCols=c("turquoise","brown", "blue", "darkorange", "darkturquoise") # for control_Day0
+#moduleCols=c("pink","turquoise", "cyan", "blue","brown", "grey") # for control_Day29
+#moduleCols=c("blue", "brown","turquoise","pink") # for variable_Day0
+moduleCols=c("grey", "turquoise", "cyan", "darkturquoise", "darkorange", "brown", "royalblue") # for variable_Day29
 
 quartz()
 # set par to be big enough for all significant module correlations, 
 #then run the next whichTrait and moduleCols statements above and repeat from the 'for' loop
-#par(mfrow=c(1,4)) # for control_Day0
-#par(mfrow=c(3,3)) # for control_Day29
+#par(mfrow=c(1,5)) # for control_Day0
+par(mfrow=c(3,3)) # for control_Day29
 #par(mfrow=c(1,4)) # for variable_Day0
-par(mfrow=c(3,3)) # for variable_Day29
+#par(mfrow=c(3,3)) # for variable_Day29
 
 counter=0
 # shows correlations for all modules
@@ -427,16 +424,14 @@ load(file = "RData_files/wgcnaData.RData");
 
 # run for each of these statements individually
 #which.module="turquoise"
-#which.module="midnightblue"
-#which.module="darkred"
+#which.module="darkturquoise"
+#which.module="brown"
+#which.module="blue"
+#which.module="darkorange"
 #which.module="pink"
 #which.module="cyan"
-#which.module="green"
-#which.module="purple"
 #which.module="grey"
-#which.module="darkorange"
-which.module="salmon"
-
+which.module="royalblue"
 
 datME=MEs
 datExpr=datt
@@ -452,10 +447,27 @@ ylab="eigengene expression",xlab="sample")
 
 length(datExpr[1,moduleColors==which.module ]) # number of genes in chosen module
 
+#turquoise = 6226
+#darkturquoise = 154
+#brown = 2451
+#blue = 8003
+#dark orange = 504
+#pink = 890
+#cyan = 550
+#grey = 2354
+#royalblue = 187
+
 # If individual samples appear to be driving expression of significant modules, they are likely outliers
 
-# idk they all look fine
-
+#turquoise looks fine
+#darkturquoise looks fine
+#brown looks fine
+#blue looks fine
+#dark orange looks fine
+#pink has two samples that are very high, but the other samples also have representation so maybe its fine
+#cyan looks fine
+#grey looks fine
+#royalblue looks fine
 
 #### GO/KOG EXPORT ####
 
@@ -465,21 +477,22 @@ load(file = "RData_files/networkdata_signed.RData") # moduleColors, MEs
 load(file = "RData_files/wgcnaData.RData") # vsd table
 load(file = "RData_files/data4wgcna.RData") # vsd table
 
-# calculating modul memberships for all genes for all modules
+# calculating module memberships for all genes for all modules
 allkME =as.data.frame(signedKME(datt, MEs)) 
 names(allkME)=gsub("kME","",names(allkME))
 
 # run for each of these statements individually
 
 #which.module="turquoise"
-#which.module="midnightblue"
-#which.module="darkred"
+#which.module="darkturquoise"
+#which.module="brown"
+#which.module="blue"
+#which.module="darkorange"
 #which.module="pink"
 #which.module="cyan"
-#which.module="green"
-#which.module="purple"
 #which.module="grey"
-which.module="salmon"
+which.module="royalblue"
+
 
 table(moduleColors==which.module) # how many genes are in it?
 
@@ -493,30 +506,31 @@ write.csv(combo,file=paste(which.module,".csv",sep=""),row.names=F,quote=F)
 
 # plotting heatmap for named top-kME genes
 library(WGCNA)
+library(pheatmap)
+
 load(file = "RData_files/networkdata_signed.RData")
 load(file = "RData_files/data4wgcna.RData") 
 load(file = "RData_files/wgcnaData.RData");
-allkME =as.data.frame(signedKME(datt, MEs))
-gg=read.delim(file="~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",sep="\t")
-library(pheatmap)
 
-which.module="turquoise"
-#which.module="midnightblue"
-#which.module="darkred"
+allkME =signedKME(datt, MEs)
+gg=read.delim(file="~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",sep="\t")
+
+#which.module="turquoise"
+#which.module="darkturquoise"
+#which.module="brown"
+#which.module="blue"
+#which.module="darkorange"
 #which.module="pink"
 #which.module="cyan"
-#which.module="green"
-#which.module="purple"
 #which.module="grey"
-which.module="salmon"
+which.module="royalblue"
 
 top=30 # number of named top-kME genes to plot
 
 datME=MEs
 datExpr=datt
 modcol=paste("kME",which.module,sep="")
-sorted=vsd.wg[order(allkME[modcol,],decreasing=T),] #Warning message:In xtfrm.data.frame(x) : cannot xtfrm data frames
-head(sorted)
+sorted=vsd.wg[order(allkME[,modcol],decreasing=T),]
 # selection top N names genes, attaching gene names
 gnames=c();counts=0;hubs=c()
 for(i in 1:length(sorted[,1])) {
@@ -534,12 +548,27 @@ for(i in 1:length(sorted[,1])) {
 } 
 row.names(hubs)=gnames
 
-contrasting = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
-# contrasting2 = colorRampPalette(rev(c("chocolate1","chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
-# contrasting3 = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan","cyan")))(100)
+colnames(hubs) 
 
-pdf(file="heatmap_top30_turquoise.pdf", height=6, width=18)
-pheatmap(hubs,scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows=F,cluster_cols=F)
+categories <- c("SI_C.control_Day_0", "MB_B.control_Day_0", "BC_8b.control_Day_0", "SI_C.variable_Day_0", "MB_B.variable_Day_0",
+                "BC_8b.variable_Day_0", "SI_C.control_Day_29", "MB_B.control_Day_29", "BC_8b.control_Day_29", "SI_C.variable_Day_29", 
+                "MB_B.variable_Day_29", "BC_8b.variable_Day_29")
+
+# Extract and sort columns for each category
+category_columns <- lapply(categories, function(cat) {
+  matching_columns <- grep(cat, names(hubs), value = TRUE)
+  hubs[, matching_columns, drop = FALSE]
+})
+
+# Bind the columns back together in the desired order
+reordered_df <- do.call(cbind, category_columns)
+
+contrasting = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
+#contrasting2 = colorRampPalette(rev(c("chocolate1","chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
+#contrasting3 = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan","cyan")))(100)
+
+pdf(file="heatmap_top30_royalblue.pdf")
+pheatmap(as.matrix(reordered_df),scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows = F, cluster_cols = F) 
 dev.off()
 
 

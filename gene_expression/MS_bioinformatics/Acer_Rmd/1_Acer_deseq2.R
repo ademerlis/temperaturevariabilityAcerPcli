@@ -159,6 +159,7 @@ load("~/OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gen
 library(pheatmap)
 # similarity among samples
 pdf(file="heatmap_fullmodel.pdf", width=15, height=15)
+head(vsd)
 pheatmap(cor(vsd))
 dev.off()
 
