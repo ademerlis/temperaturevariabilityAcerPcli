@@ -35,17 +35,19 @@ goAnnotations="Acervicornis_iso2go.tab" # two-column, tab-delimited, one line pe
 #### log-padj value files ####
 
 # Edit these to match your data file names: 
-input="control0_control29_lpv.csv" # two columns of comma-separated values: gene id, continuous measure of significance. 
 
-#input="../RData_files/variable0_variable29_lpv.RData" 
+#input="control0_control29_lpv.csv" # two columns of comma-separated values: gene id, continuous measure of significance. 
+
+input="variable0_variable29_lpv.csv" 
+
 #input="../RData_files/variable0_control0_lpv.RData" 
 #input="../RData_files/variable29_control29_lpv.RData" 
 
 #goDivision="MF" # either MF, or BP, or CC
 
-goDivision="BP" # either MF, or BP, or CC
+#goDivision="BP" # either MF, or BP, or CC
 
-#goDivision="CC" # either MF, or BP, or CC
+goDivision="CC" # either MF, or BP, or CC
 
 # Calculating stats. It might take ~3 min for MF and BP. Do not rerun it if you just want to replot the data with different cutoffs, 
 #go straight to gomwuPlot. If you change any of the numeric values below, delete the files that were generated in previos runs first.
@@ -64,12 +66,12 @@ gomwuStats(input, goDatabase, goAnnotations, goDivision,
 # Plotting results
 quartz()
 results=gomwuPlot(input,goAnnotations,goDivision,
-                  # absValue=-log(0.05,10),  # genes with the measure value exceeding this will be counted as "good genes". 
+                  absValue=-log(0.05,10),  # genes with the measure value exceeding this will be counted as "good genes". 
                   #Specify -log(0.05,10) for log p-value (lpv) datasets, and 1 for fold change (fc) datasets. 
                   #Specify absValue=0.001 if you are doing Fisher's exact test for standard GO enrichment or analyzing a WGCNA module 
                   #(all non-zero genes = "good genes").
                   # absValue=1,
-                  absValue=0.001,
+                  #absValue=0.001,
                   # level1=1, # FDR threshold for plotting. Specify level1=1 to plot all GO categories containing genes exceeding the absValue.
                   # level1=0.1,
                   level1=0.05,
@@ -89,7 +91,7 @@ results=gomwuPlot(input,goAnnotations,goDivision,
 
 # text representation of results, with actual adjusted p-values
 results
-write.csv(results, file = "darkred_CC_p0.05.csv")
+write.csv(results, file = "variable0_variable29_CC_p0.05.csv")
 
 #### fold change files ####
 
