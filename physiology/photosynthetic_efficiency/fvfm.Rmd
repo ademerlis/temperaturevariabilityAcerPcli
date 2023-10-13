@@ -9,6 +9,9 @@ output: html_document
 
 ```{r}
 ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+str(ipam_tidy_data)
+unique(ipam_tidy_data$Date)
 ```
 
 ```{r}
@@ -22,6 +25,30 @@ library(drc) #for the function "drm" dose-response model
 library(broom) #for the tidy function needed for dose response model
 library(car)
 ```
+
+
+## data normality and assumption testing
+
+```{r}
+# subsetting data frames by species
+ipam_acer <- subset(ipam_tidy_data, Species == "Acervicornis")
+ipam_pcli <- subset(ipam_tidy_data, Species == "Pclivosa") 
+```
+
+### normalized FvFm to initial value
+```{r}
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(normalized_fvfm = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
+  dplyr::select(Colony:Species, normalized_fvfm) -> ipam_normalized_data
+```
+
 
 ## FvFm during 28-day temperature treatment
 
@@ -47,43 +74,6 @@ ipam_tidy_data %>%
   theme(text = element_text(size = 15)) 
 ```
 
-### mean FvFm over time
-```{r}
-ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>%
-  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
-  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
-  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
-  dplyr::filter(Date <= "2022-04-20") %>% 
-  #mutate(Date = as.factor(Date)) %>% 
-  dplyr::group_by(Treatment, Date, Species) %>% 
-  mutate(mean_fvfm = mean(fvfm)) %>% 
-  mutate(stderr_fvfm = std.error(fvfm)) %>% 
-  ggplot(., aes(x=Date, y=mean_fvfm, color = Treatment)) + 
-  geom_point() +
-  geom_line() +
-  geom_errorbar(aes(ymin = mean_fvfm - stderr_fvfm, ymax = mean_fvfm + stderr_fvfm), width =.5) +
-  theme_classic() +
-  facet_wrap(~Species) + 
-  scale_x_date(
-    date_labels = "%d %b",
-    date_breaks = "15 day") +
-  theme_classic() + labs(y = "Fv/Fm") +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
-```
-### normalized FvFm to initial value
-```{r}
-ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>%
-  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
-  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
-  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
-  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
-  pivot_wider(names_from = Date, values_from = fvfm) %>% 
-  mutate(normalized_fvfm = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
-                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
-  dplyr::select(Colony:Species, normalized_fvfm) -> ipam_normalized_data
-```
 
 ### visualizing normalized fvfm from start to end of treatment period
 
@@ -145,37 +135,6 @@ ipam_tidy_data %>%
   labs(x= "Days in Treatment", y = "Normalized Fv/Fm")
 ```
 
-Separate by genotype to look for any significant patterns
-
-```{r}
-ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>%
-  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
-  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
-  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
-  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
-  pivot_wider(names_from = Date, values_from = fvfm) %>% 
-   mutate(normalized_fvfm_start = case_when(Species == "Acervicornis" ~ `2022-03-16`/`2022-03-16`,
-                                  Species == "Pclivosa" ~ `2022-03-21`/`2022-03-21`)) %>% 
-  mutate(normalized_fvfm_end = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
-                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
-  pivot_longer(normalized_fvfm_start:normalized_fvfm_end, names_to = "fvfm_timepoint", values_to = "normalized_fvfm") %>% 
-  mutate(numDays = case_when(fvfm_timepoint == "normalized_fvfm_start" ~ 0,
-                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_end" ~ 30,
-                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_end" ~ 35)) %>% 
-  drop_na(normalized_fvfm) %>% 
-  dplyr::group_by(Treatment, Colony, Species, numDays) %>% 
-  mutate(mean_fvfm = mean(normalized_fvfm)) %>% 
-  mutate(stderr_fvfm = std.error(normalized_fvfm)) %>% 
-  ggplot(., aes(x=numDays, y=mean_fvfm, color = Colony, lty = Treatment)) + 
-  geom_point() +
-  geom_line() +
-  geom_errorbar(aes(ymin = mean_fvfm - stderr_fvfm, ymax = mean_fvfm + stderr_fvfm), width =.5) +
-  theme_classic() +
-  facet_wrap(~Species) + 
-  theme_classic() + labs(y = "Fv/Fm") +
-  labs(x= "Days in Treatment", y = "Normalized Fv/Fm")
-```
 
 
 ### Statistics
@@ -312,6 +271,7 @@ Anova(glmm_Pcli_full, type = "II")
 
 emmeans(glmm_Pcli_full, specs = pairwise ~ Treatment)
 ```
+
 
 
 
@@ -592,6 +552,7 @@ as.data.frame(CBASS_Acer_emm$`pairwise differences of Treatment, CBASS_temp`)
 
 
 ####obtain ED50 
+
 following Evensen et al. 2020 code: https://github.com/BarshisLab/CBASS-vs-RSS-Physiology/blob/main/Figures/Figure%204/Fig4_PAM_plotting.R
 
 ```{r}
