@@ -4,15 +4,7 @@ author: "allyson_demerlis"
 date: "2023-08-28"
 output: html_document
 ---
-
-## Import data and load libraries
-
-```{r}
-ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
-
-str(ipam_tidy_data)
-unique(ipam_tidy_data$Date)
-```
+## Packages
 
 ```{r}
 library(tidyverse)
@@ -27,27 +19,102 @@ library(car)
 ```
 
 
+## Import data
+
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+```
+
+
+## Reformatting fvfm data 
+```{r}
+#one coral was measured twice on May 25th (P91), take the average measurement and keep that
+
+ipam_tidy_data %>% drop_na(Tank)
+
+str(ipam_tidy_data)
+
+ipam_tidy_data %>% 
+  dplyr::select(!c(X, AOI, Ft, Fm, file)) %>% 
+  dplyr::select(Species, Puck, Colony, Tank, Treatment, Date, fvfm) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  drop_na(Tank) %>% 
+  filter(Date < "2022-04-22") %>% 
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
+                               Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
+  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ fvfm_loss/`2022-03-16`,
+                               Species == "Pclivosa" ~ fvfm_loss/`2022-03-21`)) %>% 
+  ggplot(., aes(x=Colony, y= fvfm_loss_norm, color= Treatment)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  theme_classic() + labs(y = "Normalized Reduction of Fv/Fm", x="Genotype") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 12)) + 
+  facet_wrap(~Species, scales = "free_x")
+```
+
+
 ## data normality and assumption testing
 
 ```{r}
-# subsetting data frames by species
-ipam_acer <- subset(ipam_tidy_data, Species == "Acervicornis")
-ipam_pcli <- subset(ipam_tidy_data, Species == "Pclivosa") 
+ipam_tidy_data %>% 
+  dplyr::select(!c(X, AOI, Ft, Fm, file)) %>% 
+  dplyr::select(Species, Puck, Colony, Tank, Treatment, Date, fvfm) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  drop_na(Tank) %>% 
+  filter(Date < "2022-04-22") %>% 
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
+                               Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
+  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ fvfm_loss/`2022-03-16`,
+                               Species == "Pclivosa" ~ fvfm_loss/`2022-03-21`)) %>% 
+  dplyr::select(!`2022-04-06`:`2022-04-20`) %>% 
+  drop_na(fvfm_loss_norm) -> fvfm_loss_norm_treatment
 ```
 
-### normalized FvFm to initial value
+
 ```{r}
-ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>%
-  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
-  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
-  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
-  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
-  pivot_wider(names_from = Date, values_from = fvfm) %>% 
-  mutate(normalized_fvfm = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
-                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
-  dplyr::select(Colony:Species, normalized_fvfm) -> ipam_normalized_data
+fvfm_loss_norm_treatment$Colony <- as.factor(fvfm_loss_norm_treatment$Colony)
+fvfm_loss_norm_treatment$Treatment <- as.factor(fvfm_loss_norm_treatment$Treatment)
+fvfm_loss_norm_treatment$Tank <- as.factor(fvfm_loss_norm_treatment$Tank)
+
+# subsetting data frames by species
+ipam_acer <- subset(fvfm_loss_norm_treatment, Species == "Acervicornis")
+ipam_pcli <- subset(fvfm_loss_norm_treatment, Species == "Pclivosa") 
+
+#creating interactions for post hoc comparisons
+ipam_acer$colony_treatment<-interaction(ipam_acer$Colony, ipam_acer$Treatment)
+ipam_pcli$colony_treatment<-interaction(ipam_pcli$Colony, ipam_pcli$Treatment)
 ```
+
+
+#### Acer
+```{r}
+summary(ipam_acer)
+
+acer_variable <- ipam_acer[ipam_acer$Treatment=="Variable",]
+acer_control <- ipam_acer[ipam_acer$Treatment=="Control",]
+```
+
+Testing normalized loss in fv/fm
+```{r}
+#looking for outliers
+boxplot(fvfm_loss_norm ~ Colony + Treatment, xlab = "Colony", data = ipam_acer)
+
+#shapiro test
+aggregate(fvfm_loss_norm ~ Colony + Treatment, data = ipam_acer, FUN=function(x) shapiro.test(x)$p.value) #not significant
+
+#bartlett HOV
+bartlett.test(fvfm_loss_norm ~ colony_treatment, data = ipam_acer) #significant
+
+resid<-lm(fvfm_loss_norm~Colony*Treatment, data=ipam_acer)
+plot(resid,which=1) #want random scatter; no apparent trendline
+qqPlot(resid,data=ipam_acer,na.action=na.exclude,envelope=0.95) #data look normal
+```
+
+
 
 
 ## FvFm during 28-day temperature treatment
@@ -299,6 +366,7 @@ ipam_tidy_CBASS_treatments %>%
   facet_wrap(~Species) + 
   theme_classic()
 ```
+
 
 #### GLM Acer
 
