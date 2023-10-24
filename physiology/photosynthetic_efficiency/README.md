@@ -345,7 +345,34 @@ glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony) + (1|Tank), family=beta_family(
 <img width="604" alt="Screen Shot 2023-10-24 at 1 26 21 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a8ba28d8-371e-40d5-a0bb-13583ed14df4">
 
 
-## 10. Raw Fv/Fm Dose-Response Curves by species x treatment
+## 10. Raw CBASS Fv/Fm by colony (boxplot)
+
+<img width="626" alt="Screen Shot 2023-10-24 at 1 51 37 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5fdf79f1-2c71-4a72-bf75-759608f025cd">
+
+## 11. Raw CBASS Fv/Fm by colony (curve)
+
+<img width="620" alt="Screen Shot 2023-10-24 at 1 53 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/978eb64e-91b4-48d3-9a08-faef56251e5d">
+
+**Acer Stats**:
+
+full model was best model
+
+<img width="553" alt="Screen Shot 2023-10-24 at 2 00 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/53a80a33-20d6-4dd1-b0d2-c47da51c7910">
+
+<img width="502" alt="Screen Shot 2023-10-24 at 2 01 04 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4b606286-2e7f-4904-bcef-23b4d73abc1a">
+
+<img width="565" alt="Screen Shot 2023-10-24 at 2 01 19 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/57f1fe13-812d-4c9e-8059-5fb356201ac6">
+
+**Pcli Stats**:
+
+<img width="427" alt="Screen Shot 2023-10-24 at 2 09 51 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/95d887d3-cd59-45e2-9ebe-a520330d502f">
+
+<img width="479" alt="Screen Shot 2023-10-24 at 2 10 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a72ac944-165c-4665-a2b3-cbb968383365">
+
+<img width="556" alt="Screen Shot 2023-10-24 at 2 10 29 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/99e8f258-451f-42d7-a236-ec20510518f8">
+
+
+## 12. Raw Fv/Fm Dose-Response Curves by species x treatment
 
 <img width="625" alt="Screen Shot 2023-10-24 at 12 11 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f2f66ea9-e177-4a59-97b6-78364df4dd20">
 
