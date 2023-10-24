@@ -302,7 +302,17 @@ summary(glht(glmm_pcli_full, linfct=mcp(colony_treatment="Tukey")), test = adjus
 
 Numbers 5-7 all look the same. 
 
-## 7. Dose-Response Curves Following Acute Heat Stress using CBASS
+Are there any differences in the stats outcomes though? Just ran through #6 in R and got these results:
+
+<img width="539" alt="Screen Shot 2023-10-24 at 8 31 48 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/757acbd0-6df8-4767-9b59-c2071142c5ce">
+
+
+<img width="555" alt="Screen Shot 2023-10-24 at 8 31 23 AM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/906b64f4-6ddb-4a9e-ae49-e0cff169b05a">
+
+So those results are pretty much the same as the others. 
+
+
+## 8. Dose-Response Curves Following Acute Heat Stress using CBASS
 
 1. Normalized to initial Fv/Fm 
 <img width="624" alt="Screen Shot 2023-08-28 at 5 05 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d0ffe76-d3e0-4ce2-b0b5-32c154d39706">
