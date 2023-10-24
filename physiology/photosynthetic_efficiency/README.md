@@ -312,7 +312,51 @@ Are there any differences in the stats outcomes though? Just ran through #6 in R
 So those results are pretty much the same as the others. 
 
 
-## 8. Dose-Response Curves Following Acute Heat Stress using CBASS
+## 8. Raw Fv/Fm distribution at CBASS temps (boxplot)
+
+<img width="622" alt="Screen Shot 2023-10-24 at 12 03 21 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/9a89d862-2869-45f8-8ca9-742d6a5cc45e">
+
+## 9. Raw CBASS Fv/Fm by species (curve)
+
+<img width="786" alt="Screen Shot 2023-10-24 at 1 06 56 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/fd98977e-3fa4-45db-9394-490d100d0de5">
+
+Statistics for 8 and 9:
+
+**Acer stats**:
+full glmm model was best fit based on AIC and LRT: 
+```{r}
+glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony) + (1|Tank), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
+```
+
+<img width="436" alt="Screen Shot 2023-10-24 at 1 07 56 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2b4d4754-d93c-4e02-8542-1447abddf000">
+
+data table for pairwise comparisons within each temperature:
+
+<img width="582" alt="Screen Shot 2023-10-24 at 1 16 59 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/25d4cd9d-eead-4dc8-8846-71b3543652c1">
+
+**Pcli stats**:
+full glmm model was best fit:
+```{r}
+glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony) + (1|Tank), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
+```
+
+<img width="433" alt="Screen Shot 2023-10-24 at 1 25 34 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f470ab24-cc4b-4aa5-a145-8e81cd0ac9c1">
+
+<img width="604" alt="Screen Shot 2023-10-24 at 1 26 21 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a8ba28d8-371e-40d5-a0bb-13583ed14df4">
+
+
+## 10. Raw Fv/Fm Dose-Response Curves by species x treatment
+
+<img width="625" alt="Screen Shot 2023-10-24 at 12 11 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f2f66ea9-e177-4a59-97b6-78364df4dd20">
+
+
+## 10. Raw Fv/Fm Dose-Response Curves by genotype x treatment
+
+<img width="895" alt="Screen Shot 2023-10-24 at 12 03 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c589d759-e424-450d-9bda-af4582a8df0b">
+
+
+
+## 10. 
 
 1. Normalized to initial Fv/Fm 
 <img width="624" alt="Screen Shot 2023-08-28 at 5 05 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d0ffe76-d3e0-4ce2-b0b5-32c154d39706">
