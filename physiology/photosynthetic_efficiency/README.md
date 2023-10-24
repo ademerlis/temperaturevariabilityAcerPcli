@@ -18,7 +18,9 @@ Genotype: are there significant differences of genotype within species as well? 
 
 ## 2. Decline of Fv/Fm over treatment period, normalized to initial measurement
 
-Plot points as scatterplot and then do line of best fit and get slope of line and test significance of slope 
+Error bars are standard error of the mean. 
+
+Plot points as scatterplot and then do line of best fit and get slope of line and test significance of slope -- isn't slope just rate of change in this example? So the slope of the line would equal the difference in initial versus final Fv/Fm divided by the number of days between measurements. I plotted these in [#6 (normalized)](https://github.com/ademerlis/temperaturevariability2023/tree/main/physiology/photosynthetic_efficiency#6-loss-of-fvfm-per-day-normalized-to-initial-measurement) and [#7 (unnormalized)](https://github.com/ademerlis/temperaturevariability2023/tree/main/physiology/photosynthetic_efficiency#7-loss-of-fvfm-per-day-not-normalized-to-initial-measurement). 
 
 <img width="630" alt="Screen Shot 2023-08-28 at 12 32 19 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d1036d46-b024-4a49-84e2-590b24975de0">
 
@@ -26,6 +28,7 @@ Plot points as scatterplot and then do line of best fit and get slope of line an
 
 <img width="623" alt="Screen Shot 2023-10-13 at 2 08 30 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3e20fbc9-5639-4568-a594-bbb21f667f2b">
 
+This is the same as the figure above just in violin plot format (showing distribution of data) rather than the standard error of the mean. 
 
 ## 4. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
 
