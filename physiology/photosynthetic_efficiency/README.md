@@ -1,5 +1,10 @@
 There are so many ways I can plot the photosynthetic efficiency of the corals in the temperature treatment and the CBASS. I'm not sure which visualization is best, so I'm going to put all of them here for now.
 
+1. Section 1: 28 Day temperature treatment
+2. [Section 2: CBASS](https://github.com/ademerlis/temperaturevariability2023/edit/main/physiology/photosynthetic_efficiency/README.md#section-2-cbass)
+
+# Section 1: 28 day temperature treatment
+
 ## 1. Raw Fv/Fm during the 28-d temperature treatment period (repeated measures).
 
 <img width="528" alt="Screen Shot 2023-10-22 at 12 42 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/9b07e4f5-1883-40e4-833d-41e5a627bc9d">
@@ -311,6 +316,7 @@ Are there any differences in the stats outcomes though? Just ran through #6 in R
 
 So those results are pretty much the same as the others. 
 
+# Section 2: CBASS
 
 ## 8. Raw Fv/Fm distribution at CBASS temps (boxplot)
 
@@ -377,13 +383,25 @@ full model was best model
 <img width="625" alt="Screen Shot 2023-10-24 at 12 11 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f2f66ea9-e177-4a59-97b6-78364df4dd20">
 
 
-## 10. Raw Fv/Fm Dose-Response Curves by genotype x treatment
+## 13. Raw Fv/Fm Dose-Response Curves by genotype x treatment
 
 <img width="895" alt="Screen Shot 2023-10-24 at 12 03 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c589d759-e424-450d-9bda-af4582a8df0b">
 
+Stats for 12 and 13:
+I want to test if the ED50s are significantly different (higher) in the variable temperature-treated group. When combining genotypes together (figure 12), this means I only have one data point per treatment group per species. So, I used the ED50s from figure 13 as data points to test whether the mean ED50 within a species x treatment group was significantly different from the untreated ED50.
+
+I did this using two different tests, the Kruskal-Wallis test and an independent t-test. For both, I got no significance. 
+
+<img width="858" alt="Screen Shot 2023-10-25 at 2 07 21 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d9889b2-f242-452b-9f9a-e4a9be2c51ae">
+
+<img width="861" alt="Screen Shot 2023-10-25 at 2 07 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bbd8ed17-89e5-4a29-91bb-11fa9c9ceacd">
+
+<img width="1053" alt="Screen Shot 2023-10-25 at 2 08 15 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4b2ccb6b-54ab-4d59-8243-2927e20612ae">
+
+<img width="1056" alt="Screen Shot 2023-10-25 at 2 08 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4e7e42d6-9e33-4a03-823a-5ca9802ad8b5">
 
 
-## 10. 
+## 14. 
 
 1. Normalized to initial Fv/Fm 
 <img width="624" alt="Screen Shot 2023-08-28 at 5 05 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d0ffe76-d3e0-4ce2-b0b5-32c154d39706">
