@@ -1,7 +1,7 @@
 There are so many ways I can plot the photosynthetic efficiency of the corals in the temperature treatment and the CBASS. I'm not sure which visualization is best, so I'm going to put all of them here for now.
 
 1. Section 1: 28 Day temperature treatment
-2. [Section 2: CBASS](https://github.com/ademerlis/temperaturevariability2023/edit/main/physiology/photosynthetic_efficiency/README.md#section-2-cbass)
+2. [Section 2: CBASS](https://github.com/ademerlis/temperaturevariability2023/main/physiology/photosynthetic_efficiency/README.md#section-2-cbass)
 
 # Section 1: 28 day temperature treatment
 
