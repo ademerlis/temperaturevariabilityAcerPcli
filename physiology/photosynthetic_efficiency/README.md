@@ -401,7 +401,14 @@ I did this using two different tests, the Kruskal-Wallis test and an independent
 <img width="1056" alt="Screen Shot 2023-10-25 at 2 08 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4e7e42d6-9e33-4a03-823a-5ca9802ad8b5">
 
 
-## 14. 
+## 14. ED50 DRM curves for raw fv/fm for species (using Evensen et al. 2021 code to predict data at higher temperatures)
+
+Because I realized I was missing the lower part of the log-logistic curve that make it the characteristic shape. 
+
+<img width="620" alt="Screen Shot 2023-10-25 at 3 05 34 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/386fef14-9f78-4144-b015-065b569f3e2c">
+
+<img width="623" alt="Screen Shot 2023-10-25 at 3 13 03 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/92511051-76a8-4500-8030-2a89c213ce6f">
+
 
 1. Normalized to initial Fv/Fm 
 <img width="624" alt="Screen Shot 2023-08-28 at 5 05 43 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2d0ffe76-d3e0-4ce2-b0b5-32c154d39706">
