@@ -482,6 +482,7 @@ ipam_tidy_data %>%
 
 
 
+
 # 2. Normalized to initial measurement (day 0) - Treatment Fv/Fm
 
 ## 2a. Decline of Fv/Fm over treatment period, normalized to initial measurement
@@ -1947,6 +1948,7 @@ ggplot() +
 
 
 
+
 # 4. Normalized to initial measurement (treatment day 0 - T1/T0) - CBASS
 
 ```{r}
@@ -2085,6 +2087,7 @@ Pcli_CBASS_emm <- emmeans(glmm_PcliCBASS_full, specs = ~ Treatment*CBASS_temp)
 
 as.data.frame(pairs(Pcli_CBASS_emm))
 ```
+
 
 
 
