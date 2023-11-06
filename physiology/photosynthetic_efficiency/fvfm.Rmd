@@ -1254,6 +1254,7 @@ summary(glht(glmm_pcli_full, linfct=mcp(Treatment="Tukey")), test = adjusted(typ
 
 
 
+
 # 3. Raw CBASS 
 
 ## 3a. Raw CBASS Fv/Fm by species (boxplot)
@@ -1438,6 +1439,7 @@ Pcli_CBASS_treatment_posthoc %>%
   filter(contrast %in% list)
 ```
 
+
 ## 3c. Raw CBASS Fv/Fm by colony (boxplot)
 
 ```{r}
@@ -1585,6 +1587,7 @@ summary(glht(glmm_Acer_full, linfct=mcp(colony_treatment="Tukey")), test = adjus
 ```
 
 
+
 ## 3e. ED50 DRM curves for raw fv/fm species
 
 ### DRC for Species
@@ -1647,6 +1650,70 @@ ggplot(data = fvals_species, aes(x=CBASS_temp, y=fvfm)) +
   theme_bw() +
   theme(text = element_text(size = 14)) 
 ```
+
+## 3f. Hill slope 
+
+### DRC for Species
+```{r}
+# Define dose-response curves using same constraints
+ll3 <- function(data) {
+  drm(fvfm ~ CBASS_temp, data = data,
+      fct = LL.3(names = c("hill", "max", "ED50")),
+      upperl = c(120, 0.72, 40),
+      lowerl = c(10, 0.01, 30))} 
+
+# I changed the max value from 0.55 to 0.01 so I don't get NaN for std.error, statistic, or p-value.
+#these are the limits Ross had set in his code:
+#upperl = c(120, 0.72, 40),
+#lowerl = c(10, 0.55, 30))
+
+tryll3 <- possibly(ll3, otherwise = NULL)
+
+# Fit model to each coral, get parameters, fitted values, and residuals
+initmods_species <- ipam_tidy_CBASS_treatments %>%
+  dplyr::select(!c(Colony, Tank, Date, Treatment_period)) %>% 
+  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
+  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
+  # Get model parameters and fitted values/residuals
+  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
+         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
+
+# Extract ed50 parameter values for each Species and Treatment combination from model fits
+hill_species <- initmods_species %>% 
+  unnest(data) %>% 
+  dplyr::select(Species, Treatment, pars) %>%
+  unnest(pars) %>%
+  filter(term == "hill")
+
+hill_species %>% distinct() -> hill_species
+
+# Collect raw data, fitted values, and ed50 estimates
+fvals_species_hill <- initmods_species %>%
+  dplyr::select(Species, Treatment, pred) %>%
+  unnest(pred) %>%
+  full_join(hill_species) %>%
+  rename(hill = estimate)
+```
+
+
+```{r}
+ggplot(data = fvals_species_hill, aes(x=CBASS_temp, y=fvfm)) +
+  geom_point(data = fvals_species_hill, aes(color=Treatment)) +
+    geom_line(data = drop_na(fvals_species_hill, .fitted),
+              aes(y = .fitted)) +
+    geom_vline(data = distinct(fvals_species_hill, Species, Treatment, hill), 
+               aes(xintercept = hill), 
+               lwd = 0.2, lty = 2) +
+    geom_text(data = distinct(fvals_species_hill, Species, Treatment, hill),
+              aes(x = hill, y = 0.05, label = round(hill, 2)), 
+              hjust = 1, nudge_x = -0.2, size = 3) +
+    facet_grid(vars(Treatment), vars(Species)) +
+  labs(x = "Temperature (C)", y = "Fv/Fm") +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_bw() +
+  theme(text = element_text(size = 14)) 
+```
+
 
 
 ## 3f. ED50 DRM curves for raw fv/fm with colony 
@@ -1748,6 +1815,7 @@ ed50_colony %>%
   filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
   t_test(estimate ~ Treatment) #ed50s are not significantly different for Acer
 ```
+
 ### Independent t-test for Pcli
 ```{r}
 ed50_colony %>% 
@@ -1873,6 +1941,7 @@ ggplot() +
   theme_bw() +
   labs(title = "Pclivosa")
 ```
+
 
 
 
@@ -2019,3 +2088,37 @@ as.data.frame(pairs(Pcli_CBASS_emm))
 
 
 
+
+
+# 5. Normalized to final treatment measurement (treatment day 28) - CBASS
+
+```{r}
+ipam_tidy_data %>% 
+  filter(Date == "2022-04-20") %>% 
+  dplyr::select(fvfm, Puck, Colony, Date, Treatment,Species) %>% 
+  mutate(fvfm_T0 = fvfm) %>% 
+  dplyr::select(!fvfm) -> preCBASSfvfm_endoftreatment
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(fvfm, Puck:Date, CBASS_temp, Species) %>% 
+  mutate(fvfm_T1 = fvfm) %>% 
+  dplyr::select(!fvfm) %>% 
+  left_join(preCBASSfvfm_endoftreatment, by = c("Puck", "Colony", "Species")) %>% 
+  dplyr::select(!Date.x) %>% 
+  dplyr::select(!Date.y) %>% 
+  filter(fvfm_T0 < 0.75) %>% #there were some weird outliers where the fvfm = 2.00
+  filter(fvfm_T1 < 0.75) %>% 
+  mutate(CBASS_normalize_fvfm = fvfm_T1/fvfm_T0) %>% 
+  #filter(CBASS_normalize_fvfm > 0) %>% 
+  #filter(CBASS_normalize_fvfm < 1) %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp))-> ipam_CBASS_normalized_endoftreatment
+
+  ggplot(ipam_CBASS_normalized_endoftreatment, aes(x=CBASS_temp, y = CBASS_normalize_fvfm, fill=Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species) + 
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic()
+  
+  #there are a lot of values > 1 here so I can't just filter it out so the data is 0<x<1 
+```
