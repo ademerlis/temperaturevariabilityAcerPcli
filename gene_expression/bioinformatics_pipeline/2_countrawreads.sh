@@ -26,9 +26,12 @@ fi
 
 fqs=(*$glob)
 for f in "${fqs[@]}"; do
-    nrd=$(cat "$f" | wc -l)
+    gunzip -c "$f" > "temp.fastq"  # Decompress the file to a temporary file
+    nrd=$(cat "temp.fastq" | wc -l)
     nrd=$((nrd / 4))
-    echo "$f	$nrd" >> "$output_file"
+    echo "$f	$nrd"
+    echo "$f	$nrd" >> "$output_file"  # Append the results to the output file
+    rm "temp.fastq"  # Remove the temporary file
 done
 
 echo "Results have been saved to $output_file"
