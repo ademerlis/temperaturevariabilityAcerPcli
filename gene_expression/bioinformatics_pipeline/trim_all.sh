@@ -1,8 +1,8 @@
 #!/bin/bash
 #BSUB -J trim
-#BSUB -q general
+#BSUB -q bigmem
 #BSUB -P and_transcriptomics
-#BSUB -n 8
+#BSUB -n 16
 #BSUB -W 120:00
 #BSUB -o trim.out
 #BSUB -e trim.err
@@ -13,14 +13,14 @@ and="/scratch/projects/and_transcriptomics"
 
 cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
 
-fq="Acer-005_S23_L001.fastq.gz"
+data=($(ls *.gz))
+
+for sample in ${data[@]} ;
+
+do \
 
 
-# Check if the Fastq file is gzipped and gunzip it if needed
-if [[ "$fq" == *.gz ]]; then
-    gunzip -c "$fq" > temp.fastq
-    fq="temp.fastq"
-fi
+fq="$1"
 
 lead="${2:-[ATGC]?[ATGC][AC][AT][AT][AC][AT][ACT]GGG+|[ATGC]?[ATGC][AC][AT]GGG+|[ATGC]?[ATGC]TGC[AC][AT]GGG+|[ATGC]?[ATGC]GC[AT]TC[ACT][AC][AT]GGG+}"
 
@@ -96,3 +96,14 @@ elif [ "$tot" -gt 1 ]; then
 fi
 
 echo "$fq	total:$tot	goods:$goods	dups:$dups	noheader:$nohead	N.in.header:$ntag"
+
+
+${and}/programs/TrimGalore-0.6.10/trim_galore ${sample}
+--adapter2 "AAAAAAAA" \
+--adapter "AGATCGG" \
+--quality 15 \
+--length 25 \ ; \
+
+done
+
+\
