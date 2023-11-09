@@ -1,0 +1,59 @@
+---
+title: "florida_map_sties"
+author: "allyson_demerlis"
+date: "2023-11-06"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggspatial)
+
+theme_set(theme_bw())
+```
+
+```{r}
+world <- ne_countries(scale = 10, returnclass = "sf") #this requires the high-res package "raturalearthhires"
+
+ggplot() +
+  geom_sf(data = floridareeftract)
+  
+
+#input coordinates where Acer and Pcli were collected 
+
+sites <- data.frame(longitude = c(-80.0987, -80.15235), latitude = c(25.6763, 
+    25.77044))
+
+ggplot(data = world) +
+    geom_point(data = sites, aes(x = longitude, y = latitude), size = 4, 
+        shape = 23, fill = "darkred") +
+    coord_sf(xlim = c(-82, -80), ylim = c(24, 26), expand = FALSE)
+
+floridareeftract <- st_read("~/Downloads/reeftract_sep14/reeftract_sep14.shp")
+
+miami <- rnaturalearth::ne_states(
+  country = "United States of America",
+  state = "Florida",
+  returnclass = "sf"
+)
+
+key_biscayne <- ne_download(
+  download = "boundaries",
+  category = "admin_1_states_provinces",
+  type = "shp",
+  name = "Florida",
+  returnclass = "sf"
+)
+
+virginia_key <- ne_download(
+  download = "boundaries",
+  category = "admin_1_states_provinces",
+  type = "shp",
+  name = "Florida",
+  returnclass = "sf"
+)
+```
+
