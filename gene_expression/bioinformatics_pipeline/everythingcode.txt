@@ -1,0 +1,104 @@
+## Tag-based RNA-seq (Tag-Seq) reads processing pipeline, version November 9, 2023
+# Created by Misha Matz (matz@utexas.edu), modified by Michael Studivan (studivanms@gmail.com) for use on the FAU KoKo HPC
+# then modified by Allyson DeMerlis for use on the University of Miami HPC "Pegasus"
+
+# put all raw reads into one directory: 1_fastq_rawreads
+
+# they are all in .fastq.gz file format. First need to look at the reads and ensure that there are 4 lines per read (look for sequence headers)
+
+gunzip SampleName.fastq.gz
+
+# look at the reads
+head -50 SampleName.fastq
+# note that every read has four lines, the ID line starts with @HWI
+
+#------------------------------
+
+# to count the number of reads in all samples
+echo "countreads.pl > countreads_raw.txt" > count
+launcher_creator.py -j count -n count -q shortq7 -t 6:00:00 -e studivanms@gmail.com
+sbatch count.slurm
+
+what is "countreads.pl"
+
+#!/usr/bin/perl
+
+print "
+
+countreads.pl : counts the number of Illumina reads in a bunch of fastq files
+argument - glob to fastq files, default \.fastq
+
+";
+
+my $glob="\.fastq";
+if ($ARGV[0]) { $glob=$ARGV[0];}
+
+opendir THIS, ".";
+my @fqs=grep /$glob/,readdir THIS;
+my $f;
+my $nrd;
+foreach $f(@fqs){
+	$nrd=`cat $f | wc -l`;
+	$nrd=$nrd/4;
+	print "$f\t$nrd\n";
+}
+
+#asked ChatGPT to convert to bash
+
+#!/bin/bash
+
+echo "
+countreads.sh: counts the number of Illumina reads in a bunch of fastq files
+argument - glob to fastq files, default \.fastq
+"
+
+glob=".fastq"
+if [ ! -z "$1" ]; then
+    glob="$1"
+fi
+
+fqs=(*$glob)
+for f in "${fqs[@]}"; do
+    nrd=$(cat "$f" | wc -l)
+    nrd=$((nrd / 4))
+    echo "$f	$nrd"
+done
+
+# Final job script that worked that was submitted on Pegasus
+
+#!/bin/bash
+#BSUB -J countrawreads
+#BSUB -q general
+#BSUB -P and_transcriptomics
+#BSUB -n 8
+#BSUB -W 120:00
+#BSUB -o countrawreads.out
+#BSUB -e countrawreads.err
+#BSUB -u and128@miami.edu
+#BSUB -N
+
+#Purpose: counts the number of Illumina reads in a bunch of fastq files
+
+#specify variables and paths
+
+and="/scratch/projects/and_transcriptomics"
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
+
+output_file="countreads_results.txt"
+
+glob=".fastq.gz"
+if [ ! -z "$1" ]; then
+    glob="$1"
+fi
+
+fqs=(*$glob)
+for f in "${fqs[@]}"; do
+    nrd=$(cat "$f" | wc -l)
+    nrd=$((nrd / 4))
+    echo "$f	$nrd" >> "$output_file"
+done
+
+echo "Results have been saved to $output_file"
+
+#------------------------------
