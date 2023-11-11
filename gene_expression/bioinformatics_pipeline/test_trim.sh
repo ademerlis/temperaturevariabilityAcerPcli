@@ -13,13 +13,21 @@ and="/scratch/projects/and_transcriptomics"
 
 cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
 
-fq="Acer-005_S23_L001.fastq.gz"
 
+data=($(ls *.gz))
+
+for sample in ${data[@]} ;
+
+do \
+
+fq="$1"
+
+sample_name=$(basename "$fq" .fastq.gz)
 
 # Check if the Fastq file is gzipped and gunzip it if needed
 if [[ "$fq" == *.gz ]]; then
-    gunzip -c "$fq" > temp.fastq
-    fq="temp.fastq"
+  gunzip -c "$fq" > "$sample_name.temp.fastq"
+  fq="$sample_name.temp.fastq"
 fi
 
 lead="${2:-[ATGC]?[ATGC][AC][AT][AT][AC][AT][ACT]GGG+|[ATGC]?[ATGC][AC][AT]GGG+|[ATGC]?[ATGC]TGC[AC][AT]GGG+|[ATGC]?[ATGC]GC[AT]TC[ACT][AC][AT]GGG+}"
@@ -95,4 +103,6 @@ elif [ "$tot" -gt 1 ]; then
     nohead=$((nohead + 1))
 fi
 
-echo "$fq	total:$tot	goods:$goods	dups:$dups	noheader:$nohead	N.in.header:$ntag"
+done > "$fq".fastq.trim
+
+echo "$fq	total:$tot	goods:$goods	dups:$dups	noheader:$nohead	N.in.header:$ntag" > "$fq"_trimoutput.txt
