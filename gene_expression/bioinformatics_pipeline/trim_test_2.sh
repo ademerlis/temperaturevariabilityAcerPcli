@@ -14,7 +14,8 @@ and="/scratch/projects/and_transcriptomics"
 cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
 
 ${and}/programs/TrimGalore-0.6.10/trim_galore temp.fastq \
---adapter "AGATCGG, AAAAAAAA" \
+--adapter "AGATCGG" \
+--adapter "AAAAAAAA" \
 --quality 15 \
 --length 25 \
 --output_dir ${and}/Ch2_temperaturevariability2023/1_fastq_rawreads/test_trim
