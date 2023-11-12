@@ -38,7 +38,7 @@ echo 'goods=0' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3
 echo '' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo 'while IFS= read -r line; do' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '    if [ "\$ll" -eq 3 ] && [[ "\$line" =~ ^@(.+)$ ]]; then' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo '        tot=\$((tot + 1))' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
+echo '        tot=$((tot + 1))' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '        name2="\${BASH_REMATCH[1]}"' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '        if [[ "\$seq" =~ ^(\$lead)(.+) ]]; then' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '            start="\${BASH_REMATCH[2]:0:20}"' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
