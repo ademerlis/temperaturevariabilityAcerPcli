@@ -16,18 +16,14 @@ cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq
 
 data=($(ls *.gz))
 
-for sample in ${data[@]} ;
+for sample in "${data[@]}" ; do \
 
-do \
-
-fq="$1"
-
-sample_name=$(basename "$fq" .fastq.gz)
+sample_name=$(basename "$sample" .fastq.gz)
 
 # Check if the Fastq file is gzipped and gunzip it if needed
-if [[ "$fq" == *.gz ]]; then
-  gunzip -c "$fq" > "$sample_name.temp.fastq"
-  fq="$sample_name.temp.fastq"
+if [[ "$sample" == *.gz ]]; then
+  gunzip -c "$sample" > "$sample_name.temp.fastq"
+  sample="$sample_name.temp.fastq"
 fi
 
 lead="${2:-[ATGC]?[ATGC][AC][AT][AT][AC][AT][ACT]GGG+|[ATGC]?[ATGC][AC][AT]GGG+|[ATGC]?[ATGC]TGC[AC][AT]GGG+|[ATGC]?[ATGC]GC[AT]TC[ACT][AC][AT]GGG+}"
@@ -81,7 +77,7 @@ while IFS= read -r line; do
     else
         ll=2
     fi
-done < "$fq"
+done < "$sample"
 
 if [[ "$seq" =~ ^($lead)(.+) ]]; then
     start="${BASH_REMATCH[2]:0:20}"
@@ -103,6 +99,15 @@ elif [ "$tot" -gt 1 ]; then
     nohead=$((nohead + 1))
 fi
 
-done > "$fq".fastq.trim
+done > "$sample.trim.fastq"
 
-echo "$fq	total:$tot	goods:$goods	dups:$dups	noheader:$nohead	N.in.header:$ntag" > "$fq"_trimoutput.txt
+rm "$sample_name.temp.fastq"
+
+echo "$sample	total:$tot	goods:$goods	dups:$dups	noheader:$nohead	N.in.header:$ntag" > "$sample"_trimoutput.txt
+
+${and}/programs/TrimGalore-0.6.10/trim_galore $sample.fastq.trim \
+--adapter "AGATCGG" \
+--adapter "AAAAAAAA" \
+--quality 15 \
+--length 25 \
+--output_dir ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/take_3
