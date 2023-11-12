@@ -105,14 +105,5 @@ echo '--output_dir "\${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take
 echo '' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo 'done' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'cd ${and}/Ch2_temperaturevariability2023/2_trimmed_reads/take_3' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'for f in *.fq;' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'do' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'mv -v -- "\$f" "\${f%.fq}.fastq";' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'done' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo '' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'module load fastqc/0.10.1' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'fastqc *.fastq' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'multiqc *' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 bsub < "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job ; \
 done
