@@ -21,6 +21,7 @@ echo 'if [[ "\$SAMP" == *.gz ]]; then' >> "${and}"/Ch2_temperaturevariability202
 echo '  gunzip -c "\$SAMP" > "\$sample_name".temp.fastq' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '  SAMP="\$sample_name".temp.fastq' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo 'fi' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
+echo 'echo "\$SAMP"' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo 'lead="\${2:-[ATGC]?[ATGC][AC][AT][AT][AC][AT][ACT]GGG+|[ATGC]?[ATGC][AC][AT]GGG+|[ATGC]?[ATGC]TGC[AC][AT]GGG+|[ATGC]?[ATGC]GC[AT]TC[ACT][AC][AT]GGG+}"' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo 'trim=0' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
@@ -85,22 +86,21 @@ echo '        echo "\${BASH_REMATCH[2]}"' >> "${and}"/Ch2_temperaturevariability
 echo '        echo "+"' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '        echo "\${qua:trim}"' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '        goods=$((goods + 1))' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo '    elif [ -n "\${seen[$idtag]}" ]; then' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
+echo '    elif [ -n "${seen[$idtag]}" ]; then' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '        dups=$((dups + 1))' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '    else' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '        ntag=$((ntag + 1))' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '    fi' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'elif [ "\$tot" -gt 1 ]; then' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
+echo 'elif [ "$tot" -gt 1 ]; then' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '    nohead=$((nohead + 1))' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo 'fi' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'echo "\$SAMP	total:\$tot	goods:\$goods	dups:\$dups	noheader:\$nohead	N.in.header:\$ntag" > /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/"\$SAMP"_trimoutput.txt' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
+echo 'echo ""\$SAMP"	total:\$tot	goods:\$goods	dups:\$dups	noheader:\$nohead	N.in.header:\$ntag" > /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/"\$SAMP"_trimoutput.txt' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '/scratch/projects/and_transcriptomics/programs/TrimGalore-0.6.10/trim_galore /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads/"\$SAMP".trim.fastq \' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '--adapter "AGATCGG" \' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '--adapter "AAAAAAAA" \' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '--quality 15 \' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 echo '--length 25 \' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo '--output_dir /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_3 ;' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
-echo 'done' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
+echo '--output_dir /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_3 ' >> "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job
 bsub < "${and}"/Ch2_temperaturevariability2023/2_trimmed_reads/take_3/"${sample}"_trim_all.job ; \
 done
