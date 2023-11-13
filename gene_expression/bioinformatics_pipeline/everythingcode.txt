@@ -74,40 +74,67 @@ conda create -n cutadaptenv cutadapt
 # 2. you can download all the .pl scripts from the tagseq github repository, but then you need to make them executable (run chmod +x scriptname.pl)
 # 3. Also, you need to edit the header of each .pl script so it says "#!/usr/bin/env perl"
 
-Michael's code:
-
 #------------------------------
 ## Removing adaptors and low quality reads
 
+# module load anaconda
+
+source /share/apps/anaconda/anaconda3_build/bin/activate
+
+# activate cutadapt environment
+
 conda activate cutadaptenv
 
-echo '#!/bin/bash' > trim.sh
-echo 'conda activate cutadaptenv' >> trim.sh
-for F in *.fastq; do
-echo "tagseq_clipper.pl $F | cutadapt - -a AAAAAAAA -a AGATCGG -q 15 -m 25 -o ${F/.fastq/}.trim" >>trim.sh;
+#! /usr/bin/env bash
+
+#define variables for directories and files
+and="/scratch/projects/and_transcriptomics"
+project="and_transcriptomics"
+projdir="/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads"
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
+
+data=($(ls *.fastq.gz))
+
+for samp in "${data[@]}" ; do \
+
+#build script
+echo "making cutadapt script for ${samp}..."
+echo "
+#! /usr/bin/env bash
+#BSUB -P ${project}
+#BSUB -J ${samp}_trim
+#BSUB -e ${projdir}/logs/${samp}_trim.err
+#BSUB -o ${projdir}/logs/${samp}_trim.out
+#BSUB -W 12:00
+#BSUB -n 8
+#BSUB -q general
+
+cd \"/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads\"
+
+echo \"Gunzipping file  ${samp} then removing adaptors and low quality reads...\"
+
+gunzip -c ${samp} > ${samp}_temp.fastq
+${and}/Ch2_temperaturevariability2023/0_scripts/tagseq_clipper.pl ${samp}_temp.fastq | cutadapt - -a AAAAAAAA -a AGATCGG -q 15 -m 25 -o ${projdir}/${samp/.fastq.gz/}.trim
+
+" > ${projdir}/${samp}_trim.job
+
+#submit script
+
+bsub < ${projdir}/${samp}_trim.job
+
 done
 
-# does not work with launcher_creator, consider breaking up script and running multiple jobs
-sbatch -o trim.o%j -e trim.e%j --mem=200GB trim.sh
+# extract number of good reads, headers, and duplicates from each sample job error file
 
-# checking the status of the job
-squeue -u mstudiva
-
-# double check you have the same number of files as samples
-ll *.trim | wc -l
+for file in /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4/logs/*.err; do
+    tail -n 1 "$file"
+done > all_trimmed_read_counts.txt
 
 # did the trimming work?
 head -100 SampleName.fastq | grep -E '^[NACGT]+$'
 head -100 SampleName.trim | grep -E '^[NACGT]+$'
 # the long runs of base A should be gone
-
-# double-check that the rnaseq_clipper did not filter out too many reads by looking at the trim.e####### file
-# make sure you're not losing too many reads to duplicates
-# rename as a txt file
-mv trim.e####### trim.txt
-
-# to save time in case of issues, move the concatenated fastq files to backup directory
-mv *.fastq ~/rawReads/
 
 # to count the number of reads in trimmed samples
 echo "countreads_trim.pl > countreads_trim.txt" > count_trim
