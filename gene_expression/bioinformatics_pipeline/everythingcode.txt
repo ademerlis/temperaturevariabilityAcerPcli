@@ -136,9 +136,175 @@ head -100 SampleName.fastq | grep -E '^[NACGT]+$'
 head -100 SampleName.trim | grep -E '^[NACGT]+$'
 # the long runs of base A should be gone
 
-# to count the number of reads in trimmed samples
-echo "countreads_trim.pl > countreads_trim.txt" > count_trim
-launcher_creator.py -j count_trim -n count_trim -q shortq7 -t 6:00:00 -e studivanms@gmail.com
-sbatch count_trim.slurm
+
+# to count the number of reads in trimmed samples (copied from countreads_trim.pl)
+
+#!/bin/bash
+#BSUB -J countreads_trim
+#BSUB -q general
+#BSUB -P and_transcriptomics
+#BSUB -n 8
+#BSUB -W 120:00
+#BSUB -o countreads_trim.out
+#BSUB -e countreads_trim.err
+#BSUB -u and128@miami.edu
+#BSUB -N
+
+#Purpose: counts the number of Illumina reads in trimmed fastq files
+
+#specify variables and paths
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4"
+
+output_file="countreads_results.txt"
+
+# Default file pattern
+glob="\.trim"
+
+# Check if an argument is provided
+if [ "$1" ]; then
+    glob="$1"
+fi
+
+# Loop through files matching the pattern
+for f in *$glob*; do
+    # Count the number of lines in the file
+    nrd=$(cat "$f" | wc -l)
+
+    # Divide the line count by 4
+    nrd=$((nrd / 4))
+
+    # Print the filename and the calculated number
+    echo -e "$f\t$nrd" >> "$output_file"
+done
+
+echo "Results have been saved to $output_file"
+
 
 #------------------------------
+
+# FastQC trimmed files
+
+#BSUB -u and128@miami.edu
+
+#specify variables and paths
+
+#define variables for directories and files
+and="/scratch/projects/and_transcriptomics"
+project="and_transcriptomics"
+projdir="/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads"
+
+
+cd ${projdir}/take_4/trimmed_files
+
+data=($(ls *.trim))
+
+for samp in "${data[@]}" ; do \
+
+#build script
+echo "making fastqc script for ${samp}..."
+echo "
+#! /usr/bin/env bash
+#BSUB -P ${project}
+#BSUB -J ${samp}_fastqc
+#BSUB -e ${projdir}/logs/${samp}_fastqc.err
+#BSUB -o ${projdir}/logs/${samp}_fastqc.out
+#BSUB -W 12:00
+#BSUB -n 8
+#BSUB -q general
+
+cd ${projdir}/take_4/trimmed_files
+
+module load fastqc/0.10.1
+fastqc ${samp} --outdir ${projdir}/take_4/trimmed_files/fastqc_output/
+echo \"Fastqc script of $samp submitted\"
+" > ${projdir}/take_4/trimmed_files/${samp}_fastqc.job
+
+bsub < ${projdir}/take_4/trimmed_files/${samp}_fastqc.job
+
+done
+
+
+#------------------------------
+## Download and format reference transcriptome
+
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/032/359/415/GCA_032359415.1_NEU_Acer_K2/GCA_032359415.1_NEU_Acer_K2_genomic.gtf.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/032/359/415/GCA_032359415.1_NEU_Acer_K2/GCA_032359415.1_NEU_Acer_K2_genomic.fna.gz
+gunzip GCA_032359415.1_NEU_Acer_K2_genomic.gtf.gz
+gunzip GCA_032359415.1_NEU_Acer_K2_genomic.fna.gz
+
+# or can run this to get everything from NCBI at once
+
+curl -OJX GET "https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/GCA_032359415.1/download?include_annotation_type=GENOME_FASTA,GENOME_GFF,RNA_FASTA,CDS_FASTA,PROT_FASTA,SEQUENCE_REPORT&filename=GCA_032359415.1.zip"
+#then unzip it
+
+GCA_032359415.1_NEU_Acer_K2_genomic.fna #this is the genomic FASTA file
+GCA_032359415.1_NEU_Acer_K2_genomic.gtf #this is the GTF file
+
+# I think i can directly run bowtie2 with the genomic.fna file. I just need to download the symbiont fasta files now.
+
+# downloaded Symbiodinium, Breviolum, Cladocopium, and Durusdinium fasta files from Dr. Michael Studivan's Google Drive folder. citations are:
+# Diploria host = Avila-Magana et al. 2021
+# Symbiodinium = Shogushi 2018
+# Breviolum = Avila-Magana et al. 2021
+# Cladocopium = Camp 2022
+# Durusdinium = Shogushi et al. 2021
+
+module load python/3.8.7
+
+python3 gtf_advanced_parser.py --input ../Acer_2023/GCA_032359415.1_NEU_Acer_K2_genomic.gtf --output Acer_K2_genomic_parsed.gtf
+
+# We finished here. Here's some info:
+# Processed genes: 33794
+# Processed transcripts: 28059
+# Added 3'UTR onto forward strand: 13963
+# Added 3'UTR onto reverse strand: 14096
+
+# next run the process_them.sh to extend the UTRs by a threshold of 5000 (based on what Dr. Nick Kron did)
+
+# let's try to just run bowtie2-build on the following files (perhaps I don't need the gtf file since i have the .fna file?)
+
+# wait no i can't do that because I already extended the UTR regions, which haven't been converted to a fasta file, they're in a gtf file.
+# so I need to do the AGAT stuff first.
+
+source /share/apps/anaconda/anaconda3_build/bin/activate
+
+# only run the commented lines once if installing for the first time
+# conda install -c bioconda agat
+# conda create -n agat
+
+# so even though I ran the above two lines, when I look at the packages within agat, there is nothing listed (run code: `conda list` after activating env)
+# I when I run `conda create -n agat -c bioconda agat -vvv` it just starts taking forever.
+# so i'm wondering if it's better to just manually install the perl scripts i need
+
+# conda install -c bioconda agat
+
+# Remove transcript_id attribute to gene feature:
+
+agat_sp_manage_attributes.pl --gff test.gtf -p gene --att transcript_id -o test.gff
+
+# Convert into gtf
+
+agat_convert_sp_gff2gtf.pl --gff test.gff -o --gff test_clean.gtf
+
+
+# the 2023 Acer .gtf file cannot be read by gffread because it has issue with 'transcript_id " "' when there is no ID.
+# so you need to use AGAT and two of their codes to first convert the transcript_id attribute for blank transcript ids, then convert
+# the file back to .GTF
+
+source /share/apps/anaconda/anaconda3_build/bin/activate
+
+conda activate gffread
+
+# only need to run this line once i believe
+# conda install gffread
+
+gffread -w transcripts.fa -g GCA_032359415.1_NEU_Acer_K2_genomic.fna GCA_032359415.1_NEU_Acer_K2_genomic.gtf # DOES NOT WORK
+
+
+# creating bowtie2 index for multiple transcriptomes
+module load bowtie2-2.3.5.1-gcc-8.3.0-63cvhw5
+# replace 'Host' and 'Symbiont' with your respective filenames
+echo 'bowtie2-build Host.fasta,Symbiont.fasta,Symbiont2.fasta Host_concat' > btb
+launcher_creator.py -j btb -n btb -q shortq7 -t 6:00:00 -e studivanms@gmail.com
+sbatch btb.slurm

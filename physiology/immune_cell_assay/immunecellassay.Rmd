@@ -4,17 +4,74 @@ author: "allyson_demerlis"
 date: "2023-02-28"
 output: html_document
 ---
-
+Load libraries and datasets
 ```{r}
+library(tidyverse)
 adjusted_cells_data <- read_csv("adjusted_cell_proportions.csv")
-#we can't compare percentages across treatments and time because of several limitations:
-# 1) we don't know what a "normal" level of phagocytic cells is, and the "normal" range for individuals can be quite large.
-# 2) the cytometer itself may influence time point
-#so what we want to do is use the control group as the "baseline" and calculate the percent difference of the variable group to the control
+percent_cells_metadata <- read_csv("stresshardening_master.csv") #this only has replicate 1 in it
+#the controls for normalization were taken from replicate 1. 
+
+
+```
+Raw percent comparison by treatment over time
+(first technical replicate only)
+```{r}
+#only look at first technical replicate
+percent_cells_metadata %>%
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species, scales = "free") + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+
+```
+
+Raw percent comparison by treatment over time
+(average of all technical replicates)
+```{r}
+percent_cells_metadata %>%
+  mutate(TimePoint = fct_relevel(TimePoint, 
+            "T0", "T1", "T2", 
+            "FollowUp")) %>% 
+  group_by(TimePoint, Species, Genotype, Treatment) %>% 
+  select(!c("Tank","Average Control (for that given genotype and timepoint)", "Adjusted value (Percent -- Average Control)")) %>% 
+  mutate(average_percent = mean(Percent)) %>% 
+  select(!Percent) %>% 
+  distinct() %>% 
+  arrange(TimePoint, Species, Genotype)
+  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species, scales = "free") + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+
+```
+
+
+
+
+Raw comparison by treatment x genotype over time
+```{r}
+
+```
+
+
+
+we can't compare percentages across treatments and time because of several limitations:
+1) we don't know what a "normal" level of phagocytic cells is, and the "normal" range for individuals can be quite large.
+2) the cytometer itself may influence time point
+so what we want to do is use the control group as the "baseline" and calculate the percent difference of the variable group to the control
 #and we can do this for each time point
 
-library(tidyverse)
-```
+
+
+
+
+
+
 # subset to compare to Lys's data 
 ```{r}
 adjusted_cells_data %>% 
@@ -138,6 +195,7 @@ adjusted_cells_data %>%
 adjusted_cells_data %>% 
   group_by(TimePoint, Species, Genotype, Treatment) %>% 
   summarise(avg_percentage = mean(`Adjusted value (Percent -- Average Control)`), sd = sd(`Adjusted value (Percent -- Average Control)`)) %>% 
+  ungroup() %>% 
   filter(Species == "Pcli") %>% 
   mutate(TimePoint = as.factor(TimePoint)) %>% 
   mutate(TimePoint = fct_relevel(TimePoint, 
