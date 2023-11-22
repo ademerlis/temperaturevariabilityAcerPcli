@@ -250,6 +250,10 @@ GCA_032359415.1_NEU_Acer_K2_genomic.gtf #this is the GTF file
 # Cladocopium = Camp 2022
 # Durusdinium = Shogushi et al. 2021
 
+
+#------------------------------
+## adding UTRs based on Nick Kron's recommendation for better alignment of Acer 2023 genome
+
 module load python/3.8.7
 
 python3 gtf_advanced_parser.py --input ../Acer_2023/GCA_032359415.1_NEU_Acer_K2_genomic.gtf --output Acer_K2_genomic_parsed.gtf
@@ -262,10 +266,9 @@ python3 gtf_advanced_parser.py --input ../Acer_2023/GCA_032359415.1_NEU_Acer_K2_
 
 # next run the process_them.sh to extend the UTRs by a threshold of 5000 (based on what Dr. Nick Kron did)
 
-# let's try to just run bowtie2-build on the following files (perhaps I don't need the gtf file since i have the .fna file?)
+#------------------------------
 
-# wait no i can't do that because I already extended the UTR regions, which haven't been converted to a fasta file, they're in a gtf file.
-# so I need to do the AGAT stuff first.
+# Need to convert new UTR gtf files into fasta files, then create reference transcriptomes.
 
 source /share/apps/anaconda/anaconda3_build/bin/activate
 
@@ -279,9 +282,40 @@ source /share/apps/anaconda/anaconda3_build/bin/activate
 
 # conda install -c bioconda agat
 
+# manually downloaded the entire agat package:
+
+wget https://anaconda.org/bioconda/agat/1.2.0/download/noarch/agat-1.2.0-pl5321hdfd78af_0.tar.bz2 --no-check-certificate
+tar -xvjf agat-1.2.0-pl5321hdfd78af_0.tar.bz2
+mkdir agat-1.2.0-pl5321hdfd78af_0
+mv bin/ agat-1.2.0-pl5321hdfd78af_0
+mv info/ agat-1.2.0-pl5321hdfd78af_0
+mv lib/ agat-1.2.0-pl5321hdfd78af_0
+
+# perl scripts are stored here:
+
+/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/
+
+# try running script with the full path to the perl scripts
+
+# needed to first get the path to AGAT modules correct for perl
+
+export PERL5LIB=/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/lib/perl5/site_perl:$PERL5LIB
+
+# i also added the export line to my ~/.bash_profile and sourced it, this still didn't WORK
+
+# going to try to manually add this line to the perl scripts i need to run from agat: use lib /nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/lib/perl5/site_perl;
+echo '#! /usr/bin/env bash' > agat_step1.sh
+echo '#BSUB -e agat_step1.err' >> agat_step1.sh
+echo '#BSUB -o agat_step1.out' >> agat_step1.sh
+echo 'cd /scratch/projects/and_transcriptomics/genomes/Acer_2023' >> agat_step1.sh
+echo ''
+echo '/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff GCA_032359415.1_NEU_Acer_K2_genomic.gtf_ext_by_5000.gtf -p gene --att transcript_id -o Acer_K2_genomic_ext_by_5000.gff' >> agat_step1.sh
+echo '/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff GCA_032359415.1_NEU_Acer_K2_genomic.gtf -p gene --att transcript_id -o Acer_K2_genomic_original.gff' >> agat_step1.sh
+echo '/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff Acer_K2_genomic_parsed.gtf -p gene --att transcript_id -o Acer_K2_genomic_parsed.gff' >> agat_step1.sh
+
 # Remove transcript_id attribute to gene feature:
 
-agat_sp_manage_attributes.pl --gff test.gtf -p gene --att transcript_id -o test.gff
+/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff test.gtf -p gene --att transcript_id -o test.gff
 
 # Convert into gtf
 
@@ -301,10 +335,60 @@ conda activate gffread
 
 gffread -w transcripts.fa -g GCA_032359415.1_NEU_Acer_K2_genomic.fna GCA_032359415.1_NEU_Acer_K2_genomic.gtf # DOES NOT WORK
 
+#------------------------------
+# build index
 
-# creating bowtie2 index for multiple transcriptomes
-module load bowtie2-2.3.5.1-gcc-8.3.0-63cvhw5
-# replace 'Host' and 'Symbiont' with your respective filenames
-echo 'bowtie2-build Host.fasta,Symbiont.fasta,Symbiont2.fasta Host_concat' > btb
-launcher_creator.py -j btb -n btb -q shortq7 -t 6:00:00 -e studivanms@gmail.com
-sbatch btb.slurm
+#!/bin/bash
+#BSUB -J bowtie2-build
+#BSUB -q general
+#BSUB -P and_transcriptomics
+#BSUB -n 8
+#BSUB -W 120:00
+#BSUB -o bowtie2-build.out
+#BSUB -e bowtie2-build.err
+#BSUB -u and128@miami.edu
+#BSUB -N
+
+workdir="/scratch/projects/and_transcriptomics/genomes"
+
+bowtie2-build ${workdir}/Acer_2023/GCA_032359415.1_NEU_Acer_K2_genomic.fna, \
+${workdir}/Symbiodinium/syma_transcriptome_37.fasta,\
+${workdir}/Breviolum/Symb_Dip.fna,\
+${workdir}/Cladocopium/C124.annotated.fa,\
+${workdir}/Durusdinium/102_symbd_transcriptome_nucl.fa \
+Host_concat
+
+#------------------------------
+# run bowtie2 for alignment
+
+# first move the Host_concat files into the same directory as the trimmed Acer sequences. Then run script:
+
+#!/usr/bin/env bash
+#BSUB -e bowtie2map.err
+#BSUB -o bowtie2map.out
+#BSUB -P and_transcriptomics
+#BSUB -q general
+#BSUB -n 8
+
+
+name_position=$1
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4/trimmed_files/Acer"
+
+glob="\.trim"
+
+if [ ! -z "$1" ]; then
+    glob="$1"
+fi
+# Loop through files matching the pattern
+for f in *$glob*; do
+    if [ -n "$name_position" ]; then
+        # Split the filename and extract the part based on the provided position
+        IFS='._' read -ra parts <<< "$f"
+        outname="${parts[$((name_position - 1))]}.sam"
+    else
+        # Use the entire filename if no position is provided
+        outname="${f}.sam"
+    fi
+    bowtie2 --local -x Host_concat -U $f -S $outname --no-hd --no-sq --no-unal -k 5
+done
