@@ -118,22 +118,29 @@ Specific contrasts:
 
 ### 5) PCAs
 
-<img width="622" alt="Screen Shot 2023-08-29 at 4 47 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d0c77eaf-88ff-406d-84c4-1517a15cc785">
+Plotting everything together, genotype drives clustering.
 
-<img width="623" alt="Screen Shot 2023-08-29 at 4 47 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/84c6fe60-7919-4297-8756-55798456010a">
+<img width="549" alt="Screen Shot 2023-11-24 at 3 54 07 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/71e4605c-acf4-4037-a68b-537c904c17c9">
 
-<img width="618" alt="Screen Shot 2023-09-20 at 1 07 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/931961ca-3ac8-4071-a1cf-6732035bc210">
+When individual genotypes are plotted: 
 
-<img width="622" alt="Screen Shot 2023-09-20 at 1 08 09 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/028043e8-dd07-417c-9ee2-8717aab7a4b7">
+<img width="585" alt="Screen Shot 2023-11-24 at 3 58 42 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3a1e3bc9-f750-4793-a3a2-d8405c9731c5">
 
-<img width="627" alt="Screen Shot 2023-09-20 at 1 08 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2182201f-2302-4eec-9124-ef503b4d4c25">
+<img width="586" alt="Screen Shot 2023-11-24 at 3 59 15 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3d834638-d389-4909-bb78-4aea359b08f9">
 
-<img width="618" alt="Screen Shot 2023-09-20 at 1 08 45 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bac6761f-9286-4574-ad9e-f4b60cd9d264">
+<img width="584" alt="Screen Shot 2023-11-24 at 3 59 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/749f4bf4-104e-4b87-af2f-19e764203332">
 
-<img width="621" alt="Screen Shot 2023-09-20 at 1 09 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/00150278-6da9-408c-9faa-00b0ffd33268">
+<img width="583" alt="Screen Shot 2023-11-24 at 4 00 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/15692ddf-4617-44f6-8ec5-223542eacbba">
 
-<img width="626" alt="Screen Shot 2023-09-20 at 1 09 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d326aa26-6eda-49b2-a10e-5b7c1dec0462">
+<img width="584" alt="Screen Shot 2023-11-24 at 4 00 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c03dae9b-d83f-4ac5-9309-d32c34ecc627">
 
+<img width="583" alt="Screen Shot 2023-11-24 at 4 00 41 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f2f1d1a1-94d1-461d-a1c4-5b4b2565f826">
+
+the PC axes 2 and 3 don't show any patterns (other than genotype again).
+
+<img width="480" alt="Screen Shot 2023-11-24 at 4 03 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5bec7b78-3aff-478d-b3c8-6e542a2cdb99">
+
+<img width="581" alt="Screen Shot 2023-11-24 at 4 02 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5b8ab5a2-bd40-461f-bb72-9491d803bef3">
 
 
 
