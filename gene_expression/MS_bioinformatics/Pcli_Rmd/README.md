@@ -116,7 +116,7 @@ Specific contrasts:
 <img width="502" alt="Screen Shot 2023-11-24 at 3 32 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/29415867-88a9-41de-9308-bf91992f3dc7">
 
 
-### 7) PCAs
+### 5) PCAs
 
 <img width="622" alt="Screen Shot 2023-08-29 at 4 47 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d0c77eaf-88ff-406d-84c4-1517a15cc785">
 
