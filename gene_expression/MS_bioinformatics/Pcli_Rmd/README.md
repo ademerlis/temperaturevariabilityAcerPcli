@@ -12,7 +12,7 @@ Updates:
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
 
-`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)`
+`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)`
 
 countData pre-filtered to remove low-count genes:
 
@@ -99,16 +99,16 @@ Neighbor-joining tree of samples (based on significant PCoA's).
 ### 3) PERMANOVA for variance in distance matrices
 
 ```{r}
-ad=adonis2(t(vsd)~time_point*Treatment + Genotype,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd)~Genotype + time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 ```
 
-<img width="591" alt="Screen Shot 2023-08-24 at 1 35 23 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/7ebd17c0-6e3c-4df0-9c46-e2c77bc283b8">
+<img width="631" alt="Screen Shot 2023-11-24 at 3 21 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a0c38276-90b6-41d0-aa2c-8d3531643ec5">
 
 
 Pie chart to show proportion of R2 values per factor driving variance
 
-<img width="610" alt="Screen Shot 2023-08-24 at 1 36 22 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/834c22b9-5c10-431f-a549-1b0df39d7094">
+<img width="525" alt="Screen Shot 2023-11-24 at 3 22 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/99900762-5d3a-4f45-ba30-593b8b71bf5c">
 
 
 ### 4) DESeq2
