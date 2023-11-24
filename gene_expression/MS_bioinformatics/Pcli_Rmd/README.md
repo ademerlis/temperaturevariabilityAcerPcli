@@ -2,6 +2,12 @@
 
 To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com/mstudiva/tag-based_RNAseq/blob/master/tagSeq_processing_README.txt)  that he ran in his HPC.
 
+Last updated: 2023-11-24
+
+Updates:
+1. Changed dds formulas to be ~batch + condition
+2. Updated vsd WGCNA to be blind=FALSE
+
 ## Results
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
