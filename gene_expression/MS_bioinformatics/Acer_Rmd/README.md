@@ -2,6 +2,11 @@
 
 To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com/mstudiva/tag-based_RNAseq/blob/master/tagSeq_processing_README.txt)  that he ran in his HPC.
 
+Last updated: 2023-10-02
+
+Updates: 
+1. re-ordering dds design formula so that the "less important" variable comes first.
+
 ## Results
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/1_Acer_deseq2.R). 
