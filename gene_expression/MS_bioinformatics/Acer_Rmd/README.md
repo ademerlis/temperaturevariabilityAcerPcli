@@ -4,7 +4,7 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 
 ## Results
 
-Code to create these graphs is from [this R file]. 
+Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Acer_Rmd/1_Acer_deseq2.R). 
 
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment_timepoint)`
 
