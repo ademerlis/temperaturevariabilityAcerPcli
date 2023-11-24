@@ -5,7 +5,8 @@ To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com
 Last updated: 2023-10-02
 
 Updates: 
-1. re-ordering dds design formula so that the "less important" variable comes first.
+1. Changed dds formulas to be ~batch + condition
+2. Updated vsd WGCNA to be blind=FALSE
 
 ## Results
 
