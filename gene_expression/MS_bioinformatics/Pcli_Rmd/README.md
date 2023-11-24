@@ -7,12 +7,15 @@ Last updated: 2023-11-24
 Updates:
 1. Changed dds formulas to be ~batch + condition
 2. Updated vsd WGCNA to be blind=FALSE
+3. change lpv tables so they use FDR-adjusted p-value instead of raw p-value
 
 ## Results
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
 
-`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)`
+`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment_timepoint)`
+
+Note: in the R script, Treatment_timepoint is actually called 'group' and it is a concatenated factor of Treatment and time_point (i.e., control_Day_29)
 
 countData pre-filtered to remove low-count genes:
 
@@ -26,20 +29,6 @@ keep <- rowSums(counts) >= 10
 countData <- counts[keep,]
 nrow(countData) #34300
 ncol(countData) #48
-```
-
-the "group" variable for the design contains both "Treatment" (control vs. variable) and "time_point" (Day_0 vs. Day_29).
-
-```{r}
-design$Genotype <- as.factor(design$Genotype)
-design$Treatment <- as.factor(design$Treatment)
-design %>% 
-  mutate(time_point = case_when(Experiment.phase == "Pre-treatment" ~ "Day_0",
-                                Experiment.phase == "last day of treatment" ~ "Day_29")) -> design
-column_to_rownames(design, var="Sample_ID") -> design
-design$group <- factor(paste0(design$Treatment, "_", design$time_point))
-# reorders fate factor according to "control" vs "treatment" levels
-dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 ```
 
 First, the package arrayQualityMetrics was used to identify outliers. It generates a report called "index.html", where you can visualize which samples exceed a certain threshold. Then, those are removed from downstream analyses.
@@ -73,17 +62,10 @@ dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group
 dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 ```
 
-### 1) Heatmap
-To see similarity of samples
-
-<img width="681" alt="Screen Shot 2023-08-24 at 1 34 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5cb8c257-a7fc-442c-812f-09979d91287e">
-
-
-### 2) PCoA
+### 1) PCoA
 How many good PCs are there? Look for the number of black points above the line of red crosses (random model). 
 
 <img width="683" alt="Screen Shot 2023-08-24 at 1 34 30 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/7aa03c0e-5821-4981-8cf5-a8e1947b5433">
-
 
 Now plot the PCoA by treatment and time point.
 
@@ -91,12 +73,7 @@ Now plot the PCoA by treatment and time point.
 
 Axis 1 is 14.7% of the variance, and axis 2 is 6.0% of the variance.
 
-Neighbor-joining tree of samples (based on significant PCoA's).
-
-<img width="631" alt="Screen Shot 2023-08-24 at 1 34 54 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2e85ccc7-da1a-448a-9139-e8da0d251184">
-
-
-### 3) PERMANOVA for variance in distance matrices
+### 2) PERMANOVA
 
 ```{r}
 ad=adonis2(t(vsd)~Genotype + time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
@@ -105,13 +82,7 @@ ad
 
 <img width="631" alt="Screen Shot 2023-11-24 at 3 21 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a0c38276-90b6-41d0-aa2c-8d3531643ec5">
 
-
-Pie chart to show proportion of R2 values per factor driving variance
-
-<img width="525" alt="Screen Shot 2023-11-24 at 3 22 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/99900762-5d3a-4f45-ba30-593b8b71bf5c">
-
-
-### 4) DESeq2
+### 3) DESeq2
 
 ```{r}
 # Running full model for contrast statements
@@ -123,7 +94,7 @@ degs_treatment_time=row.names(treatment_time)[treatment_time$padj<0.1 & !(is.na(
 resultsNames(dds)
 ```
 
-<img width="353" alt="Screen Shot 2023-08-24 at 1 37 51 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ea6804b6-e3f8-48bf-8e7b-07a09cc0a158">
+<img width="357" alt="Screen Shot 2023-11-24 at 3 27 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/fcc599a6-51eb-4e08-a3fe-89807af861e3">
 
 
 Specific contrasts:
@@ -140,15 +111,10 @@ Specific contrasts:
 <img width="341" alt="Screen Shot 2023-08-24 at 1 39 47 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/46c78b3a-5db3-41b0-a31b-a470732df6dd">
 
 
+### 4) Venn diagram of number of DGEs (based on FDR p-adjusted value < 0.1)
 
-### 5) Density plot for DEGs
+<img width="502" alt="Screen Shot 2023-11-24 at 3 32 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/29415867-88a9-41de-9308-bf91992f3dc7">
 
-<img width="668" alt="Screen Shot 2023-08-24 at 1 42 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/eecfbb5f-9dd9-4949-b0ad-4ee24908568b">
-
-
-### 6) Venn diagram for DEGs
-
-<img width="605" alt="Screen Shot 2023-08-24 at 1 49 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f4d287ce-ed29-4bea-a509-79722870c896">
 
 ### 7) PCAs
 
