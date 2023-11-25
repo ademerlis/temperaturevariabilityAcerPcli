@@ -8,14 +8,19 @@ Updates:
 1. Changed dds formulas to be ~batch + condition
 2. Updated vsd WGCNA to be blind=FALSE
 3. change lpv tables so they use FDR-adjusted p-value instead of raw p-value
+4. Combine control and variable day 0 into one group, called "Initial" (because no treatment has happened yet, so separating them doesn't make sense)
+
 
 ## Results
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
 
-`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment_timepoint)`
+`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)`
 
-Note: in the R script, Treatment_timepoint is actually called 'group' and it is a concatenated factor of Treatment and time_point (i.e., control_Day_29)
+Treatment has three levels:
+1. Initial (day 0)
+2. Untreated (control day 29)
+3. Treated (variable treated day 29)
 
 countData pre-filtered to remove low-count genes:
 
@@ -58,29 +63,25 @@ design=design[-outs,]
 Then dds model is remade without those outliers. 
 ```{r}
 # remaking model with outliers removed from dataset
-dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)
-dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)
+dds$Treatment <- factor(dds$Treatment, levels = c("Initial", "Untreated", "Treated"))
 ```
 
 ### 1) PCoA
-How many good PCs are there? Look for the number of black points above the line of red crosses (random model). 
 
-<img width="683" alt="Screen Shot 2023-08-24 at 1 34 30 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/7aa03c0e-5821-4981-8cf5-a8e1947b5433">
+<img width="531" alt="Screen Shot 2023-11-24 at 7 59 04 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/56012fac-03ec-4af5-9a52-e6a53ed5f72b">
 
-Now plot the PCoA by treatment and time point.
-
-<img width="1118" alt="Screen Shot 2023-09-20 at 12 58 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5d0311c1-4da9-4f54-b872-36dc41a666e2">
-
-Axis 1 is 14.7% of the variance, and axis 2 is 6.0% of the variance.
+First axis explains 14.8% of the variance, axis 2 explains 6% of the variance.
 
 ### 2) PERMANOVA
 
 ```{r}
-ad=adonis2(t(vsd)~Genotype + time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd)~Genotype + Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 ```
 
-<img width="631" alt="Screen Shot 2023-11-24 at 3 21 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a0c38276-90b6-41d0-aa2c-8d3531643ec5">
+<img width="731" alt="Screen Shot 2023-11-24 at 8 01 54 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/04864f5b-e4dd-46e5-940b-45c3ef13c2d1">
+
 
 ### 3) DESeq2
 
@@ -88,32 +89,43 @@ ad
 # Running full model for contrast statements
 dds=DESeq(dds, parallel=TRUE)
 # treatment
-treatment_time=results(dds) 
-summary(treatment_time) 
-degs_treatment_time=row.names(treatment_time)[treatment_time$padj<0.1 & !(is.na(treatment_time$padj))]
+Treatment=results(dds) 
+summary(Treatment) 
+degs_Treatment=row.names(Treatment)[Treatment$padj<0.1 & !(is.na(Treatment$padj))]
 resultsNames(dds)
 ```
 
-<img width="357" alt="Screen Shot 2023-11-24 at 3 27 50 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/fcc599a6-51eb-4e08-a3fe-89807af861e3">
+**some notes from DESeq2 when it was running:**
+-- note: fitType='parametric', but the dispersion trend was not well captured by the
+   function: y = a/x + b, and a local regression fit was automatically substituted.
+   specify fitType='local' or 'mean' to avoid this message next time.
+final dispersion estimates, fitting model and testing: 6 workers
+-- replacing outliers and refitting for 24 genes
+-- DESeq argument 'minReplicatesForReplace' = 7 
+
+<img width="349" alt="Screen Shot 2023-11-24 at 8 05 32 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/08c2aad3-a438-4692-9a23-fdb971288e1e">
 
 
 Specific contrasts:
 
-<img width="344" alt="Screen Shot 2023-08-24 at 1 38 31 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d67dbf56-51fe-44a0-99ba-89ab561ee921">
+**How to interpret**: the contrast reported first is the numerator, i.e. Treated (numerator) vs. Untreated (denomenator), the number of DEGs upregulated are differentially upregulated (greater positive LogFoldChange) in the treated group than the untreated group. 
 
+<img width="352" alt="Screen Shot 2023-11-24 at 8 07 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/48b3409a-59ea-4dc1-9637-02d38867ee5a">
 
-<img width="349" alt="Screen Shot 2023-08-24 at 1 39 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/85b75332-f670-4ddc-a63a-075e888cd756">
+<img width="351" alt="Screen Shot 2023-11-24 at 8 08 03 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a5213278-4016-4c5b-8dd7-39c8c2f7d335">
 
-
-<img width="351" alt="Screen Shot 2023-08-24 at 1 39 34 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/874c65d7-6e61-46b6-8410-b5a95b8747f8">
-
-
-<img width="341" alt="Screen Shot 2023-08-24 at 1 39 47 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/46c78b3a-5db3-41b0-a31b-a470732df6dd">
+<img width="349" alt="Screen Shot 2023-11-24 at 8 10 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/134a35b7-ea1c-4577-9fcc-a0c0fa413a19">
 
 
 ### 4) Venn diagram of number of DGEs (based on FDR p-adjusted value < 0.1)
 
-<img width="502" alt="Screen Shot 2023-11-24 at 3 32 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/29415867-88a9-41de-9308-bf91992f3dc7">
+<img width="447" alt="Screen Shot 2023-11-24 at 8 45 22 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ab06e6cf-739a-443c-b74d-232552a7c4d3">
+
+This one was made with VennDiagram and it's ugly and I can't move the labels or make the circles smaller.
+
+This one was made with ggvenn and is marginally better:
+
+<img width="612" alt="Screen Shot 2023-11-24 at 8 46 09 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e9f995b2-0f1d-4ff7-bf45-45b6564a56fc">
 
 
 ### 5) PCAs
@@ -124,36 +136,31 @@ Plotting everything together, genotype drives clustering.
 
 When individual genotypes are plotted: 
 
-<img width="585" alt="Screen Shot 2023-11-24 at 3 58 42 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3a1e3bc9-f750-4793-a3a2-d8405c9731c5">
+<img width="625" alt="Screen Shot 2023-11-24 at 9 04 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d4daa57c-826e-4725-90fe-9a0551476942">
 
-<img width="586" alt="Screen Shot 2023-11-24 at 3 59 15 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/3d834638-d389-4909-bb78-4aea359b08f9">
+But with the stat_ellipse function it looks better:
 
-<img width="584" alt="Screen Shot 2023-11-24 at 3 59 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/749f4bf4-104e-4b87-af2f-19e764203332">
+<img width="620" alt="Screen Shot 2023-11-24 at 9 05 10 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/278e48ed-07cd-4720-80de-d6c141a1efbe">
 
-<img width="583" alt="Screen Shot 2023-11-24 at 4 00 00 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/15692ddf-4617-44f6-8ec5-223542eacbba">
+<img width="625" alt="Screen Shot 2023-11-24 at 9 05 36 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4666ecf5-d8b5-49f5-b2ae-e98834cba0d1">
 
-<img width="584" alt="Screen Shot 2023-11-24 at 4 00 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c03dae9b-d83f-4ac5-9309-d32c34ecc627">
+<img width="623" alt="Screen Shot 2023-11-24 at 9 05 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c5544b57-97ae-45ec-84df-ae8a1f9366fc">
 
-<img width="583" alt="Screen Shot 2023-11-24 at 4 00 41 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f2f1d1a1-94d1-461d-a1c4-5b4b2565f826">
+<img width="622" alt="Screen Shot 2023-11-24 at 9 06 27 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2efc4e87-5aee-4bb4-b715-b94fd8f0d593">
+
+<img width="621" alt="Screen Shot 2023-11-24 at 9 06 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/337fd5ba-b500-4b86-b617-a69c2e35da3d">
 
 the PC axes 2 and 3 don't show any patterns (other than genotype again).
 
-<img width="480" alt="Screen Shot 2023-11-24 at 4 03 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5bec7b78-3aff-478d-b3c8-6e542a2cdb99">
-
-<img width="581" alt="Screen Shot 2023-11-24 at 4 02 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5b8ab5a2-bd40-461f-bb72-9491d803bef3">
+<img width="623" alt="Screen Shot 2023-11-24 at 9 08 41 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/446179d9-ef82-42e1-9a4f-a39515cafa54">
 
 ### 6) Volcano plots
 
-There are so few genes that meet the criteria (padj < 0.05 and L2FC > 2 or < -2) that none of these plots are very good.
+<img width="585" alt="Screen Shot 2023-11-24 at 9 11 12 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b5e11831-6a7d-422c-868e-e1587e385151">
 
-<img width="755" alt="Screen Shot 2023-11-24 at 7 04 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5713612a-bc03-4cdf-aa07-76701091d8e1">
+<img width="587" alt="Screen Shot 2023-11-24 at 9 12 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e9c29af2-7de5-4648-98e9-257072675998">
 
-<img width="752" alt="Screen Shot 2023-11-24 at 7 04 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/529d7d05-da3d-4e4a-bc8f-55cbfaa95702">
+<img width="585" alt="Screen Shot 2023-11-24 at 9 13 40 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/17555bb8-a018-4292-a7b4-e1603be8582a">
 
-<img width="749" alt="Screen Shot 2023-11-24 at 7 04 40 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4a3eb5a9-2a76-496d-aab0-13b90f9ec580">
-
-### 7) Common genes
-
-C29/V29 is an interesting one 
 
 
