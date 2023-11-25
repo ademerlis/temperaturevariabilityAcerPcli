@@ -142,5 +142,18 @@ the PC axes 2 and 3 don't show any patterns (other than genotype again).
 
 <img width="581" alt="Screen Shot 2023-11-24 at 4 02 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5b8ab5a2-bd40-461f-bb72-9491d803bef3">
 
+### 6) Volcano plots
+
+There are so few genes that meet the criteria (padj < 0.05 and L2FC > 2 or < -2) that none of these plots are very good.
+
+<img width="755" alt="Screen Shot 2023-11-24 at 7 04 08 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5713612a-bc03-4cdf-aa07-76701091d8e1">
+
+<img width="752" alt="Screen Shot 2023-11-24 at 7 04 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/529d7d05-da3d-4e4a-bc8f-55cbfaa95702">
+
+<img width="749" alt="Screen Shot 2023-11-24 at 7 04 40 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4a3eb5a9-2a76-496d-aab0-13b90f9ec580">
+
+### 7) Common genes
+
+C29/V29 is an interesting one 
 
 
