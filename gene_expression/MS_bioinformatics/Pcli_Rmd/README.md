@@ -2,11 +2,25 @@
 
 To do: add scripts from [Michael's Tag-based_RNAseq pipeline](https://github.com/mstudiva/tag-based_RNAseq/blob/master/tagSeq_processing_README.txt)  that he ran in his HPC.
 
+Last updated: 2023-11-24
+
+Updates:
+1. Changed dds formulas to be ~batch + condition
+2. Updated vsd WGCNA to be blind=FALSE
+3. change lpv tables so they use FDR-adjusted p-value instead of raw p-value
+4. Combine control and variable day 0 into one group, called "Initial" (because no treatment has happened yet, so separating them doesn't make sense)
+
+
 ## Results
 
 Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
 
-`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)`
+`dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)`
+
+Treatment has three levels:
+1. Initial (day 0)
+2. Untreated (control day 29)
+3. Treated (variable treated day 29)
 
 countData pre-filtered to remove low-count genes:
 
@@ -20,20 +34,6 @@ keep <- rowSums(counts) >= 10
 countData <- counts[keep,]
 nrow(countData) #34300
 ncol(countData) #48
-```
-
-the "group" variable for the design contains both "Treatment" (control vs. variable) and "time_point" (Day_0 vs. Day_29).
-
-```{r}
-design$Genotype <- as.factor(design$Genotype)
-design$Treatment <- as.factor(design$Treatment)
-design %>% 
-  mutate(time_point = case_when(Experiment.phase == "Pre-treatment" ~ "Day_0",
-                                Experiment.phase == "last day of treatment" ~ "Day_29")) -> design
-column_to_rownames(design, var="Sample_ID") -> design
-design$group <- factor(paste0(design$Treatment, "_", design$time_point))
-# reorders fate factor according to "control" vs "treatment" levels
-dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 ```
 
 First, the package arrayQualityMetrics was used to identify outliers. It generates a report called "index.html", where you can visualize which samples exceed a certain threshold. Then, those are removed from downstream analyses.
@@ -63,105 +63,104 @@ design=design[-outs,]
 Then dds model is remade without those outliers. 
 ```{r}
 # remaking model with outliers removed from dataset
-dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ group + Genotype)
-dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)
+dds$Treatment <- factor(dds$Treatment, levels = c("Initial", "Untreated", "Treated"))
 ```
 
-### 1) Heatmap
-To see similarity of samples
+### 1) PCoA
 
-<img width="681" alt="Screen Shot 2023-08-24 at 1 34 14 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5cb8c257-a7fc-442c-812f-09979d91287e">
+<img width="531" alt="Screen Shot 2023-11-24 at 7 59 04 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/56012fac-03ec-4af5-9a52-e6a53ed5f72b">
 
+First axis explains 14.8% of the variance, axis 2 explains 6% of the variance.
 
-### 2) PCoA
-How many good PCs are there? Look for the number of black points above the line of red crosses (random model). 
-
-<img width="683" alt="Screen Shot 2023-08-24 at 1 34 30 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/7aa03c0e-5821-4981-8cf5-a8e1947b5433">
-
-
-Now plot the PCoA by treatment and time point.
-
-<img width="1118" alt="Screen Shot 2023-09-20 at 12 58 46 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/5d0311c1-4da9-4f54-b872-36dc41a666e2">
-
-Axis 1 is 14.7% of the variance, and axis 2 is 6.0% of the variance.
-
-Neighbor-joining tree of samples (based on significant PCoA's).
-
-<img width="631" alt="Screen Shot 2023-08-24 at 1 34 54 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2e85ccc7-da1a-448a-9139-e8da0d251184">
-
-
-### 3) PERMANOVA for variance in distance matrices
+### 2) PERMANOVA
 
 ```{r}
-ad=adonis2(t(vsd)~time_point*Treatment + Genotype,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd)~Genotype + Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 ```
 
-<img width="591" alt="Screen Shot 2023-08-24 at 1 35 23 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/7ebd17c0-6e3c-4df0-9c46-e2c77bc283b8">
+<img width="731" alt="Screen Shot 2023-11-24 at 8 01 54 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/04864f5b-e4dd-46e5-940b-45c3ef13c2d1">
 
 
-Pie chart to show proportion of R2 values per factor driving variance
-
-<img width="610" alt="Screen Shot 2023-08-24 at 1 36 22 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/834c22b9-5c10-431f-a549-1b0df39d7094">
-
-
-### 4) DESeq2
+### 3) DESeq2
 
 ```{r}
 # Running full model for contrast statements
 dds=DESeq(dds, parallel=TRUE)
 # treatment
-treatment_time=results(dds) 
-summary(treatment_time) 
-degs_treatment_time=row.names(treatment_time)[treatment_time$padj<0.1 & !(is.na(treatment_time$padj))]
+Treatment=results(dds) 
+summary(Treatment) 
+degs_Treatment=row.names(Treatment)[Treatment$padj<0.1 & !(is.na(Treatment$padj))]
 resultsNames(dds)
 ```
 
-<img width="353" alt="Screen Shot 2023-08-24 at 1 37 51 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ea6804b6-e3f8-48bf-8e7b-07a09cc0a158">
+**some notes from DESeq2 when it was running:**
+-- note: fitType='parametric', but the dispersion trend was not well captured by the
+   function: y = a/x + b, and a local regression fit was automatically substituted.
+   specify fitType='local' or 'mean' to avoid this message next time.
+final dispersion estimates, fitting model and testing: 6 workers
+-- replacing outliers and refitting for 24 genes
+-- DESeq argument 'minReplicatesForReplace' = 7 
+
+<img width="349" alt="Screen Shot 2023-11-24 at 8 05 32 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/08c2aad3-a438-4692-9a23-fdb971288e1e">
 
 
 Specific contrasts:
 
-<img width="344" alt="Screen Shot 2023-08-24 at 1 38 31 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d67dbf56-51fe-44a0-99ba-89ab561ee921">
+**How to interpret**: the contrast reported first is the numerator, i.e. Treated (numerator) vs. Untreated (denomenator), the number of DEGs upregulated are differentially upregulated (greater positive LogFoldChange) in the treated group than the untreated group. 
+
+<img width="352" alt="Screen Shot 2023-11-24 at 8 07 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/48b3409a-59ea-4dc1-9637-02d38867ee5a">
+
+<img width="351" alt="Screen Shot 2023-11-24 at 8 08 03 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/a5213278-4016-4c5b-8dd7-39c8c2f7d335">
+
+<img width="349" alt="Screen Shot 2023-11-24 at 8 10 44 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/134a35b7-ea1c-4577-9fcc-a0c0fa413a19">
 
 
-<img width="349" alt="Screen Shot 2023-08-24 at 1 39 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/85b75332-f670-4ddc-a63a-075e888cd756">
+### 4) Venn diagram of number of DGEs (based on FDR p-adjusted value < 0.1)
+
+<img width="447" alt="Screen Shot 2023-11-24 at 8 45 22 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ab06e6cf-739a-443c-b74d-232552a7c4d3">
+
+This one was made with VennDiagram and it's ugly and I can't move the labels or make the circles smaller.
+
+This one was made with ggvenn and is marginally better:
+
+<img width="612" alt="Screen Shot 2023-11-24 at 8 46 09 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e9f995b2-0f1d-4ff7-bf45-45b6564a56fc">
 
 
-<img width="351" alt="Screen Shot 2023-08-24 at 1 39 34 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/874c65d7-6e61-46b6-8410-b5a95b8747f8">
+### 5) PCAs
 
+Plotting everything together, genotype drives clustering.
 
-<img width="341" alt="Screen Shot 2023-08-24 at 1 39 47 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/46c78b3a-5db3-41b0-a31b-a470732df6dd">
+<img width="549" alt="Screen Shot 2023-11-24 at 3 54 07 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/71e4605c-acf4-4037-a68b-537c904c17c9">
 
+When individual genotypes are plotted: 
 
+<img width="625" alt="Screen Shot 2023-11-24 at 9 04 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d4daa57c-826e-4725-90fe-9a0551476942">
 
-### 5) Density plot for DEGs
+But with the stat_ellipse function it looks better:
 
-<img width="668" alt="Screen Shot 2023-08-24 at 1 42 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/eecfbb5f-9dd9-4949-b0ad-4ee24908568b">
+<img width="620" alt="Screen Shot 2023-11-24 at 9 05 10 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/278e48ed-07cd-4720-80de-d6c141a1efbe">
 
+<img width="625" alt="Screen Shot 2023-11-24 at 9 05 36 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4666ecf5-d8b5-49f5-b2ae-e98834cba0d1">
 
-### 6) Venn diagram for DEGs
+<img width="623" alt="Screen Shot 2023-11-24 at 9 05 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c5544b57-97ae-45ec-84df-ae8a1f9366fc">
 
-<img width="605" alt="Screen Shot 2023-08-24 at 1 49 24 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/f4d287ce-ed29-4bea-a509-79722870c896">
+<img width="622" alt="Screen Shot 2023-11-24 at 9 06 27 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2efc4e87-5aee-4bb4-b715-b94fd8f0d593">
 
-### 7) PCAs
+<img width="621" alt="Screen Shot 2023-11-24 at 9 06 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/337fd5ba-b500-4b86-b617-a69c2e35da3d">
 
-<img width="622" alt="Screen Shot 2023-08-29 at 4 47 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d0c77eaf-88ff-406d-84c4-1517a15cc785">
+the PC axes 2 and 3 don't show any patterns (other than genotype again).
 
-<img width="623" alt="Screen Shot 2023-08-29 at 4 47 55 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/84c6fe60-7919-4297-8756-55798456010a">
+<img width="623" alt="Screen Shot 2023-11-24 at 9 08 41 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/446179d9-ef82-42e1-9a4f-a39515cafa54">
 
-<img width="618" alt="Screen Shot 2023-09-20 at 1 07 52 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/931961ca-3ac8-4071-a1cf-6732035bc210">
+### 6) Volcano plots
 
-<img width="622" alt="Screen Shot 2023-09-20 at 1 08 09 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/028043e8-dd07-417c-9ee2-8717aab7a4b7">
+<img width="585" alt="Screen Shot 2023-11-24 at 9 11 12 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b5e11831-6a7d-422c-868e-e1587e385151">
 
-<img width="627" alt="Screen Shot 2023-09-20 at 1 08 26 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2182201f-2302-4eec-9124-ef503b4d4c25">
+<img width="587" alt="Screen Shot 2023-11-24 at 9 12 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e9c29af2-7de5-4648-98e9-257072675998">
 
-<img width="618" alt="Screen Shot 2023-09-20 at 1 08 45 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/bac6761f-9286-4574-ad9e-f4b60cd9d264">
-
-<img width="621" alt="Screen Shot 2023-09-20 at 1 09 02 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/00150278-6da9-408c-9faa-00b0ffd33268">
-
-<img width="626" alt="Screen Shot 2023-09-20 at 1 09 17 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d326aa26-6eda-49b2-a10e-5b7c1dec0462">
-
+<img width="585" alt="Screen Shot 2023-11-24 at 9 13 40 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/17555bb8-a018-4292-a7b4-e1603be8582a">
 
 
 
