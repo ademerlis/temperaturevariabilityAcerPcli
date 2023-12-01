@@ -38,3 +38,5 @@ echo 'eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)' >> ~/.bash_profile
 source ~/.bash_profile
 
 cpanm Bio::Perl
+
+# ok none of this worked. I think I can't run this on Pegasus.

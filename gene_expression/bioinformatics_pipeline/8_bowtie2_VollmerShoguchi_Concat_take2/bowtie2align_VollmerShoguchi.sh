@@ -16,19 +16,21 @@ echo "making bowtie2-align script for ${samp}..."
 echo "
 #! /usr/bin/env bash
 #BSUB -P ${project}
-#BSUB -J ${samp}_bowtie2align_LocatelliShoguchi
-#BSUB -e ${projdir}/bowtie2align_LocatelliShoguchi/logs/${samp}_bowtie2align_LocatelliShoguchi.err
-#BSUB -o ${projdir}/bowtie2align_LocatelliShoguchi/logs/${samp}_bowtie2align_LocatelliShoguchi.out
+#BSUB -J ${samp}_bowtie2align_VollmerShoguchi
+#BSUB -e ${projdir}/bowtie2_VollmerShoguchi_concat/logs/${samp}_bowtie2align_VollmerShoguchi.err
+#BSUB -o ${projdir}/bowtie2_VollmerShoguchi_concat/logs/${samp}_bowtie2align_VollmerShoguchi.out
 #BSUB -W 12:00
 #BSUB -n 8
 #BSUB -q general
 
 cd \"/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4/trimmed_files/Acer\"
 
-bowtie2 --local -U ${samp} -x Locatelli_Shoguchi_concat --un ${samp}.unaligned -k 5 -S ${samp}.sam
+bowtie2 --local -U ${samp} -x Vollmer_Shoguchi_concat --un ${samp}.unaligned -k 5 -S ${samp}.sam
 
-" > ${projdir}/bowtie2align_LocatelliShoguchi/${samp}_bowtie2align_LocatelliShoguchi.job
+done
 
-bsub < ${projdir}/bowtie2align_LocatelliShoguchi/${samp}_bowtie2align_LocatelliShoguchi.job
+" > ${projdir}/bowtie2_VollmerShoguchi_concat/${samp}_bowtie2align_VollmerShoguchi.job
+
+bsub < ${projdir}/bowtie2_VollmerShoguchi_concat/${samp}_bowtie2align_VollmerShoguchi.job
 
 done
