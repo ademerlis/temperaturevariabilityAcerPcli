@@ -4,24 +4,86 @@ author: "allyson_demerlis"
 date: "2023-02-22"
 output: html_document
 ---
-
+#load dataset and packages
 ```{r}
-metadata <- readxl::read_xlsx("metadata.xlsx")
+metadata <- readxl::read_xlsx("metadata.xlsx", sheet = "tidy_data")
 
 library(tidyverse)
 library(janitor)
+library(lubridate)
 ```
 
-
+#beginning of experiment sample size (by species and genotype)
 ```{r}
 metadata %>% 
-  filter(!is.na(Treatment)) %>% 
+  select(Species, ID, Colony) %>% 
+  group_by(Species, Colony) %>% 
+  summarise(count = n())
+```
+#beginning of experiment sample size after fragmenting mortality (by species, genotype, and treatment)
+```{r}
+metadata %>% 
+  select(Species, ID, Colony, Treatment) %>% 
   group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n()) #treatment = NA means that number of fragments died before getting treatment assignment
+```
+
+# sample size going into temperature treatment
+```{r}
+metadata %>% 
+  select(Species, ID, Colony, Treatment) %>% 
+  drop_na(Treatment) %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n()) 
+```
+
+# sample size for CBASS (separated by CBASS temperature assignment)
+```{r}
+metadata %>% 
+  select(Species, ID, Colony, Treatment, CBASS_tank) %>% 
+  drop_na(Treatment) %>% 
+  group_by(Species, Colony, Treatment, CBASS_tank) %>% 
   summarise(count = n()) %>% 
-  ggplot(., aes(x=Colony, y=count, fill = Treatment)) +
-  geom_col() +
-  facet_wrap(~Species, scales = "free")  +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  ggplot(., aes(x=CBASS_tank, y=count, fill = Treatment)) + geom_bar(stat="identity") + facet_wrap(~Species + Colony) + scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
   theme_classic()
 ```
+
+
+# sample size post-CBASS
+```{r}
+metadata %>% 
+  select(Species, ID, Colony, Treatment, CBASS_recovery_tank) %>% 
+  drop_na(Treatment, CBASS_recovery_tank) %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n()) #overall numbers went from 283 pre-cbass to 183 post-cbass
+
+#how many of those came from the control CBASS tank (temp=28ºC)?
+metadata %>% 
+  select(Species, ID, Colony, Treatment, CBASS_tank, CBASS_recovery_tank) %>% 
+  drop_na(Treatment, CBASS_recovery_tank) %>% 
+  group_by(Species, Colony, Treatment, CBASS_tank) %>% 
+  summarise(count = n()) %>% 
+    ggplot(., aes(x=CBASS_tank, y=count, fill = Treatment)) + geom_bar(stat="identity") + facet_wrap(~Species + Colony) + scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic()
+```
+
+# sample size pre-slow burn heat-stress
+```{r}
+metadata %>% 
+  select(Species, ID, Colony, Treatment, slowburn_heatstress_tank) %>% 
+  drop_na(Treatment, slowburn_heatstress_tank) %>% 
+  group_by(Species, Colony, Treatment, slowburn_heatstress_tank) %>% 
+  summarise(count = n()) #sample size total = 163 corals going into slow burn (lost 20 more corals due to CBASS stress)
+```
+# sample size post-slow burn heat-stress
+```{r}
+metadata %>% 
+  select(Species, ID, Colony, Treatment, heatstress_recovery_tank) %>% 
+  drop_na(Treatment, heatstress_recovery_tank) %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n()) #19 corals made it to the end (or were never put in the slow burn because they weren't ready for it)
+```
+
+
+
 

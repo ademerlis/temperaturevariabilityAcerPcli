@@ -174,7 +174,7 @@ temptreatment %>%
   scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))+
   scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
   theme(text = element_text(size = 20)) 
-ggsave("summarytemptreatment.pdf")
+ggsave("summarytemptreatment.pdf", width = 10, height = 6)
 ```
 
 
@@ -204,7 +204,7 @@ CBASS %>%
        y = "Temperature (°C)",
        x = "Hour") +
   theme(text = element_text(size = 20)) 
-ggsave("CBASStemps.pdf")
+ggsave("CBASStemps.pdf", width = 10)
 ```
 
 
@@ -281,20 +281,31 @@ heatstressassay %>%
 ```
 
 ```{r}
+heatstressassay$Time <- lubridate::round_date(heatstressassay$Time, unit = "15 min")
+
+# need to figure out troublesome time points for each tank
 heatstressassay %>% 
   dplyr::select(Time, T3, T4, T7, T8) %>% 
   pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
+  filter(!(Time > "2022-06-25 00:00:00" & Temp < 30.5 & Tank != "T7")) %>% 
+   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
+                               Tank == "T4" ~ "heatstress",
+                               Tank == "T7" ~ "ambient",
+                               Tank == "T8" ~ "heatstress")) %>% 
+  group_by(Time, Treatment) %>% 
+  summarise(mean_temp = mean(Temp), se = std.error(Temp)) %>% 
   ggplot(data = .,
-       aes(x = Time, y = Temp, color = Tank)) +
-  geom_line() + 
+       aes(x = Time, y = mean_temp, color = Treatment)) +
+  geom_point() + 
   theme_classic() +
   labs(title = "Tank Temperatures",
        y = "Temperature (°C)",
        x = "Date") +
-  theme(text = element_text(size = 15)) 
-
-#this is messy because each tank was "stopped" at different times, depending on when all the corals died or not. there was also a dip in temps for all of them where they went back down to 28 because of human error in setting the program
-
+  theme(text = element_text(size = 15)) +
+  geom_ribbon(aes(fill=Treatment, group = Treatment, ymin = mean_temp - se, ymax = mean_temp + se), alpha = 0.2) +
+  scale_color_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))+
+  scale_fill_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))
+ggsave("slowburnheatstress.pdf", width = 10, height = 6)
 ```
 
 
@@ -311,7 +322,6 @@ heatstressassay %>%
   dplyr::summarise(avg_temp = mean(Temp), se = std.error(Temp)) %>% 
   ggplot(., aes(x=Time, y=avg_temp)) + 
   geom_point() +
-  geom_smooth() +
   theme_classic() +
   labs(title = "Tank Temperatures",
        y = "Temperature (°C)",
