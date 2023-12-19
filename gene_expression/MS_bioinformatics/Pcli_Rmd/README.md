@@ -13,8 +13,6 @@ Updates:
 
 ## Results
 
-Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
-
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)`
 
 Treatment has three levels:
