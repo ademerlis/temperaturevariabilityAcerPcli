@@ -30,12 +30,19 @@ library(tidyverse)
 #read in counts
 counts = read.delim("final_counts_matrix.txt")
 
+#select only Acropora genes, remove Symbiodinium
+counts <- counts %>% filter(!grepl("^Symbiodinium[0-9]+$", X))
+
 column_to_rownames(counts, var ="X") -> counts
 counts %>% 
   select(!X.1) -> counts
+
+#two of the sample IDs are in all caps, need to change it to be "Acer"
+counts <- counts %>% rename(Acer.112 = ACER.112)
+counts <- counts %>% rename(Acer.124 = ACER.124)
  
 # how many genes we have total?
-nrow(counts) #73938
+nrow(counts) #30122
 ncol(counts) #48 samples
 
 # how does the data look? 
@@ -47,13 +54,13 @@ rownames(counts) #gene names (but not actual gene names, arbitrary gene names li
 # filtering out low-count genes
 keep <- rowSums(counts) >= 10
 countData <- counts[keep,]
-nrow(countData) #56314
+nrow(countData) #25003
 ncol(countData) #48
 #write.csv(countData, file = "Acer_countdata.csv")
 
 # for WCGNA: removing all genes with counts of <10 in more than 90 % of samples
 counts4wgcna = counts[apply(counts,1,function(x) sum(x<10))<ncol(counts)*0.9,]
-nrow(counts4wgcna) #28834
+nrow(counts4wgcna) #15526
 ncol(counts4wgcna) #48
 #write.csv(counts4wgcna, file="Acer_counts4wgcna.csv")
 
@@ -73,7 +80,7 @@ design$Genotype <- as.factor(design$Genotype)
 design$Genotype <- factor(gsub("-", "_", design$Genotype)) #DESeq2 does not like hyphens in factor names
 design$Treatment <- as.factor(design$Treatment)
 
-#### FULL MODEL DESIGN (Genotype + group) and OUTLIERS ####
+#### FULL MODEL DESIGN (Genotype + Treatment) and OUTLIERS ####
 
 #when making dds formula, it is CRITICAL that you put the right order of variables in the design. The design indicates how to model the samples, 
 #(here: design = ~batch + condition), 
@@ -81,9 +88,6 @@ design$Treatment <- as.factor(design$Treatment)
 
 # make big dataframe including all factors and interaction, getting normalized data for outlier detection
 dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)
-
-# reorders factor according to "control" vs "treatment" levels
-dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
 
 # for large datasets, rlog may take too much time, especially for an unfiltered dataframe
 # vsd is much faster and still works for outlier detection
@@ -95,7 +99,7 @@ library(Biobase)
 e=ExpressionSet(assay(Vsd), AnnotatedDataFrame(as.data.frame(colData(Vsd))))
 
 # running outlier detection
-arrayQualityMetrics(e,intgroup=c("group"),force=T) #Genotype is not included as an intgroup because it is not the main factors of interest.
+arrayQualityMetrics(e,intgroup=c("Treatment"),force=T) #Genotype is not included as an intgroup because it is not the main factors of interest.
 # open the directory "arrayQualityMetrics report for e" in your working directory and open index.html
 # Array metadata and outlier detection overview gives a report of all samples, and which are likely outliers according to the 3 methods tested.
 #I typically remove the samples that violate *1 (distance between arrays).
@@ -105,21 +109,14 @@ arrayQualityMetrics(e,intgroup=c("group"),force=T) #Genotype is not included as 
 # use the array number for removal in the following section
 
 # if there were outliers:
-outs=c(20,22,28) #these numbers were taken from the index.html report from arrayQualityMetrics Figure 2 "Outlier detection"
+outs=c(20,22,28,36) #these numbers were taken from the index.html report from arrayQualityMetrics Figure 2 "Outlier detection"
 countData=countData[,-outs]
 Vsd=Vsd[,-outs]
 counts4wgcna=counts4wgcna[,-outs]
 design=design[-outs,]
 
 # remaking model with outliers removed from dataset
-dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
-dds$group <- factor(dds$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
-
-#These values should all be the same:
-colnames(dds)
-rownames(design)
-colnames(countData)
-colnames(counts4wgcna)
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)
 
 # save all these dataframes as an Rdata package so you don't need to rerun each time
 save(dds,design,countData,Vsd,counts4wgcna,file="initial_fullddsdesigncountsVsdcountsWGCNA.RData")
@@ -128,8 +125,8 @@ save(dds,design,countData,Vsd,counts4wgcna,file="initial_fullddsdesigncountsVsdc
 vsd=assay(Vsd)
 colnames(vsd)
 # takes the sample IDs and factor levels from the design to create new column names for the dataframe
-snames=paste(colnames(countData),design[,2], design[,8],sep=".")
-snames #i.e. Acer-005.SI_C.control_Day_0
+snames=paste(colnames(countData),design[,1], design[,4],sep="_")
+snames #i.e. 
 
 # renames the column names
 colnames(vsd)=snames
@@ -137,7 +134,7 @@ colnames(vsd)=snames
 save(vsd,design,file="vsd.RData")
 
 # more reduced stabilized dataset for WGCNA
-wg = DESeqDataSetFromMatrix(countData=counts4wgcna, colData=design, design=~ Genotype + group)
+wg = DESeqDataSetFromMatrix(countData=counts4wgcna, colData=design, design=~ Genotype + Treatment)
 vsd.wg=assay(varianceStabilizingTransformation(wg), blind=FALSE) #blind=TRUE is the default, and it is a fully unsupervised transformation. However, the creator of DESeq2,
 #Michael Love, recommends using blind=FALSE for downstream analyses because when transforming data, the full use of the design information should be made. If many genes have
 #large differences in counts due to experimental design, then blind=FALSE will account for that.
@@ -151,7 +148,7 @@ save(vsd.wg,design,file="data4wgcna.RData")
 #### PCOA and PERMANOVA ####
 
 # heatmap and hierarchical clustering:
-load("~/OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/RData_files/vsd.RData")
+load("Rdata_files/vsd.RData")
 library(pheatmap)
 # similarity among samples
 pdf(file="heatmap_fullmodel.pdf", width=15, height=15)
@@ -165,8 +162,6 @@ library(vegan)
 library(ape)
 
 conditions=design
-conditions$group <- factor(conditions$group, levels = c("control_Day_0","control_Day_29","variable_Day_0","variable_Day_29"))
-
 colnames(vsd)
 rownames(conditions)
 #while the names aren't equal, they are in the same order, so when doing the PCoA and using conditions it still should work
@@ -186,30 +181,30 @@ dev.off()
 # the number of black points above the line of red crosses (random model) corresponds to the number of good PC's
 #there are 3 "good PCs" based on this figure
 
-# plotting PCoA by treatment and time (axes 1 and 2)
+# plotting PCoA by treatment and Genotype (axes 1 and 2)
 pdf(file="PCoA.pdf", width=12, height=6)
 par(mfrow=c(1,2))
-plot(scores[,1], scores[,2],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
-ordispider(scores, conditions$Treatment, label=F, col=c("red","blue"))
-legend("topright", legend=c("Control", "Variable"), fill = c("red","blue"), bty="n")
-legend("topleft", legend=c("Day_0", "Day_29"), pch=c(1,19), bty="n")
-plot(scores[,1], scores[,2],col=c("grey","black")[as.numeric(as.factor(conditions$time_point))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Time")
-ordispider(scores, conditions$time, label=F, col=c("grey","black"))
-legend("topleft", legend=c("Day_0", "Day_29"), fill = c("grey","black"), bty="n")
-legend("topright", legend=c("Control", "Variable"), pch=c(15,17,25), bty="n")
+plot(scores[,1], scores[,2],col=c("grey","red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Genotype)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
+ordispider(scores, conditions$Treatment, label=F, col=c("grey","red","blue"))
+legend("topright", legend=c("Initial", "Treated", "Untreated"), fill = c("grey","red","blue"), bty="n")
+legend("topleft", legend=c("BC-8b", "MB-B", "SI-C"), pch=c(15,17,25), bty="n")
+plot(scores[,1], scores[,2],col=c("darkgreen","orange", "black")[as.numeric(as.factor(conditions$Genotype))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Genotype")
+ordispider(scores, conditions$Genotype, label=F, col=c("darkgreen","orange", "black"))
+legend("topleft", legend=c("BC-8b", "MB-B", "SI-C"), fill = c("darkgreen","orange", "black"), bty="n")
+legend("topright", legend=c("Initial", "Treated", "Untreated"), pch=c(15,17,25), bty="n")
 dev.off()
 
 # plotting PCoA by treatment and time (axes 2 and 3)
 pdf(file="PCoA_axes23.pdf", width=12, height=6)
 par(mfrow=c(1,2))
-plot(scores[,2], scores[,3],col=c("red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(1,19)[as.numeric(as.factor(conditions$time_point))], xlab="Coordinate 2", ylab="Coordinate 3", main="Treatment")
-ordispider(scores[,2:3], conditions$Treatment, label=F, col=c("red","blue"))
-legend("topright", legend=c("Control", "Variable"), fill = c("red","blue"), bty="n")
-legend("topleft", legend=c("Day_0", "Day_29"), pch=c(1,19), bty="n")
-plot(scores[,2], scores[,3],col=c("grey","black")[as.numeric(as.factor(conditions$time_point))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 2", ylab="Coordinate 3", main="Time")
-ordispider(scores[,2:3], conditions$time, label=F, col=c("grey","black"))
-legend("topleft", legend=c("Day_0", "Day_29"), fill = c("grey","black"), bty="n")
-legend("topright", legend=c("Control", "Variable"), pch=c(15,17,25), bty="n")
+plot(scores[,2], scores[,3],col=c("grey","red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Genotype)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
+ordispider(scores[,2:3], conditions$Treatment, label=F, col=c("grey","red","blue"))
+legend("topright", legend=c("Initial", "Treated", "Untreated"), fill = c("grey","red","blue"), bty="n")
+legend("topleft", legend=c("BC-8b", "MB-B", "SI-C"), pch=c(15,17,25), bty="n")
+plot(scores[,2], scores[,3],col=c("darkgreen","orange", "black")[as.numeric(as.factor(conditions$Genotype))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Genotype")
+ordispider(scores[,2:3], conditions$Genotype, label=F, col=c("darkgreen","orange", "black"))
+legend("topleft", legend=c("BC-8b", "MB-B", "SI-C"), fill = c("darkgreen","orange", "black"), bty="n")
+legend("topright", legend=c("Initial", "Treated", "Untreated"), pch=c(15,17,25), bty="n")
 dev.off()
 
 # neighbor-joining tree of samples (based on significant PCo's):
@@ -223,7 +218,7 @@ dev.off()
 rownames(conditions) = snames 
 rownames(conditions)
 conditions
-ad=adonis2(t(vsd)~Genotype + time_point*Treatment,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd)~Genotype + Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 summary(ad)
 as.data.frame(ad)
@@ -231,83 +226,76 @@ as.data.frame(ad)
 # creating pie chart to represent ANOVA results
 cols=c("blue","orange","lightblue","grey80")
 pdf(file="ANOVA_pie.pdf", width=6, height=6)
-pie(ad$R2[1:4],labels=row.names(as.data.frame(ad)),col=cols,main="time vs treatment")
+pie(ad$R2[1:4],labels=row.names(as.data.frame(ad)),col=cols,main="Genotype vs treatment")
 dev.off()
 
 
 #### DESEQ ####
 
 # with multi-factor, multi-level design
-load("initial_fullddsdesigncountsVsdcountsWGCNA.RData")
+load("Rdata_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
 library(DESeq2)
 library(BiocParallel)
 
 # Running full model for contrast statements
-#dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + group)
+#dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)
 rownames(design)
 colnames(countData)
 dds=DESeq(dds, parallel=TRUE)
 
 # saving all models
-save(dds,file="realModels_Acer.RData")
+save(dds,file="Rdata_files/realModels_Acer.RData")
 
 
 #### DEGs and CONTRASTS ####
 
-load("realModels_Acer.RData")
+load("Rdata_files/realModels_Acer.RData")
 library(DESeq2)
 
 # treatment
-treatment_time=results(dds) 
-summary(treatment_time) 
-degs_treatment_time=row.names(treatment_time)[treatment_time$padj<0.1 & !(is.na(treatment_time$padj))]
-#list of gene names that are significant at p < 0.1
-length(degs_treatment_time) #12,836 genes
+Treatment=results(dds) 
+summary(Treatment) 
 
 resultsNames(dds)
-#"Intercept"                              "Genotype_MB_B_vs_BC_8b"                 "Genotype_SI_C_vs_BC_8b"                
-#"group_control_Day_29_vs_control_Day_0"  "group_variable_Day_0_vs_control_Day_0"  "group_variable_Day_29_vs_control_Day_0"
-#there are more contrasts though, so you have to specify 
+#primary ones of interest: "Treatment_Treated_vs_Initial",  "Treatment_Untreated_vs_Initial",  "Treatment_Treated_vs_Untreated"
 
-# treatment and time contrasts
-variable29_control29=results(dds,contrast=c("group","variable_Day_29","control_Day_29"))
-summary(variable29_control29)
-degs_variable29_control29=row.names(variable29_control29)[variable29_control29$padj<0.1 & !(is.na(variable29_control29$padj))]
-length(degs_variable29_control29) #4,060 genes
+degs_treatment=row.names(Treatment)[Treatment$padj<0.1 & !(is.na(Treatment$padj))]
+#list of gene names that are significant at p < 0.1
+length(degs_treatment) #8643 genes
 
-variable0_control0=results(dds,contrast=c("group","variable_Day_0","control_Day_0"))
-summary(variable0_control0)
-degs_variable0_control0=row.names(variable0_control0)[variable0_control0$padj<0.1 & !(is.na(variable0_control0$padj))]
-length(degs_variable0_control0) #149 genes
+# Treated vs. Untreated
+Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Untreated"))
+summary(Treatment_Treated_vs_Untreated)
+degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.1 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
+length(degs_Treatment_Treated_vs_Untreated)
 
-variable0_variable29=results(dds,contrast=c("group","variable_Day_0","variable_Day_29"))
-summary(variable0_variable29)
-degs_variable0_variable29=row.names(variable0_variable29)[variable0_variable29$padj<0.1 & !(is.na(variable0_variable29$padj))]
-length(degs_variable0_variable29) #10,540 genes
+# Treated vs. Initial
+Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"))
+summary(Treatment_Treated_vs_Initial)
+degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatment_Treated_vs_Initial$padj<0.1 & !(is.na(Treatment_Treated_vs_Initial$padj))]
 
-control0_control29=results(dds,contrast=c("group","control_Day_0","control_Day_29"))
-summary(control0_control29)
-degs_control0_control29=row.names(control0_control29)[control0_control29$padj<0.1 & !(is.na(control0_control29$padj))]
-length(degs_control0_control29) #16,022 genes
+# Untreated vs. Initial
+Treatment_Untreated_vs_Initial=results(dds,contrast=c("Treatment","Untreated","Initial"))
+summary(Treatment_Untreated_vs_Initial)
+degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.1 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
 
-save(treatment_time,variable29_control29,variable0_control0,variable0_variable29,control0_control29, degs_variable29_control29,degs_variable0_control0, degs_variable0_variable29, degs_control0_control29, file="pvals.RData")
+save(Treatment,Treatment_Untreated_vs_Initial,Treatment_Treated_vs_Initial,Treatment_Treated_vs_Untreated, degs_Treatment_Untreated_vs_Initial,degs_Treatment_Treated_vs_Initial, degs_Treatment_Treated_vs_Untreated, file="Rdata_files/pvals.RData")
 
 
 # density plots: are my DEGs high-abundant or low-abundant?
-load("vsd.RData")
-load("pvals.RData")
+load("Rdata_files/vsd.RData")
+load("Rdata_files/pvals.RData")
 
 means=apply(vsd,1,mean)
 
-pdf(file="DEG_density_treatment.time.pdf", height=5, width=5)
+pdf(file="DEG_density_Treatment.pdf", height=5, width=5)
 plot(density(means))
-lines(density(means[degs_variable29_control29]),col="blue")
-lines(density(means[degs_variable0_control0]),col="orange")
-lines(density(means[degs_variable0_variable29]),col="lightblue")
-lines(density(means[degs_control0_control29]),col="yellow")
+lines(density(means[degs_Treatment_Untreated_vs_Initial]),col="blue")
+lines(density(means[degs_Treatment_Treated_vs_Initial]),col="orange")
+lines(density(means[degs_Treatment_Treated_vs_Untreated]),col="lightblue")
 legend("topright", title = "Factor", 
-       legend=c("variable29_control29","variable0_control0","variable0_variable29","control0_control29"), 
-       fill = c("blue","orange","lightblue","yellow"))
+       legend=c("Untreated_vs_Initial","Treated_vs_Initial","Treated_vs_Untreated"), 
+       fill = c("blue","orange","lightblue"))
 dev.off()
 
 
@@ -316,33 +304,39 @@ dev.off()
 load("RData_files/pvals.RData")
 library(DESeq2)
 
-pairwise=list("V29/C29"=degs_variable29_control29, "V0/C0"=degs_variable0_control0,"V0/V29"=degs_variable0_variable29,"C0/C29"=degs_control0_control29)
+pairwise=list("Untreated vs. Initial"=degs_Treatment_Untreated_vs_Initial, "Treated vs. Initial"=degs_Treatment_Treated_vs_Initial,"Treated vs. Untreated"=degs_Treatment_Treated_vs_Untreated)
 
 # install.packages("VennDiagram")
 library(VennDiagram)
 
 # treatment/time contrasts
-venn=venn.diagram(
-  x = pairwise,
-  filename=NULL,
+venn = venn.diagram(
+  x = pairwise,  # make sure this contains only three sets
+  filename = NULL,
   col = "transparent",
-  fill = c("#ca0020", "#0571b0", "#f4a582", "#92c5de"),
+  fill = c("#ca0020", "#0571b0", "#f4a582"),  # three colors, one for each set
   alpha = 0.5,
-  label.col = c("red3","white","cornflowerblue","black","white","white","white", "black","darkred","black","white","white","black","darkblue","white"),
+  label.col = c("red3", "white", "cornflowerblue", "black", "white", "white", "black"),  # colors for each of the 7 regions
   cex = 3.5,
   fontfamily = "sans",
   fontface = "bold",
   cat.default.pos = "text",
-  cat.col =c("darkred", "darkblue", "red3", "cornflowerblue"),
+  cat.col = c("darkred", "darkblue", "red3"),  # three category colors
   cat.cex = 3.5,
   cat.fontfamily = "sans",
-  cat.just = list(c(0,0.5),c(0.75,0.5),c(0.5,0.5),c(0.5,0.5))
+  cat.just = list(c(0, 0.5), c(0.75, 0.5), c(0.5, 0.5))  # adjust positions for three categories
 )
+
            
 pdf(file="Venn_Acer.pdf", height=10, width=12)
 grid.draw(venn)
 dev.off()
 
+
+library(ggvenn)
+
+ggvenn(pairwise) + 
+  scale_fill_manual(values = c("#ca0020", "#0571b0", "#f4a582"))
 
 #### GO/KOG EXPORT ####
 
@@ -352,86 +346,59 @@ load("RData_files/pvals.RData")
 # fold change (fc) can only be used for binary factors, such as control/treatment, or specific contrasts comparing two factor levels
 # log p value (lpv) is for multi-level factors, including binary factors
 
-# variable 29 vs control 29
+# Untreated vs Initial
 # log2 fold changes:
-source=variable29_control29[!is.na(variable29_control29$padj),]
-variable29_control29.fc=data.frame("gene"=row.names(source))
-variable29_control29.fc$lfc=source[,"log2FoldChange"]
-head(variable29_control29.fc)
-write.csv(variable29_control29.fc,file="variable29_control29_fc.csv",row.names=F,quote=F)
-save(variable29_control29.fc,file="variable29_control29_fc.RData")
+source=Treatment_Untreated_vs_Initial[!is.na(Treatment_Untreated_vs_Initial$padj),]
+Untreated_vs_Initial.fc=data.frame("gene"=row.names(source))
+Untreated_vs_Initial.fc$lfc=source[,"log2FoldChange"]
+head(Untreated_vs_Initial.fc)
+write.csv(Untreated_vs_Initial.fc,file="Untreated_vs_Initial_fc.csv",row.names=F,quote=F)
+save(Untreated_vs_Initial.fc,file="Rdata_files/Untreated_vs_Initial.fc.RData")
 
 # signed log FDR-adjusted p-values: -log(p-adj)* direction:
-variable29_control29.p=data.frame("gene"=row.names(source))
-variable29_control29.p$lpv=-log(source[,"padj"],10)
-variable29_control29.p$lpv[source$stat<0]=variable29_control29.p$lpv[source$stat<0]*-1
-head(variable29_control29.p)
-write.csv(variable29_control29.p,file="variable29_control29_lpv.csv",row.names=F,quote=F)
-save(variable29_control29.p,file="variable29_control29_lpv.RData")
+Untreated_vs_Initial.p=data.frame("gene"=row.names(source))
+Untreated_vs_Initial.p$lpv=-log(source[,"padj"],10)
+Untreated_vs_Initial.p$lpv[source$stat<0]=Untreated_vs_Initial.p$lpv[source$stat<0]*-1
+head(Untreated_vs_Initial.p)
+write.csv(Untreated_vs_Initial.p,file="Untreated_vs_Initial_lpv.csv",row.names=F,quote=F)
+save(Untreated_vs_Initial.p,file="Rdata_files/Untreated_vs_Initial_lpv.RData")
 
-#length of both variable29_control29 data frames = 30,233 genes. This is not a list of significant genes, 
-#but a list of all genes with p-adj and log2foldchange values that are not NA
 
-# variable0 vs control0
+# Treated vs. Initial
 # log2 fold changes:
-source=variable0_control0[!is.na(variable0_control0$padj),]
-variable0_control0.fc=data.frame("gene"=row.names(source))
-variable0_control0.fc$lfc=source[,"log2FoldChange"]
-head(variable0_control0.fc)
-write.csv(variable0_control0.fc,file="variable0_control0_fc.csv",row.names=F,quote=F)
-save(variable0_control0.fc,file="variable0_control0_fc.RData")
+source=Treatment_Treated_vs_Initial[!is.na(Treatment_Treated_vs_Initial$padj),]
+Treated_vs_Initial.fc=data.frame("gene"=row.names(source))
+Treated_vs_Initial.fc$lfc=source[,"log2FoldChange"]
+head(Treated_vs_Initial.fc)
+write.csv(Treated_vs_Initial.fc,file="Treated_vs_Initial_fc.csv",row.names=F,quote=F)
+save(Treated_vs_Initial.fc,file="Rdata_files/Treated_vs_Initial_fc.RData")
 
 # signed log FDR-adjusted p-values: -log(p-adj)* direction:
-variable0_control0.p=data.frame("gene"=row.names(source))
-variable0_control0.p$lpv=-log(source[,"padj"],10)
-variable0_control0.p$lpv[source$stat<0]=variable0_control0.p$lpv[source$stat<0]*-1
-head(variable0_control0.p)
-write.csv(variable0_control0.p,file="variable0_control0_lpv.csv",row.names=F,quote=F)
-save(variable0_control0.p,file="variable0_control0_lpv.RData")
+Treated_vs_Initial.p=data.frame("gene"=row.names(source))
+Treated_vs_Initial.p$lpv=-log(source[,"padj"],10)
+Treated_vs_Initial.p$lpv[source$stat<0]=Treated_vs_Initial.p$lpv[source$stat<0]*-1
+head(Treated_vs_Initial.p)
+write.csv(Treated_vs_Initial.p,file="Treated_vs_Initial_lpv.csv",row.names=F,quote=F)
+save(Treated_vs_Initial.p,file="Rdata_files/Treated_vs_Initial_lpv.RData")
 
-#length of both variable0_control0 data frames = 20,952 genes. This is not a list of significant genes, 
-#but a list of all genes with p-adj and log2foldchange values that are not NA
 
-#variable0 vs variable29
+#Treated vs. Untreated
 # log2 fold changes:
-source=variable0_variable29[!is.na(variable0_variable29$padj),]
-variable0_variable29.fc=data.frame("gene"=row.names(source))
-variable0_variable29.fc$lfc=source[,"log2FoldChange"]
-head(variable0_variable29.fc)
-write.csv(variable0_variable29.fc,file="variable0_variable29_fc.csv",row.names=F,quote=F)
-save(variable0_variable29.fc,file="variable0_variable29_fc.RData")
+source=Treatment_Treated_vs_Untreated[!is.na(Treatment_Treated_vs_Untreated$padj),]
+Treated_vs_Untreated.fc=data.frame("gene"=row.names(source))
+Treated_vs_Untreated.fc$lfc=source[,"log2FoldChange"]
+head(Treated_vs_Untreated.fc)
+write.csv(Treated_vs_Untreated.fc,file="Treated_vs_Untreated_fc.csv",row.names=F,quote=F)
+save(Treated_vs_Untreated.fc,file="Rdata_files/Treated_vs_Untreated_fc.RData")
 
 # signed log FDR-adjusted p-values: -log(p-adj)* direction:
-variable0_variable29.p=data.frame("gene"=row.names(source))
-variable0_variable29.p$lpv=-log(source[,"padj"],10)
-variable0_variable29.p$lpv[source$stat<0]=variable0_variable29.p$lpv[source$stat<0]*-1
-head(variable0_variable29.p)
-nrows(variable0_variable29.p)
-write.csv(variable0_variable29.p,file="variable0_variable29_lpv.csv",row.names=F,quote=F)
-save(variable0_variable29.p,file="variable0_variable29_lpv.RData")
+Treated_vs_Untreated.p=data.frame("gene"=row.names(source))
+Treated_vs_Untreated.p$lpv=-log(source[,"padj"],10)
+Treated_vs_Untreated.p$lpv[source$stat<0]=Treated_vs_Untreated.p$lpv[source$stat<0]*-1
+head(Treated_vs_Untreated.p)
+write.csv(Treated_vs_Untreated.p,file="Treated_vs_Untreated_lpv.csv",row.names=F,quote=F)
+save(Treated_vs_Untreated.p,file="Rdata_files/Treated_vs_Untreated_lpv.RData")
 
-#length of both variable0_variable29 data frames = 36,731 genes. This is not a list of significant genes, 
-#but a list of all genes with p-adj and log2foldchange values that are not NA
-
-# control0_control29
-# log2 fold changes:
-source=control0_control29[!is.na(control0_control29$padj),]
-control0_control29.fc=data.frame("gene"=row.names(source))
-control0_control29.fc$lfc=source[,"log2FoldChange"]
-head(control0_control29.fc)
-write.csv(control0_control29.fc,file="control0_control29_fc.csv",row.names=F,quote=F)
-save(control0_control29.fc,file="control0_control29_fc.RData")
-
-# signed log FDR-adjusted p-values: -log(p-adj)* direction:
-control0_control29.p=data.frame("gene"=row.names(source))
-control0_control29.p$lpv=-log(source[,"padj"],10)
-control0_control29.p$lpv[source$stat<0]=control0_control29.p$lpv[source$stat<0]*-1
-head(control0_control29.p)
-write.csv(control0_control29.p,file="control0_control29_lpv.csv",row.names=F,quote=F)
-save(control0_control29.p,file="control0_control29_lpv.RData")
-
-#length of both control0_control29 data frames = 40,443 genes. This is not a list of significant genes, 
-#but a list of all genes with p-adj and log2foldchange values that are not NA
 
 
 #### ANNOTATING DGES ####
