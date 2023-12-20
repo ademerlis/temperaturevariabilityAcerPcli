@@ -29,3 +29,13 @@ Using the R package "biobase", I ran arrayQualityMetrics, which generates a repo
 
 ![Screen Shot 2023-12-20 at 4 01 12 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/dfcba9c5-c521-498b-bea3-22bacb3a8976)
 
+### Significant DGEs
+
+![Screen Shot 2023-12-20 at 4 12 29 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/6319c22e-ac59-41ea-a42e-da18eb06e4ef)
+
+![Screen Shot 2023-12-20 at 4 12 59 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/aa7754a7-eb10-4518-a6d7-ae532304fc1c)
+
+![Screen Shot 2023-12-20 at 4 14 19 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/08c140ab-1d8a-43ae-b658-ae7080981d4b)
+
+![Screen Shot 2023-12-20 at 4 15 16 PM](https://github.com/ademerlis/temperaturevariability2023/assets/56000927/8282e08f-89d5-4ff3-a128-3da2f2f35095)
+
