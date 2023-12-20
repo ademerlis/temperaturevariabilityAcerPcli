@@ -1,0 +1,53 @@
+
+
+countreads_align.pl : counts the number of mapped reads in a bunch of fastq files
+argument - glob to fastq files, default .trim.al
+
+Pcli-003.trim.al	809771
+Pcli-004.trim.al	228919
+Pcli-006.trim.al	666945
+Pcli-008.trim.al	841370
+Pcli-011.trim.al	29838
+Pcli-015.trim.al	298702
+Pcli-018.trim.al	304265
+Pcli-024.trim.al	1031694
+Pcli-026.trim.al	1185742
+Pcli-028.trim.al	1450669
+Pcli-029.trim.al	1018231
+Pcli-038.trim.al	842423
+Pcli-033.trim.al	1668190
+Pcli-040.trim.al	537529
+Pcli-039.trim.al	238619
+Pcli-045.trim.al	223174
+Pcli-049.trim.al	630027
+Pcli-050.trim.al	682794
+Pcli-052.trim.al	1374619
+Pcli-064.trim.al	111284
+Pcli-070.trim.al	1171617
+Pcli-055.trim.al	233761
+Pcli-069.trim.al	221008
+Pcli-066.trim.al	90463
+Pcli-058.trim.al	142041
+Pcli-067.trim.al	320367
+Pcli-075.trim.al	1259462
+Pcli-076.trim.al	313081
+Pcli-077.trim.al	645888
+Pcli-111.trim.al	621883
+Pcli-114.trim.al	84143
+Pcli-128.trim.al	2348361
+Pcli-103.trim.al	722564
+Pcli-126.trim.al	1875984
+Pcli-094.trim.al	729165
+Pcli-135.trim.al	264266
+Pcli-132.trim.al	43274
+Pcli-124.trim.al	197917
+Pcli-130.trim.al	1334618
+Pcli-120.trim.al	1370348
+Pcli-101.trim.al	282705
+Pcli-115.trim.al	704265
+Pcli-096.trim.al	571929
+Pcli-091.trim.al	595965
+Pcli-109.trim.al	1429983
+Pcli-148.trim.al	939006
+Pcli-105.trim.al	1111017
+Pcli-079.trim.al	286288

@@ -1,0 +1,394 @@
+## Tag-based RNA-seq (Tag-Seq) reads processing pipeline, version November 9, 2023
+# Created by Misha Matz (matz@utexas.edu), modified by Michael Studivan (studivanms@gmail.com) for use on the FAU KoKo HPC
+# then modified by Allyson DeMerlis for use on the University of Miami HPC "Pegasus"
+
+# put all raw reads into one directory: 1_fastq_rawreads
+
+# they are all in .fastq.gz file format. First need to look at the reads and ensure that there are 4 lines per read (look for sequence headers)
+
+gunzip SampleName.fastq.gz
+
+# look at the reads
+head -50 SampleName.fastq
+# note that every read has four lines, the ID line starts with @HWI
+
+#------------------------------
+
+# first step: count the raw reads of each sample (converted countreads.pl to a bash script)
+
+#!/bin/bash
+#BSUB -J countrawreads
+#BSUB -q general
+#BSUB -P and_transcriptomics
+#BSUB -n 8
+#BSUB -W 120:00
+#BSUB -o countrawreads.out
+#BSUB -e countrawreads.err
+#BSUB -u and128@miami.edu
+#BSUB -N
+
+#Purpose: counts the number of Illumina reads in a bunch of fastq files
+
+#specify variables and paths
+
+and="/scratch/projects/and_transcriptomics"
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
+
+output_file="countreads_results.txt"
+
+glob=".fastq"
+if [ ! -z "$1" ]; then
+    glob="$1"
+fi
+
+fqs=(*$glob)
+for f in "${fqs[@]}"; do
+    gunzip -c "$f" > "temp.fastq"  # Decompress the file to a temporary file
+    nrd=$(cat "temp.fastq" | wc -l)
+    nrd=$((nrd / 4))
+    echo "$f	$nrd"
+    echo "$f	$nrd" >> "$output_file"  # Append the results to the output file
+    rm "temp.fastq"  # Remove the temporary file
+done
+
+echo "Results have been saved to $output_file"
+
+#------------------------------
+
+# For the next step, I will be using TrimGalore to cutadapt.
+
+# First, run these lines (if you haven't done this before) to install the conda packages (including cutadapt) so all the environments will work:
+
+# module load
+# conda config --add channels defaults
+# conda config --add channels bioconda
+# conda config --add channels conda-forge
+
+# create cutadapt conda environment
+
+conda create -n cutadaptenv cutadapt
+
+# Modifications to Michael's code:
+# 1. for Pegasus, you can't run "conda activate" within a LSF job, you have to active the conda environment first and then submit the job in that conda environment.
+# 2. you can download all the .pl scripts from the tagseq github repository, but then you need to make them executable (run chmod +x scriptname.pl)
+# 3. Also, you need to edit the header of each .pl script so it says "#!/usr/bin/env perl"
+
+#------------------------------
+## Removing adaptors and low quality reads
+
+# module load anaconda
+
+source /share/apps/anaconda/anaconda3_build/bin/activate
+
+# activate cutadapt environment
+
+conda activate cutadaptenv
+
+#! /usr/bin/env bash
+
+#define variables for directories and files
+and="/scratch/projects/and_transcriptomics"
+project="and_transcriptomics"
+projdir="/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads"
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads"
+
+data=($(ls *.fastq.gz))
+
+for samp in "${data[@]}" ; do \
+
+#build script
+echo "making cutadapt script for ${samp}..."
+echo "
+#! /usr/bin/env bash
+#BSUB -P ${project}
+#BSUB -J ${samp}_trim
+#BSUB -e ${projdir}/logs/${samp}_trim.err
+#BSUB -o ${projdir}/logs/${samp}_trim.out
+#BSUB -W 12:00
+#BSUB -n 8
+#BSUB -q general
+
+cd \"/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads\"
+
+echo \"Gunzipping file  ${samp} then removing adaptors and low quality reads...\"
+
+gunzip -c ${samp} > ${samp}_temp.fastq
+${and}/Ch2_temperaturevariability2023/0_scripts/tagseq_clipper.pl ${samp}_temp.fastq | cutadapt - -a AAAAAAAA -a AGATCGG -q 15 -m 25 -o ${projdir}/${samp/.fastq.gz/}.trim
+
+" > ${projdir}/${samp}_trim.job
+
+#submit script
+
+bsub < ${projdir}/${samp}_trim.job
+
+done
+
+# extract number of good reads, headers, and duplicates from each sample job error file
+
+for file in /scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4/logs/*.err; do
+    tail -n 1 "$file"
+done > all_trimmed_read_counts.txt
+
+# did the trimming work?
+head -100 SampleName.fastq | grep -E '^[NACGT]+$'
+head -100 SampleName.trim | grep -E '^[NACGT]+$'
+# the long runs of base A should be gone
+
+
+# to count the number of reads in trimmed samples (copied from countreads_trim.pl)
+
+#!/bin/bash
+#BSUB -J countreads_trim
+#BSUB -q general
+#BSUB -P and_transcriptomics
+#BSUB -n 8
+#BSUB -W 120:00
+#BSUB -o countreads_trim.out
+#BSUB -e countreads_trim.err
+#BSUB -u and128@miami.edu
+#BSUB -N
+
+#Purpose: counts the number of Illumina reads in trimmed fastq files
+
+#specify variables and paths
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4"
+
+output_file="countreads_results.txt"
+
+# Default file pattern
+glob="\.trim"
+
+# Check if an argument is provided
+if [ "$1" ]; then
+    glob="$1"
+fi
+
+# Loop through files matching the pattern
+for f in *$glob*; do
+    # Count the number of lines in the file
+    nrd=$(cat "$f" | wc -l)
+
+    # Divide the line count by 4
+    nrd=$((nrd / 4))
+
+    # Print the filename and the calculated number
+    echo -e "$f\t$nrd" >> "$output_file"
+done
+
+echo "Results have been saved to $output_file"
+
+
+#------------------------------
+
+# FastQC trimmed files
+
+#BSUB -u and128@miami.edu
+
+#specify variables and paths
+
+#define variables for directories and files
+and="/scratch/projects/and_transcriptomics"
+project="and_transcriptomics"
+projdir="/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads"
+
+
+cd ${projdir}/take_4/trimmed_files
+
+data=($(ls *.trim))
+
+for samp in "${data[@]}" ; do \
+
+#build script
+echo "making fastqc script for ${samp}..."
+echo "
+#! /usr/bin/env bash
+#BSUB -P ${project}
+#BSUB -J ${samp}_fastqc
+#BSUB -e ${projdir}/logs/${samp}_fastqc.err
+#BSUB -o ${projdir}/logs/${samp}_fastqc.out
+#BSUB -W 12:00
+#BSUB -n 8
+#BSUB -q general
+
+cd ${projdir}/take_4/trimmed_files
+
+module load fastqc/0.10.1
+fastqc ${samp} --outdir ${projdir}/take_4/trimmed_files/fastqc_output/
+echo \"Fastqc script of $samp submitted\"
+" > ${projdir}/take_4/trimmed_files/${samp}_fastqc.job
+
+bsub < ${projdir}/take_4/trimmed_files/${samp}_fastqc.job
+
+done
+
+
+#------------------------------
+## Download and format reference transcriptome
+
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/032/359/415/GCA_032359415.1_NEU_Acer_K2/GCA_032359415.1_NEU_Acer_K2_genomic.gtf.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/032/359/415/GCA_032359415.1_NEU_Acer_K2/GCA_032359415.1_NEU_Acer_K2_genomic.fna.gz
+gunzip GCA_032359415.1_NEU_Acer_K2_genomic.gtf.gz
+gunzip GCA_032359415.1_NEU_Acer_K2_genomic.fna.gz
+
+# or can run this to get everything from NCBI at once
+
+curl -OJX GET "https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/GCA_032359415.1/download?include_annotation_type=GENOME_FASTA,GENOME_GFF,RNA_FASTA,CDS_FASTA,PROT_FASTA,SEQUENCE_REPORT&filename=GCA_032359415.1.zip"
+#then unzip it
+
+GCA_032359415.1_NEU_Acer_K2_genomic.fna #this is the genomic FASTA file
+GCA_032359415.1_NEU_Acer_K2_genomic.gtf #this is the GTF file
+
+# I think i can directly run bowtie2 with the genomic.fna file. I just need to download the symbiont fasta files now.
+
+# downloaded Symbiodinium, Breviolum, Cladocopium, and Durusdinium fasta files from Dr. Michael Studivan's Google Drive folder. citations are:
+# Diploria host = Avila-Magana et al. 2021
+# Symbiodinium = Shogushi 2018
+# Breviolum = Avila-Magana et al. 2021
+# Cladocopium = Camp 2022
+# Durusdinium = Shogushi et al. 2021
+
+
+#------------------------------
+## adding UTRs based on Nick Kron's recommendation for better alignment of Acer 2023 genome
+
+module load python/3.8.7
+
+python3 gtf_advanced_parser.py --input ../Acer_2023/GCA_032359415.1_NEU_Acer_K2_genomic.gtf --output Acer_K2_genomic_parsed.gtf
+
+# We finished here. Here's some info:
+# Processed genes: 33794
+# Processed transcripts: 28059
+# Added 3'UTR onto forward strand: 13963
+# Added 3'UTR onto reverse strand: 14096
+
+# next run the process_them.sh to extend the UTRs by a threshold of 5000 (based on what Dr. Nick Kron did)
+
+#------------------------------
+
+# Need to convert new UTR gtf files into fasta files, then create reference transcriptomes.
+
+source /share/apps/anaconda/anaconda3_build/bin/activate
+
+# only run the commented lines once if installing for the first time
+# conda install -c bioconda agat
+# conda create -n agat
+
+# so even though I ran the above two lines, when I look at the packages within agat, there is nothing listed (run code: `conda list` after activating env)
+# I when I run `conda create -n agat -c bioconda agat -vvv` it just starts taking forever.
+# so i'm wondering if it's better to just manually install the perl scripts i need
+
+# conda install -c bioconda agat
+
+# manually downloaded the entire agat package:
+
+wget https://anaconda.org/bioconda/agat/1.2.0/download/noarch/agat-1.2.0-pl5321hdfd78af_0.tar.bz2 --no-check-certificate
+tar -xvjf agat-1.2.0-pl5321hdfd78af_0.tar.bz2
+mkdir agat-1.2.0-pl5321hdfd78af_0
+mv bin/ agat-1.2.0-pl5321hdfd78af_0
+mv info/ agat-1.2.0-pl5321hdfd78af_0
+mv lib/ agat-1.2.0-pl5321hdfd78af_0
+
+# perl scripts are stored here:
+
+/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/
+
+# try running script with the full path to the perl scripts
+
+# needed to first get the path to AGAT modules correct for perl
+
+export PERL5LIB=/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/lib/perl5/site_perl:$PERL5LIB
+
+# i also added the export line to my ~/.bash_profile and sourced it, this still didn't WORK
+
+# going to try to manually add this line to the perl scripts i need to run from agat: use lib /nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/lib/perl5/site_perl;
+echo '#! /usr/bin/env bash' > agat_step1.sh
+echo '#BSUB -e agat_step1.err' >> agat_step1.sh
+echo '#BSUB -o agat_step1.out' >> agat_step1.sh
+echo 'cd /scratch/projects/and_transcriptomics/genomes/Acer_2023' >> agat_step1.sh
+echo ''
+echo '/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff GCA_032359415.1_NEU_Acer_K2_genomic.gtf_ext_by_5000.gtf -p gene --att transcript_id -o Acer_K2_genomic_ext_by_5000.gff' >> agat_step1.sh
+echo '/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff GCA_032359415.1_NEU_Acer_K2_genomic.gtf -p gene --att transcript_id -o Acer_K2_genomic_original.gff' >> agat_step1.sh
+echo '/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff Acer_K2_genomic_parsed.gtf -p gene --att transcript_id -o Acer_K2_genomic_parsed.gff' >> agat_step1.sh
+
+# Remove transcript_id attribute to gene feature:
+
+/nethome/and128/.conda/pkgs/agat-1.2.0-pl5321hdfd78af_0/bin/agat_sp_manage_attributes.pl --gff test.gtf -p gene --att transcript_id -o test.gff
+
+# Convert into gtf
+
+agat_convert_sp_gff2gtf.pl --gff test.gff -o --gff test_clean.gtf
+
+
+# the 2023 Acer .gtf file cannot be read by gffread because it has issue with 'transcript_id " "' when there is no ID.
+# so you need to use AGAT and two of their codes to first convert the transcript_id attribute for blank transcript ids, then convert
+# the file back to .GTF
+
+source /share/apps/anaconda/anaconda3_build/bin/activate
+
+conda activate gffread
+
+# only need to run this line once i believe
+# conda install gffread
+
+gffread -w transcripts.fa -g GCA_032359415.1_NEU_Acer_K2_genomic.fna GCA_032359415.1_NEU_Acer_K2_genomic.gtf # DOES NOT WORK
+
+#------------------------------
+# build index
+
+#!/bin/bash
+#BSUB -J bowtie2-build
+#BSUB -q general
+#BSUB -P and_transcriptomics
+#BSUB -n 8
+#BSUB -W 120:00
+#BSUB -o bowtie2-build.out
+#BSUB -e bowtie2-build.err
+#BSUB -u and128@miami.edu
+#BSUB -N
+
+workdir="/scratch/projects/and_transcriptomics/genomes"
+
+bowtie2-build ${workdir}/Acer_2023/GCA_032359415.1_NEU_Acer_K2_genomic.fna, \
+${workdir}/Symbiodinium/syma_transcriptome_37.fasta,\
+${workdir}/Breviolum/Symb_Dip.fna,\
+${workdir}/Cladocopium/C124.annotated.fa,\
+${workdir}/Durusdinium/102_symbd_transcriptome_nucl.fa \
+Host_concat
+
+#------------------------------
+# run bowtie2 for alignment
+
+# first move the Host_concat files into the same directory as the trimmed Acer sequences. Then run script:
+
+#!/usr/bin/env bash
+#BSUB -e bowtie2map.err
+#BSUB -o bowtie2map.out
+#BSUB -P and_transcriptomics
+#BSUB -q general
+#BSUB -n 8
+
+
+name_position=$1
+
+cd "/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/2_trimmed_reads/take_4/trimmed_files/Acer"
+
+glob="\.trim"
+
+if [ ! -z "$1" ]; then
+    glob="$1"
+fi
+# Loop through files matching the pattern
+for f in *$glob*; do
+    if [ -n "$name_position" ]; then
+        # Split the filename and extract the part based on the provided position
+        IFS='._' read -ra parts <<< "$f"
+        outname="${parts[$((name_position - 1))]}.sam"
+    else
+        # Use the entire filename if no position is provided
+        outname="${f}.sam"
+    fi
+    bowtie2 --local -x Host_concat -U $f -S $outname --no-hd --no-sq --no-unal -k 5
+done
