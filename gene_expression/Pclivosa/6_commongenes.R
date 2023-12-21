@@ -55,15 +55,7 @@ Treated_vs_Initial.p %>%
 
 str(TreatedvInitial_vs_UntreatedvInitial)
 #there are 58 shared genes (cut-off is p-adj of 0.1)
-
-# what about genes unique to Treated_vs_Initial and Untreated_vs_Initial?
-
-unique_sig_TreatedvInitial <- Treated_vs_Initial.p %>% filter(abs(lpv_Treated_vs_Initial) >= 1) %>% anti_join(., Untreated_vs_Initial.p) 
-str(unique_sig_TreatedvInitial) #0 genes
-
-unique_sig_Untreated_vs_Initial <- Untreated_vs_Initial.p %>% filter(abs(lpv_Untreated_vs_Initial) >= 1) %>% anti_join(., Treated_vs_Initial.p) 
-str(unique_sig_Untreated_vs_Initial )#4 genes
-
+write_csv(TreatedvInitial_vs_UntreatedvInitial, "TreatedvInitial_vs_UntreatedvInitial_sharedgenes.csv")
 
 # next look at Treated_vs_Untreated and Untreated_vs_Initial
 
@@ -84,14 +76,8 @@ Treated_vs_Untreated.p %>%
               dplyr::select(-V1, -V2), by = "gene") -> TreatedvUntreated_vs_UntreatedvInitial
 str(TreatedvUntreated_vs_UntreatedvInitial)
 #13 shared genes
+write_csv(TreatedvUntreated_vs_UntreatedvInitial, "TreatedvUntreated_vs_UntreatedvInitial_sharedgenes.csv")
 
-# what about genes unique to Treated_vs_Untreated and Untreated_vs_Initial?
-
-unique_sig_TreatedvUntreated <- Treated_vs_Untreated.p %>% filter(abs(lpv_Treated_vs_Untreated) >= 1) %>% anti_join(., Untreated_vs_Initial.p) 
-str(unique_sig_TreatedvUntreated) #0 genes
-
-unique_sig_UntreatedvInitial <- Untreated_vs_Initial.p %>% filter(abs(lpv_Untreated_vs_Initial) >= 1) %>% anti_join(., Treated_vs_Untreated.p) 
-str(unique_sig_UntreatedvInitial )#0 genes
 
 Untreated_vs_Initial.p %>% 
   filter(abs(lpv_Untreated_vs_Initial) >= 1) %>% 
@@ -120,6 +106,43 @@ find_common_elements <- function(lst) {
 common_elements <- find_common_elements(pairwise)
 
 # zero
+
+#this matches venn diagram
+
+# what about genes unique to each treatment?
+
+unique_Untreated_vs_Initial <- setdiff(Untreated_vs_Initial_sig, Treated_vs_Initial_sig)
+unique_Untreated_vs_Initial <- setdiff(unique_Untreated_vs_Initial, Treated_vs_Untreated_sig)
+unique_Untreated_vs_Initial %>% 
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") -> unique_Untreated_vs_Initial_annotated
+write_csv(unique_Untreated_vs_Initial_annotated, "unique_Untreated_vs_Initial_annotated.csv")
+
+unique_Treated_vs_Initial <- setdiff(Treated_vs_Initial_sig, Untreated_vs_Initial_sig)
+unique_Treated_vs_Initial <- setdiff(unique_Treated_vs_Initial, Treated_vs_Untreated_sig)
+unique_Treated_vs_Initial %>% 
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") -> unique_Treated_vs_Initial_annotated
+write_csv(unique_Treated_vs_Initial_annotated, "unique_Treated_vs_Initial_annotated.csv")
+
+unique_Treated_vs_Untreated <- setdiff(Treated_vs_Untreated_sig, Untreated_vs_Initial_sig)
+unique_Treated_vs_Untreated <- setdiff(unique_Treated_vs_Untreated, Treated_vs_Initial_sig)
+unique_Treated_vs_Untreated %>% 
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") -> unique_Treated_vs_Untreated_annotated
+write_csv(unique_Treated_vs_Untreated_annotated, "unique_Treated_vs_Untreated_annotated.csv")
 
 
 
