@@ -20,7 +20,7 @@ summary(pca)
 fviz_eig(pca)
 ```
 
-
+Note: the data going into these PCAs is after the outlier removal step using arrayQualityMetrics
 ```{r}
 plotPCA(Vsd, intgroup = c("Treatment"))
 plotPCA(Vsd, intgroup = c("Genotype"))
@@ -29,7 +29,7 @@ plotPCA(Vsd, intgroup = c("Treatment", "Genotype"))
 vst_PCAdata <- plotPCA(Vsd, intgroup = c("Treatment", "Genotype"), returnData = TRUE)
 percentVar <- round(100*attr(vst_PCAdata, "percentVar")) 
 
-ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
+g1 <- ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
@@ -37,68 +37,66 @@ ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
    theme_bw() + #Set background color
    theme(panel.border = element_blank(), # Set border
          axis.line = element_line(colour = "black"), #Set axes color
-         plot.background=element_blank()) + 
-  stat_ellipse(aes(PC1, PC2, group=Treatment, lty = Treatment), type = "norm")
+         plot.background=element_blank()) +
+  scale_color_manual(values = c("grey", "#FF3333", "#00CCCC")) 
+#ggsave("PCA_allgenets.pdf")
 
-
-ggplot(vst_PCAdata, aes(PC1, PC2, color=Genotype, shape=Treatment)) +
-   geom_point(size=3) +
-   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
-   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
-   ggtitle("P. clivosa") +
-   theme_bw() + #Set background color
-   theme(panel.border = element_blank(), # Set border
-         axis.line = element_line(colour = "black"), #Set axes color
-         plot.background=element_blank()) + 
-  stat_ellipse(aes(PC1, PC2, group=Genotype, lty = Genotype), type = "norm")
 ```
 
 
 # separate genotype and plot treatment for each 
 
 ```{r}
-vst_PCA_A <- vst_PCAdata %>% 
-  filter(Genotype == "A")
+#how do i make Vsd something that I can filter?
+colData(Vsd)
+metadata <- colData(Vsd)
 
-vst_PCA_B <- vst_PCAdata %>% 
-  filter(Genotype == "B")
+A <- metadata$Genotype == "A"
+A <- Vsd[, A]
 
-vst_PCA_C <- vst_PCAdata %>% 
-  filter(Genotype == "C")
-
-#A
-ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment)) + 
+vst_PCA_A <- plotPCA(A, intgroup = c("Treatment"), returnData = TRUE)
+percentVar <- round(100*attr(vst_PCA_A, "percentVar")) 
+g2 <- ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
-   ggtitle("Pcli Colony A") +
+   ggtitle("P.clivosa colony A") +
    theme_bw() + 
-   scale_color_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
-   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm")
+   scale_color_manual(values = c("grey",  "#FF3333", "#00CCCC")) 
 
+B <- metadata$Genotype == "B"
+B <- Vsd[, B]
 
-#B
-ggplot(vst_PCA_B, aes(PC1, PC2, color=Treatment)) + 
+vst_PCA_B<- plotPCA(B, intgroup = c("Treatment"), returnData = TRUE)
+percentVar <- round(100*attr(vst_PCA_B, "percentVar")) 
+g3 <- ggplot(vst_PCA_B, aes(PC1, PC2, color=Treatment)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
-   ggtitle("Pcli Colony B") +
+   ggtitle("P.clivosa colony B") +
    theme_bw() + 
-   scale_color_manual(values = c("grey","#00CCCC", "#FF3333")) + 
-   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm")
+   scale_color_manual(values = c("grey",  "#FF3333", "#00CCCC"))
 
 
-#C
-ggplot(vst_PCA_C, aes(PC1, PC2, color=Treatment)) + 
+C <- metadata$Genotype == "C"
+C <- Vsd[, C]
+
+vst_PCA_C<- plotPCA(C, intgroup = c("Treatment"), returnData = TRUE)
+percentVar <- round(100*attr(vst_PCA_C, "percentVar")) 
+g4 <- ggplot(vst_PCA_C, aes(PC1, PC2, color=Treatment)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
-   ggtitle("Pcli Colony C") +
+   ggtitle("P.clivosa colony C") +
    theme_bw() + 
-   scale_color_manual(values = c("grey","#00CCCC", "#FF3333")) + 
-   stat_ellipse(aes(PC1, PC2, group= Treatment), type = "norm")
+   scale_color_manual(values = c("grey",  "#FF3333", "#00CCCC"))
 
+
+combined_plot <- plot_grid(g1, g2, g3, g4, nrow = 2, ncol = 2)
+print(combined_plot)
+ggsave("combined_PCA_plot.pdf", combined_plot, width = 10, height = 7)
 ```
+
 
 # PC axes 2 and 3
 ```{r}
