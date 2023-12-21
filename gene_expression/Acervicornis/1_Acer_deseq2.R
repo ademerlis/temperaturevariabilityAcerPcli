@@ -182,7 +182,7 @@ dev.off()
 #there are 3 "good PCs" based on this figure
 
 # plotting PCoA by treatment and Genotype (axes 1 and 2)
-pdf(file="PCoA.pdf", width=12, height=6)
+pdf(file="plots/PCoA_TreatmentGenotype.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,1], scores[,2],col=c("grey","red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Genotype)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
 ordispider(scores, conditions$Treatment, label=F, col=c("grey","red","blue"))
@@ -194,7 +194,14 @@ legend("topleft", legend=c("BC-8b", "MB-B", "SI-C"), fill = c("darkgreen","orang
 legend("topright", legend=c("Initial", "Treated", "Untreated"), pch=c(15,17,25), bty="n")
 dev.off()
 
-# plotting PCoA by treatment and time (axes 2 and 3)
+# plotting PCoA by treatment
+pdf(file="plots/PCoA.pdf")
+plot(scores[,1], scores[,2],col=c("grey","blue","red")[as.numeric(as.factor(conditions$Treatment))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
+ordispider(scores, conditions$Treatment, label=F, col=c("grey","blue","red"))
+legend("topleft", legend=c("Initial", "Untreated", "Treated"), fill = c("grey","blue","red"), bty="n")
+dev.off()
+
+# plotting PCoA by treatment and genotype (axes 2 and 3)
 pdf(file="PCoA_axes23.pdf", width=12, height=6)
 par(mfrow=c(1,2))
 plot(scores[,2], scores[,3],col=c("grey","red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Genotype)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")

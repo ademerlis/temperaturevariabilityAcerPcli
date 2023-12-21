@@ -172,11 +172,24 @@ dev.off()
 # the number of black points above the line of red crosses (random model) corresponds to the number of good PC's
 #there is 1 good PC based on this figure
 
-# plotting PCoA by treatment and time
+# plotting PCoA by treatment
 pdf(file="plots/PCoA.pdf")
 plot(scores[,1], scores[,2],col=c("black","blue","red")[as.numeric(as.factor(conditions$Treatment))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
 ordispider(scores, conditions$Treatment, label=F, col=c("black","blue","red"))
 legend("topleft", legend=c("Initial", "Untreated", "Treated"), fill = c("black","blue","red"), bty="n")
+dev.off()
+
+# plotting PCoA by treatment and Genotype (axes 1 and 2)
+pdf(file="plots/PCoA_TreatmentGenotype.pdf", width=12, height=6)
+par(mfrow=c(1,2))
+plot(scores[,1], scores[,2],col=c("grey","red","blue")[as.numeric(as.factor(conditions$Treatment))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Genotype)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Treatment")
+ordispider(scores, conditions$Treatment, label=F, col=c("grey","red","blue"))
+legend("topright", legend=c("Initial", "Treated", "Untreated"), fill = c("grey","red","blue"), bty="n")
+legend("topleft", legend=c("A", "B", "C"), pch=c(15,17,25), bty="n")
+plot(scores[,1], scores[,2],col=c("darkgreen","orange", "black")[as.numeric(as.factor(conditions$Genotype))],pch=c(15,17,25)[as.numeric((as.factor(conditions$Treatment)))], xlab="Coordinate 1", ylab="Coordinate 2", main="Genotype")
+ordispider(scores, conditions$Genotype, label=F, col=c("darkgreen","orange", "black"))
+legend("topleft", legend=c("A", "B", "C"), fill = c("darkgreen","orange", "black"), bty="n")
+legend("topright", legend=c("Initial", "Treated", "Untreated"), pch=c(15,17,25), bty="n")
 dev.off()
 
 # neighbor-joining tree of samples (based on significant PCo's):
@@ -270,7 +283,7 @@ dev.off()
 
 #### VENN DIAGRAMS ####
 
-load("pvals.RData")
+load("Rdata_files/pvals.RData")
 library(DESeq2)
 
 pairwise=list("Untreated_vs_Initial"=degs_Treatment_Untreated_vs_Initial, "Treated_vs_Initial"=degs_Treatment_Treated_vs_Initial,"Treated_vs_Untreated"=degs_Treatment_Treated_vs_Untreated)
@@ -323,8 +336,8 @@ dev.off()
 
 #### GO/KOG EXPORT ####
 
-load("realModels.RData")
-load("pvals.RData")
+load("Rdata_files/realModels_Pcli.RData")
+load("Rdata_files/pvals.RData")
 
 # fold change (fc) can only be used for binary factors, such as control/treatment, or specific contrasts comparing two factor levels
 # log p value (lpv) is for multi-level factors, including binary factors
@@ -389,128 +402,36 @@ save(Treated_vs_Untreated.p,file="Rdata_files/Treated_vs_Untreated_lpv.RData")
 as.data.frame(Treatment_Untreated_vs_Initial) %>%
   rownames_to_column(var="gene") %>% 
   filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Untreated_vs_Initial_annotatedDGEs.csv")
-
-as.data.frame(Treatment_Untreated_vs_Initial) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% str()
 #237 genes 
-
-as.data.frame(Treatment_Untreated_vs_Initial) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Untreated_vs_Initial_annot_padjL2FC.csv")
-
-as.data.frame(Treatment_Untreated_vs_Initial) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% str()
-#22 genes
 
 # Treated vs. Initial
 as.data.frame(Treatment_Treated_vs_Initial) %>%
   rownames_to_column(var="gene") %>% 
   filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Initial_annotatedDGEs.csv")
-
-as.data.frame(Treatment_Treated_vs_Initial) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% str()
 #228 genes
 
-as.data.frame(Treatment_Treated_vs_Initial) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Initial_annot_padjL2FC.csv")
-
-as.data.frame(Treatment_Treated_vs_Initial) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% str()
-#18 genes
 
 # Treated vs. Untreated
 as.data.frame(Treatment_Treated_vs_Untreated) %>%
   rownames_to_column(var="gene") %>% 
   filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Untreated_annotatedDGEs.csv")
-
-as.data.frame(Treatment_Treated_vs_Untreated) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% str()
 #40 genes
-
-as.data.frame(Treatment_Treated_vs_Untreated) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Untreated_annot_padjL2FC.csv")
-
-as.data.frame(Treatment_Treated_vs_Untreated) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Pclivosa_annotatedTranscriptome/Pclivosa_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% str()
-#7 genes
 

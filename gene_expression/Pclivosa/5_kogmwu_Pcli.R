@@ -1,0 +1,74 @@
+#### packages ####
+
+#install.packages("KOGMWU")
+library(KOGMWU)
+
+
+#### pairwise treatments (lpv) ####
+
+# loading KOG annotations
+gene2kog=read.table("bioinformatics/Pclivosa_iso2kogClass.tab",sep="\t", fill=T) #iso2kogClass.tab not iso2kogClass1.tab because that file has an "error" when you try to view it using the terminal
+head(gene2kog)
+
+load("RData_files/pvals.RData")
+
+load("RData_files/Treated_vs_Initial_lpv.RData") #Treated_vs_Initial.p dataset
+lpv.Treated_vs_Initial=kog.mwu(Treated_vs_Initial.p,gene2kog)
+
+load("RData_files/Treated_vs_Untreated_lpv.RData") #Treated_vs_Untreated.p dataset
+lpv.Treated_vs_Untreated=kog.mwu(Treated_vs_Untreated.p,gene2kog)
+
+load("RData_files/Untreated_vs_Initial_lpv.RData") #Treated_vs_Untreated.p dataset
+lpv.Untreated_vs_Initial=kog.mwu(Untreated_vs_Initial.p,gene2kog)
+
+#each lpv table has 25 KOG terms. I think this is a setting within the kog.mwu function
+
+# compiling a table of delta-ranks to compare these results:
+ktable=makeDeltaRanksTable(list("Treated_vs_Initial"=lpv.Treated_vs_Initial, "Treated_vs_Untreated"=lpv.Treated_vs_Untreated, "Untreated_vs_Initial"=lpv.Untreated_vs_Initial))
+
+library(RColorBrewer)
+color = colorRampPalette(rev(c(brewer.pal(n = 7, name ="RdBu"),"royalblue","darkblue")))(100)
+
+# Making a heatmap with hierarchical clustering trees: 
+pdf(file="KOG_Pcli_host_lpv.pdf", width=7, height=8)
+pheatmap(as.matrix(ktable),clustering_distance_cols="correlation",color=color, cellwidth=15, cellheight=15, border_color="white") 
+while (!is.null(dev.list()))  dev.off()
+
+# exploring correlations between datasets
+pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
+#scatterplots between pairs
+# p-values of these correlations in the upper panel:
+pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval) 
+
+
+
+#### pairwise treatments (fc) ####
+
+load("RData_files/Treated_vs_Initial_fc.RData") 
+fc.Treated_vs_Initial=kog.mwu(Treated_vs_Initial.fc,gene2kog)
+
+load("RData_files/Treated_vs_Untreated_fc.RData") 
+fc.Treated_vs_Untreated=kog.mwu(Treated_vs_Untreated.fc,gene2kog)
+
+load("RData_files/Untreated_vs_Initial.fc.RData") 
+fc.Untreated_vs_Initial=kog.mwu(Untreated_vs_Initial.fc,gene2kog)
+
+#each fc table has 25 KOG terms. I think this is a setting within the kog.mwu function
+
+# compiling a table of delta-ranks to compare these results:
+ktable=makeDeltaRanksTable(list("Treated_vs_Initial"=fc.Treated_vs_Initial, "Treated_vs_Untreated"=fc.Treated_vs_Untreated, "Untreated_vs_Initial"=fc.Untreated_vs_Initial))
+
+library(RColorBrewer)
+color = colorRampPalette(rev(c(brewer.pal(n = 7, name ="RdBu"),"royalblue","darkblue")))(100)
+
+# Making a heatmap with hierarchical clustering trees: 
+pdf(file="KOG_Pcli_host_fc.pdf", width=7, height=8)
+pheatmap(as.matrix(ktable),clustering_distance_cols="correlation",color=color, cellwidth=15, cellheight=15, border_color="white") 
+while (!is.null(dev.list()))  dev.off()
+#needed to manually save this as a PDF
+
+# exploring correlations between datasets
+pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor)
+#scatterplots between pairs
+# p-values of these correlations in the upper panel:
+pairs(ktable, lower.panel = panel.smooth, upper.panel = panel.cor.pval) 

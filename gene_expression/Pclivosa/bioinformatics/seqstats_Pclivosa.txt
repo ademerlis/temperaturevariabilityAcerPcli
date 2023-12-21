@@ -1,0 +1,13 @@
+
+Pclivosa.fasta
+-------------------------
+731432 sequences.
+903 average length.
+41481 maximum length.
+201 minimum length.
+N50 = 1701
+660.4 Mb altogether (660419674 bp).
+0 ambiguous Mb. (0 bp, 0%)
+0 Mb of Ns. (0 bp, 0%)
+-------------------------
+
