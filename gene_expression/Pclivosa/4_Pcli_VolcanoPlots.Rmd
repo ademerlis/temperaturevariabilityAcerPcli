@@ -1,5 +1,5 @@
 ---
-title: "Acer_VolcanoPlot"
+title: "Pcli_VolcanoPlot"
 author: "allyson_demerlis"
 date: "2023-09-16"
 output: html_document
@@ -29,13 +29,13 @@ Treated_vs_Initial_annotated <- as.data.frame(Treatment_Treated_vs_Initial) %>%
 str(Treated_vs_Initial_annotated) #34300 x 8
 
   keyvals <- ifelse(
-    Treated_vs_Initial_annotated$log2FoldChange < -2 & Treated_vs_Initial_annotated$padj < 0.05, 'royalblue',
-      ifelse(Treated_vs_Initial_annotated$log2FoldChange > 2 & Treated_vs_Initial_annotated$padj < 0.05, 'red',
+    Treated_vs_Initial_annotated$log2FoldChange < 0 & Treated_vs_Initial_annotated$padj < 0.05, 'royalblue',
+      ifelse(Treated_vs_Initial_annotated$log2FoldChange > 0 & Treated_vs_Initial_annotated$padj < 0.05, 'red',
         'grey'))
   keyvals[is.na(keyvals)] <- 'grey'
-  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
-  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
-  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 0)'
+  names(keyvals)[keyvals == 'grey'] <- 'L2FC=0 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < 0)'
 
 pdf(file="volcano_Treated_vs_Initial.pdf", width = 12, height = 6)  
   EnhancedVolcano(Treated_vs_Initial_annotated,
@@ -46,7 +46,7 @@ pdf(file="volcano_Treated_vs_Initial.pdf", width = 12, height = 6)
     ylab = bquote(~-Log[10]~ 'FDR P-adjusted'),
     legendPosition = 'right',
     pCutoff = 10e-2,
-    FCcutoff = 2.0,
+    FCcutoff = 0.25,
     legendIconSize = 5.0,
     labSize = 6.0,
     colCustom = keyvals,
@@ -65,14 +65,14 @@ Treated_vs_Untreated_annotated <- as.data.frame(Treatment_Treated_vs_Untreated) 
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) 
 
-keyvals <- ifelse(
-    Treated_vs_Untreated_annotated$log2FoldChange < -2 & Treated_vs_Untreated_annotated$padj < 0.05, 'royalblue',
-      ifelse(Treated_vs_Untreated_annotated$log2FoldChange > 2 & Treated_vs_Untreated_annotated$padj < 0.05, 'red',
+  keyvals <- ifelse(
+    Treated_vs_Untreated_annotated$log2FoldChange < 0 & Treated_vs_Untreated_annotated$padj < 0.05, 'royalblue',
+      ifelse(Treated_vs_Untreated_annotated$log2FoldChange > 0 & Treated_vs_Untreated_annotated$padj < 0.05, 'red',
         'grey'))
   keyvals[is.na(keyvals)] <- 'grey'
-  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
-  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
-  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 0)'
+  names(keyvals)[keyvals == 'grey'] <- 'L2FC=0 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < 0)'
 
 pdf(file="volcano_Treated_vs_Untreated.pdf", width = 12, height = 6)  
   EnhancedVolcano(Treated_vs_Untreated_annotated,
@@ -80,9 +80,10 @@ pdf(file="volcano_Treated_vs_Untreated.pdf", width = 12, height = 6)
     title = "Treated vs. Untreated",
     x = 'log2FoldChange',
     y = 'padj',
+    ylab = bquote(~-Log[10]~ 'FDR P-adjusted'),
     legendPosition = 'right',
     pCutoff = 10e-2,
-    FCcutoff = 2.0,
+    FCcutoff = 0.25,
     legendIconSize = 5.0,
     labSize = 6.0,
    colCustom = keyvals,
@@ -101,14 +102,14 @@ Untreated_vs_Initial_annotated <- as.data.frame(Treatment_Untreated_vs_Initial) 
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene"))
 
-keyvals <- ifelse(
-    Untreated_vs_Initial_annotated$log2FoldChange < -2 & Untreated_vs_Initial_annotated$padj < 0.05, 'royalblue',
-      ifelse(Untreated_vs_Initial_annotated$log2FoldChange > 2 & Untreated_vs_Initial_annotated$padj < 0.05, 'red',
+ keyvals <- ifelse(
+    Untreated_vs_Initial_annotated$log2FoldChange < 0 & Untreated_vs_Initial_annotated$padj < 0.05, 'royalblue',
+      ifelse(Untreated_vs_Initial_annotated$log2FoldChange > 0 & Untreated_vs_Initial_annotated$padj < 0.05, 'red',
         'grey'))
   keyvals[is.na(keyvals)] <- 'grey'
-  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
-  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
-  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 0)'
+  names(keyvals)[keyvals == 'grey'] <- 'L2FC=0 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < 0)'
 
 pdf(file="volcano_Untreated_vs_Initial.pdf", width = 12, height = 6)  
   EnhancedVolcano(Untreated_vs_Initial_annotated,
@@ -116,9 +117,10 @@ pdf(file="volcano_Untreated_vs_Initial.pdf", width = 12, height = 6)
     lab = NA,
     x = 'log2FoldChange',
     y = 'padj',
+    ylab = bquote(~-Log[10]~ 'FDR P-adjusted'),
     legendPosition = 'right',
     pCutoff = 10e-2,
-    FCcutoff = 2.0,
+    FCcutoff = 0.25,
     legendIconSize = 5.0,
     labSize = 6.0,
    colCustom = keyvals,
