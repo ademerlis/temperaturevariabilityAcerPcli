@@ -119,48 +119,7 @@ Specific contrasts:
 
 ### 4) Venn diagram of number of DGEs (based on FDR p-adjusted value < 0.1)
 
-<img width="447" alt="Screen Shot 2023-11-24 at 8 45 22 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/ab06e6cf-739a-443c-b74d-232552a7c4d3">
-
-This one was made with VennDiagram and it's ugly and I can't move the labels or make the circles smaller.
-
-This one was made with ggvenn and is marginally better:
 
 <img width="612" alt="Screen Shot 2023-11-24 at 8 46 09 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e9f995b2-0f1d-4ff7-bf45-45b6564a56fc">
-
-
-### 5) PCAs
-
-Plotting everything together, genotype drives clustering.
-
-<img width="549" alt="Screen Shot 2023-11-24 at 3 54 07 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/71e4605c-acf4-4037-a68b-537c904c17c9">
-
-When individual genotypes are plotted: 
-
-<img width="625" alt="Screen Shot 2023-11-24 at 9 04 39 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/d4daa57c-826e-4725-90fe-9a0551476942">
-
-But with the stat_ellipse function it looks better:
-
-<img width="620" alt="Screen Shot 2023-11-24 at 9 05 10 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/278e48ed-07cd-4720-80de-d6c141a1efbe">
-
-<img width="625" alt="Screen Shot 2023-11-24 at 9 05 36 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/4666ecf5-d8b5-49f5-b2ae-e98834cba0d1">
-
-<img width="623" alt="Screen Shot 2023-11-24 at 9 05 58 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/c5544b57-97ae-45ec-84df-ae8a1f9366fc">
-
-<img width="622" alt="Screen Shot 2023-11-24 at 9 06 27 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/2efc4e87-5aee-4bb4-b715-b94fd8f0d593">
-
-<img width="621" alt="Screen Shot 2023-11-24 at 9 06 48 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/337fd5ba-b500-4b86-b617-a69c2e35da3d">
-
-the PC axes 2 and 3 don't show any patterns (other than genotype again).
-
-<img width="623" alt="Screen Shot 2023-11-24 at 9 08 41 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/446179d9-ef82-42e1-9a4f-a39515cafa54">
-
-### 6) Volcano plots
-
-<img width="585" alt="Screen Shot 2023-11-24 at 9 11 12 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/b5e11831-6a7d-422c-868e-e1587e385151">
-
-<img width="587" alt="Screen Shot 2023-11-24 at 9 12 28 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/e9c29af2-7de5-4648-98e9-257072675998">
-
-<img width="585" alt="Screen Shot 2023-11-24 at 9 13 40 PM" src="https://github.com/ademerlis/temperaturevariability2023/assets/56000927/17555bb8-a018-4292-a7b4-e1603be8582a">
-
 
 
