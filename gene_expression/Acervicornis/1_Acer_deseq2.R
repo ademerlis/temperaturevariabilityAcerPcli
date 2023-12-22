@@ -221,10 +221,6 @@ plot(tre,cex=0.8)
 dev.off()
 
 # formal analysis of variance in distance matricies: 
-#do the results of the PERMANOVA change depending on whether the column and row names match?
-rownames(conditions) = snames 
-rownames(conditions)
-conditions
 ad=adonis2(t(vsd)~Genotype + Treatment,data=conditions,method="manhattan",permutations=1e6)
 ad
 summary(ad)
