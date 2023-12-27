@@ -4,7 +4,7 @@ author: "allyson_demerlis"
 date: "2023-02-20"
 output: html_document
 ---
-
+# Load data and packages
 ```{r}
 metadata <- readxl::read_xlsx("../metadata.xlsx")
 
@@ -13,24 +13,11 @@ library(janitor)
 library(rstatix)
 ```
 
+# CBASS Mortality
 
-
+Number of corals that died due to CBASS
 ```{r}
 metadata %>% 
-  dplyr::select(Species:Colony, Treatment, Removed_Date, Reason_removed, mortality_date, Notes) -> mortality_data
-
-#fix excel dates
-#columns must be numeric
-mortality_data$Removed_Date <- as.numeric(mortality_data$Removed_Date)
-mortality_data$mortality_date <- as.numeric(mortality_data$mortality_date)
-
-mortality_data$Removed_Date <- excel_numeric_to_date(mortality_data$Removed_Date)
-mortality_data$mortality_date <- excel_numeric_to_date(mortality_data$mortality_date)
-```
-
-
-```{r}
-mortality_data %>% 
   dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-25") %>% 
   drop_na(Species, Treatment, Reason_removed) %>% 
   group_by(Reason_removed, Species, Treatment) %>% 
@@ -45,42 +32,6 @@ mortality_data %>%
   coord_flip()
 ```
 
-```{r}
-#mortality just on the day of the CBASS
-
-mortality_data %>% 
-  dplyr::filter(Removed_Date == "2022-04-22" | mortality_date == "2022-04-22") %>% 
-  drop_na(Species, Treatment, Reason_removed) %>% 
-  group_by(Reason_removed, Species, Treatment) %>% 
-  summarize(count = n()) %>% 
-  ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
-  geom_col(position = position_dodge()) +
-  theme_classic() +
-  facet_wrap(~Species, scales = "free")  +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
-  theme(text = element_text(size = 15)) +
-  labs(x="Category", y="Number of corals") + 
-  coord_flip()
-```
-
-```{r}
-#total nunmber of corals per species
-mortality_data %>% 
-  dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
-  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
-                             Reason_removed == "post-CBASS RTL" ~ "RTL",
-                             Reason_removed == "RTL" ~ "RTL")) %>% 
-  drop_na(Species, Treatment, Reason_removed) %>% 
-  group_by(Reason_removed, Species, Treatment) %>% 
-  summarize(count = n()) %>% 
-  ggplot(., aes(x=Species, y=count, fill = Treatment)) +
-  geom_col(position = position_dodge()) +
-  theme_classic() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
-  theme(text = element_text(size = 15)) +
-  labs(y="Number of corals", title = "Mortality post-CBASS due to RTL")
-```
-
 
 ```{r}
 #proportion of corals that died during/post-CBASS versus the total number of corals that went into the CBASS
@@ -93,6 +44,11 @@ mortality_data %>%
   group_by(Species, Treatment) %>% 
   summarize(count_RTL = n()) -> RTL_species_treatment_count
 
+```
+
+
+
+```{r}
 mortality_data %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
   group_by(Species, Treatment) %>% 
@@ -137,3 +93,17 @@ mortality_data %>%
   drop_na(Species, Treatment, Reason_removed) %>% 
   select(Species, Treatment, Reason_removed)
 ```
+
+
+
+# Slow-Burn Mortality
+
+Heat-stress at 32ºC was reached on June 25. 
+```{r}
+metadata %>% 
+  filter(Removed_Date >= "2022-06-25")
+
+metadata %>% 
+  filter(is.na(Removed_Date)) # hmm this is suspect.
+```
+

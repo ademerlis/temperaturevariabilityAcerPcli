@@ -1,0 +1,49 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = fvfm_loss_norm ~ Treatment * Species, data = treatment_normalized_bothspecies)
+
+$Treatment
+                         diff         lwr         upr     p adj
+Treated-tank_8    -0.08803228 -0.11631675 -0.05974781 0.0000000
+Untreated-tank_8  -0.04867950 -0.07617143 -0.02118757 0.0001199
+Untreated-Treated  0.03935278  0.02197267  0.05673289 0.0000006
+
+$Species
+                            diff        lwr         upr p adj
+Pclivosa-Acervicornis -0.1014085 -0.1150039 -0.08781307     0
+
+$`Treatment:Species`
+                                                   diff          lwr         upr
+Treated:Acervicornis-tank_8:Acervicornis    -0.07772138 -0.119518873 -0.03592388
+Untreated:Acervicornis-tank_8:Acervicornis   0.04589793  0.009633569  0.08216228
+tank_8:Pclivosa-tank_8:Acervicornis                  NA           NA          NA
+Treated:Pclivosa-tank_8:Acervicornis        -0.09275811 -0.128874626 -0.05664159
+Untreated:Pclivosa-tank_8:Acervicornis      -0.14192485 -0.178114319 -0.10573538
+Untreated:Acervicornis-Treated:Acervicornis  0.12361930  0.088943778  0.15829483
+tank_8:Pclivosa-Treated:Acervicornis                 NA           NA          NA
+Treated:Pclivosa-Treated:Acervicornis       -0.01503673 -0.049557613  0.01948414
+Untreated:Pclivosa-Treated:Acervicornis     -0.06420347 -0.098800672 -0.02960627
+tank_8:Pclivosa-Untreated:Acervicornis               NA           NA          NA
+Treated:Pclivosa-Untreated:Acervicornis     -0.13865604 -0.166219851 -0.11109222
+Untreated:Pclivosa-Untreated:Acervicornis   -0.18782277 -0.215482112 -0.16016344
+Treated:Pclivosa-tank_8:Pclivosa                     NA           NA          NA
+Untreated:Pclivosa-tank_8:Pclivosa                   NA           NA          NA
+Untreated:Pclivosa-Treated:Pclivosa         -0.04916674 -0.076631953 -0.02170152
+                                                p adj
+Treated:Acervicornis-tank_8:Acervicornis    0.0000030
+Untreated:Acervicornis-tank_8:Acervicornis  0.0044869
+tank_8:Pclivosa-tank_8:Acervicornis                NA
+Treated:Pclivosa-tank_8:Acervicornis        0.0000000
+Untreated:Pclivosa-tank_8:Acervicornis      0.0000000
+Untreated:Acervicornis-Treated:Acervicornis 0.0000000
+tank_8:Pclivosa-Treated:Acervicornis               NA
+Treated:Pclivosa-Treated:Acervicornis       0.8114790
+Untreated:Pclivosa-Treated:Acervicornis     0.0000031
+tank_8:Pclivosa-Untreated:Acervicornis             NA
+Treated:Pclivosa-Untreated:Acervicornis     0.0000000
+Untreated:Pclivosa-Untreated:Acervicornis   0.0000000
+Treated:Pclivosa-tank_8:Pclivosa                   NA
+Untreated:Pclivosa-tank_8:Pclivosa                 NA
+Untreated:Pclivosa-Treated:Pclivosa         0.0000079
+

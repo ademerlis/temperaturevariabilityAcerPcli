@@ -19,7 +19,7 @@ library(joeyr) #for filtering and QC of IPAM data (following Cunning et al. 2021
 ## Load metadata 
 
 ```{r}
-metadata <- read_xlsx("../metadata.xlsx")
+metadata <- read_xlsx("../metadata.xlsx", sheet = "data")
 ```
 
 
@@ -43,6 +43,12 @@ import_ipam <- function(dir, ipam.pattern="*.csv", info.pattern="*ids.txt") {
     df <- read.delim(ipam[i], sep=";")
     # Get rid of trailing NA
     df <- df %>% select_if(~ !any(is.na(.))) # I changed this from Ross's original code b/c it wasn't working to import some of the files. this seems to work for all of them.
+        
+  # Check if the dataframe has more than one row 
+  if (nrow(df) > 1) {
+    # Remove the second row
+    df <- df[-2, ] # I added this part in from Ross's original code because I had some csv files with two rows of identical data (got exported twice maybe?) and so the reshape2 function didn't work 
+  }
     
     # Make data long form and recast with rows for each AOI (based on column names)
     df2 <- reshape2::melt(df)
@@ -50,7 +56,6 @@ import_ipam <- function(dir, ipam.pattern="*.csv", info.pattern="*ids.txt") {
     df2$AOI <- as.numeric(as.character(df2$AOI))
     df2$var <- stringr::str_extract(string=df2$variable, pattern="[^0-9|\\.]+")
     df3 <- reshape2::dcast(na.omit(df2), AOI ~ var)
-    
     
     # Read in sample names from ids file (if provided) and merge data
     if (!is.null(info)) {
@@ -74,6 +79,7 @@ import_ipam <- function(dir, ipam.pattern="*.csv", info.pattern="*ids.txt") {
   return(result)
 }
 ```
+
 
 ```{r import PAM files, include = F}
 march_16<-import_ipam(dir="ipam_data/march 16 2022 test 2/", info.pattern = NULL)

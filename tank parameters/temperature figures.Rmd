@@ -5,9 +5,11 @@ date: "4/4/2022"
 output: html_document
 ---
 
+# Load libraries and data
 ```{r}
 library(tidyverse)
 library(plotrix) #for standard error function
+library(cowplot)
 
 feb4<- readxl::read_xlsx("Data from LabVIEW/20220204_TemperatureData edited.xlsx", col_types = c("date", "numeric", "numeric", 
         "numeric", "numeric", "numeric", 
@@ -44,14 +46,22 @@ Creating subsets for different stages of experiment
 ```{r}
 acclimation <- bind_rows(feb4, feb23) 
 temptreatment<- bind_rows(march7, march29, april15) #treatment started march 24 and ended april 20
-  temptreatment %>% filter(Time >= as.Date("2022-03-24") & Time <= as.Date("2022-04-22")) -> temptreatment
+temptreatment %>% filter(Time >= as.Date("2022-03-24") & Time <= as.Date("2022-04-22")) -> temptreatment
+#filter out one anomalous data point
+  temptreatment %>% 
+    filter(T1<23) 
+# Set the specific data point to NA
+temptreatment[temptreatment$T1 < 22.5, "T1"]= NA
+  temptreatment %>% 
+    filter(T1<23) #its gone now
+
 CBASS #april 22
 recovery <- bind_rows(april15, april25, may11, may20, june10) #recovery started april 23 and ended june 21
   recovery %>% filter(Time >= as.Date("2022-04-23") & Time <= as.Date("2022-06-22")) -> recovery
 heatstressassay <- bind_rows(june10, june24, july6, july8, july20) #ramp up started june 21
 ```
 
-
+# Acclimation period
 ```{r}
 #tanks 1-4 had Pclivosa in them since Feb 4, so they were maintained at 24 C. Tanks 5-8 didn't get Acer until Feb 24, so that's why their temps fluctuate before then.
 #need to remove tank temps for tanks 5-8 for dates before feb 24 and before feb 17 for tanks 1-4
@@ -96,6 +106,8 @@ acclimation %>%
   theme(text = element_text(size = 16)) #all font sizes
 ```
 
+
+# Treatment period (Mar 24 - Apr 20)
 ```{r}
 #all tanks separated
 temptreatment %>% 
@@ -109,11 +121,17 @@ temptreatment %>%
   labs(title = "Tank Temperatures",
        y = "Temperature (°C)",
        x = "Date")
+#ggsave("temptreatment_28d.pdf", width = 10, height = 6)
 ```
+
+There is something wrong with tank 8. It never reached 31ºC. 
+
+You can see it in the standard deviation plot below. 
 
 ```{r}
 #summary figure of average tank temp during 24-hr period over the 28 days
 temptreatment$Time <- lubridate::round_date(temptreatment$Time, unit = "15 min")
+temptreatment %>% drop_na() -> temptreatment
 
 temptreatment %>% 
   filter(Time >= "2022-03-24 09:00:00") %>% 
@@ -138,12 +156,78 @@ temptreatment %>%
   geom_ribbon(aes(fill=treatment, group = treatment, ymin = avg_temp - sd, ymax = avg_temp + sd), alpha = 0.2) +
    geom_line(aes(group = treatment)) +
   scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
-  labs(y="Temperature (C)") +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))+
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  labs(y="Temperature (ºC)") +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))+
+  scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
   theme(text = element_text(size = 15)) 
+#ggsave("summarytemptreatment_stdeviation.pdf", width = 10, height = 6)
 ```
 
+Separate out tanks
+```{r}
+temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  # mutate(treatment = case_when(Tank == "T1" ~ "control",
+  #                              Tank == "T2" ~ "variable",
+  #                              Tank == "T3" ~ "variable",
+  #                              Tank == "T4" ~ "control",
+  #                              Tank == "T5" ~ "variable", 
+  #                              Tank == "T6" ~ "control",
+  #                              Tank == "T7" ~ "control",
+  #                              Tank == "T8" ~ "variable")) %>% 
+  dplyr::group_by(Time, Tank) %>% 
+  dplyr::summarise(avg_temp = mean(Temp), sd = sd(Temp)) %>% 
+  ggplot(., aes(x=Time, y=avg_temp, color = Tank)) + 
+  theme_classic() +
+  geom_ribbon(aes(fill=Tank, group = Tank, ymin = avg_temp - sd, ymax = avg_temp + sd), alpha = 0.2) +
+   geom_line(aes(group = Tank)) +
+  scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
+  labs(y="Temperature (ºC)") +
+ # scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))+
+ # scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 15)) 
+#ggsave("summarytemptreatment_alltanks_sd.pdf", width = 10, height = 6)
+```
+
+Standard deviation with tank 8 separated
+```{r}
+temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(treatment = case_when(Tank == "T1" ~ "control",
+                               Tank == "T2" ~ "variable",
+                               Tank == "T3" ~ "variable",
+                               Tank == "T4" ~ "control",
+                               Tank == "T5" ~ "variable",
+                               Tank == "T6" ~ "control",
+                               Tank == "T7" ~ "control")) %>%
+  dplyr::group_by(Time, treatment) %>% 
+  dplyr::summarise(avg_temp = mean(Temp), sd = sd(Temp)) %>% 
+  ggplot(., aes(x=Time, y=avg_temp, color = treatment)) + 
+  theme_classic() +
+  geom_ribbon(aes(fill=treatment, group = treatment, ymin = avg_temp - sd, ymax = avg_temp + sd), alpha = 0.2) +
+   geom_line(aes(group = treatment)) +
+  scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
+  labs(y="Temperature (C)") +
+  scale_color_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey"))+
+  scale_fill_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey")) +
+  theme(text = element_text(size = 15)) 
+#ggsave("summarytemptreatment_tank8separate_sd.pdf", width = 10, height = 6)
+```
+
+
+Standard error with tank 8 separated
 ```{r}
 #with standard error instead of standard deviation
 
@@ -161,8 +245,7 @@ temptreatment %>%
                                Tank == "T4" ~ "control",
                                Tank == "T5" ~ "variable", 
                                Tank == "T6" ~ "control",
-                               Tank == "T7" ~ "control",
-                               Tank == "T8" ~ "variable")) %>% 
+                               Tank == "T7" ~ "control")) %>% 
   dplyr::group_by(Time, treatment) %>% 
   dplyr::summarise(avg_temp = mean(Temp), se = std.error(Temp)) %>% 
   ggplot(., aes(x=Time, y=avg_temp, color = treatment)) + 
@@ -171,13 +254,274 @@ temptreatment %>%
    geom_line(aes(group = treatment)) +
   scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
   labs(y="Temperature (C)") +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))+
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_color_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey"))+
+  scale_fill_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey")) +
   theme(text = element_text(size = 20)) 
-ggsave("summarytemptreatment.pdf", width = 10, height = 6)
+#ggsave("summarytemptreatment_tank8separate_stderr.pdf", width = 10, height = 6)
+```
+
+Calculate the mean daily min, max, and variance for each tank/treatment over the 28-d period.
+```{r}
+temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "control",
+                               Tank == "T2" ~ "variable",
+                               Tank == "T3" ~ "variable",
+                               Tank == "T4" ~ "control",
+                               Tank == "T5" ~ "variable", 
+                               Tank == "T6" ~ "control",
+                               Tank == "T7" ~ "control",
+                               Tank == "T8" ~ "tank_8")) %>% 
+  mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
+                             Tank == "T2" ~ "Pclivosa",
+                               Tank == "T3" ~ "Pclivosa",
+                               Tank == "T4" ~ "Pclivosa",
+                               Tank == "T5" ~ "Acervicornis", 
+                               Tank == "T6" ~ "Acervicornis",
+                               Tank == "T7" ~ "Acervicornis",
+                               Tank == "T8" ~ "Acervicornis")) %>% 
+  group_by(Tank, Date, Treatment, Species) %>% 
+  summarise(daily_max = max(Temp), daily_min = min(Temp), daily_range = (max(Temp)-min(Temp))) %>% 
+  ungroup() %>% 
+  group_by(Tank, Treatment, Species) %>% 
+  summarise(mean_daily_max=mean(daily_max),sd_daily_max=sd(daily_max), mean_daily_min=mean(daily_min),sd_daily_min=sd(daily_min),mean_daily_range=mean(daily_max - daily_min), sd_daily_range=sd(daily_max - daily_min)) -> meanmaxminrange_summarytable
+
+meanmaxminrange_summarytable %>% 
+  group_by(Treatment) %>% summarise(mean_max=mean(mean_daily_max),sd_max=sd(mean_daily_max), mean_min=mean(mean_daily_min),sd_min=sd(mean_daily_min),mean_range=mean(mean_daily_max - mean_daily_min), sd_daily_range=sd(mean_daily_max - mean_daily_min))
+
+ggplot(meanmaxminrange_summarytable, aes(x=Treatment, y=mean_daily_max, color=Tank)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = mean_daily_max - sd_daily_max, ymax = mean_daily_max + sd_daily_max), width = 0.2) +
+  theme_classic()
+
+ggplot(meanmaxminrange_summarytable, aes(x=Treatment, y=mean_daily_min, color=Tank)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = mean_daily_min - sd_daily_min, ymax = mean_daily_min + sd_daily_min), width = 0.2) +
+  theme_classic()
+
+ggplot(meanmaxminrange_summarytable, aes(x=Treatment, y=mean_daily_range, color=Tank)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = mean_daily_range - sd_daily_range, ymax = mean_daily_range + sd_daily_range), width = 0.2) +
+  theme_classic()
+```
+
+Combined plot 
+```{r}
+p1=temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "Untreated",
+                               Tank == "T2" ~ "Treated",
+                               Tank == "T3" ~ "Treated",
+                               Tank == "T4" ~ "Untreated",
+                               Tank == "T5" ~ "Treated", 
+                               Tank == "T6" ~ "Untreated",
+                               Tank == "T7" ~ "Untreated",
+                               Tank == "T8" ~ "Tank 8")) %>% 
+  mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
+                             Tank == "T2" ~ "Pclivosa",
+                               Tank == "T3" ~ "Pclivosa",
+                               Tank == "T4" ~ "Pclivosa",
+                               Tank == "T5" ~ "Acervicornis", 
+                               Tank == "T6" ~ "Acervicornis",
+                               Tank == "T7" ~ "Acervicornis",
+                               Tank == "T8" ~ "Acervicornis")) %>% 
+  group_by(Tank, Date, Treatment, Species) %>% 
+  summarise(daily_max = max(Temp), daily_min = min(Temp), daily_range = (max(Temp)-min(Temp))) %>% 
+  ggplot(., aes(x=Treatment, y=daily_max, color=Tank)) +
+  geom_boxplot() + 
+  theme_classic() +
+  labs(y="Daily Maximum Temperature (ºC)") + 
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15)) 
+
+p2=temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "Untreated",
+                               Tank == "T2" ~ "Treated",
+                               Tank == "T3" ~ "Treated",
+                               Tank == "T4" ~ "Untreated",
+                               Tank == "T5" ~ "Treated", 
+                               Tank == "T6" ~ "Untreated",
+                               Tank == "T7" ~ "Untreated",
+                               Tank == "T8" ~ "Tank 8")) %>% 
+  mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
+                             Tank == "T2" ~ "Pclivosa",
+                               Tank == "T3" ~ "Pclivosa",
+                               Tank == "T4" ~ "Pclivosa",
+                               Tank == "T5" ~ "Acervicornis", 
+                               Tank == "T6" ~ "Acervicornis",
+                               Tank == "T7" ~ "Acervicornis",
+                               Tank == "T8" ~ "Acervicornis")) %>% 
+  group_by(Tank, Date, Treatment, Species) %>% 
+  summarise(daily_max = max(Temp), daily_min = min(Temp), daily_range = (max(Temp)-min(Temp))) %>% 
+  ggplot(., aes(x=Treatment, y=daily_min, color=Tank)) +
+  geom_boxplot() + 
+  theme_classic() +
+  labs(y="Daily Minimum Temperature (ºC)") + 
+  ylim(27,28.5) + 
+  theme(legend.position = "none") +
+  theme(text = element_text(size = 15)) 
+
+p3=temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "Untreated",
+                               Tank == "T2" ~ "Treated",
+                               Tank == "T3" ~ "Treated",
+                               Tank == "T4" ~ "Untreated",
+                               Tank == "T5" ~ "Treated", 
+                               Tank == "T6" ~ "Untreated",
+                               Tank == "T7" ~ "Untreated",
+                               Tank == "T8" ~ "Tank 8")) %>% 
+  mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
+                             Tank == "T2" ~ "Pclivosa",
+                               Tank == "T3" ~ "Pclivosa",
+                               Tank == "T4" ~ "Pclivosa",
+                               Tank == "T5" ~ "Acervicornis", 
+                               Tank == "T6" ~ "Acervicornis",
+                               Tank == "T7" ~ "Acervicornis",
+                               Tank == "T8" ~ "Acervicornis")) %>% 
+  group_by(Tank, Date, Treatment, Species) %>% 
+  summarise(daily_max = max(Temp), daily_min = min(Temp), daily_range = (max(Temp)-min(Temp))) %>% 
+  ggplot(., aes(x=Treatment, y=daily_range, color=Tank)) +
+  geom_boxplot() + 
+  theme_classic() +
+  labs(y="Daily Range of Temperature (ºC)") +
+  theme(text = element_text(size = 15)) 
+
+plot_grid(p1, p2, p3, nrow = 1, align = 'v', rel_widths = c(1, 1, 1))
+#ggsave("combined_maxminrange.pdf", width = 15, height = 5)
+```
+
+Test for significant differences 
+```{r}
+maxminrange_summarytable <- temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "control",
+                               Tank == "T2" ~ "variable",
+                               Tank == "T3" ~ "variable",
+                               Tank == "T4" ~ "control",
+                               Tank == "T5" ~ "variable", 
+                               Tank == "T6" ~ "control",
+                               Tank == "T7" ~ "control",
+                               Tank == "T8" ~ "tank_8")) %>% 
+  mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
+                             Tank == "T2" ~ "Pclivosa",
+                               Tank == "T3" ~ "Pclivosa",
+                               Tank == "T4" ~ "Pclivosa",
+                               Tank == "T5" ~ "Acervicornis", 
+                               Tank == "T6" ~ "Acervicornis",
+                               Tank == "T7" ~ "Acervicornis",
+                               Tank == "T8" ~ "Acervicornis")) %>% 
+  group_by(Tank, Date, Treatment, Species) %>% 
+  summarise(daily_max = max(Temp), daily_min = min(Temp), daily_range = (max(Temp)-min(Temp))) %>% 
+  ungroup()
+
+str(maxminrange_summarytable)
+
+maxminrange_summarytable <- maxminrange_summarytable %>% 
+  mutate(across(c(Tank,Date,Treatment,Species), as.factor))
+```
+
+Daily max
+```{r}
+maxminrange_summarytable %>% 
+  aov(daily_max ~ Tank, data = .) -> model1
+
+summary(model1)
+#tank is significant
+
+qqnorm(residuals(model1)) 
+qqline(residuals(model1)) # not normal
+
+#Non parametric test
+maxminrange_summarytable %>% 
+  kruskal_test(., daily_max ~ Tank) #significant
+
+dunn.test(maxminrange_summarytable$daily_max, maxminrange_summarytable$Tank, method = "bonferroni")
+# tank 5 (True treatment tank) is significantly different from all tanks
+
+#dunn's test assumption is that distribution of groups is similar
+ggqqplot(maxminrange_summarytable, "daily_max", facet.by = "Tank")
+```
+
+Daily min
+```{r}
+maxminrange_summarytable %>% 
+  aov(daily_min ~ Tank, data = .) -> model2
+
+summary(model2)
+#tank is significant
+
+qqnorm(residuals(model2)) 
+qqline(residuals(model2)) # not normal
+
+#Non parametric test
+maxminrange_summarytable %>% 
+  kruskal_test(., daily_min ~ Tank) #significant
+
+dunn.test(maxminrange_summarytable$daily_min, maxminrange_summarytable$Tank, method = "bonferroni")
+# tank 5 (True treatment tank) is significantly different from all tanks
+
+#dunn's test assumption is that distribution of groups is similar
+ggqqplot(maxminrange_summarytable, "daily_min", facet.by = "Tank")
 ```
 
 
+Daily range
+```{r}
+maxminrange_summarytable %>% 
+  aov(daily_range ~ Tank, data = .) -> model3
+
+summary(model3)
+#tank is significant
+
+qqnorm(residuals(model3)) 
+qqline(residuals(model3)) # not normal
+
+#Non parametric test
+maxminrange_summarytable %>% 
+  kruskal_test(., daily_range ~ Tank) #significant
+
+dunn.test(maxminrange_summarytable$daily_range, maxminrange_summarytable$Tank, method = "bonferroni")
+# tank 5 (True treatment tank) is significantly different from all tanks
+
+#dunn's test assumption is that distribution of groups is similar
+ggqqplot(maxminrange_summarytable, "daily_range", facet.by = "Tank")
+```
+
+
+
+# CBASS (April 22)
 ```{r}
 CBASS %>% 
   dplyr::select(Time:`8`) %>% 
@@ -204,10 +548,10 @@ CBASS %>%
        y = "Temperature (°C)",
        x = "Hour") +
   theme(text = element_text(size = 20)) 
-ggsave("CBASStemps.pdf", width = 10)
+#ggsave("CBASStemps.pdf", width = 10)
 ```
 
-
+# Recovery period
 ```{r}
 recovery %>% 
   dplyr::select(Time:T8) %>% 
@@ -263,7 +607,7 @@ recovery %>%
   theme(text = element_text(size = 16)) #all font sizes
 ```
 
-
+# Slow burn heat-stress assay 
 ```{r}
 heatstressassay %>% 
   dplyr::select(Time:T8) %>% 

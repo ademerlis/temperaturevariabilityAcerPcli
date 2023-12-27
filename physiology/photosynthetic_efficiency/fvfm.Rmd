@@ -22,6 +22,8 @@ library(nlme)
 library(multcomp)
 ```
 
+Some notes on statistical tests before I dive in:
+1. A lot of my code I try to incorporate the generalized linear mixed models because I became more familiar with that recently, and you can incorporate fixed and random effects. However, the one function I have been using a lot is glmmTMB with the "beta" family distribution and the "logit" function. The major assumption of this type of distribution is that data are bound by 0 < x < 1. I originally thought fv/fm data would fit this best because it is a proportion that the IPAM is measuring. But, some of the values equal zero, and when I start doing time normalizations I get values greater than 1 or less than zero. So, for this reason I no longer think glmmTMB is appropriate. The next best GLMM would be the classic continuous response model using lme4::lmer. This is consistent with code I've seen from Klepac and Evensen. 
 
 # Import data
 
@@ -267,6 +269,7 @@ get_anova_table(pcli_aov) # all factors significant except interaction term
 
 #capture.output(get_anova_table(ssid_aov), file = "urban ipam ssid ancova.txt")
 ```
+
 Create a contrast matrix for post-hoc test
 ```{r}
 contrast_matrix <- contrast(

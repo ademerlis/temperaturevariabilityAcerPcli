@@ -1,0 +1,246 @@
+---
+title: "treatment_tankeffects"
+author: "allyson_demerlis"
+date: "2023-12-24"
+output: html_document
+---
+# Packages
+
+```{r}
+library(tidyverse)
+library(plotrix)
+library(emmeans)
+library(lme4) 
+library(lmerTest)
+library(ggpubr)
+library(drc) #for the function "drm" dose-response model
+library(broom) #for the tidy function needed for dose response model
+library(car)
+library(rstatix)
+library(rcompanion)
+library(nlme)
+library(multcomp)
+library(dunn.test)
+```
+
+
+# Import data and create tidy datasets
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+treatment_time_bothspecies <- ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(Date <= "2022-04-20") %>% 
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+   mutate(fvfm_t0 = case_when(Species == "Acervicornis" ~ `2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-03-21`)) %>% 
+   mutate(fvfm_t1 = case_when(Species == "Acervicornis" ~ `2022-04-06`,
+                                  Species == "Pclivosa" ~ `2022-04-06`)) %>% 
+   mutate(fvfm_t2 = case_when(Species == "Acervicornis" ~ `2022-04-20`,
+                                  Species == "Pclivosa" ~ `2022-04-20`)) %>% 
+  pivot_longer(fvfm_t0:fvfm_t2, names_to = "fvfm_timepoint", values_to = "fvfm") %>% 
+  mutate(numDays = case_when(fvfm_timepoint == "fvfm_t0" ~ 0,
+                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t1" ~ 16,
+                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t1" ~ 21,
+                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t2" ~ 30,
+                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t2" ~ 35,
+                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t3" ~ 65,
+                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t3" ~ 70))
+
+treatment_normalized_bothspecies <- ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
+                               Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
+  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ fvfm_loss/`2022-03-16`,
+                               Species == "Pclivosa" ~ fvfm_loss/`2022-03-21`))
+```
+
+
+
+By genotype and tank
+```{r, warning = F}
+#Acer is the only one that was in tank 8
+treatment_time_bothspecies%>% 
+  filter(Species == "Acervicornis") %>% 
+  dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
+  mutate(numDays = as.factor(numDays)) %>% 
+  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color = Treatment)) + 
+  geom_boxplot(color = "black", outlier.shape = NA,  alpha=0.3) + #not removing outliers, just removing the black dots because they are already represented in the geom_point() line
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  facet_wrap(~Colony + Tank) + 
+  theme_classic() + 
+  labs(y = "Fv/Fm", x = "Days in Treatment") +
+  scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 14))
+
+#look at Pcli and see if there is any tank pattern
+treatment_time_bothspecies%>% 
+  filter(Species == "Pclivosa") %>% 
+  dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
+  mutate(numDays = as.factor(numDays)) %>% 
+  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color = Treatment)) + 
+  geom_boxplot(color = "black", outlier.shape = NA,  alpha=0.3) + #not removing outliers, just removing the black dots because they are already represented in the geom_point() line
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  facet_wrap(~Colony + Tank) + 
+  theme_classic() + 
+  labs(y = "Fv/Fm", x = "Days in Treatment") +
+  scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 14))
+#no pattern like in Acer
+```
+
+Mean and standard deviation instead of boxplot
+```{r}
+treatment_normalized_bothspecies%>% 
+  group_by(Species, Colony, Treatment, Tank) %>% 
+  summarise(mean = mean(fvfm_loss_norm), sd = sd(fvfm_loss_norm)) %>% 
+  ggplot(., aes(x=Tank, y= mean, color= Treatment)) +
+  geom_point(alpha=0.3) +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.2) +
+  theme_classic() + labs(y = "Decline in Fv/Fm", x="Tank") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 12)) + 
+  facet_wrap(~Species + Colony, scales = "free_x")
+#tank 8 looks more similar to controls than to treatment group
+```
+
+
+
+```{r, warning = F}
+treatment_normalized_bothspecies%>% 
+  filter(Species == "Acervicornis") %>% 
+  ggplot(., aes(x=Tank, y= fvfm_loss_norm, color= Tank)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  theme_classic() + 
+  labs(y = "Decline in Fv/Fm", x="Tank") +
+  # scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))  +
+  # scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 15))
+ggsave("treatment_normalized_Acer_boxplot_individualtanks.pdf")
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(fvfm_loss_norm ~ Treatment*Species + Colony + Tank, data = treatment_normalized_bothspecies)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 0 outliers
+```
+
+
+Try running a 1-way ANOVA for each species separately to test if there are significant differences in tanks. (Tank)
+
+```{r}
+treatment_normalized_bothspecies %>% 
+  filter(Species == "Acervicornis") %>% 
+  aov(fvfm_loss_norm ~ Tank, data = .) -> model1
+
+summary(model1)
+#tank is significant
+
+qqnorm(residuals(model1)) 
+qqline(residuals(model1))
+
+shapiro.test(residuals(model1)) #significant 
+#transformations didnt help make this data more normal
+
+plot(fitted(model1), residuals(model1))
+abline(h=0, col="red")
+
+#Try non parametric test instead
+treatment_normalized_bothspecies %>% 
+  filter(Species == "Acervicornis") %>% 
+  kruskal_test(., fvfm_loss_norm ~ Tank)
+
+treatment_normalized_bothspecies %>% 
+  filter(Species == "Acervicornis") -> df
+
+dunn.test(df$fvfm_loss_norm, df$Tank, method = "bonferroni")
+# tank 5 (True treatment tank) is significantly different from all tanks
+
+#dunn's test assumption is that distribution of groups is similar
+ggqqplot(df, "fvfm_loss_norm", facet.by = "Tank")
+
+```
+
+
+
+```{r}
+treatment_normalized_bothspecies%>% 
+  filter(Species == "Acervicornis") %>% 
+  ggplot(., aes(x=Tank, y= fvfm_loss_norm, color= Tank)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  theme_classic() + 
+  labs(y = "Decline in Fv/Fm", x="Tank") +
+  # scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))  +
+  # scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 12)) + 
+  facet_wrap(~Colony, scales = "free_x")
+ggsave("treatment_normalized_AcerGenets_boxplot_individiualtanks.pdf")
+```
+
+
+
+
+
+
+Try running a 2-way ANOVA for each species separately to test if there are significant differences in tanks. (Colony*Tank)
+
+```{r}
+treatment_normalized_bothspecies %>% 
+  filter(Species == "Acervicornis") -> df
+
+model2 <- aov(fvfm_loss_norm ~ Tank*Colony, data = df) 
+
+summary(model2)
+#tank and colony are significant
+
+qqnorm(residuals(model2)) 
+qqline(residuals(model2))
+
+shapiro.test(residuals(model2)) #not significant 
+
+plot(fitted(model2), residuals(model2))
+abline(h=0, col="red")
+
+leveneTest(df$fvfm_loss_norm, df$Colony) #significant
+leveneTest(df$fvfm_loss_norm, df$Tank) #not significant
+
+#do nonparametric test with interaction term of colony and tank
+df$colony_tank <- interaction(df$Colony, df$Tank)
+
+kruskal_test(df, fvfm_loss_norm ~ colony_tank) #significant
+
+dunn.test(df$fvfm_loss_norm, df$colony_tank, method = "bonferroni")
+
+
+#dunn's test assumption is that distribution of groups is similar
+ggqqplot(df, "fvfm_loss_norm", facet.by = "colony_tank")
+# i would say those distributions do not look similar
+
+pairwise.wilcox.test(df$fvfm_loss_norm, df$colony_tank, p.adjust.method = "BH")
+
+```
