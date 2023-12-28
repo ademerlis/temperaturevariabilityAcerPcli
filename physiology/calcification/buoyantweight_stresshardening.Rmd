@@ -4,24 +4,111 @@ author: "Allyson DeMerlis"
 date: "4/11/2022"
 output: html_document
 ---
-
+# load libraries and data frames
 ```{r}
-metadata <- readxl::read_xlsx("../metadata.xlsx")
-
 library(tidyverse)
-#install.packages("gsw")
 library(gsw) #for density calculation
 library(rstatix)
 library(ggsignif)
-library(lme4)
-library(emmeans)
+library(dunn.test)
 
-buoyantweights<- metadata %>% dplyr::select(Species, ID, Colony, Treatment, Random_Tank, Bw_initial_raw_mass:bw_final_temp) %>% drop_na(bw_final_date)
+metadata <- readxl::read_xlsx("../metadata.xlsx")
+
+buoyantweights<- metadata %>% 
+    dplyr::select(Species, ID, Colony, Treatment, Treatment_Tank, Bw_initial_raw_mass:bw_final_temp) %>% 
+    mutate(Treatment = case_when(Treatment_Tank == "1" ~ "Untreated",
+                               Treatment_Tank == "2" ~ "Treated",
+                               Treatment_Tank == "3" ~ "Treated",
+                               Treatment_Tank == "4" ~ "Untreated",
+                               Treatment_Tank == "5" ~ "Treated", 
+                               Treatment_Tank == "6" ~ "Untreated",
+                               Treatment_Tank == "7" ~ "Untreated",
+                               Treatment_Tank == "8" ~ "tank_8"))
 
 #sample size
 buoyantweights %>% group_by(Species, Treatment) %>% summarise(count = n())
 ```
 
+
+# Calculating percent change of mass in air for both species, all genotypes together
+```{r}
+#determining seawater density using temperature and salinity (from Patrick Kiel's code)
+#general equation:gsw_rho_t_exact(SA = salinity, t = temp,p = 10.1325)/1000
+
+#initial and final corrected buoyant weight calculations
+buoyantweights %>% 
+  group_by(Species, ID, Treatment, bw_initial_date) %>% 
+  mutate(SWrho_initial = gsw_rho_t_exact(SA = `bw_initial_salinity (ppt)`,
+                         t = bw_initial_temp,
+                         p = 10.1325)/1000) %>% 
+  mutate(CalcMAir_initial = Bw_initial_raw_mass/(1-SWrho_initial/2.93)) %>%  #2.93 is the density of solid aragonite
+  ungroup() %>% 
+  group_by(Species, ID, Treatment, bw_final_date) %>% 
+  mutate(SWrho_final = gsw_rho_t_exact(SA = bw_final_salinity,
+                         t = bw_final_temp,
+                         p = 10.1325)/1000) %>% 
+  mutate(CalcMAir_final = bw_final_raw_mass/(1-SWrho_final/2.93)) %>% 
+  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #drop this one sample because it was tissue sampled
+  ungroup() %>% 
+  mutate(percent_change = ((CalcMAir_final - CalcMAir_initial)/ CalcMAir_initial)*100) %>% 
+  drop_na() -> calc_bw_bothspecies_bothtimepoints
+
+#write_csv(calc_bw_bothspecies_bothtimepoints, file = "calc_bw_bothspecies_bothtimepoints.csv")
+```
+
+
+#boxplot of % growth - all genotypes together
+```{r}
+calc_bw_bothspecies_bothtimepoints %>% 
+  group_by(Treatment) %>% 
+  ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() + 
+   scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y= "% Growth")
+#ggsave("percentgrowth_speciestreatments.pdf")
+```
+
+# stats 
+
+Change to factors
+```{r}
+str(calc_bw_bothspecies_bothtimepoints)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspecies_bothtimepoints
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(percent_change ~ Treatment*Species + Treatment_Tank + Colony, data = calc_bw_bothspecies_bothtimepoints)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+```
+
+use non-parametric method
+```{r}
+#do nonparametric test with interaction term of colony and tank
+calc_bw_bothspecies_bothtimepoints$species_treatment <- interaction(calc_bw_bothspecies_bothtimepoints$Species, calc_bw_bothspecies_bothtimepoints$Treatment)
+
+kruskal_test(calc_bw_bothspecies_bothtimepoints, percent_change ~ species_treatment) #significant
+
+dunn_results <- dunn.test(calc_bw_bothspecies_bothtimepoints$percent_change, calc_bw_bothspecies_bothtimepoints$species_treatment, method = "bonferroni")
+
+as.data.frame(dunn_results) 
+```
+
+
+
+# Calculating percent change of mass in air for both species and all genotypes separated
 ```{r}
 #determining seawater density using temperature and salinity (from Patrick Kiel's code)
 #general equation:gsw_rho_t_exact(SA = salinity, t = temp,p = 10.1325)/1000
@@ -39,170 +126,64 @@ buoyantweights %>%
                          t = bw_final_temp,
                          p = 10.1325)/1000) %>% 
   mutate(CalcMAir_final = bw_final_raw_mass/(1-SWrho_final/2.93)) %>% 
+  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #drop this one sample because it was tissue sampled
   ungroup() %>% 
-  mutate(percent_change = ((CalcMAir_final - CalcMAir_initial)/ CalcMAir_initial)*100) -> calc_bw
+  mutate(percent_change = ((CalcMAir_final - CalcMAir_initial)/ CalcMAir_initial)*100) %>% 
+  drop_na() -> calc_bw_bothspeciesgenet_bothtimepoints
 
-#write_csv(calc_bw, file = "calc_bw.csv")
-
+write_csv(calc_bw_bothspeciesgenet_bothtimepoints, file = "calc_bw_bothspeciesgenet_bothtimepoints.csv")
 ```
 
-
+#boxplot of % growth - genotypes separated
 ```{r}
-#initial weights only (unstandardized)
-
-calc_bw %>% 
-  dplyr::select(Species, ID, Colony, Treatment, Random_Tank, Bw_initial_raw_mass:bw_final_temp) %>% 
-  drop_na(Species) %>% 
-  group_by(Species, ID, Colony, Treatment, bw_initial_date) %>% 
-  mutate(SWrho_initial = gsw_rho_t_exact(SA = `bw_initial_salinity (ppt)`,
-                         t = bw_initial_temp,
-                         p = 10.1325)/1000) %>% 
-  mutate(CalcMAir_initial = Bw_initial_raw_mass/(1-SWrho_initial/2.93)) %>% 
-  group_by(Colony, Treatment, Species) %>% 
-  ggplot(., aes(x=Colony, y = CalcMAir_initial, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() + 
-  facet_wrap(~Species, scales = "free") +
-  scale_fill_manual(values = c("#60DBDB", "#F54A34")) +
-  labs(y = "Mass in Air (g)") +
-  theme(text = element_text(size = 15)) 
-```
-
-```{r}
-#final weights only (unstandardized)
-
-calc_bw %>% 
-  dplyr::select(Species, ID, Colony, Treatment, Random_Tank, bw_final_raw_mass:bw_final_temp) %>% 
-  drop_na(Species) %>% 
-  group_by(Species, ID, Colony, Treatment, bw_final_date) %>% 
-  mutate(SWrho_final = gsw_rho_t_exact(SA = bw_final_salinity,
-                         t = bw_final_temp,
-                         p = 10.1325)/1000) %>% 
-  mutate(CalcMAir_final = bw_final_raw_mass/(1-SWrho_final/2.93)) %>% 
-  group_by(Colony, Treatment, Species) %>% 
-  ggplot(., aes(x=Colony, y = CalcMAir_final, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() + 
-  facet_wrap(~Species, scales = "free") +
-  scale_fill_manual(values = c("#60DBDB", "#F54A34")) +
-  labs(y = "Mass in Air (g)") +
-  theme(text = element_text(size = 15)) 
-```
-
-```{r}
-#final timepoint sample size
-
-calc_bw %>% 
-  dplyr::select(Species, ID, Colony, Treatment, Random_Tank, bw_final_raw_mass:bw_final_temp) %>% 
-  drop_na(Species) %>% 
-  group_by(Species, ID, Colony, Treatment, bw_final_date) %>% 
-  mutate(SWrho_final = gsw_rho_t_exact(SA = bw_final_salinity,
-                         t = bw_final_temp,
-                         p = 10.1325)/1000) %>% 
-  mutate(CalcMAir_final = bw_final_raw_mass/(1-SWrho_final/2.93)) %>% 
-  drop_na(Treatment, bw_final_salinity) %>% 
-  group_by(Treatment, Species) %>% 
-  summarise(count = n())
-```
-
-#with genotypes separated
-```{r}
-calc_bw %>% 
-  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #removed one that had been tissue sampled
+calc_bw_bothspeciesgenet_bothtimepoints %>% 
   group_by(Colony, Treatment) %>% 
   ggplot(., aes(x=Colony, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
   theme_classic() + 
   facet_wrap(~Species, scales = "free") +
-  scale_fill_manual(values = c("#60DBDB", "#F54A34")) +
+    scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 15)) +
   labs(y= "% Growth")
-```
 
-#all genotypes together
-```{r}
-calc_bw %>% 
-  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #removed one that had been tissue sampled
-  group_by(Treatment) %>% 
-  ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() + 
-  scale_fill_manual(values = c("#60DBDB", "#F54A34")) +
-  theme(text = element_text(size = 15)) +
-  labs(y= "% Growth")
 ```
 
 # stats for percent change in buoyant weight
+
+Change to factors
 ```{r}
-#non parametric test (but for just pairwise comparisons, not including fixed or random effects)
+str(calc_bw_bothspeciesgenet_bothtimepoints)
+#make factors: Colony, Puck, Tank, Treatment, Species
 
-calc_bw %>% 
-  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #removed one that had been tissue sampled
-  unite("Combined", Colony:Treatment, remove=F) %>% 
-  wilcox_test(., percent_change ~ Combined, p.adjust.method = 'BH') %>% view()
+calc_bw_bothspeciesgenet_bothtimepoints %>% 
+  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspeciesgenet_bothtimepoints
+```
 
-calc_bw %>% 
-  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #removed one that had been tissue sampled
-  filter(Species == "Acropora cervicornis") %>% 
-  wilcox_test(., percent_change ~ Treatment, p.adjust.method = 'BH')
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(percent_change ~ Treatment*Species*Colony + Treatment_Tank, data = calc_bw_bothspeciesgenet_bothtimepoints)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
 
-calc_bw %>% 
-  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #removed one that had been tissue sampled
-  filter(Species == "Pseudodiploria clivosa") %>% 
-  wilcox_test(., percent_change ~ Treatment, p.adjust.method = 'BH')
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species*Colony, data = treat_model_metrics) #not significant
+```
+use non-parametric method
+```{r}
+#do nonparametric test with interaction term of colony and tank
+calc_bw_bothspeciesgenet_bothtimepoints$species_treatment_colony <- interaction(calc_bw_bothspeciesgenet_bothtimepoints$Species, calc_bw_bothspeciesgenet_bothtimepoints$Treatment, calc_bw_bothspeciesgenet_bothtimepoints$Colony)
+
+kruskal_test(calc_bw_bothspeciesgenet_bothtimepoints, percent_change ~ species_treatment_colony) #significant
+
+dunn_results2 <- dunn.test(calc_bw_bothspeciesgenet_bothtimepoints$percent_change, calc_bw_bothspeciesgenet_bothtimepoints$species_treatment_colony, method = "bonferroni")
+
+as.data.frame(dunn_results2) 
+#no interesting significant differences
 ```
 
 
-#trying GLM for percent change (can't use glmmTMB because that has to be bound by 0-1, and the percent change data is -0.1 - 20 or something)
-```{r}
-#model selection to include fixed and random effects
-
-Pcli_BW <- calc_bw %>% filter(Species == "Pseudodiploria clivosa")
-Acer_BW <- calc_bw %>% filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #removed one that had been tissue sampled
-  filter(Species == "Acropora cervicornis")
-
-#model 1 = full model
-Pcli_BW_GLMM_full <- lmer(percent_change ~ Treatment + (1|Colony) + (1|Random_Tank), data=Pcli_BW)
-summary(Pcli_BW_GLMM_full)
-#how much variance is explained by Colony?
-#add up all the variances then divide Colony by the total
-#about 50% of the variance is due to colony
-
-#visualize residuals
-
-qqnorm(resid(Pcli_BW_GLMM_full)) #ends could be cleaner
-qqline(resid(Pcli_BW_GLMM_full))
-
-#it won't let me do boxplots, i think that's because of lmer function
-
-Pcli_BW_GLMM_Colony <- lmer(percent_change ~ Treatment + (1|Colony), data=Pcli_BW)
-summary(Pcli_BW_GLMM_Colony)
-
-Pcli_BW_GLMM_Tank <- lmer(percent_change ~ Treatment + (1|Random_Tank), data=Pcli_BW)
-summary(Pcli_BW_GLMM_Tank)
-
-#compare models using LRT
-lrt(Pcli_BW_GLMM_Colony, Pcli_BW_GLMM_full) #not significant
-
-lrt(Pcli_BW_GLMM_Tank, Pcli_BW_GLMM_full) #significantly different
-
-anova(Pcli_BW_GLMM_full, type = "II")
-
-#compare to a strictly fixed effects model
-
-BW_Pcli_aov <- aov(percent_change ~ Treatment*Colony, data = Pcli_BW)
-
-qqnorm(BW_Pcli_aov$residuals)
-boxplot(resid(BW_Pcli_aov)~Pcli_BW$Treatment)
-boxplot(resid(BW_Pcli_aov)~Pcli_BW$Colony) #it all looks fine
-
-summary(aov(percent_change ~ Treatment*Colony, data = Pcli_BW)) # colony is much more significant than treatment
-
-TukeyHSD(BW_Pcli_aov)
-
-BW_Acer_aov <- aov(percent_change ~ Treatment*Colony, data = Acer_BW)
-
-summary(BW_Acer_aov)
-```
 
 

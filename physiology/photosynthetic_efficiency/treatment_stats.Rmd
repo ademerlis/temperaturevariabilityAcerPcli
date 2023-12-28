@@ -178,9 +178,6 @@ TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bot
 
 
 
-
-
-
 ## 2b. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
 ```{r, warning = F}
 treatment_normalized_bothspecies%>% 
