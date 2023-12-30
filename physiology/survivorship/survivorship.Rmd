@@ -1,5 +1,5 @@
 ---
-title: "coralmortality"
+title: "survivorship"
 author: "allyson_demerlis"
 date: "2023-02-20"
 output: html_document
@@ -12,6 +12,23 @@ library(tidyverse)
 library(janitor)
 library(rstatix)
 ```
+
+Tidy data 
+
+There are two columns of significance for survivorship, Removed_Date and Mortality_Date. At some point, tank 7 become the recovery tank for corals. If the coral had a lot of tissue on it but looked stressed, it was removed from either the CBASS tank or the slow burn heat stress assay (high temp) into the recovery tank at 28ºC. That date of transfer was recorded in the column "Removed_Date". The column "Mortality_Date" refers to corals that were removed from any tank and died. 
+
+```{r}
+metadata %>% 
+  filter(is.na(Removed_Date)) #71 corals don't have a removed date
+
+metadata %>% 
+  filter(is.na(mortality_date)) #118 corals dont' have a mortality date
+
+metadata %>% 
+  filter(is.na(Removed_Date) & is.na(mortality_date)) #48 corals don't have either. But if they weren't assigned a heat-stress tank, that should indicate that they were removed/died before 06/15/2022
+
+```
+
 
 # CBASS Mortality
 
@@ -43,7 +60,6 @@ mortality_data %>%
   drop_na(Species, Treatment) %>% 
   group_by(Species, Treatment) %>% 
   summarize(count_RTL = n()) -> RTL_species_treatment_count
-
 ```
 
 
@@ -63,7 +79,7 @@ mortality_data %>%
   labs(y="% Mortality due to RTL")  + 
   coord_flip() +
   theme(text = element_text(size = 20)) 
-ggsave("coralmortalityduetoCBASS.png", width = 10, height =6)
+#ggsave("coralmortalityduetoCBASS.png", width = 10, height =6)
 ```
 
 

@@ -22,6 +22,8 @@ library(rcompanion)
 library(nlme)
 library(multcomp)
 library(MASS)
+library(cowplot)
+library(dunn.test)
 ```
 
 # Import and tidy data
@@ -35,908 +37,466 @@ ipam_tidy_data %>%
 
 ipam_tidy_data %>% 
   dplyr::filter(!Treatment_period == "CBASS") %>% 
-  dplyr::select(Puck, Colony, Treatment, Species) %>% 
+  dplyr::select(Tank, Puck, Colony, Treatment, Species) %>% 
   distinct() %>% #283 rows = one coral ID per treatment, no repeats
+  mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
+                               Tank == "2" ~ "Treated",
+                               Tank == "3" ~ "Treated",
+                               Tank == "4" ~ "Untreated",
+                               Tank == "5" ~ "Treated", 
+                               Tank == "6" ~ "Untreated",
+                               Tank == "7" ~ "Untreated",
+                               Tank == "8" ~ "tank_8")) %>% 
   full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
   drop_na() %>% 
-  dplyr::select(Puck:Species, fvfm, Tank:CBASS_temp) -> ipam_tidy_CBASS_treatments
+  rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) -> ipam_tidy_CBASS_treatments
 
-ipam_tidy_CBASS_treatments %>% 
-  dplyr::filter(fvfm < 0.75 & fvfm > 0) %>% #has to be in between 0 and 1
-  dplyr::filter(Species  == "Acervicornis") %>% 
-  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Acer_ipam_CBASS
 ```
 
-# Raw CBASS data + GLMMs
+sample sizes - they're no longer balanced for Acer because of the treated vs. tank 8 separation
+```{r}
+ipam_tidy_CBASS_treatments %>% 
+  mutate(CBASS_Tank = as.factor(CBASS_Tank)) %>% 
+  group_by(Treatment, Colony, Species, CBASS_Tank) %>% 
+  summarise(count = n()) %>% 
+  ggplot(., aes(x=CBASS_Tank, y=count, fill = Treatment)) + 
+  geom_bar(stat="identity", position = position_dodge()) +
+  facet_wrap(~Species+Colony)
+```
 
-## 1. Raw CBASS Fv/Fm by species (boxplot)
+# Species x Treatment
+
+## boxplot
 ```{r}
 ipam_tidy_CBASS_treatments %>% 
   mutate(CBASS_temp = as.factor(CBASS_temp)) %>% 
   ggplot(., aes(x=CBASS_temp, y= fvfm, fill = Treatment)) + 
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
   geom_boxplot() +
   facet_wrap(~Species) + 
   theme_classic()
 ```
 
-## 2. Raw CBASS Fv/Fm by species (curve)
+## curve
 ```{r}
 ipam_tidy_CBASS_treatments %>%  
-  mutate(CBASS_temp=as.numeric(CBASS_temp)) %>% 
 ggplot(., aes(x=CBASS_temp, y = fvfm, color = Treatment)) +
   geom_point() +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_color_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
   geom_smooth(formula = y ~ x, method = "loess", span = 0.9)  + 
   facet_wrap(~Species) +
   theme_classic() +
   labs(x="Temperature (ºC)", y = "Fv/Fm")
 ```
 
-### Statistics 
+## DRC Curve fitting
 
-#### GLM Acer (colony as random effect)
+Convert to factors
 ```{r}
+str(ipam_tidy_CBASS_treatments)
+#make factors: Colony, Puck, Treatment, Species
+
 ipam_tidy_CBASS_treatments %>% 
-  dplyr::filter(fvfm < 0.75 & fvfm > 0) %>% #has to be in between 0 and 1
-  dplyr::filter(Species  == "Acervicornis") %>% 
-  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Acer_ipam_CBASS
+  mutate_at(vars(Colony, Puck, Treatment, Species), factor) -> ipam_tidy_CBASS_treatments
 
-#model 1 = full model Treatment*time_point + (1|Colony) + (1|Tank)
-glmm_AcerCBASS_full <- glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony) + (1|Tank), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
-
-summary(glmm_AcerCBASS_full) 
-
-qqnorm(resid(glmm_AcerCBASS_full))
-qqline(resid(glmm_AcerCBASS_full))
-
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Treatment)
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$CBASS_temp)
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Colony)
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Tank)
-
-#model 2 = Treatment*time_point + (1|Colony)
-AcerCBASS_GLMM_Colony <- glmmTMB::glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
-summary(AcerCBASS_GLMM_Colony)
-
-#need to check normality and variance visually (boxplots of fixed effects only)
-qqnorm(resid(AcerCBASS_GLMM_Colony))
-qqline(resid(AcerCBASS_GLMM_Colony))
-
-boxplot(resid(AcerCBASS_GLMM_Colony)~Acer_ipam_CBASS$Treatment) 
-boxplot(resid(AcerCBASS_GLMM_Colony)~Acer_ipam_CBASS$CBASS_temp)
-boxplot(resid(AcerCBASS_GLMM_Colony)~Acer_ipam_CBASS$Colony)
-
-#model 3 = Treatment*Date + (1|Tank)
-Acer_CBASS_GLMM_Tank <- glmmTMB::glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Tank), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
-summary(Acer_CBASS_GLMM_Tank)
-
-qqnorm(resid(Acer_CBASS_GLMM_Tank)) #looks great
-qqline(resid(Acer_CBASS_GLMM_Tank))
-
-boxplot(resid(Acer_CBASS_GLMM_Tank)~Acer_ipam_CBASS$Treatment) 
-boxplot(resid(Acer_CBASS_GLMM_Tank)~Acer_ipam_CBASS$CBASS_temp)
-boxplot(resid(Acer_CBASS_GLMM_Tank)~Acer_ipam_CBASS$Tank)
-
-lrt(AcerCBASS_GLMM_Colony, glmm_AcerCBASS_full)
-
-lrt(Acer_CBASS_GLMM_Tank, glmm_AcerCBASS_full)
-
-# GLMM Acer Full: AIC =  -428.5 
-# GLMM Acer Colony: AIC =  -430.5, LRT to full model p-value = 1
-# GLMM Acer Tank: AIC =  -423.3, LRT to full model p-value = 0.007379927
-
-#based on AIC and LRT p-values (lowest AIC is best, if p-value is significant that means there is a significant difference in the full model versus the reduced model) ...
-
-#the model with just colony as a fixed effect is not significantly different than the full model. However, tank model is significantly different from full. If I'm interpreting this correctly, it means that the fixed effect of colony is not important to the model, but tank is important to the model. You don't want to have too many variables to try to explain variance.  But the AIC of the full model is better than the AIC of the tank model. I will move forward with the full model.
+#check
+str(ipam_tidy_CBASS_treatments)
 ```
 
 
 ```{r}
-Anova(glmm_AcerCBASS_full, type = "II")
+# Checking sample sizes
+aggregate(fvfm ~ Species + Treatment, data=ipam_tidy_CBASS_treatments, length)
+#sample sizes are large enough to use z-test statistics from compParm()
 
-Acer_CBASS_emm <- emmeans(glmm_AcerCBASS_full, specs = ~ Treatment*CBASS_temp)
-
-as.data.frame(pairs(Acer_CBASS_emm)) -> Acer_CBASS_treatment_posthoc
-
-list <- c("Control CBASS_temp28 - Variable CBASS_temp28", "Control CBASS_temp30 - Variable CBASS_temp30", "Control CBASS_temp32 - Variable CBASS_temp32","Control CBASS_temp33 - Variable CBASS_temp33","Control CBASS_temp34 - Variable CBASS_temp34" ,"Control CBASS_temp35 - Variable CBASS_temp35","Control CBASS_temp36 - Variable CBASS_temp36","Control CBASS_temp37 - Variable CBASS_temp37")
-list <- as.vector(list)
-
-Acer_CBASS_treatment_posthoc %>% 
-  filter(contrast %in% list)
-```
-
-#### GLM Pcli (colony as random effect)
-
-```{r}
-ipam_tidy_CBASS_treatments %>% 
-  dplyr::filter(fvfm < 0.75) %>% 
-  dplyr::filter(Species  == "Pclivosa") %>% 
-  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Pcli_ipam_CBASS
-
-#model 1 = full model Treatment*time_point + (1|Colony) + (1|Tank)
-glmm_PcliCBASS_full <- glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony) + (1|Tank), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-
-summary(glmm_PcliCBASS_full) 
-
-qqnorm(resid(glmm_PcliCBASS_full))
-qqline(resid(glmm_PcliCBASS_full))
-
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Treatment)
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$CBASS_temp)
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Colony)
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Tank)
-
-#model 2 = Treatment*time_point + (1|Colony)
-PcliCBASS_GLMM_Colony <- glmmTMB::glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Colony), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-summary(PcliCBASS_GLMM_Colony)
-
-#need to check normality and variance visually (boxplots of fixed effects only)
-qqnorm(resid(PcliCBASS_GLMM_Colony))
-qqline(resid(PcliCBASS_GLMM_Colony))
-
-boxplot(resid(PcliCBASS_GLMM_Colony)~Pcli_ipam_CBASS$Treatment) 
-boxplot(resid(PcliCBASS_GLMM_Colony)~Pcli_ipam_CBASS$CBASS_temp)
-boxplot(resid(PcliCBASS_GLMM_Colony)~Pcli_ipam_CBASS$Colony)
-
-#model 3 = Treatment*Date + (1|Tank)
-Pcli_CBASS_GLMM_Tank <- glmmTMB::glmmTMB(fvfm ~ Treatment*CBASS_temp + (1|Tank), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-summary(Pcli_CBASS_GLMM_Tank)
-
-qqnorm(resid(Pcli_CBASS_GLMM_Tank))
-qqline(resid(Pcli_CBASS_GLMM_Tank))
-
-boxplot(resid(Pcli_CBASS_GLMM_Tank)~Pcli_ipam_CBASS$Treatment) 
-boxplot(resid(Pcli_CBASS_GLMM_Tank)~Pcli_ipam_CBASS$CBASS_temp)
-boxplot(resid(Pcli_CBASS_GLMM_Tank)~Pcli_ipam_CBASS$Tank)
-
-lrt(PcliCBASS_GLMM_Colony, glmm_PcliCBASS_full)
-
-lrt(Pcli_CBASS_GLMM_Tank, glmm_PcliCBASS_full)
-
-# GLMM Pcli Full: AIC =  -504.0
-# GLMM Pcli Colony: AIC =  -506, LRT to full model p-value = 1
-# GLMM Pcli Tank: AIC =  -477.2, LRT to full model p-value = 8.420974e-08
-
-#based on AIC and LRT p-values (lowest AIC is best, if p-value is significant that means there is a significant difference in the full model versus the reduced model) ...
-
-#the model with just colony as a fixed effect is not significantly different than the full model. However, tank model is significantly different from full. If I'm interpreting this correctly, it means that the fixed effect of colony is not important to the model, but tank is important to the model. You don't want to have too many variables to try to explain variance.  But the AIC of the full model is better than the AIC of the tank model. I will move forward with the full model.
-
-```
-
-```{r}
-Anova(glmm_PcliCBASS_full, type = "II")
-
-Pcli_CBASS_emm <- emmeans(glmm_PcliCBASS_full, specs = ~ Treatment*CBASS_temp)
-
-as.data.frame(pairs(Pcli_CBASS_emm)) -> Pcli_CBASS_treatment_posthoc
-
-list <- c("Control CBASS_temp28 - Variable CBASS_temp28", "Control CBASS_temp30 - Variable CBASS_temp30", "Control CBASS_temp32 - Variable CBASS_temp32","Control CBASS_temp33 - Variable CBASS_temp33","Control CBASS_temp34 - Variable CBASS_temp34" ,"Control CBASS_temp35 - Variable CBASS_temp35","Control CBASS_temp36 - Variable CBASS_temp36","Control CBASS_temp37 - Variable CBASS_temp37")
-list <- as.vector(list)
-
-Pcli_CBASS_treatment_posthoc %>% 
-  filter(contrast %in% list)
+aggregate(fvfm ~ Species + Treatment + Colony, data=ipam_tidy_CBASS_treatments, length)
 ```
 
 
+```{r}
+ipam_tidy_CBASS_treatments$Species_Treatment <- interaction(ipam_tidy_CBASS_treatments$Species, ipam_tidy_CBASS_treatments$Treatment)
 
-## 3c. Raw CBASS Fv/Fm by colony (boxplot)
+ipam_tidy_CBASS_treatments$CBASS_temp <- as.numeric(ipam_tidy_CBASS_treatments$CBASS_temp) #needs to be numeric or drm function won't run
+
+
+DRC_species_treatment = drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments, curveid = Species_Treatment,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRC_species_treatment)
+plot(DRC_species_treatment)
+
+#See example 3 from the supplementary info of drc package creators Ritz et al. 2015 (https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0146021)
+
+#compParm compares the selected coefficient by means of a z-test
+compParm(DRC_species_treatment, 'ed50')
+as.data.frame(compParm(DRC_species_treatment, 'ed50', "-")) %>% 
+  write.csv("DRC_species_treatment_ed50_stats.csv")
+
+compParm(DRC_species_treatment, 'hill')
+as.data.frame(compParm(DRC_species_treatment, 'hill', "-")) %>% 
+  write.csv("DRC_species_treatment_hill_stats.csv")
+
+#use these p-values for the boxplot statistics
+```
+
+
+### ED50s
+```{r}
+coeff <- as.data.frame(DRC_species_treatment$coefficients) #hill, max, and ed50 values
+
+coeff %>% 
+  rownames_to_column(var = "coeff_species_treatment") %>% 
+  filter(grepl("ed50", coeff_species_treatment)) -> ED50s
+
+ED50s
+```
+
+Make predicted datasets for each species x treatment interaction
+
+Acer
+```{r}
+untreated_Acer <- drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis" & ipam_tidy_CBASS_treatments$Treatment=="Untreated",], fct = LL.3())
+summary(untreated_Acer)
+plot(untreated_Acer)
+
+treated_Acer <- drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis" & ipam_tidy_CBASS_treatments$Treatment=="Treated",], fct = LL.3())
+summary(treated_Acer)
+plot(treated_Acer)
+
+tank8_Acer <- drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis" & ipam_tidy_CBASS_treatments$Treatment=="tank_8",], fct = LL.3())
+summary(tank8_Acer)
+plot(tank8_Acer)
+
+untreated_Acer_preddata = data.frame(temp = seq(27,39, length.out = 100))
+untreated_Acer_pred = as.data.frame(predict(untreated_Acer, newdata = untreated_Acer_preddata, interval = 'confidence'))
+untreated_Acer_preddata = data.frame(untreated_Acer_preddata, fvfm = untreated_Acer_pred$Prediction, Lower = untreated_Acer_pred$Lower, Upper = untreated_Acer_pred$Upper)
+
+treated_Acer_preddata = data.frame(temp = seq(27,39, length.out = 100))
+treated_Acer_pred = as.data.frame(predict(treated_Acer, newdata = treated_Acer_preddata, interval = 'confidence'))
+treated_Acer_preddata = data.frame(treated_Acer_preddata, fvfm = treated_Acer_pred$Prediction, Lower = treated_Acer_pred$Lower, Upper = treated_Acer_pred$Upper)
+
+tank8_Acer_preddata = data.frame(temp = seq(27,39, length.out = 100))
+tank8_Acer_pred = as.data.frame(predict(tank8_Acer, newdata = tank8_Acer_preddata, interval = 'confidence'))
+tank8_Acer_preddata = data.frame(tank8_Acer_preddata, fvfm = tank8_Acer_pred$Prediction, Lower = tank8_Acer_pred$Lower, Upper = tank8_Acer_pred$Upper)
+```
+
+plot
+```{r}
+g1 <- ggplot() +
+  geom_jitter(data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis",], aes(x = CBASS_temp, y = fvfm, color =   Treatment), size = 1, width = 0.25) +
+  scale_x_continuous(limits=c(26,40), breaks=c(26,28,30,32,34,36,38)) +
+  scale_y_continuous(limits=c(-0.1, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
+  geom_line(data = tank8_Acer_preddata, aes(x = temp, y = fvfm), color = 'black', show.legend = FALSE) +
+  geom_ribbon(data = tank8_Acer_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = 'black', linetype=2, alpha = 0.2) +
+  geom_vline(data = ED50s, aes(xintercept = 36.11790), color = 'grey', show.legend = FALSE) +
+  geom_text(data = ED50s, aes(label = "ED50 = 36.12"), x = 38, y = 0.7, show.legend = FALSE, color = 'black') +
+  geom_line(data = untreated_Acer_preddata, aes(x = temp, y = fvfm), color = "#60DBDB", show.legend = FALSE) +
+  geom_ribbon(data = untreated_Acer_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = "#60DBDB", linetype=2, alpha = 0.2) +
+  geom_vline(data = ED50s, aes(xintercept = 36.15546), color = "#60DBDB", show.legend = FALSE) +
+  geom_text(data = ED50s, aes(label = "ED50 = 36.16"), x = 38, y = 0.65, show.legend = FALSE, color = "#60DBDB") +
+  geom_line(data = treated_Acer_preddata, aes(x = temp, y = fvfm), color = '#F54A34', show.legend = FALSE) +
+  geom_ribbon(data = treated_Acer_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#F54A34', linetype=2, alpha = 0.2) +
+  geom_vline(data = ED50s, aes(xintercept = 36.24109), color = '#F54A34', show.legend = FALSE) +
+  geom_text(data = ED50s, aes(label = "ED50 = 36.24"), x = 38, y = 0.6, show.legend = FALSE, color = '#F54A34') +
+  scale_color_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("black", "#F54A34", "#60DBDB")) +
+  ylab("Fv/Fm") +
+  xlab("Temperature (°C)") +
+  theme_bw() +
+  labs(title = "A.cervicornis")
+```
+
+
+Pcli
+```{r}
+untreated_Pcli <- drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Pclivosa" & ipam_tidy_CBASS_treatments$Treatment=="Untreated",], fct = LL.3())
+summary(untreated_Pcli)
+plot(untreated_Pcli)
+
+treated_Pcli <- drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Pclivosa" & ipam_tidy_CBASS_treatments$Treatment=="Treated",], fct = LL.3())
+summary(treated_Pcli)
+plot(treated_Pcli)
+
+untreated_Pcli_preddata = data.frame(temp = seq(27,39, length.out = 100))
+untreated_Pcli_pred = as.data.frame(predict(untreated_Pcli, newdata = untreated_Pcli_preddata, interval = 'confidence'))
+untreated_Pcli_preddata = data.frame(untreated_Pcli_preddata, fvfm = untreated_Pcli_pred$Prediction, Lower = untreated_Pcli_pred$Lower, Upper = untreated_Pcli_pred$Upper)
+
+treated_Pcli_preddata = data.frame(temp = seq(27,39, length.out = 100))
+treated_Pcli_pred = as.data.frame(predict(treated_Pcli, newdata = treated_Pcli_preddata, interval = 'confidence'))
+treated_Pcli_preddata = data.frame(treated_Pcli_preddata, fvfm = treated_Pcli_pred$Prediction, Lower = treated_Pcli_pred$Lower, Upper = treated_Pcli_pred$Upper)
+```
+
+
+plot
+```{r}
+g2<- ggplot() +
+  geom_jitter(data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Pclivosa",], aes(x = CBASS_temp, y = fvfm, color = Treatment), size = 1, width = 0.25) +
+  scale_x_continuous(limits=c(26,40), breaks=c(26,28,30,32,34,36,38)) +
+  scale_y_continuous(limits=c(-0.1, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
+  geom_line(data = untreated_Pcli_preddata, aes(x = temp, y = fvfm), color = "#60DBDB", show.legend = FALSE) +
+  geom_ribbon(data = untreated_Pcli_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = "#60DBDB", linetype=2, alpha = 0.2) +
+  geom_vline(data = ED50s, aes(xintercept = 36.45646), color = "#60DBDB", show.legend = FALSE) +
+  geom_text(data = ED50s, aes(label = "ED50 = 36.46"), x = 38, y = 0.65, show.legend = FALSE, color = "#60DBDB") +
+  geom_line(data = treated_Pcli_preddata, aes(x = temp, y = fvfm), color = '#F54A34', show.legend = FALSE) +
+  geom_ribbon(data = treated_Pcli_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#F54A34', linetype=2, alpha = 0.2) +
+  geom_vline(data = ED50s, aes(xintercept = 36.52786), color = '#F54A34', show.legend = FALSE) +
+  geom_text(data = ED50s, aes(label = "ED50 = 36.53"), x = 38, y = 0.6, show.legend = FALSE, color = '#F54A34') +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c( "#F54A34", "#60DBDB")) +
+  ylab("Fv/Fm") +
+  xlab("Temperature (°C)") +
+  theme_bw() +
+  labs(title = "P.clivosa")
+```
+
+
+## Final DRC plots
+```{r}
+plot_grid(g1, g2)
+ggsave("ED50_DRC_bothspecies.pdf", width = 15, height = 7)
+```
+
+# Colony x Treatment
+
+## boxplot
 
 ```{r}
-ipam_tidy_data %>% 
-  dplyr::filter(Treatment_period == "CBASS") %>% 
-  dplyr::select(!Treatment) -> ipam_tidy_CBASS
-
-ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>% 
-  dplyr::select(Puck, Colony, Treatment, Species) %>% 
-  distinct() %>% #283 rows = one coral ID per treatment, no repeats
-  full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
-  drop_na() %>% 
-  dplyr::select(Puck:Species, fvfm, Tank:CBASS_temp) -> ipam_tidy_CBASS_treatments
-
-ipam_tidy_CBASS_treatments$Colony <- factor(ipam_tidy_CBASS_treatments$Colony, levels = c('MB-B', 'BC-8b', 'SI-C', 'A', 'B', 'C'))
-
 ipam_tidy_CBASS_treatments %>% 
   mutate(CBASS_temp = as.factor(CBASS_temp)) %>% 
   ggplot(., aes(x=CBASS_temp, y= fvfm, fill = Treatment)) + 
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
   geom_boxplot() +
-  facet_wrap(~Colony+Species) +
+  facet_wrap(~Species+Colony) +
   theme_classic()
 ```
 
-## 3d. Raw CBASS Fv/Fm by colony (curve)
+## curve
 ```{r}
 ipam_tidy_CBASS_treatments %>%  
   mutate(CBASS_temp=as.numeric(CBASS_temp)) %>% 
 ggplot(., aes(x=CBASS_temp, y = fvfm, color = Treatment)) +
   geom_point() +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  scale_color_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
   geom_smooth(formula = y ~ x, method = "loess", span = 0.9)  + 
-  facet_wrap(~Colony+Species) +
+  facet_wrap(~Species+Colony) +
   theme_classic() +
   labs(x="Temperature (ºC)", y = "Fv/Fm")
 ```
 
+## DRC Curve fitting
 
-### Statistics 
-
-#### GLM Acer colony co-variate
-
-First need to make column for combination of colony_treatment
+Acer
 ```{r}
 ipam_tidy_CBASS_treatments %>% 
-  dplyr::filter(fvfm < 0.75 & fvfm > 0) %>% #has to be in between 0 and 1
-  dplyr::filter(Species  == "Acervicornis") %>% 
-  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Acer_ipam_CBASS
+  filter(Species == "Acervicornis") -> Acer_CBASS
 
-Acer_ipam_CBASS$colony_treatment<-interaction(Acer_ipam_CBASS$Colony, Acer_ipam_CBASS$Treatment)
-```
+Acer_CBASS$Colony_Treatment <- interaction(Acer_CBASS$Colony, Acer_CBASS$Treatment)
 
-```{r}
-#model 1 = full model colony_treatment + (1|Tank)
-glmm_Acer_full <- glmmTMB(fvfm ~ colony_treatment + (1|Tank), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
+str(Acer_CBASS)
 
-summary(glmm_Acer_full) 
-
-qqnorm(resid(glmm_Acer_full))
-qqline(resid(glmm_Acer_full))
-
-boxplot(resid(glmm_Acer_full)~Acer_ipam_CBASS$Treatment)
-boxplot(resid(glmm_Acer_full)~Acer_ipam_CBASS$Colony)
-boxplot(resid(glmm_Acer_full)~Acer_ipam_CBASS$Tank)
-
-#model 2 = Treatment*time_point + (1|Colony)
-Acer_fvfm_GLMM_notank <- glmmTMB::glmmTMB(fvfm ~ colony_treatment, family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
-summary(Acer_fvfm_GLMM_notank)
-
-qqnorm(resid(Acer_fvfm_GLMM_notank)) #big yikes
-qqline(resid(Acer_fvfm_GLMM_notank))
-
-boxplot(resid(Acer_fvfm_GLMM_notank)~Acer_ipam_CBASS$Treatment) 
-boxplot(resid(Acer_fvfm_GLMM_notank)~Acer_ipam_CBASS$Colony)
-
-lrt(Acer_fvfm_GLMM_notank, glmm_Acer_full) #significant
-
-# GLMM Acer Full: AIC =   -405.7
-# GLMM Acer no tank: AIC =  -131.5
-
-#based on AIC and LRT p-values (lowest AIC is best, if p-value is significant that means there is a significant difference in the full model versus the reduced model), the full model is the best model.
-```
-
-
-```{r}
-Anova(glmm_Acer_full, type = "II")
-
-emmeans(glmm_Acer_full, pairwise ~ colony_treatment)
-
-summary(glht(glmm_Acer_full, linfct=mcp(colony_treatment="Tukey")), test = adjusted(type = "bonferroni"))
-```
-
-
-#### GLM Pcli colony co-variate
-
-First need to make column for combination of colony_treatment
-```{r}
-ipam_tidy_CBASS_treatments %>% 
-  dplyr::filter(fvfm < 0.75) %>% 
-  dplyr::filter(Species  == "Pclivosa") %>% 
-  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Pcli_ipam_CBASS
-
-Pcli_ipam_CBASS$colony_treatment<-interaction(Pcli_ipam_CBASS$Colony, Pcli_ipam_CBASS$Treatment)
-```
-
-```{r}
-#model 1 = full model colony_treatment + (1|Tank)
-glmm_Pcli_full <- glmmTMB(fvfm ~ colony_treatment + (1|Tank), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-
-summary(glmm_Pcli_full) 
-
-qqnorm(resid(glmm_Pcli_full))
-qqline(resid(glmm_Pcli_full))
-
-boxplot(resid(glmm_Pcli_full)~Pcli_ipam_CBASS$Treatment)
-boxplot(resid(glmm_Pcli_full)~Pcli_ipam_CBASS$Colony)
-boxplot(resid(glmm_Pcli_full)~Pcli_ipam_CBASS$Tank)
-
-#model 2 = Treatment*time_point + (1|Colony)
-Pcli_fvfm_GLMM_notank <- glmmTMB::glmmTMB(fvfm ~ colony_treatment, family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-summary(Pcli_fvfm_GLMM_notank)
-
-qqnorm(resid(Pcli_fvfm_GLMM_notank)) #big yikes
-qqline(resid(Pcli_fvfm_GLMM_notank))
-
-boxplot(resid(Pcli_fvfm_GLMM_notank)~Pcli_ipam_CBASS$Treatment) 
-boxplot(resid(Pcli_fvfm_GLMM_notank)~Pcli_ipam_CBASS$Colony)
-
-lrt(Pcli_fvfm_GLMM_notank, glmm_Pcli_full) #significant
-
-# GLMM Pcli Full: AIC =   -491.5
-# GLMM Pcli no tank: AIC =  -202.9
-
-#based on AIC and LRT p-values (lowest AIC is best, if p-value is significant that means there is a significant difference in the full model versus the reduced model), the full model is the best model.
-```
-
-
-```{r}
-Anova(glmm_Pcli_full, type = "II")
-
-emmeans(glmm_Pcli_full, pairwise ~ colony_treatment)
-
-summary(glht(glmm_Acer_full, linfct=mcp(colony_treatment="Tukey")), test = adjusted(type = "bonferroni"))
-```
-
-
-
-
-
-# Ross Cunning's DRC analysis
-
-```{r}
-# Define dose-response curves using same constraints
-ll3 <- function(data) {
-  drm(fvfm ~ CBASS_temp, data = data,
-      fct = LL.3(names = c("hill", "max", "ED50")),
-      upperl = c(120, 0.72, 40),
-      lowerl = c(10, 0.01, 30))} 
-
-# I changed the max value from 0.55 to 0.01 so I don't get NaN for std.error, statistic, or p-value.
-#these are the limits Ross had set in his code:
-#upperl = c(120, 0.72, 40),
-#lowerl = c(10, 0.55, 30))
-
-tryll3 <- possibly(ll3, otherwise = NULL)
-
-# Fit model to each coral, get parameters, fitted values, and residuals
-initmods_species <- ipam_tidy_CBASS_treatments %>%
-  dplyr::select(!c(Colony, Tank, Date, Treatment_period)) %>% 
-  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
-  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
-  # Get model parameters and fitted values/residuals
-  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
-         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
-
-# Extract ed50 parameter values for each Species and Treatment combination from model fits
-ed50_species <- initmods_species %>% 
-  unnest(data) %>% 
-  dplyr::select(Species, Treatment, pars) %>%
-  unnest(pars) %>%
-  filter(term == "ED50")
-
-ed50_species %>% distinct() -> ed50_species
-
-# Collect raw data, fitted values, and ed50 estimates
-fvals_species <- initmods_species %>%
-  dplyr::select(Species, Treatment, pred) %>%
-  unnest(pred) %>%
-  full_join(ed50_species) %>%
-  rename(ed50 = estimate)
-```
-
-
-```{r}
-ggplot(data = fvals_species, aes(x=CBASS_temp, y=fvfm)) +
-  geom_point(data = fvals_species, aes(color=Treatment)) +
-    geom_line(data = drop_na(fvals_species, .fitted),
-              aes(y = .fitted)) +
-    geom_vline(data = distinct(fvals_species, Species, Treatment, ed50), 
-               aes(xintercept = ed50), 
-               lwd = 0.2, lty = 2) +
-    geom_text(data = distinct(fvals_species, Species, Treatment, ed50),
-              aes(x = ed50, y = 0.05, label = round(ed50, 2)), 
-              hjust = 1, nudge_x = -0.2, size = 3) +
-    facet_grid(vars(Treatment), vars(Species)) +
-  labs(x = "Temperature (C)", y = "Fv/Fm") +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_bw() +
-  theme(text = element_text(size = 14)) 
-```
-
-## 3f. Hill slope (i wrote this)
-
-### DRC for Species
-```{r}
-# Define dose-response curves using same constraints
-ll3 <- function(data) {
-  drm(fvfm ~ CBASS_temp, data = data,
-      fct = LL.3(names = c("hill", "max", "ED50")),
-      upperl = c(120, 0.72, 40),
-      lowerl = c(10, 0.01, 30))} 
-
-# I changed the max value from 0.55 to 0.01 so I don't get NaN for std.error, statistic, or p-value.
-#these are the limits Ross had set in his code:
-#upperl = c(120, 0.72, 40),
-#lowerl = c(10, 0.55, 30))
-
-tryll3 <- possibly(ll3, otherwise = NULL)
-
-# Fit model to each coral, get parameters, fitted values, and residuals
-initmods_species <- ipam_tidy_CBASS_treatments %>%
-  dplyr::select(!c(Colony, Tank, Date, Treatment_period)) %>% 
-  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
-  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
-  # Get model parameters and fitted values/residuals
-  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
-         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
-
-# Extract ed50 parameter values for each Species and Treatment combination from model fits
-hill_species <- initmods_species %>% 
-  unnest(data) %>% 
-  dplyr::select(Species, Treatment, pars) %>%
-  unnest(pars) %>%
-  filter(term == "hill")
-
-hill_species %>% distinct() -> hill_species
-
-# Collect raw data, fitted values, and ed50 estimates
-fvals_species_hill <- initmods_species %>%
-  dplyr::select(Species, Treatment, pred) %>%
-  unnest(pred) %>%
-  full_join(hill_species) %>%
-  rename(hill = estimate)
-```
-
-## 3f. ED50 DRM curves for raw fv/fm with colony 
-
-### DRC for Colony
-```{r, include = F}
-# Define dose-response curves using same constraints
-ll3 <- function(data) {
-  drm(fvfm ~ CBASS_temp, data = data,
-      fct = LL.3(names = c("hill", "max", "ED50")),
-      upperl = c(120, 0.72, 40),
-      lowerl = c(10, 0.01, 30))} 
-
-# when I remove the lower limit from the ll3 function, SI-C variable ED50 is 36.25712. But when I keep both limits, it is 35.96952 but the std.error, statistic, and p-value are NaN. I narrowed it down and it is an issue with the "max" value. I changed it from 0.55 to 0.01, and I get 36.25712 for the ED50. Below are the upper and lower limits set by Ross in his code.
-#upperl = c(120, 0.72, 40),
-#lowerl = c(10, 0.55, 30))
-
-tryll3 <- possibly(ll3, otherwise = NULL)
-
-# Fit model to each coral, get parameters, fitted values, and residuals
-initmods_colony <- ipam_tidy_CBASS_treatments %>%
-  dplyr::select(!c(Tank, Date, Treatment_period)) %>% 
-  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
-  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
-  # Get model parameters and fitted values/residuals
-  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
-         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
-
-# Extract ed50 parameter values for each Colony and Treatment combination from model fits
-ed50_colony <- initmods_colony%>% 
-  unnest(data) %>% 
-  dplyr::select(Colony, Treatment, pars) %>%
-  unnest(pars) %>%
-  filter(term == "ED50")
-
-ed50_colony %>% distinct() -> ed50_colony
-
-# Collect raw data, fitted values, and ed50 estimates
-fvals_colony <- initmods_colony %>%
-  dplyr::select(Species, Treatment, Colony, pred) %>%
-  unnest(pred) %>%
-  full_join(ed50_colony) %>%
-  rename(ed50 = estimate)
-```
-
-
-```{r}
-fvals_colony$Colony <- factor(fvals_colony$Colony, levels = c('MB-B', 'BC-8b', 'SI-C', 'A', 'B', 'C'))
-
-fvals_colony
-
-ggplot(data = fvals_colony, aes(x=CBASS_temp, y=fvfm)) +
-  geom_point(data = fvals_colony, aes(color=Treatment)) +
-    geom_line(data = drop_na(fvals_colony, .fitted),
-              aes(y = .fitted)) +
-    geom_vline(data = distinct(fvals_colony, Colony, Treatment, ed50), 
-               aes(xintercept = ed50), 
-               lwd = 0.2, lty = 2) +
-    geom_text(data = distinct(fvals_colony, Colony, Treatment, ed50),
-              aes(x = ed50, y = 0.05, label = round(ed50, 2)), 
-              hjust = 1, nudge_x = -0.2, size = 3) +
-    facet_grid(vars(Treatment), vars(Colony)) +
-  labs(x = "Temperature (C)", y = "Fv/Fm") +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_bw() +
-  theme(text = element_text(size = 14)) 
-```
-
-### ED50 Statistical test 
-
-Take all genotypes together and compare the mean ED50 of treatment (that way you have multiple samples to add to the total group mean)
-
-Kruskall-wallis test
-```{r}
-#Acer
-ed50_colony %>% 
-  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
-kruskal_test(data = ., estimate ~ Treatment) #not significant
-
-
-#Pcli
-ed50_colony %>% 
-  filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
-kruskal_test(data = ., estimate ~ Treatment) #not significant
-```
-
-### Independent t-test for Acer
-```{r}
-ed50_colony %>% 
-  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
-  group_by(Treatment) %>% 
-  shapiro_test(estimate) #normality test not significant
-
-ed50_colony %>% 
-  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
-  levene_test(estimate ~ Treatment) # variances are equal (p-value not significant)
-
-ed50_colony %>% 
-  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
-  t_test(estimate ~ Treatment) #ed50s are not significantly different for Acer
-```
-
-### Independent t-test for Pcli
-```{r}
-ed50_colony %>% 
-  filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
-  group_by(Treatment) %>% 
-  shapiro_test(estimate) #normality test not significant
-
-ed50_colony %>% 
-   filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
-  levene_test(estimate ~ Treatment) # variances are equal (p-value not significant)
-
-ed50_colony %>% 
-   filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
-  t_test(estimate ~ Treatment) #ed50s are not significantly different for Pcli
-```
-
-
-
-
-
-# Rachel Alderice DRC analysis
-
-```{r}
-#curve ID treatment - filter for control
-ipam_tidy_CBASS_treatments %>% filter(Treatment == "Control") -> control
-
-DRCpam_control = drm(fvfm ~ CBASS_temp, data = control, curveid = Species,
+DRC_Acer_colony_treatment = drm(fvfm ~ CBASS_temp, data = Acer_CBASS, curveid = Colony_Treatment,
              fct = LL.3(names = c('hill', 'max', 'ed50')))
-summary(DRCpam_control)
-compParm(DRCpam_control, 'ed50')
-compParm(DRCpam_control, 'ed50', "-")
-plot(DRCpam_control)
+summary(DRC_Acer_colony_treatment)
+plot(DRC_Acer_colony_treatment)
+compParm(DRC_Acer_colony_treatment, 'ed50')
+compParm(DRC_Acer_colony_treatment, 'ed50', "-")
 
-#significant!!
+compParm(DRC_Acer_colony_treatment, 'hill')
+compParm(DRC_Acer_colony_treatment, 'hill', "-")
 
-compParm(DRCpam_control, 'hill')
-compParm(DRCpam_control, 'hill', "-")
+Acer_coeff <- as.data.frame(DRC_Acer_colony_treatment$coefficients)
 
-#curve ID treatment - filter for variable
-ipam_tidy_CBASS_treatments %>% filter(Treatment == "Variable") -> variable
+Acer_coeff %>% 
+  rownames_to_column(var = "coeff_colony_treatment") %>% 
+  filter(grepl("ed50", coeff_colony_treatment)) %>% 
+  rename(ED50 = `DRC_Acer_colony_treatment$coefficients`) %>% 
+  separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Acer_ED50s
 
-DRCpam_variable = drm(fvfm ~ CBASS_temp, data = variable, curveid = Species,
-             fct = LL.3(names = c('hill', 'max', 'ed50')))
-summary(DRCpam_variable)
-compParm(DRCpam_variable, 'ed50')
-#significant!
-compParm(DRCpam_variable, 'ed50', "-")
-plot(DRCpam_variable)
+#statistics
+Acer_model <- lm(ED50 ~ Treatment, data = Acer_ED50s)
+Acer_model_metrics <- augment(Acer_model)
 
-compParm(DRCpam_variable, 'hill')
-compParm(DRCpam_variable, 'hill', "-")
-```
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_model_metrics$.resid) # not significant
 
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Acer_model_metrics) #not significant
 
-# Evensen DRC analysis
-
-```{r}
-Acer_ipam_CBASS -> Acer_CBASS
-Acer_CBASS$CBASS_temp <- as.numeric(as.character(Acer_CBASS$CBASS_temp))
-CBASS_Acer_DRC <- drm(fvfm ~ CBASS_temp, data = Acer_CBASS, curveid = Treatment, fct = LL.3(names = c('hill', 'max', 'ed50')))
-mselect(CBASS_Acer_DRC, list(LL.2(), LL.4(), LL.5(), LL2.2(), LL2.3(), LL2.4(), LL2.5(), AR.2(), AR.3(), EXD.2(), EXD.3()), icfct = AIC)
-modelFit(CBASS_Acer_DRC)
-summary(CBASS_Acer_DRC)
-plot(CBASS_Acer_DRC)
-
-#extract ED50
-Acer_CBASS_variable_coeff<-CBASS_Acer_DRC$coefficients[5]
-Acer_CBASS_control_coeff<-CBASS_Acer_DRC$coefficients[6]
-
-Acer_coeff <- data.frame(Acer_CBASS_variable_coeff,Acer_CBASS_control_coeff)
-
-control_CBASS <- drm(fvfm ~ CBASS_temp, data = Acer_CBASS[Acer_CBASS$Treatment=="Control",], fct = LL.3())
-summary(control_CBASS)
-plot(control_CBASS)
-
-variable_CBASS <- drm(fvfm ~ CBASS_temp, data = Acer_CBASS[Acer_CBASS$Treatment=="Variable",], fct = LL.3())
-summary(variable_CBASS)
-plot(variable_CBASS)
-
-control_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
-control_CBASS_pred = as.data.frame(predict(control_CBASS, newdata = control_CBASS_preddata, interval = 'confidence'))
-control_CBASS_preddata = data.frame(control_CBASS_preddata, fvfm = control_CBASS_pred$Prediction, Lower = control_CBASS_pred$Lower, Upper = control_CBASS_pred$Upper)
-
-variable_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
-variable_CBASS_pred = as.data.frame(predict(variable_CBASS, newdata = variable_CBASS_preddata, interval = 'confidence'))
-variable_CBASS_preddata = data.frame(variable_CBASS_preddata, fvfm = variable_CBASS_pred$Prediction, Lower = variable_CBASS_pred$Lower, Upper = variable_CBASS_pred$Upper)
-
-
-ggplot() +
-  geom_jitter(data = Acer_CBASS, aes(x = CBASS_temp, y = fvfm, color = Treatment), size = 1, width = 0.25) +
-  scale_x_continuous(limits=c(26,40), breaks=c(26,28,30,32,34,36,38)) +
-  scale_y_continuous(limits=c(-0.1, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
-  geom_line(data = control_CBASS_preddata, aes(x = temp, y = fvfm), color = '#66ccfe', show.legend = FALSE) +
-  geom_ribbon(data = control_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#66ccfe', linetype=2, alpha = 0.2) +
-  geom_vline(data = Acer_coeff, aes(xintercept = Acer_CBASS_control_coeff), color = '#66ccfe', show.legend = FALSE) +
-  geom_text(data = Acer_coeff, aes(label = Acer_CBASS_control_coeff), x = 30, y = 0.2, show.legend = FALSE, color = '#66ccfe') +
- 
-  geom_line(data = variable_CBASS_preddata, aes(x = temp, y = fvfm), color = '#e92000', show.legend = FALSE) +
-  geom_ribbon(data = variable_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#e92000', linetype=2, alpha = 0.2) +
-  geom_vline(data = Acer_coeff, aes(xintercept = Acer_CBASS_variable_coeff), color = '#e92000', show.legend = FALSE) +
-  geom_text(data = Acer_coeff, aes(label = Acer_CBASS_variable_coeff), x = 30, y = 0.1, show.legend = FALSE, color = '#e92000') +
-
-  scale_color_manual(values=c('#66ccfe','#e92000')) +
-  ylab("Fv/Fm") +
-  xlab("Temperature (°C)") +
-  theme_bw() +
-  labs(title = "Acervicornis")
+Acer_aov <- aov(ED50 ~ Treatment, data = Acer_ED50s)
+summary(Acer_aov) #not significant
 ```
 
 Pcli
 ```{r}
-Pcli_ipam_CBASS -> Pcli_CBASS
-Pcli_CBASS$CBASS_temp <- as.numeric(as.character(Pcli_CBASS$CBASS_temp))
-CBASS_Pcli_DRC <- drm(fvfm ~ CBASS_temp, data = Pcli_CBASS, curveid = Treatment, fct = LL.3(names = c('hill', 'max', 'ed50')))
-mselect(CBASS_Pcli_DRC, list(LL.2(), LL.4(), LL.5(), LL2.2(), LL2.3(), LL2.4(), LL2.5(), AR.2(), AR.3(), EXD.2(), EXD.3()), icfct = AIC)
-modelFit(CBASS_Pcli_DRC)
-summary(CBASS_Pcli_DRC)
-plot(CBASS_Pcli_DRC)
+ipam_tidy_CBASS_treatments %>% 
+  filter(Species == "Pclivosa") -> Pcli_CBASS
 
-#extract ED50
-Pcli_CBASS_variable_coeff<-CBASS_Pcli_DRC$coefficients[5]
-Pcli_CBASS_control_coeff<-CBASS_Pcli_DRC$coefficients[6]
+Pcli_CBASS$Colony_Treatment <- interaction(Pcli_CBASS$Colony, Pcli_CBASS$Treatment)
 
-Pcli_coeff <- data.frame(Pcli_CBASS_variable_coeff,Pcli_CBASS_control_coeff)
+str(Pcli_CBASS)
 
-control_CBASS <- drm(fvfm ~ CBASS_temp, data = Pcli_CBASS[Pcli_CBASS$Treatment=="Control",], fct = LL.3())
-summary(control_CBASS)
-plot(control_CBASS)
+DRC_Pcli_colony_treatment = drm(fvfm ~ CBASS_temp, data = Pcli_CBASS, curveid = Colony_Treatment,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRC_Pcli_colony_treatment)
+plot(DRC_Pcli_colony_treatment)
+compParm(DRC_Pcli_colony_treatment, 'ed50')
+compParm(DRC_Pcli_colony_treatment, 'ed50', "-")
 
-variable_CBASS <- drm(fvfm ~ CBASS_temp, data = Pcli_CBASS[Pcli_CBASS$Treatment=="Variable",], fct = LL.3())
-summary(variable_CBASS)
-plot(variable_CBASS)
+compParm(DRC_Pcli_colony_treatment, 'hill')
+compParm(DRC_Pcli_colony_treatment, 'hill', "-")
 
-control_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
-control_CBASS_pred = as.data.frame(predict(control_CBASS, newdata = control_CBASS_preddata, interval = 'confidence'))
-control_CBASS_preddata = data.frame(control_CBASS_preddata, fvfm = control_CBASS_pred$Prediction, Lower = control_CBASS_pred$Lower, Upper = control_CBASS_pred$Upper)
+Pcli_coeff <- as.data.frame(DRC_Pcli_colony_treatment$coefficients)
 
-variable_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
-variable_CBASS_pred = as.data.frame(predict(variable_CBASS, newdata = variable_CBASS_preddata, interval = 'confidence'))
-variable_CBASS_preddata = data.frame(variable_CBASS_preddata, fvfm = variable_CBASS_pred$Prediction, Lower = variable_CBASS_pred$Lower, Upper = variable_CBASS_pred$Upper)
+Pcli_coeff %>% 
+  rownames_to_column(var = "coeff_colony_treatment") %>% 
+  filter(grepl("ed50", coeff_colony_treatment)) %>% 
+  rename(ED50 = `DRC_Pcli_colony_treatment$coefficients`) %>% 
+  separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Pcli_ED50s
 
+#statistics
+Pcli_model <- lm(ED50 ~ Treatment, data = Pcli_ED50s)
+Pcli_model_metrics <- augment(Pcli_model)
 
-ggplot() +
-  geom_jitter(data = Pcli_CBASS, aes(x = CBASS_temp, y = fvfm, color = Treatment), size = 1, width = 0.25) +
-  scale_x_continuous(limits=c(26,40), breaks=c(26,28,30,32,34,36,38)) +
-  scale_y_continuous(limits=c(-0.1, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
-  geom_line(data = control_CBASS_preddata, aes(x = temp, y = fvfm), color = '#66ccfe', show.legend = FALSE) +
-  geom_ribbon(data = control_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#66ccfe', linetype=2, alpha = 0.2) +
-  geom_vline(data = Pcli_coeff, aes(xintercept = Pcli_CBASS_control_coeff), color = '#66ccfe', show.legend = FALSE) +
-  geom_text(data = Pcli_coeff, aes(label = Pcli_CBASS_control_coeff), x = 30, y = 0.2, show.legend = FALSE, color = '#66ccfe') +
- 
-  geom_line(data = variable_CBASS_preddata, aes(x = temp, y = fvfm), color = '#e92000', show.legend = FALSE) +
-  geom_ribbon(data = variable_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#e92000', linetype=2, alpha = 0.2) +
-  geom_vline(data = Pcli_coeff, aes(xintercept = Pcli_CBASS_variable_coeff), color = '#e92000', show.legend = FALSE) +
-  geom_text(data = Pcli_coeff, aes(label = Pcli_CBASS_variable_coeff), x = 30, y = 0.1, show.legend = FALSE, color = '#e92000') +
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_model_metrics$.resid) # not significant
 
-  scale_color_manual(values=c('#66ccfe','#e92000')) +
-  ylab("Fv/Fm") +
-  xlab("Temperature (°C)") +
-  theme_bw() +
-  labs(title = "Pclivosa")
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Pcli_model_metrics) #not significant
+
+Pcli_aov <- aov(ED50 ~ Treatment, data = Pcli_ED50s)
+summary(Pcli_aov) #not significant
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 4. Normalized to initial measurement (treatment day 0 - T1/T0) - CBASS
-
+combine both ED50 datasets into one
 ```{r}
-ipam_tidy_data %>% 
-  filter(Date < "2022-03-22") %>% 
-  dplyr::select(fvfm, Puck, Colony, Date, Treatment,Species) %>% 
-  mutate(fvfm_T0 = fvfm) %>% 
-  dplyr::select(!fvfm) -> preCBASSfvfm
+Pcli_ED50s %>% 
+  mutate(Species ="Pclivosa") -> Pcli_ED50s
 
-ipam_tidy_data %>% 
-  dplyr::filter(Treatment_period == "CBASS") %>% 
-  dplyr::select(fvfm, Puck:Date, CBASS_temp, Species) %>% 
-  mutate(fvfm_T1 = fvfm) %>% 
-  dplyr::select(!fvfm) %>% 
-  left_join(preCBASSfvfm, by = c("Puck", "Colony", "Species")) %>% 
-  dplyr::select(!Date.x) %>% 
-  dplyr::select(!Date.y) %>% 
-  filter(fvfm_T0 < 0.75) %>% #there were some weird outliers where the fvfm = 2.00
-  filter(fvfm_T1 < 0.75) %>% 
-  mutate(CBASS_normalize_fvfm = fvfm_T1/fvfm_T0) %>% 
-  filter(CBASS_normalize_fvfm > 0) %>% 
-  filter(CBASS_normalize_fvfm < 1) %>% 
-  mutate(CBASS_temp = as.factor(CBASS_temp))-> ipam_CBASS_normalized
+Acer_ED50s %>% 
+  mutate(Species = "Acervicornis") -> Acer_ED50s
 
-  ggplot(ipam_CBASS_normalized, aes(x=CBASS_temp, y = CBASS_normalize_fvfm, fill=Treatment)) +
+full_join(Pcli_ED50s, Acer_ED50s) -> bothspecies_colony_ED50s
+
+bothspecies_colony_ED50s$Species_Treatment <- interaction(bothspecies_colony_ED50s$Species, bothspecies_colony_ED50s$Treatment)
+
+ed50_model <- lm(ED50 ~ Species_Treatment, data = bothspecies_colony_ED50s)
+ed50_model_metrics <- augment(ed50_model)
+
+summary(glht(ed50_model, linfct=mcp(Species_Treatment="Tukey")), test = adjusted(type = "bonferroni"))
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(ed50_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Species_Treatment, data = ed50_model_metrics) #not significant
+
+summary(aov(ED50 ~ Species_Treatment, data = bothspecies_colony_ED50s)) #not significant
+
+TukeyHSD(aov(ED50 ~ Species_Treatment, data = bothspecies_colony_ED50s))
+
+# i don't understand how these aren't significant... maybe ANOVA isn't the right test because the design is unbalanced? Acer has 3 treatments and Pcli has 2. also number of sample sizes varies for each group.
+
+#let's try a non parametric test that is robust to unbalanced designs
+
+kruskal.test(ED50 ~ Species_Treatment, data = bothspecies_colony_ED50s) #not significant
+
+```
+
+## boxplot of ed50s
+```{r}
+#something fishy is going on with these ED50s. the means don't match the drc ones??
+ggplot(bothspecies_colony_ED50s, aes(x=Treatment, y=ED50, fill=Treatment)) +
   geom_boxplot() +
-  facet_wrap(~Species) + 
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic()
-```
-
-```{r}
-ipam_CBASS_normalized %>% 
-  mutate(CBASS_temp=as.numeric(as.character(CBASS_temp))) %>% 
-ggplot(., aes(x=CBASS_temp, y = CBASS_normalize_fvfm, color = Treatment)) +
-  geom_point() +
-  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  geom_smooth(formula = y ~ x, method = "loess", span = 0.9)  + 
-  facet_wrap(~Species) +
+  facet_wrap(~Species, scales = "free_x") +
+  scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
   theme_classic() +
-  labs(x="Temperature (ºC)", y = "Normalized Fv/Fm")
-```
-
-### GLM Acer
-
-```{r}
-ipam_CBASS_normalized %>% 
-  filter(Species == "Acervicornis") -> Acer_ipam_CBASS
-
-#model 1 = full model
-glmm_AcerCBASS_full <- glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp + (1|Colony), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
-
-summary(glmm_AcerCBASS_full) 
-
-qqnorm(resid(glmm_AcerCBASS_full))
-qqline(resid(glmm_AcerCBASS_full))
-
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Treatment)
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$CBASS_temp)
-boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Colony)
-
-#model 2 
-AcerCBASS_GLMM <- glmmTMB::glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp, family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
-summary(AcerCBASS_GLMM)
-
-#need to check normality and variance visually (boxplots of fixed effects only)
-qqnorm(resid(AcerCBASS_GLMM))
-qqline(resid(AcerCBASS_GLMM))
-
-boxplot(resid(AcerCBASS_GLMM)~Acer_ipam_CBASS$Treatment) 
-boxplot(resid(AcerCBASS_GLMM)~Acer_ipam_CBASS$CBASS_temp)
-
-lrt(AcerCBASS_GLMM, glmm_AcerCBASS_full)
-
-lrt(Acer_CBASS_GLMM_Tank, glmm_AcerCBASS_full)
-
-# GLMM Acer Full: AIC =  -323.6 
-# GLMM Acer no Colony: AIC =  -324.1
-
-# no colony is better based on AIC, and lrt p-value is not significant
+  theme(text = element_text(size = 12)) 
+ggsave("ed50s_boxplot_bothspecies.pdf", width = 7, height =5)
 ```
 
 
+## statistics for hill slope of curve
 ```{r}
-Anova(AcerCBASS_GLMM, type = "II")
+Acer_coeff %>% 
+  rownames_to_column(var = "coeff_colony_treatment") %>% 
+  filter(grepl("hill", coeff_colony_treatment)) %>% 
+  rename(hill = `DRC_Acer_colony_treatment$coefficients`) %>% 
+  separate(coeff_colony_treatment, into=c("var", "Colony", "Treatment"), sep = "[:.]") -> Acer_hills
 
-Acer_CBASS_emm <- emmeans(AcerCBASS_GLMM, specs = ~ Treatment*CBASS_temp)
+#statistics
+Acer_hill_model <- lm(hill ~ Treatment, data = Acer_hills)
+Acer_hill_model_metrics <- augment(Acer_hill_model)
 
-as.data.frame(pairs(Acer_CBASS_emm))
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_hill_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Acer_hill_model_metrics) #not significant
+
+summary(aov(hill ~ Treatment, data = Acer_hills)) #not significant
+```
+
+```{r}
+Pcli_coeff %>% 
+  rownames_to_column(var = "coeff_colony_treatment") %>% 
+  filter(grepl("hill", coeff_colony_treatment)) %>% 
+  rename(hill = `DRC_Pcli_colony_treatment$coefficients`) %>% 
+  separate(coeff_colony_treatment, into=c("var", "Colony", "Treatment"), sep = "[:.]") -> Pcli_hills
+
+#statistics
+Pcli_hill_model <- lm(hill ~ Treatment, data = Pcli_hills)
+Pcli_hill_model_metrics <- augment(Pcli_hill_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_hill_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Pcli_hill_model_metrics) #not significant
+
+summary(aov(hill ~ Treatment, data = Pcli_hills)) #not significant
+```
+
+combine both hill datasets into one
+```{r}
+Pcli_hills %>% 
+  mutate(Species ="Pclivosa") -> Pcli_hills
+
+Acer_hills %>% 
+  mutate(Species = "Acervicornis") -> Acer_hills
+
+full_join(Pcli_hills, Acer_hills) -> bothspecies_colony_hills
+
+bothspecies_colony_hills$Species_Treatment <- interaction(bothspecies_colony_hills$Species, bothspecies_colony_hills$Treatment)
+
+hill_model <- lm(hill ~ Species_Treatment, data = bothspecies_colony_hills)
+hill_model_metrics <- augment(hill_model)
+
+summary(glht(hill_model, linfct=mcp(Species_Treatment="Tukey")), test = adjusted(type = "bonferroni"))
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(hill_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Species_Treatment, data = hill_model_metrics) #not significant
+
+summary(aov(hill ~ Species_Treatment, data = bothspecies_colony_hills)) #not significant
+
+TukeyHSD(aov(hill ~ Species_Treatment, data = bothspecies_colony_hills))
+
+# i don't understand how these aren't significant... maybe ANOVA isn't the right test because the design is unbalanced? Acer has 3 treatments and Pcli has 2. also number of sample sizes varies for each group.
+
+#let's try a non parametric test that is robust to unbalanced designs
+
+kruskal.test(hill ~ Species_Treatment, data = bothspecies_colony_hills) #significant!
+dunn.test(bothspecies_colony_hills$hill, bothspecies_colony_hills$Species_Treatment, method = "bonferroni") # no significant interactions
 ```
 
 
-### GLM Pcli
-
+## boxplot of hills
 ```{r}
-ipam_CBASS_normalized %>% 
-  filter(Species == "Pclivosa") -> Pcli_ipam_CBASS
-
-#model 1 = full model
-glmm_PcliCBASS_full <- glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp + (1|Colony), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-
-summary(glmm_PcliCBASS_full) 
-
-qqnorm(resid(glmm_PcliCBASS_full))
-qqline(resid(glmm_PcliCBASS_full))
-
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Treatment)
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$CBASS_temp)
-boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Colony)
-
-#model 2 
-PcliCBASS_GLMM <- glmmTMB::glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp, family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
-summary(PcliCBASS_GLMM)
-
-#need to check normality and variance visually (boxplots of fixed effects only)
-qqnorm(resid(PcliCBASS_GLMM))
-qqline(resid(PcliCBASS_GLMM))
-
-boxplot(resid(PcliCBASS_GLMM)~Pcli_ipam_CBASS$Treatment) 
-boxplot(resid(PcliCBASS_GLMM)~Pcli_ipam_CBASS$CBASS_temp)
-
-lrt(PcliCBASS_GLMM, glmm_PcliCBASS_full)
-
-# GLMM Pcli Full: AIC =  -355.8 
-# GLMM Pcli no Colony: AIC =  -344.3  , LRT p-value = 0.0002403821
-
-# full model is better based on AIC and p-value
-```
-
-
-```{r}
-Anova(glmm_PcliCBASS_full, type = "II")
-
-Pcli_CBASS_emm <- emmeans(glmm_PcliCBASS_full, specs = ~ Treatment*CBASS_temp)
-
-as.data.frame(pairs(Pcli_CBASS_emm))
-```
-
-
-
-
-
-
-# 5. Normalized to final treatment measurement (treatment day 28) - CBASS
-
-```{r}
-ipam_tidy_data %>% 
-  filter(Date == "2022-04-20") %>% 
-  dplyr::select(fvfm, Puck, Colony, Date, Treatment,Species) %>% 
-  mutate(fvfm_T0 = fvfm) %>% 
-  dplyr::select(!fvfm) -> preCBASSfvfm_endoftreatment
-
-ipam_tidy_data %>% 
-  dplyr::filter(Treatment_period == "CBASS") %>% 
-  dplyr::select(fvfm, Puck:Date, CBASS_temp, Species) %>% 
-  mutate(fvfm_T1 = fvfm) %>% 
-  dplyr::select(!fvfm) %>% 
-  left_join(preCBASSfvfm_endoftreatment, by = c("Puck", "Colony", "Species")) %>% 
-  dplyr::select(!Date.x) %>% 
-  dplyr::select(!Date.y) %>% 
-  filter(fvfm_T0 < 0.75) %>% #there were some weird outliers where the fvfm = 2.00
-  filter(fvfm_T1 < 0.75) %>% 
-  mutate(CBASS_normalize_fvfm = fvfm_T1/fvfm_T0) %>% 
-  #filter(CBASS_normalize_fvfm > 0) %>% 
-  #filter(CBASS_normalize_fvfm < 1) %>% 
-  mutate(CBASS_temp = as.factor(CBASS_temp))-> ipam_CBASS_normalized_endoftreatment
-
-  ggplot(ipam_CBASS_normalized_endoftreatment, aes(x=CBASS_temp, y = CBASS_normalize_fvfm, fill=Treatment)) +
+ggplot(bothspecies_colony_hills, aes(x=Treatment, y=hill, fill=Treatment)) +
   geom_boxplot() +
-  facet_wrap(~Species) + 
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic()
-  
-  #there are a lot of values > 1 here so I can't just filter it out so the data is 0<x<1 
+  facet_wrap(~Species, scales = "free_x") +
+  scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
+  theme_classic() +
+  theme(text = element_text(size = 12)) 
+#ggsave("hills_boxplot_bothspecies.pdf", width = 7, height =5)
 ```
-
