@@ -127,7 +127,7 @@ treatment_normalized_bothspecies%>%
   scale_color_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB")) +
   theme(text = element_text(size = 12)) + 
   facet_wrap(~Species, scales = "free_x")
-ggsave("treatment_normalized_bothspecies_boxplot.pdf")
+#ggsave("treatment_normalized_bothspecies_boxplot.pdf")
 ```
 
 ### Statistics
@@ -176,9 +176,89 @@ TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bot
 #capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
 ```
 
+## 2b. compare to when tank 8 and treated are combined 
+```{r}
+treatment_normalized_bothspecies_notank8separate <- ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species)  %>% 
+    mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
+                               Tank == "2" ~ "Treated",
+                               Tank == "3" ~ "Treated",
+                               Tank == "4" ~ "Untreated",
+                               Tank == "5" ~ "Treated", 
+                               Tank == "6" ~ "Untreated",
+                               Tank == "7" ~ "Untreated",
+                               Tank == "8" ~ "Treated")) %>% 
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
+                               Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
+  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ fvfm_loss/`2022-03-16`,
+                               Species == "Pclivosa" ~ fvfm_loss/`2022-03-21`))
+```
+
+```{r}
+treatment_normalized_bothspecies_notank8separate%>% 
+  ggplot(., aes(x=Treatment, y= fvfm_loss_norm, color= Treatment)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  theme_classic() + 
+  labs(y = "Decline in Fv/Fm", x="Treatment") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 12)) + 
+  facet_wrap(~Species, scales = "free_x")
+```
+
+### Statistics
+
+Change to factors
+```{r}
+str(treatment_normalized_bothspecies_notank8separate)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+treatment_normalized_bothspecies_notank8separate %>% 
+  mutate_at(vars(Colony, Puck, Tank, Treatment, Species), factor) -> treatment_normalized_bothspecies_notank8separate
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(fvfm_loss_norm ~ Treatment*Species*Colony + Tank, data = treatment_normalized_bothspecies_notank8separate)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3) -> treat_outliers
+# 2 outliers
+
+#remove outliers
+treatment_normalized_bothspecies_notank8separate <- treatment_normalized_bothspecies_notank8separate[!rownames(treatment_normalized_bothspecies_notank8separate) %in% treat_outliers$.rownames,]
+```
+
+Run 2-way ANOVA
+```{r}
+aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_notank8separate)
+
+summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_notank8separate))
+
+#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_table.csv")
 
 
-## 2b. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
+TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_notank8separate))
+         
+#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
+```
+
+
+## 2c. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
 ```{r, warning = F}
 treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Colony, y= fvfm_loss_norm, color= Treatment)) +
@@ -194,14 +274,14 @@ treatment_normalized_bothspecies%>%
 
 Run 3-way ANOVA
 ```{r}
-aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies)
+aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_notank8separate)
 
-summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies))
+summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_notank8separate))
 
 #capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspeciesgenet_anova_table.csv")
 
 
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies))
+TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_notank8separate))
          
 #capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspeciesgenet_anova_tukey.csv")
 ```

@@ -1,0 +1,7 @@
+                      Df Sum Sq Mean Sq F value Pr(>F)    
+Treatment              1 0.0105 0.01045   6.017 0.0155 *  
+CBASS_temp             7 1.5410 0.22014 126.697 <2e-16 ***
+Treatment:CBASS_temp   7 0.0095 0.00136   0.781 0.6040    
+Residuals            127 0.2207 0.00174                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

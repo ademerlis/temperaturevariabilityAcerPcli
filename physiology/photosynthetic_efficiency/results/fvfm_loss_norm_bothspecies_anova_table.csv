@@ -1,0 +1,8 @@
+                   Df Sum Sq Mean Sq F value  Pr(>F)    
+Treatment           1 0.0344  0.0344   10.40 0.00142 ** 
+Species             1 1.0565  1.0565  318.92 < 2e-16 ***
+Treatment:Species   1 0.2917  0.2917   88.06 < 2e-16 ***
+Residuals         268 0.8878  0.0033                    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+5 observations deleted due to missingness

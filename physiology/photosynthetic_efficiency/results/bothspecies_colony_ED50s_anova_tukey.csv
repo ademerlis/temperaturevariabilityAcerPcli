@@ -1,0 +1,10 @@
+Call:
+   aov(formula = ED50 ~ Species * Treatment, data = bothspecies_colony_ED50s)
+
+Terms:
+                   Species  Treatment Species:Treatment  Residuals
+Sum of Squares  0.26645961 0.00849839        0.00032022 0.28681073
+Deg. of Freedom          1          1                 1          8
+
+Residual standard error: 0.1893445
+Estimated effects may be unbalanced

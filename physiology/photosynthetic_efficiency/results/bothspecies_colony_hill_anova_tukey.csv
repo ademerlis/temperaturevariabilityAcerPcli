@@ -1,0 +1,10 @@
+Call:
+   aov(formula = hill ~ Species * Treatment, data = bothspecies_colony_hills)
+
+Terms:
+                  Species Treatment Species:Treatment Residuals
+Sum of Squares  2274.7552  101.0009          310.8778 2573.6051
+Deg. of Freedom         1         1                 1         8
+
+Residual standard error: 17.93602
+Estimated effects may be unbalanced

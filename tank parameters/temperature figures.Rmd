@@ -607,6 +607,7 @@ recovery %>%
   theme(text = element_text(size = 16)) #all font sizes
 ```
 
+
 # Slow burn heat-stress assay 
 ```{r}
 heatstressassay %>% 
@@ -621,6 +622,9 @@ heatstressassay %>%
        y = "Temperature (°C)",
        x = "Date")
 
+heatstressassay %>% 
+  arrange(desc(Time)) #high temp in tank 4 goes until the very end, july 22. when do i call the "End of experiment"?
+
 #was it just tanks 3, 4, and 8 that we used as the heat stress assay tanks? What was happening in tank 1?
 ```
 
@@ -631,7 +635,8 @@ heatstressassay$Time <- lubridate::round_date(heatstressassay$Time, unit = "15 m
 heatstressassay %>% 
   dplyr::select(Time, T3, T4, T7, T8) %>% 
   pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  filter(!(Time > "2022-06-25 00:00:00" & Temp < 30.5 & Tank != "T7")) %>% 
+  filter(!(Time > "2022-06-25 00:00:00" & Temp < 28 & Tank != "T7")) %>% 
+  filter(Time <= as.Date("2022-07-15")) %>% 
    mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
                                Tank == "T4" ~ "heatstress",
                                Tank == "T7" ~ "ambient",
@@ -653,24 +658,4 @@ ggsave("slowburnheatstress.pdf", width = 10, height = 6)
 ```
 
 
-```{r}
-heatstressassay$Time <- lubridate::round_date(heatstressassay$Time, unit = "15 min")
-
-heatstressassay %>% 
-  dplyr::select(Time, T3, T4, T8) %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  drop_na(Temp) %>% 
-  filter(Time <= as.Date("2022-07-15")) %>% 
-  dplyr::group_by(Time) %>% 
-  dplyr::summarise(avg_temp = mean(Temp), se = std.error(Temp)) %>% 
-  ggplot(., aes(x=Time, y=avg_temp)) + 
-  geom_point() +
-  theme_classic() +
-  labs(title = "Tank Temperatures",
-       y = "Temperature (°C)",
-       x = "Date") +
-  #scale_y_continuous(limits = c(27, 29)) +
-  theme(text = element_text(size = 16)) #all font sizes
-```
 

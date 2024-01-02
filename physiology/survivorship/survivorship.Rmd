@@ -6,14 +6,36 @@ output: html_document
 ---
 # Load data and packages
 ```{r}
-metadata <- readxl::read_xlsx("../metadata.xlsx")
-
 library(tidyverse)
 library(janitor)
 library(rstatix)
+library(cowplot)
+
+metadata <- readxl::read_xlsx("../metadata.xlsx")
 ```
 
 Tidy data 
+
+```{r}
+metadata %>% 
+  mutate(Treatment = case_when(Treatment_Tank == "1" ~ "Untreated",
+                               Treatment_Tank == "2" ~ "Treated",
+                               Treatment_Tank == "3" ~ "Treated",
+                               Treatment_Tank == "4" ~ "Untreated",
+                               Treatment_Tank == "5" ~ "Treated", 
+                               Treatment_Tank == "6" ~ "Untreated",
+                               Treatment_Tank == "7" ~ "Untreated",
+                               Treatment_Tank == "8" ~ "Treated")) %>% 
+  mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
+                               CBASS_tank == "2" ~ "37",
+                               CBASS_tank == "3" ~ "32",
+                               CBASS_tank == "4" ~ "33",
+                               CBASS_tank == "5" ~ "35",
+                               CBASS_tank == "6" ~ "30",
+                               CBASS_tank == "7" ~ "34",
+                               CBASS_tank == "8" ~ "28")) -> tidy_metadata
+```
+
 
 There are two columns of significance for survivorship, Removed_Date and Mortality_Date. At some point, tank 7 become the recovery tank for corals. If the coral had a lot of tissue on it but looked stressed, it was removed from either the CBASS tank or the slow burn heat stress assay (high temp) into the recovery tank at 28ºC. That date of transfer was recorded in the column "Removed_Date". The column "Mortality_Date" refers to corals that were removed from any tank and died. 
 
@@ -26,7 +48,6 @@ metadata %>%
 
 metadata %>% 
   filter(is.na(Removed_Date) & is.na(mortality_date)) #48 corals don't have either. But if they weren't assigned a heat-stress tank, that should indicate that they were removed/died before 06/15/2022
-
 ```
 
 
@@ -34,7 +55,7 @@ metadata %>%
 
 Number of corals that died due to CBASS
 ```{r}
-metadata %>% 
+tidy_metadata %>% 
   dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-25") %>% 
   drop_na(Species, Treatment, Reason_removed) %>% 
   group_by(Reason_removed, Species, Treatment) %>% 
@@ -42,8 +63,8 @@ metadata %>%
   ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
   geom_col(position = position_dodge()) +
   theme_classic() +
-  facet_wrap(~Species, scales = "free")  +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  facet_wrap(~Species)  +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 15)) +
   labs(x="Category", y="Number of corals") + 
   coord_flip()
@@ -52,7 +73,7 @@ metadata %>%
 
 ```{r}
 #proportion of corals that died during/post-CBASS versus the total number of corals that went into the CBASS
-mortality_data %>% 
+tidy_metadata %>% 
   dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
                              Reason_removed == "post-CBASS RTL" ~ "RTL",
@@ -60,55 +81,165 @@ mortality_data %>%
   drop_na(Species, Treatment) %>% 
   group_by(Species, Treatment) %>% 
   summarize(count_RTL = n()) -> RTL_species_treatment_count
-```
 
-
-
-```{r}
-mortality_data %>% 
-  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
-  group_by(Species, Treatment) %>% 
-  summarize(count_total = n()) %>% 
-  full_join(., RTL_species_treatment_count) %>% 
-  mutate(proportion_RTL = (count_RTL/count_total)*100) %>% #need total number of corals that were alive at that time
-  ggplot(., aes(x=Species, y=proportion_RTL, fill = Treatment)) +
-  geom_col(position = position_dodge()) +
-  theme_classic() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
-  theme(text = element_text(size = 15)) +
-  labs(y="% Mortality due to RTL")  + 
-  coord_flip() +
-  theme(text = element_text(size = 20)) 
-#ggsave("coralmortalityduetoCBASS.png", width = 10, height =6)
-```
-
-
-```{r}
-#chi squared test for comparing mortality numbers
-mortality_data %>% 
-  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% 
-  group_by(Species, Treatment) %>% 
-  summarize(count_total = n()) %>% 
-  full_join(., RTL_species_treatment_count) %>% 
-  mutate(count_survived = count_total - count_RTL) %>% 
-  filter(Species == "Acropora cervicornis") %>% 
-  ungroup() %>% 
-  dplyr::select(Treatment, count_RTL, count_survived) %>% 
-  mutate(Treatment = as.factor(Treatment)) %>% 
-  column_to_rownames(var = "Treatment")-> Acer_contingencytable
-
-chisq_test(Acer_contingencytable)
-
-goodnessOfFitTest(Acer_contingencytable)
-
-mortality_data %>% 
+tidy_metadata %>% 
   dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
                              Reason_removed == "post-CBASS RTL" ~ "RTL",
                              Reason_removed == "RTL" ~ "RTL")) %>% 
-  drop_na(Species, Treatment, Reason_removed) %>% 
-  select(Species, Treatment, Reason_removed)
+  drop_na(Species, Treatment) %>% 
+  group_by(Species, Treatment, CBASS_temp) %>% 
+  summarize(count_RTL = n()) -> RTL_species_treatment_CBASStemps
 ```
+
+
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_count) %>% 
+  mutate(count_survived = count_total-count_RTL) %>% 
+  select(!count_total) %>% 
+  pivot_longer(count_RTL:count_survived, names_to="label", values_to="count") %>% 
+  ggplot(., aes(x=Treatment, y=count, fill = label)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(labels=c("RTL", "Survived"), values = c("black", "grey"))  +
+  theme(text = element_text(size = 12)) +
+  facet_wrap(~Species, scales = "free_x") +
+  labs(y="Count", fill = "Category") 
+```
+
+
+
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment, CBASS_temp) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_CBASStemps) %>% 
+  drop_na(CBASS_temp) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  mutate(count_survived = if_else(is.na(count_survived),0,count_survived)) %>% 
+  select(!count_total) %>% 
+  pivot_longer(count_RTL:count_survived, names_to="label", values_to="count") %>% 
+  ggplot(., aes(x=CBASS_temp, y=count, fill = label)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(labels=c("RTL", "Survived"), values = c("black", "grey"))  +
+  theme(text = element_text(size = 12)) +
+  facet_wrap(~Species*Treatment, scales = "free_x") +
+  labs(y="Count", fill = "Category") 
+```
+
+test on counts (not standardized)
+
+```{r}
+#chi squared test for comparing mortality numbers
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., RTL_species_treatment_count) %>% 
+  mutate(count_survived = count_total-count_RTL) %>% 
+  select(!count_total) %>% 
+  unite("Species.Treatment", Species,Treatment, sep = ".") %>% 
+  column_to_rownames(var="Species.Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() #not significant
+
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment,CBASS_temp) %>% 
+  summarize(count_total = n()) %>%
+  drop_na(CBASS_temp) %>% 
+  full_join(., RTL_species_treatment_CBASStemps) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  select(!count_total) %>% 
+  unite("Species.Treatment.CBASS_temp", Species,Treatment,CBASS_temp, sep = ".") %>% 
+  column_to_rownames(var="Species.Treatment.CBASS_temp") %>%  
+  as.data.frame() %>% 
+  chisq_test() #very significant 
+```
+
+post-hoc test for pairwise comparisons
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment,CBASS_temp) %>% 
+  summarize(count_total = n()) %>%
+  drop_na(CBASS_temp) %>% 
+  full_join(., RTL_species_treatment_CBASStemps) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  select(!count_total) %>% 
+  unite("Species.Treatment.CBASS_temp", Species,Treatment,CBASS_temp, sep = ".") %>% 
+  column_to_rownames(var="Species.Treatment.CBASS_temp") %>% 
+  as.data.frame() %>% 
+  pairwise_prop_test() #%>% 
+  # write_csv("pairwise_prop_test_RTLvsSurvivedCounts.csv")
+```
+
+
+
+
+
+Proportions 
+
+```{r}
+p1<- tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_count) %>% 
+  mutate(count_survived = count_total-count_RTL) %>% 
+  mutate(proportion_survived = count_survived/count_total) %>% 
+  mutate(proportion_RTL = 1-proportion_survived) %>% 
+  pivot_longer(proportion_survived:proportion_RTL, names_to="label", values_to="proportion") %>% 
+  ggplot(., aes(x=Treatment, y=proportion, fill = label)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(labels=c("RTL", "Survived"), values = c("black", "grey"))  +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Species, scales = "free_x") +
+  labs(y="Proportion", fill = "Category")  +
+  theme(legend.position="none")
+
+#ggsave("coralmortalityduetoCBASS.pdf", width=8, height=5)
+```
+
+
+```{r}
+p2<-tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment,CBASS_temp) %>% 
+  summarize(count_total = n()) %>% 
+  drop_na(CBASS_temp) %>% 
+  full_join(., RTL_species_treatment_CBASStemps) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>% 
+  mutate(count_survived = count_total-count_RTL) %>% 
+  mutate(count_survived = if_else(is.na(count_survived),0,count_survived)) %>% 
+  mutate(proportion_survived = count_survived/count_total) %>% 
+  mutate(proportion_RTL = 1-proportion_survived) %>% 
+  pivot_longer(proportion_survived:proportion_RTL, names_to="label", values_to="proportion") %>%
+  ggplot(., aes(x=CBASS_temp, y=proportion, fill = label)) +
+  geom_col() +
+  theme_classic() +
+  scale_fill_manual(labels=c("RTL", "Survived"), values = c("black", "grey"))  +
+  theme(text = element_text(size = 12)) +
+  facet_wrap(~Species*Treatment, scales = "free_x") +
+  labs(y="Proportion", fill = "Category", x = "CBASS Temperature")
+#ggsave("coralmortalityduetoCBASS_bytemp.pdf", width = 10, height =6)
+```
+combine plots
+```{r}
+plot_grid(p1, p2, ncol=2, rel_widths = c(1.5, 2))
+#ggsave("coralmortalityduetoCBASS_bytreatandtemp.pdf", width = 10, height = 5)
+```
+
 
 
 
@@ -117,9 +248,137 @@ mortality_data %>%
 Heat-stress at 32ºC was reached on June 25. 
 ```{r}
 metadata %>% 
-  filter(Removed_Date >= "2022-06-25")
+  filter(!is.na(slowburn_heatstress_tank)) #163 corals
 
 metadata %>% 
-  filter(is.na(Removed_Date)) # hmm this is suspect.
+  filter(!is.na(slowburn_heatstress_tank)) %>% 
+  select(Species:heatstress_recovery_tank) %>% 
+  mutate(Treatment = case_when(Treatment_Tank == "1" ~ "Untreated",
+                               Treatment_Tank == "2" ~ "Treated",
+                               Treatment_Tank == "3" ~ "Treated",
+                               Treatment_Tank == "4" ~ "Untreated",
+                               Treatment_Tank == "5" ~ "Treated", 
+                               Treatment_Tank == "6" ~ "Untreated",
+                               Treatment_Tank == "7" ~ "Untreated",
+                               Treatment_Tank == "8" ~ "Treated")) %>% 
+  mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
+                               CBASS_tank == "2" ~ "37",
+                               CBASS_tank == "3" ~ "32",
+                               CBASS_tank == "4" ~ "33",
+                               CBASS_tank == "5" ~ "35",
+                               CBASS_tank == "6" ~ "30",
+                               CBASS_tank == "7" ~ "34",
+                               CBASS_tank == "8" ~ "28")) %>% 
+  mutate(slowburn= case_when(slowburn_heatstress_tank == "7" ~ "ambient",
+                             TRUE ~ "heatstress_32")) %>% 
+  group_by(Species, Treatment, slowburn)-> slowburn_metadata
 ```
 
+convert dates to days at 32ºC
+```{r}
+slowburn_metadata %>% 
+  filter(Removed_Date >= "2022-06-21") %>% 
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>% 
+  mutate(days_to_removed = Removed_Date - start_date) %>% 
+  ggplot(., aes(x=Treatment, y=days_to_removed, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species)
+```
+
+```{r}
+slowburn_metadata %>% 
+  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(end_date =  replace(end_date, is.na(end_date), as.Date("2022-07-15"))) %>% 
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  group_by(Species, Treatment) %>% 
+  summarise(averagedays = mean(days_to_removed), sd = sd(days_to_removed)) %>%
+  ggplot(., aes(x = Treatment, y = averagedays, fill = Treatment)) + 
+  geom_bar(stat="identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = averagedays - sd, ymax = averagedays + sd), width =
+                  .2, position=position_dodge(.9)) +
+  theme_classic() +
+  facet_wrap(~Species, scales = "free_x") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+```
+
+
+separated by max CBASS temp
+```{r}
+slowburn_metadata %>% 
+  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(end_date =  replace(end_date, is.na(end_date), as.Date("2022-07-15"))) %>% 
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  group_by(Species, Treatment, CBASS_temp) %>% 
+  summarise(averagedays = mean(days_to_removed), se = std.error(days_to_removed)) %>%
+  ggplot(., aes(x = CBASS_temp, y = averagedays, fill = Treatment)) + 
+  geom_bar(stat="identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = averagedays - se, ymax = averagedays + se), width =
+                  .2, position=position_dodge(.9)) +
+  theme_classic() +
+  facet_wrap(~Species, scales = "free_x") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+```
+
+3-way anova for species, treatment, and CBASS temp
+
+Change to factors
+```{r}
+slowburn_metadata %>% 
+  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(end_date =  replace(end_date, is.na(end_date), as.Date("2022-07-15"))) %>% 
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  filter(days_to_removed > 0) #remove corals that were not in the 32ºC heat stress because they didn't make it
+  select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
+
+
+str(slowburn_summary_data)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+slowburn_summary_data %>% 
+  mutate_at(vars(Species, ID, Colony, Treatment, CBASS_temp), factor) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) -> slowburn_summary_data
+
+
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(days_to_removed ~ Treatment*Species*CBASS_temp + Colony, data = slowburn_summary_data)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species*CBASS_temp, data = treat_model_metrics) #not significant
+```
+Run 3-way ANOVA
+```{r}
+aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data)
+
+summary(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data))
+
+#capture.output(summary(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data)), file = "daysuntilremoved_slowburn_anova_table.csv")
+
+TukeyHSD(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data))
+         
+#capture.output(TukeyHSD(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data)), file = "daysuntilremoved_slowburn_anova_tukey.csv")
+```

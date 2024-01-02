@@ -1,0 +1,7 @@
+chi2,Z,P,P.adjusted,comparisons
+57.2804842591334,1.1959651260378121,0.115855084243792,0.695130505462752,Acropora cervicornis.Treated - Acropora cervicornis.Untreated
+57.2804842591334,6.381469568601947,8.769829005277447e-11,5.261897403166468e-10,Acropora cervicornis.Treated - Pseudodiploria clivosa.Treated
+57.2804842591334,5.54157451425707,1.498819829667986e-8,8.992918978007916e-8,Acropora cervicornis.Untreated - Pseudodiploria clivosa.Treated
+57.2804842591334,4.923997309267959,4.239700130133483e-7,2.54382007808009e-6,Acropora cervicornis.Treated - Pseudodiploria clivosa.Untreated
+57.2804842591334,3.9768681755154582,3.4914424644826374e-5,2.0948654786895826e-4,Acropora cervicornis.Untreated - Pseudodiploria clivosa.Untreated
+57.2804842591334,-1.6021149591388497,0.054565095317412014,0.32739057190447207,Pseudodiploria clivosa.Treated - Pseudodiploria clivosa.Untreated

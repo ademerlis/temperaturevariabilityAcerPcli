@@ -1429,6 +1429,8 @@ lrt(Pcli_CBASS_GLMM_Tank, glmm_PcliCBASS_full)
 #the model with just colony as a fixed effect is not significantly different than the full model. However, tank model is significantly different from full. If I'm interpreting this correctly, it means that the fixed effect of colony is not important to the model, but tank is important to the model. You don't want to have too many variables to try to explain variance.  But the AIC of the full model is better than the AIC of the tank model. I will move forward with the full model.
 
 ```
+
+
 ```{r}
 Anova(glmm_PcliCBASS_full, type = "II")
 

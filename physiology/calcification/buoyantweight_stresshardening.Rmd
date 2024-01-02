@@ -11,6 +11,7 @@ library(gsw) #for density calculation
 library(rstatix)
 library(ggsignif)
 library(dunn.test)
+library(cowplot)
 
 metadata <- readxl::read_xlsx("../metadata.xlsx")
 
@@ -23,7 +24,7 @@ buoyantweights<- metadata %>%
                                Treatment_Tank == "5" ~ "Treated", 
                                Treatment_Tank == "6" ~ "Untreated",
                                Treatment_Tank == "7" ~ "Untreated",
-                               Treatment_Tank == "8" ~ "tank_8"))
+                               Treatment_Tank == "8" ~ "Treated"))
 
 #sample size
 buoyantweights %>% group_by(Species, Treatment) %>% summarise(count = n())
@@ -59,14 +60,15 @@ buoyantweights %>%
 
 #boxplot of % growth - all genotypes together
 ```{r}
-calc_bw_bothspecies_bothtimepoints %>% 
+p1<- calc_bw_bothspecies_bothtimepoints %>% 
   group_by(Treatment) %>% 
   ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
   theme_classic() + 
-   scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB"))  +
+   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 15)) +
-  labs(y= "% Growth")
+  labs(y= "% Growth") +
+  theme(legend.position="none")
 #ggsave("percentgrowth_speciestreatments.pdf")
 ```
 
@@ -103,7 +105,9 @@ kruskal_test(calc_bw_bothspecies_bothtimepoints, percent_change ~ species_treatm
 
 dunn_results <- dunn.test(calc_bw_bothspecies_bothtimepoints$percent_change, calc_bw_bothspecies_bothtimepoints$species_treatment, method = "bonferroni")
 
-as.data.frame(dunn_results) 
+bw_posthoc_results <- as.data.frame(dunn_results) 
+
+#write_csv(bw_posthoc_results, "bw_posthoc_results.csv")
 ```
 
 
@@ -131,21 +135,20 @@ buoyantweights %>%
   mutate(percent_change = ((CalcMAir_final - CalcMAir_initial)/ CalcMAir_initial)*100) %>% 
   drop_na() -> calc_bw_bothspeciesgenet_bothtimepoints
 
-write_csv(calc_bw_bothspeciesgenet_bothtimepoints, file = "calc_bw_bothspeciesgenet_bothtimepoints.csv")
+#write_csv(calc_bw_bothspeciesgenet_bothtimepoints, file = "calc_bw_bothspeciesgenet_bothtimepoints.csv")
 ```
 
 #boxplot of % growth - genotypes separated
 ```{r}
-calc_bw_bothspeciesgenet_bothtimepoints %>% 
+p2 <- calc_bw_bothspeciesgenet_bothtimepoints %>% 
   group_by(Colony, Treatment) %>% 
   ggplot(., aes(x=Colony, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
   theme_classic() + 
-  facet_wrap(~Species, scales = "free") +
-    scale_fill_manual(labels=c("Tank 8", "Treated", "Untreated"), values = c("grey", "#F54A34", "#60DBDB"))  +
+  facet_wrap(~Species, scales= "free_x") +
+    scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 15)) +
   labs(y= "% Growth")
-
 ```
 
 # stats for percent change in buoyant weight
@@ -180,10 +183,18 @@ kruskal_test(calc_bw_bothspeciesgenet_bothtimepoints, percent_change ~ species_t
 
 dunn_results2 <- dunn.test(calc_bw_bothspeciesgenet_bothtimepoints$percent_change, calc_bw_bothspeciesgenet_bothtimepoints$species_treatment_colony, method = "bonferroni")
 
-as.data.frame(dunn_results2) 
+bw_posthoc_results_bygenet <- as.data.frame(dunn_results2) 
 #no interesting significant differences
+
+#write_csv(bw_posthoc_results_bygenet, "bw_posthoc_results_bygenet.csv")
 ```
 
+
+combined plot
+```{r}
+plot_grid(p1, p2, ncol = 2, rel_widths = c(1.5, 2))
+ggsave("growthrates_species_genet.pdf", width = 10, height = 5)
+```
 
 
 
