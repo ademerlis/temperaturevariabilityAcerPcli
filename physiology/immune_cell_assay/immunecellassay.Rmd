@@ -7,273 +7,911 @@ output: html_document
 Load libraries and datasets
 ```{r}
 library(tidyverse)
-adjusted_cells_data <- read_csv("adjusted_cell_proportions.csv")
-percent_cells_metadata <- read_csv("stresshardening_master.csv") #this only has replicate 1 in it
-#the controls for normalization were taken from replicate 1. 
+library(plotrix)
+library(ggpubr)
+library(rstatix)
+library(cowplot)
+library(dunn.test)
 
+percent_cells_df <- read_csv("Grace_percentcells_alldata.csv") 
+
+percent_cells_df%>% 
+    mutate(Treatment = case_when(Treatment == "Control" ~ "Untreated",
+                               Treatment == "Variable" ~ "Treated")) -> percent_cells_df
+
+#there's one outlier to remove right off the bat: T1	Pcli	B	P9	r2	Percent=111.50	T1	Untreated
+percent_cells_df %>% 
+  filter(!(TimePoint=="T1" & Species == "Pcli" & Genotype == "B" & Treatment == "Untreated" & ID == "P9" & Replicate == "r2")) -> percent_cells_df
+
+#replicates are technical replicates of the same coral fragment
+#time points:
+#T0 = initial pre-treatment (March 22)
+#T1 = one week into treatment (March 30)
+#T2 = end of treatment (April 20)
+#follow-up = post CBASS and treatment follow-up (June 1)
+
+percent_cells_df %>% 
+  mutate(num_days = case_when(TimePoint == "T0" ~ "0",
+                              TimePoint == "T1" ~ "7",
+                              TimePoint == "T2" ~ "28",
+                              TimePoint == "FollowUp" ~ "71")) %>% 
+  mutate(num_days = as.factor(num_days)) %>% 
+  mutate(num_days = fct_relevel(num_days, "0", "7", "28", "71")) -> percent_cells_df
 
 ```
-Raw percent comparison by treatment over time
-(first technical replicate only)
+
+
+# Raw percent at each time point (compare reps 1-3) and testing if significant differences between technical replicates 
+
+None of the technical replicates are significantly different than one another within a given species:genotype:treatment. So I feel confident taking the mean percent across the three technical replicates and using that moving forward.
+
+## T0
 ```{r}
-#only look at first technical replicate
-percent_cells_metadata %>%
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
+percent_cells_df %>%
+  filter(TimePoint == "T0") %>% 
+  ggplot(., aes(x=Replicate, y=Percent, fill = Treatment)) +
   geom_boxplot() +
-  facet_wrap(~Species, scales = "free") + 
+  facet_wrap(~Species+Genotype) + 
   theme_classic() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+```
+### Statistics
 
+#### Acer BC-8b 
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0" & Species == "Acer" & Genotype == "BC-8b") -> T0_Acer_BC8b_df
+
+str(T0_df)
+
+#make factors
+T0_Acer_BC8b_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T0_Acer_BC8b_df
 ```
 
-Raw percent comparison by treatment over time
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T0_Acer_BC8b_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T0_Acer_BC8b_df)
+T0_Acer_BC8b_model_metrics <- augment(T0_Acer_BC8b_model)
+plot(T0_Acer_BC8b_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T0_Acer_BC8b_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T0_Acer_BC8b_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T0_Acer_BC8b_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T0_Acer_BC8b_df)) #replicate is not significant. wooooo
+```
+
+#### Acer MB-B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0" & Species == "Acer" & Genotype == "MB-B") -> T0_Acer_MBB_df
+
+#make factors
+T0_Acer_MBB_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T0_Acer_MBB_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T0_Acer_MBB_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T0_Acer_MBB_df)
+T0_Acer_MBB_model_metrics <- augment(T0_Acer_MBB_model)
+plot(T0_Acer_MBB_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T0_Acer_MBB_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T0_Acer_MBB_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T0_Acer_MBB_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T0_Acer_MBB_df)) #replicate is not significant. wooooo
+```
+
+#### Acer SI-C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0" & Species == "Acer" & Genotype == "SI-C") -> T0_Acer_SIC_df
+
+#make factors
+T0_Acer_SIC_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T0_Acer_SIC_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T0_Acer_SIC_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T0_Acer_SIC_df)
+T0_Acer_SIC_model_metrics <- augment(T0_Acer_SIC_model)
+plot(T0_Acer_SIC_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T0_Acer_SIC_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T0_Acer_SIC_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T0_Acer_SIC_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T0_Acer_SIC_df)) #replicate is not significant. wooooo
+```
+
+#### Pcli A
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0" & Species == "Pcli" & Genotype == "A") -> T0_Pcli_A_df
+
+#make factors
+T0_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T0_Pcli_A_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T0_Pcli_A_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T0_Pcli_A_df)
+T0_Pcli_A_model_metrics <- augment(T0_Pcli_A_model)
+plot(T0_Pcli_A_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T0_Pcli_A_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T0_Pcli_A_model_metrics) #significant
+
+#make interaction term
+T0_Pcli_A_df$Treatment_Replicate <- interaction(T0_Pcli_A_df$Treatment, T0_Pcli_A_df$Replicate)
+
+#run Welch's anova
+oneway.test(Percent ~ Treatment_Replicate, data = T0_Pcli_A_df, var.equal = FALSE) #not significant
+```
+
+
+#### Pcli B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0" & Species == "Pcli" & Genotype == "B") -> T0_Pcli_B_df
+
+#make factors
+T0_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T0_Pcli_B_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T0_Pcli_B_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T0_Pcli_B_df)
+T0_Pcli_B_model_metrics <- augment(T0_Pcli_B_model)
+plot(T0_Pcli_B_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T0_Pcli_B_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T0_Pcli_B_model_metrics) #significant
+
+#make interaction term
+T0_Pcli_B_df$Treatment_Replicate <- interaction(T0_Pcli_B_df$Treatment, T0_Pcli_B_df$Replicate)
+
+#run Welch's anova
+oneway.test(Percent ~ Treatment_Replicate, data = T0_Pcli_B_df, var.equal = FALSE) #not significant
+```
+
+
+#### Pcli C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0" & Species == "Pcli" & Genotype == "C") -> T0_Pcli_C_df
+
+#make factors
+T0_Pcli_C_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T0_Pcli_C_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T0_Pcli_C_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T0_Pcli_C_df)
+T0_Pcli_C_model_metrics <- augment(T0_Pcli_C_model)
+plot(T0_Pcli_C_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T0_Pcli_C_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T0_Pcli_C_model_metrics) #significant
+
+#make interaction term
+T0_Pcli_C_df$Treatment_Replicate <- interaction(T0_Pcli_C_df$Treatment, T0_Pcli_C_df$Replicate)
+
+#run Welch's anova
+oneway.test(Percent ~ Treatment_Replicate, data = T0_Pcli_C_df, var.equal = FALSE) #not significant
+```
+
+
+## T1
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1") %>% 
+  ggplot(., aes(x=Replicate, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species+Genotype) + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+```
+
+### Statistics
+
+#### Acer BC-8b 
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1" & Species == "Acer" & Genotype == "BC-8b") -> T1_Acer_BC8b_df
+
+#make factors
+T1_Acer_BC8b_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T1_Acer_BC8b_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T1_Acer_BC8b_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T1_Acer_BC8b_df)
+T1_Acer_BC8b_model_metrics <- augment(T1_Acer_BC8b_model)
+plot(T1_Acer_BC8b_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T1_Acer_BC8b_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T1_Acer_BC8b_model_metrics) #significant
+
+#make interaction term
+T1_Acer_BC8b_df$Treatment_Replicate <- interaction(T1_Acer_BC8b_df$Treatment, T1_Acer_BC8b_df$Replicate)
+
+#run Welch's anova
+oneway.test(Percent ~ Treatment_Replicate, data = T1_Acer_BC8b_df, var.equal = FALSE) #not significant
+```
+
+#### Acer MB-B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1" & Species == "Acer" & Genotype == "MB-B") -> T1_Acer_MBB_df
+
+#make factors
+T1_Acer_MBB_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T1_Acer_MBB_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T1_Acer_MBB_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T1_Acer_MBB_df)
+T1_Acer_MBB_model_metrics <- augment(T1_Acer_MBB_model)
+plot(T1_Acer_MBB_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T1_Acer_MBB_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T1_Acer_MBB_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T1_Acer_MBB_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T1_Acer_MBB_df)) #replicate is not significant. wooooo
+```
+
+#### Acer SI-C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1" & Species == "Acer" & Genotype == "SI-C") -> T1_Acer_SIC_df
+
+#make factors
+T1_Acer_SIC_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T1_Acer_SIC_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T1_Acer_SIC_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T1_Acer_SIC_df)
+T1_Acer_SIC_model_metrics <- augment(T1_Acer_SIC_model)
+plot(T1_Acer_SIC_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T1_Acer_SIC_model_metrics$.resid) #significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T1_Acer_SIC_model_metrics) #significant
+
+#make interaction term
+T1_Acer_SIC_df$Treatment_Replicate <- interaction(T1_Acer_SIC_df$Treatment, T1_Acer_SIC_df$Replicate)
+
+#run kruskal wallis test
+kruskal_test(Percent ~ T1_Acer_SIC_df$Treatment_Replicate, data = T1_Acer_SIC_df) #not significant
+```
+
+#### Pcli A
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1" & Species == "Pcli" & Genotype == "A") -> T1_Pcli_A_df
+
+#make factors
+T1_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T1_Pcli_A_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T1_Pcli_A_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T1_Pcli_A_df)
+T1_Pcli_A_model_metrics <- augment(T1_Pcli_A_model)
+plot(T1_Pcli_A_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T1_Pcli_A_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T1_Pcli_A_model_metrics) #significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T1_Pcli_A_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T1_Pcli_A_df)) #replicate is not significant. wooooo
+```
+
+
+#### Pcli B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1" & Species == "Pcli" & Genotype == "B") -> T1_Pcli_B_df
+
+#make factors
+T1_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T1_Pcli_B_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T1_Pcli_B_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T1_Pcli_B_df)
+T1_Pcli_B_model_metrics <- augment(T1_Pcli_B_model)
+plot(T1_Pcli_B_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T1_Pcli_B_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T1_Pcli_B_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T1_Pcli_B_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T1_Pcli_B_df)) #replicate is not significant. wooooo
+```
+
+
+#### Pcli C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T1" & Species == "Pcli" & Genotype == "C") -> T1_Pcli_C_df
+
+#make factors
+T1_Pcli_C_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T1_Pcli_C_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T1_Pcli_C_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T1_Pcli_C_df)
+T1_Pcli_C_model_metrics <- augment(T1_Pcli_C_model)
+plot(T1_Pcli_C_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T1_Pcli_C_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T1_Pcli_C_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T1_Pcli_C_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T1_Pcli_C_df)) #replicate is not significant. wooooo
+```
+
+
+
+
+## T2
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2") %>% 
+  ggplot(., aes(x=Replicate, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species+Genotype) + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+```
+
+
+### Statistics
+
+#### Acer BC-8b 
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2" & Species == "Acer" & Genotype == "BC-8b") -> T2_Acer_BC8b_df
+
+#make factors
+T2_Acer_BC8b_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T2_Acer_BC8b_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T2_Acer_BC8b_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T2_Acer_BC8b_df)
+T2_Acer_BC8b_model_metrics <- augment(T2_Acer_BC8b_model)
+plot(T2_Acer_BC8b_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T2_Acer_BC8b_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T2_Acer_BC8b_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T2_Acer_BC8b_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T2_Acer_BC8b_df)) #replicate is not significant. wooooo
+```
+
+#### Acer MB-B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2" & Species == "Acer" & Genotype == "MB-B") -> T2_Acer_MBB_df
+
+#make factors
+T2_Acer_MBB_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T2_Acer_MBB_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T2_Acer_MBB_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T2_Acer_MBB_df)
+T2_Acer_MBB_model_metrics <- augment(T2_Acer_MBB_model)
+plot(T2_Acer_MBB_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T2_Acer_MBB_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T2_Acer_MBB_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T2_Acer_MBB_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T2_Acer_MBB_df)) #replicate is not significant. wooooo
+```
+
+#### Acer SI-C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2" & Species == "Acer" & Genotype == "SI-C") -> T2_Acer_SIC_df
+
+#make factors
+T2_Acer_SIC_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T2_Acer_SIC_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T2_Acer_SIC_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T2_Acer_SIC_df)
+T2_Acer_SIC_model_metrics <- augment(T2_Acer_SIC_model)
+plot(T2_Acer_SIC_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T2_Acer_SIC_model_metrics$.resid) #significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T2_Acer_SIC_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T2_Acer_SIC_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T2_Acer_SIC_df)) #replicate is not significant. wooooo
+```
+
+#### Pcli A
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2" & Species == "Pcli" & Genotype == "A") -> T2_Pcli_A_df
+
+#make factors
+T2_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T2_Pcli_A_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T2_Pcli_A_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T2_Pcli_A_df)
+T2_Pcli_A_model_metrics <- augment(T2_Pcli_A_model)
+plot(T2_Pcli_A_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T2_Pcli_A_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T2_Pcli_A_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T2_Pcli_A_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T2_Pcli_A_df)) #replicate is not significant. wooooo
+```
+
+
+#### Pcli B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2" & Species == "Pcli" & Genotype == "B") -> T2_Pcli_B_df
+
+#make factors
+T2_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T2_Pcli_B_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T2_Pcli_B_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T2_Pcli_B_df)
+T2_Pcli_B_model_metrics <- augment(T2_Pcli_B_model)
+plot(T2_Pcli_B_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T2_Pcli_B_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T2_Pcli_B_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T2_Pcli_B_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T2_Pcli_B_df)) #replicate is not significant. wooooo
+```
+
+
+#### Pcli C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T2" & Species == "Pcli" & Genotype == "C") -> T2_Pcli_C_df
+
+#make factors
+T2_Pcli_C_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> T2_Pcli_C_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+T2_Pcli_C_model <- lm(Percent ~ Treatment*Replicate + Tank, data = T2_Pcli_C_df)
+T2_Pcli_C_model_metrics <- augment(T2_Pcli_C_model)
+plot(T2_Pcli_C_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(T2_Pcli_C_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = T2_Pcli_C_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = T2_Pcli_C_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = T2_Pcli_C_df)) #replicate is not significant. wooooo
+```
+
+
+
+## FollowUp
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp") %>% 
+  ggplot(., aes(x=Replicate, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species+Genotype) + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+```
+
+
+
+### Statistics
+
+#### Acer BC-8b 
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp" & Species == "Acer" & Genotype == "BC-8b") -> FollowUp_Acer_BC8b_df
+
+#make factors
+FollowUp_Acer_BC8b_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> FollowUp_Acer_BC8b_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+FollowUp_Acer_BC8b_model <- lm(Percent ~ Treatment*Replicate + Tank, data = FollowUp_Acer_BC8b_df)
+FollowUp_Acer_BC8b_model_metrics <- augment(FollowUp_Acer_BC8b_model)
+plot(FollowUp_Acer_BC8b_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(FollowUp_Acer_BC8b_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = FollowUp_Acer_BC8b_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = FollowUp_Acer_BC8b_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Acer_BC8b_df)) #replicate is not significant. wooooo
+```
+
+#### Acer MB-B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp" & Species == "Acer" & Genotype == "MB-B") -> FollowUp_Acer_MBB_df
+
+#make factors
+FollowUp_Acer_MBB_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> FollowUp_Acer_MBB_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+FollowUp_Acer_MBB_model <- lm(Percent ~ Treatment*Replicate + Tank, data = FollowUp_Acer_MBB_df)
+FollowUp_Acer_MBB_model_metrics <- augment(FollowUp_Acer_MBB_model)
+plot(FollowUp_Acer_MBB_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(FollowUp_Acer_MBB_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = FollowUp_Acer_MBB_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = FollowUp_Acer_MBB_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Acer_MBB_df)) #replicate is not significant. wooooo
+```
+
+#### Acer SI-C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp" & Species == "Acer" & Genotype == "SI-C") -> FollowUp_Acer_SIC_df
+
+#make factors
+FollowUp_Acer_SIC_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> FollowUp_Acer_SIC_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+FollowUp_Acer_SIC_model <- lm(Percent ~ Treatment*Replicate + Tank, data = FollowUp_Acer_SIC_df)
+FollowUp_Acer_SIC_model_metrics <- augment(FollowUp_Acer_SIC_model)
+plot(FollowUp_Acer_SIC_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(FollowUp_Acer_SIC_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = FollowUp_Acer_SIC_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = FollowUp_Acer_SIC_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Acer_SIC_df)) #replicate is not significant. wooooo
+```
+
+#### Pcli A
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp" & Species == "Pcli" & Genotype == "A") -> FollowUp_Pcli_A_df
+
+#make factors
+FollowUp_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> FollowUp_Pcli_A_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+FollowUp_Pcli_A_model <- lm(Percent ~ Treatment*Replicate + Tank, data = FollowUp_Pcli_A_df)
+FollowUp_Pcli_A_model_metrics <- augment(FollowUp_Pcli_A_model)
+plot(FollowUp_Pcli_A_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(FollowUp_Pcli_A_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = FollowUp_Pcli_A_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_A_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_A_df)) #replicate is not significant. wooooo
+```
+
+
+#### Pcli B
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp" & Species == "Pcli" & Genotype == "B") -> FollowUp_Pcli_B_df
+
+#make factors
+FollowUp_Pcli_A_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> FollowUp_Pcli_B_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+FollowUp_Pcli_B_model <- lm(Percent ~ Treatment*Replicate + Tank, data = FollowUp_Pcli_B_df)
+FollowUp_Pcli_B_model_metrics <- augment(FollowUp_Pcli_B_model)
+plot(FollowUp_Pcli_B_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(FollowUp_Pcli_B_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = FollowUp_Pcli_B_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_B_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_B_df)) #replicate is not significant. wooooo
+```
+
+
+#### Pcli C
+
+do within each species:genotype because you are interested in whether replicates within the species:genotype comparison are significantly different
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "FollowUp" & Species == "Pcli" & Genotype == "C") -> FollowUp_Pcli_C_df
+
+#make factors
+FollowUp_Pcli_C_df %>% 
+  mutate_at(vars(TimePoint, Species, Genotype, Replicate, Tank, Treatment), factor) -> FollowUp_Pcli_C_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+FollowUp_Pcli_C_model <- lm(Percent ~ Treatment*Replicate + Tank, data = FollowUp_Pcli_C_df)
+FollowUp_Pcli_C_model_metrics <- augment(FollowUp_Pcli_C_model)
+plot(FollowUp_Pcli_C_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(FollowUp_Pcli_C_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Replicate, data = FollowUp_Pcli_C_model_metrics) #not significant
+
+#run two-way anova
+aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_C_df)
+
+summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_C_df)) #replicate is not significant. wooooo
+```
+
+
+None of the technical replicates are significantly different than one another within a given species:genotype:treatment. So I feel confident taking the mean percent across the three technical replicates and using that moving forward.
+
+
+
+# Percent at each time point (replicates combined)
+
+## T0
+```{r}
+percent_cells_df %>%
+  filter(TimePoint == "T0") %>% 
+  ggplot(., aes(x=Genotype, y=Percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species, scales = "free_x") + 
+  theme_classic() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+```
+
+
+
+# Percent comparison by treatment over time
 (average of all technical replicates)
-```{r}
-percent_cells_metadata %>%
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  group_by(TimePoint, Species, Genotype, Treatment) %>% 
-  select(!c("Tank","Average Control (for that given genotype and timepoint)", "Adjusted value (Percent -- Average Control)")) %>% 
-  mutate(average_percent = mean(Percent)) %>% 
-  select(!Percent) %>% 
-  distinct() %>% 
-  arrange(TimePoint, Species, Genotype)
-  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
-  geom_boxplot() +
-  facet_wrap(~Species, scales = "free") + 
-  theme_classic() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
-
-```
-
-
-
-
-Raw comparison by treatment x genotype over time
-```{r}
-
-```
-
-
-
-we can't compare percentages across treatments and time because of several limitations:
-1) we don't know what a "normal" level of phagocytic cells is, and the "normal" range for individuals can be quite large.
-2) the cytometer itself may influence time point
-so what we want to do is use the control group as the "baseline" and calculate the percent difference of the variable group to the control
-#and we can do this for each time point
-
-
-
-
-
-
-
-# subset to compare to Lys's data 
-```{r}
-adjusted_cells_data %>% 
-  filter(Species == "Pcli") %>% 
-  filter(TimePoint == "T0") %>%  #only look at before they were temp treated because in Lys's experiment she combined treated and untreated coral fragments
-  dplyr::rename(Avg_Control = `Average Control (for that given genotype and timepoint)`,
-                Adj_percent = `Adjusted value (Percent -- Average Control)`)
-  group_by(Genotype) %>% 
-  dplyr::summarise(mean_percent = mean(Adj_percent), sd = sd(Adj_percent), count = n())
-```
 
 
 ```{r}
-#only look at first technical replicate
-percent_cells_metadata %>%
-  filter(Replicate == "r1") %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
-  geom_boxplot() +
-  facet_wrap(~Species, scales = "free") + 
-  theme_classic() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))
-
-#we can't compare percentages across treatments and time because of several limitations:
-# 1) we don't know what a "normal" level of phagocytic cells is, and the "normal" range for individuals can be quite large.
-# 2) the cytometer itself may influence time point
-
-```
-
-
-```{r}
-#without follow up (because that wasn't during the treatment period, it was like a month later)
-
-percent_cells_metadata %>%
-  filter(Replicate == "r1") %>% 
-  filter(!TimePoint=="FollowUp") %>% 
-  mutate(TimePoint = case_when(TimePoint == "T0" ~ "Day 1",
-                               TimePoint == "T1" ~ "Day 7",
-                               TimePoint == "T2" ~ "Day 28")) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "Day 1", "Day 7", "Day 28")) %>% 
-  ggplot(., aes(x=TimePoint, y=Percent, fill = Treatment)) +
-  geom_boxplot() +
-  facet_wrap(~Species, scales = "free") + 
-  theme_classic() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme(text = element_text(size = 15)) 
-```
-
-```{r}
-#so what we want to do is use the control group as the "baseline" and calculate the percent difference of the variable group to the control
-#and we can do this for each time point
-
-#maybe try doing a ratio? like variable / control?
-
-percent_cells_metadata %>%
-  filter(Replicate == "r1") %>% 
-  filter(!TimePoint=="FollowUp") %>% 
-  group_by(TimePoint, Species, Treatment) %>% 
-  summarise(avg_percent = mean(Percent)) %>% 
-  pivot_wider(names_from = "Treatment", values_from = "avg_percent") %>% 
-  mutate(TimePoint = case_when(TimePoint == "T0" ~ "Day 1",
-                               TimePoint == "T1" ~ "Day 7",
-                               TimePoint == "T2" ~ "Day 28")) %>% 
-  mutate(TimePoint = as.factor(TimePoint)) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "Day 1", "Day 7", "Day 28")) %>% 
-  mutate("VC_Ratio" = Variable/Control) %>% 
-  mutate(VC_Ratio = VC_Ratio - 1) %>% 
-  mutate(color_assignment = case_when(VC_Ratio > 0 ~ "Variable",
-                                      VC_Ratio < 0 ~ "Control"
-                                      )) %>% 
-  ggplot(., aes(x=TimePoint, y=VC_Ratio, fill = color_assignment)) +
-  geom_col(position = position_dodge()) + 
-  theme_classic() +
-  facet_wrap(~Species) +
-  labs(x = "Time Point", y = "Ratio of Average Phagocytosis Percentage", fill = "Treatment") +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme(text = element_text(size = 15))
-  
-```
-
-
-```{r}
-percent_cells_metadata %>%
-  filter(Replicate == "r1") %>% 
-  filter(!TimePoint=="FollowUp") %>% 
-  select(TimePoint, Species, Percent, Treatment) %>% 
-  pivot_wider(names_from = "TimePoint", values_from = "Percent")
-  mutate(TimePoint = as.factor(TimePoint)) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  mutate("VC_Ratio" = Variable/Control)
-```
-
-using Grace/Benyamin's method of adjusting values based on the average control value for that timepoint+genotype
-```{r}
-jitter <- position_jitter(width = 0.1, height = 0.1)
-
-adjusted_cells_data %>% 
-  group_by(TimePoint, Species, Genotype, Treatment) %>% 
-  summarise(avg_percentage = mean(`Adjusted value (Percent -- Average Control)`), sd = sd(`Adjusted value (Percent -- Average Control)`)) %>% 
-  filter(Species == "Acer") %>% 
-  mutate(TimePoint = as.factor(TimePoint)) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  ggplot(., aes(x=TimePoint, y=avg_percentage, fill = Treatment)) + 
-  geom_bar(stat = "identity", position = position_dodge()) +
-  geom_errorbar(aes(ymin = avg_percentage - sd, ymax = avg_percentage + sd), width =.2, position = jitter) +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic() +
-  facet_wrap(~Genotype)
-
-```
-
-```{r}
-adjusted_cells_data %>% 
-  group_by(TimePoint, Species, Genotype, Treatment) %>% 
-  summarise(avg_percentage = mean(`Adjusted value (Percent -- Average Control)`), sd = sd(`Adjusted value (Percent -- Average Control)`)) %>% 
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
-  filter(Species == "Pcli") %>% 
-  mutate(TimePoint = as.factor(TimePoint)) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  ggplot(., aes(x=TimePoint, y=avg_percentage, fill = Treatment)) + 
-  geom_bar(stat = "identity", position = position_dodge()) +
-  geom_errorbar(aes(ymin = avg_percentage - sd, ymax = avg_percentage + sd), width =.2, position = jitter) +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic() +
-  facet_wrap(~Genotype)
-```
-
-```{r}
-adjusted_cells_data %>% 
-  group_by(TimePoint, Species, Genotype, Treatment) %>% 
-  filter(Species == "Acer") %>% 
-  filter(!TimePoint == "FollowUp") %>% 
-  mutate(TimePoint = as.factor(TimePoint)) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  ggplot(., aes(x=TimePoint, y=`Adjusted value (Percent -- Average Control)`, fill = Treatment)) + 
-  geom_boxplot() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic() +
-  facet_wrap(~Genotype) +
-  theme(text = element_text(size = 13))
+  group_by(num_days, Species, Genotype, Treatment) %>% 
+  mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x = num_days, y = avg_percent_per_genet))+
+  theme_classic()+
+  geom_jitter(aes(y=mean_replicate_percent_perID, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.3),
+              alpha=0.2, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .2, position = position_dodge(width=0.4)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, fill = Treatment), size = 3, pch = 21, color = "black", position = position_dodge(width=0.4))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Number of Days")+
+  ylab("% Phagocytic Activity")+
+  facet_wrap(~Species+Genotype, scales = "free_x") +
+  theme(text = element_text(size = 15))
 ```
 
 
-```{r}
-adjusted_cells_data %>% 
-  group_by(TimePoint, Species, Genotype, Treatment) %>% 
-  filter(!TimePoint=="FollowUp") %>% 
-  filter(Species == "Pcli") %>% 
-  mutate(TimePoint = as.factor(TimePoint)) %>% 
-  mutate(TimePoint = fct_relevel(TimePoint, 
-            "T0", "T1", "T2", 
-            "FollowUp")) %>% 
-  ggplot(., aes(x=TimePoint, y=`Adjusted value (Percent -- Average Control)`, fill = Treatment)) + 
-  geom_boxplot() +
-  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme_classic() +
-  facet_wrap(~Genotype) +
-  theme(text = element_text(size = 13))
-```
-
-
-
-Stats (attempt to use lmer)
-```{r}
-adjusted_cells_data %>% 
-  filter(Species == "Acer") -> Acer_FACS_df
-
-#model 1 = full model
-Acer_FACS_GLMM_full <- lmer(`Adjusted value (Percent -- Average Control)` ~ Treatment*TimePoint + (1|Genotype) + (1|Tank), data=Acer_FACS_df)
-summary(Acer_FACS_GLMM_full)
-
-qqnorm(resid(Acer_FACS_GLMM_full))
-qqline(resid(Acer_FACS_GLMM_full))
-
-Acer_FACS_aov <- aov(`Adjusted value (Percent -- Average Control)` ~ Treatment*TimePoint*Genotype, data=Acer_FACS_df)
-summary(Acer_FACS_aov)
-
-qqnorm(resid(Acer_FACS_aov))
-```
-
-```{r}
-adjusted_cells_data %>% 
-  filter(Species == "Pcli") -> Pcli_FACS_df
-
-Pcli_FACS_aov <- aov(`Adjusted value (Percent -- Average Control)` ~ Treatment*TimePoint*Genotype, data=Pcli_FACS_df)
-summary(Pcli_FACS_aov)
-
-qqnorm(resid(Pcli_FACS_aov))
-
-pivot_longer(cols = `Trypan )
-
-```
 
