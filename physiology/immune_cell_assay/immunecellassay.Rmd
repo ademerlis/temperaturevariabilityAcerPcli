@@ -12,6 +12,7 @@ library(ggpubr)
 library(rstatix)
 library(cowplot)
 library(dunn.test)
+library(Rmisc)
 
 percent_cells_df <- read_csv("Grace_percentcells_alldata.csv") 
 
@@ -887,7 +888,100 @@ percent_cells_df %>%
 # Percent comparison by treatment over time
 (average of all technical replicates)
 
+## species:treatment comparison
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  group_by(num_days, Species, Treatment) %>% 
+  mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x = num_days, y = avg_percent_per_genet))+
+  theme_classic()+
+  geom_jitter(aes(y=mean_replicate_percent_perID, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.3),
+              alpha=0.2, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .2, position = position_dodge(width=0.4)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, fill = Treatment), size = 3, pch = 21, color = "black", position = position_dodge(width=0.4))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Number of Days")+
+  ylab("% Phagocytic Activity")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15))
+```
 
+### Statistics
+
+Change to factors
+```{r}
+#average all technical replicates together before running stats
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() -> percent_cells_speciestreatments
+
+str(percent_cells_speciestreatments)
+
+percent_cells_speciestreatments %>% 
+  mutate_at(vars(Species, Treatment, num_days), factor) -> percent_cells_speciestreatments
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(mean_replicate_percent_perID ~ Treatment*Species*num_days + Genotype + Tank, data = percent_cells_speciestreatments)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 2 outliers
+
+#manually remove outliers
+
+percent_cells_speciestreatments<- percent_cells_speciestreatments %>% 
+  filter(!(Treatment == "Treated" & Species == "Pcli" & Genotype == "A" & num_days == "71" & mean_replicate_percent_perID > 19 ))
+
+#rerun normality and homogeneity tests to see if they're normal now
+treat_model <- lm(mean_replicate_percent_perID ~ Treatment*Species*num_days + Genotype + Tank, data = percent_cells_speciestreatments)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species*num_days, data = treat_model_metrics) #significant
+
+#nope still not normal
+
+#kruskal wallis test
+percent_cells_speciestreatments$Treatment_Species_numdays <- interaction(percent_cells_speciestreatments$Treatment, percent_cells_speciestreatments$Species, percent_cells_speciestreatments$num_days)
+
+kruskal_test(percent_cells_speciestreatments, mean_replicate_percent_perID ~ Treatment_Species_numdays) #significant
+
+as.data.frame(dunn.test(percent_cells_speciestreatments$mean_replicate_percent_perID, percent_cells_speciestreatments$Treatment_Species_numdays, method = "bonferroni")) #%>% 
+  #write_csv("percent_cells_speciestreatments.csv")
+
+```
+
+
+
+## separated by genotype and species
 ```{r}
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
@@ -912,6 +1006,30 @@ percent_cells_df %>%
   facet_wrap(~Species+Genotype, scales = "free_x") +
   theme(text = element_text(size = 15))
 ```
+
+# Percent change over treatment 
+
+## By species x treatment
+
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() -> percent_cells_speciestreatments 
+  
+#average all technical replicates together before running stats
+cell_means <- summarySE(percent_cells_speciestreatments, measurevar="mean_replicate_percent_perID", groupvars=c("Species","Treatment", "num_days"))
+```
+
+```{r}
+
+```
+
+
+# Percent change end of treatment vs recovery time point 
 
 
 
