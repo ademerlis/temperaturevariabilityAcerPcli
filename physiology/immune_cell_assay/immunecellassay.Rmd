@@ -13,6 +13,8 @@ library(rstatix)
 library(cowplot)
 library(dunn.test)
 library(Rmisc)
+library(plyr)
+library(dplyr)
 
 percent_cells_df <- read_csv("Grace_percentcells_alldata.csv") 
 
@@ -885,33 +887,38 @@ percent_cells_df %>%
 
 
 
-# Percent comparison by treatment over time
+# Percent comparison beginning and end of treatment
 (average of all technical replicates)
 
 ## species:treatment comparison
 ```{r}
-percent_cells_df %>% 
+plot1 <- percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
-  group_by(num_days, Species, ID, Treatment) %>% 
-  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  dplyr::filter(TimePoint == "T0" | TimePoint == "T2") %>% 
+  dplyr::group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
-  group_by(num_days, Species, Treatment) %>% 
-  mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
+  dplyr::group_by(num_days, Species, Treatment) %>% 
+  dplyr::mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
   ungroup() %>% 
   ggplot(., aes(x = num_days, y = avg_percent_per_genet))+
   theme_classic()+
   geom_jitter(aes(y=mean_replicate_percent_perID, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.3),
+              position=position_dodge(width=0.8),
               alpha=0.2, pch = 21,
               color = "black") +
-  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .2, position = position_dodge(width=0.4)) +
+  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .3, position = position_dodge(width=0.8)) +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, fill = Treatment), size = 3, pch = 21, color = "black", position = position_dodge(width=0.4))+
+  geom_point(mapping = aes(x = num_days, fill = Treatment), size = 2, pch = 21, color = "black", position = position_dodge(width=0.8))+
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  xlab("Number of Days")+
+  xlab("Day")+
   ylab("% Phagocytic Activity")+
-  facet_wrap(~Species, scales = "free_x") +
-  theme(text = element_text(size = 15))
+  facet_wrap(~Species, scales = "free_x", dir = "v") +
+  theme(text = element_text(size = 15)) +
+  ylim(0, 20) +
+  theme(legend.position="none")
+  
+#ggsave("percentcells_speciestreatments_overtime.pdf", width = 8, height = 5)
 ```
 
 ### Statistics
@@ -922,15 +929,16 @@ Change to factors
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, ID, Treatment) %>% 
-  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
   select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
-  distinct() -> percent_cells_speciestreatments
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") -> percent_cells_speciestreatments
 
 str(percent_cells_speciestreatments)
 
 percent_cells_speciestreatments %>% 
-  mutate_at(vars(Species, Treatment, num_days), factor) -> percent_cells_speciestreatments
+  dplyr::mutate_at(vars(Species, Treatment, num_days), factor) -> percent_cells_speciestreatments
 ```
 
 
@@ -941,71 +949,122 @@ treat_model_metrics <- augment(treat_model)
 plot(treat_model)
 
 # assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
-
-# identifying outliers
-treat_model_metrics %>% 
-  filter(abs(.std.resid) > 3)
-# 2 outliers
-
-#manually remove outliers
-
-percent_cells_speciestreatments<- percent_cells_speciestreatments %>% 
-  filter(!(Treatment == "Treated" & Species == "Pcli" & Genotype == "A" & num_days == "71" & mean_replicate_percent_perID > 19 ))
-
-#rerun normality and homogeneity tests to see if they're normal now
-treat_model <- lm(mean_replicate_percent_perID ~ Treatment*Species*num_days + Genotype + Tank, data = percent_cells_speciestreatments)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
+shapiro_test(treat_model_metrics$.resid) # not significant
 
 # assess homogeneity of variances using Levene's Test
 levene_test(.resid ~ Treatment*Species*num_days, data = treat_model_metrics) #significant
 
-#nope still not normal
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 0 outliers
 
-#kruskal wallis test
+#make interaction term
 percent_cells_speciestreatments$Treatment_Species_numdays <- interaction(percent_cells_speciestreatments$Treatment, percent_cells_speciestreatments$Species, percent_cells_speciestreatments$num_days)
 
-kruskal_test(percent_cells_speciestreatments, mean_replicate_percent_perID ~ Treatment_Species_numdays) #significant
+#run Welch's anova
+oneway.test(mean_replicate_percent_perID ~ Treatment_Species_numdays, data = percent_cells_speciestreatments, var.equal = FALSE) #significant
 
-as.data.frame(dunn.test(percent_cells_speciestreatments$mean_replicate_percent_perID, percent_cells_speciestreatments$Treatment_Species_numdays, method = "bonferroni")) #%>% 
-  #write_csv("percent_cells_speciestreatments.csv")
+#posthoc test: Games-Howell
 
+games_howell_test(percent_cells_speciestreatments, mean_replicate_percent_perID ~ Treatment_Species_numdays) #%>% 
+ # write_csv("percentcells_speciestreatment_posthoc.csv")
 ```
 
 
 
 ## separated by genotype and species
 ```{r}
-percent_cells_df %>% 
+plot2 <- percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
+  dplyr::filter(TimePoint == "T0" | TimePoint == "T2") %>% 
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
-  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
   group_by(num_days, Species, Genotype, Treatment) %>% 
-  mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
+  dplyr::mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
   ungroup() %>% 
   ggplot(., aes(x = num_days, y = avg_percent_per_genet))+
   theme_classic()+
   geom_jitter(aes(y=mean_replicate_percent_perID, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.3),
+              position=position_dodge(width=0.8),
               alpha=0.2, pch = 21,
               color = "black") +
-  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .2, position = position_dodge(width=0.4)) +
+  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .3, position = position_dodge(width=0.8)) +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, fill = Treatment), size = 3, pch = 21, color = "black", position = position_dodge(width=0.4))+
+  geom_point(mapping = aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, fill = Treatment), size = 2, pch = 21, color = "black", position = position_dodge(width=0.8))+
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   xlab("Number of Days")+
   ylab("% Phagocytic Activity")+
   facet_wrap(~Species+Genotype, scales = "free_x") +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 15)) +
+  ylim(0, 20)
 ```
+
+
+```{r}
+plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1,2))
+```
+
+### Statistics
+
+Change to factors
+
+Separate species 
+
+#### Acer
+```{r}
+#average all technical replicates together before running stats
+percent_cells_df %>% 
+  filter(Species == "Acer") %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") -> Acer_percent_cells 
+
+str(Acer_percent_cells)
+
+Acer_percent_cells %>% 
+  dplyr::mutate_at(vars(Species, Genotype, Treatment, num_days), factor) -> Acer_percent_cells
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+Acer_model <- lm(mean_replicate_percent_perID ~ Treatment*Genotype*num_days + Tank, data = Acer_percent_cells)
+Acer_model_metrics <- augment(Acer_model)
+plot(Acer_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Genotype*num_days, data = Acer_model_metrics) #not significant
+
+# identifying outliers
+Acer_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 0 outliers
+
+#make interaction term
+Acer_percent_cells$Treatment_Genotype_numdays <- interaction(Acer_model_metrics$Treatment, Acer_percent_cells$Genotype, Acer_percent_cells$num_days)
+
+# kruskal wallis test
+kruskal_test(mean_replicate_percent_perID ~ Treatment_Genotype_numdays, data = Acer_percent_cells)#significant
+
+#posthoc test
+as.data.frame(dunn.test(Acer_percent_cells$mean_replicate_percent_perID, Acer_percent_cells$Treatment_Genotype_numdays, method = "bonferroni"))
+
+#theres too many corrections going on here because Dunn test is overly conservative. I think some of the day 0 vs day 28 within each genotype could be significant but this test doesn't show that. I can either try to transform the data or subset it and just do within genotype tests, which could hopefully be ANOVAs. 
+
+#what about GLMs? 
+```
+
+
+
 
 # Percent change over treatment 
 
@@ -1015,10 +1074,11 @@ percent_cells_df %>%
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, ID, Treatment) %>% 
-  mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
   select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
-  distinct() -> percent_cells_speciestreatments 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") -> percent_cells_speciestreatments 
   
 #average all technical replicates together before running stats
 cell_means <- summarySE(percent_cells_speciestreatments, measurevar="mean_replicate_percent_perID", groupvars=c("Species","Treatment", "num_days"))
