@@ -46,6 +46,12 @@ metadata %>%
   summarise(count = n()) %>% 
   ggplot(., aes(x=CBASS_tank, y=count, fill = Treatment)) + geom_bar(stat="identity") + facet_wrap(~Species + Colony) + scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
   theme_classic()
+
+metadata %>% 
+  select(Species, ID, Colony, Treatment, CBASS_tank) %>% 
+  drop_na(Treatment) %>% 
+  group_by(CBASS_tank) %>% 
+  summarise(count = n())
 ```
 
 
@@ -74,6 +80,12 @@ metadata %>%
   drop_na(Treatment, slowburn_heatstress_tank) %>% 
   group_by(Species, Colony, Treatment, slowburn_heatstress_tank) %>% 
   summarise(count = n()) #sample size total = 163 corals going into slow burn (lost 20 more corals due to CBASS stress)
+
+metadata %>% 
+  select(Species, ID, Colony, Treatment, slowburn_heatstress_tank) %>% 
+  drop_na(Treatment, slowburn_heatstress_tank) %>% 
+  group_by( slowburn_heatstress_tank) %>% 
+  summarise(count = n())
 ```
 # sample size post-slow burn heat-stress
 ```{r}

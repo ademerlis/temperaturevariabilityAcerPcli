@@ -10,22 +10,15 @@ library(tidyverse)
 library(janitor)
 library(rstatix)
 library(cowplot)
+library(plotrix)
 
-metadata <- readxl::read_xlsx("../metadata.xlsx")
+metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
 ```
 
 Tidy data 
 
 ```{r}
 metadata %>% 
-  mutate(Treatment = case_when(Treatment_Tank == "1" ~ "Untreated",
-                               Treatment_Tank == "2" ~ "Treated",
-                               Treatment_Tank == "3" ~ "Treated",
-                               Treatment_Tank == "4" ~ "Untreated",
-                               Treatment_Tank == "5" ~ "Treated", 
-                               Treatment_Tank == "6" ~ "Untreated",
-                               Treatment_Tank == "7" ~ "Untreated",
-                               Treatment_Tank == "8" ~ "Treated")) %>% 
   mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
                                CBASS_tank == "2" ~ "37",
                                CBASS_tank == "3" ~ "32",
@@ -41,22 +34,41 @@ There are two columns of significance for survivorship, Removed_Date and Mortali
 
 ```{r}
 metadata %>% 
-  filter(is.na(Removed_Date)) #71 corals don't have a removed date
+  filter(is.na(Removed_Date) & is.na(mortality_date)) #43 corals don't have either. But if they weren't assigned a heat-stress tank, that should indicate that they were removed/died before 06/15/2022
 
 metadata %>% 
-  filter(is.na(mortality_date)) #118 corals dont' have a mortality date
-
-metadata %>% 
-  filter(is.na(Removed_Date) & is.na(mortality_date)) #48 corals don't have either. But if they weren't assigned a heat-stress tank, that should indicate that they were removed/died before 06/15/2022
+  filter(is.na(Removed_Date) & is.na(mortality_date) & is.na(slowburn_heatstress_tank)) # 5 corals. looks like the four Acer were tissue sampled and the Pcli who knows, it got buoyant weighed on April 21. they probably died sometime after CBASS and before heat stress.
 ```
 
 
 # CBASS Mortality
 
+First plot the timeline of when corals were removed.
+```{r}
+tidy_metadata %>%
+  filter(Removed_Date < "2022-05-20") %>% 
+  arrange(desc(Removed_Date))
+
+#April 26 was the last coral reported with a mortality date until the slow burn heat stress started. So have April 26 be the cut-off point for CBASS mortality plots.
+
+ggplot(tidy_metadata, aes(x=Removed_Date, fill = Treatment)) +
+  geom_bar() + 
+  facet_wrap(~Species)
+
+ggplot(tidy_metadata, aes(x=mortality_date, fill = Treatment)) +
+  geom_bar() + 
+  facet_wrap(~Species)
+
+CBASS_mortality <- tidy_metadata %>% 
+  dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-26") 
+#for this time period, Removed_Date and mortality_date match up so there's no need to use the coalesce function
+```
+
+
 Number of corals that died due to CBASS
 ```{r}
 tidy_metadata %>% 
-  dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-25") %>% 
+  dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-26") %>%
   drop_na(Species, Treatment, Reason_removed) %>% 
   group_by(Reason_removed, Species, Treatment) %>% 
   summarize(count = n()) %>% 
@@ -70,11 +82,8 @@ tidy_metadata %>%
   coord_flip()
 ```
 
-
 ```{r}
-#proportion of corals that died during/post-CBASS versus the total number of corals that went into the CBASS
-tidy_metadata %>% 
-  dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
+CBASS_mortality %>% 
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
                              Reason_removed == "post-CBASS RTL" ~ "RTL",
                              Reason_removed == "RTL" ~ "RTL")) %>% 
@@ -82,8 +91,7 @@ tidy_metadata %>%
   group_by(Species, Treatment) %>% 
   summarize(count_RTL = n()) -> RTL_species_treatment_count
 
-tidy_metadata %>% 
-  dplyr::filter(Removed_Date >= "2022-04-21" & Removed_Date <= "2022-04-25") %>% 
+CBASS_mortality %>% 
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
                              Reason_removed == "post-CBASS RTL" ~ "RTL",
                              Reason_removed == "RTL" ~ "RTL")) %>% 
@@ -253,14 +261,6 @@ metadata %>%
 metadata %>% 
   filter(!is.na(slowburn_heatstress_tank)) %>% 
   select(Species:heatstress_recovery_tank) %>% 
-  mutate(Treatment = case_when(Treatment_Tank == "1" ~ "Untreated",
-                               Treatment_Tank == "2" ~ "Treated",
-                               Treatment_Tank == "3" ~ "Treated",
-                               Treatment_Tank == "4" ~ "Untreated",
-                               Treatment_Tank == "5" ~ "Treated", 
-                               Treatment_Tank == "6" ~ "Untreated",
-                               Treatment_Tank == "7" ~ "Untreated",
-                               Treatment_Tank == "8" ~ "Treated")) %>% 
   mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
                                CBASS_tank == "2" ~ "37",
                                CBASS_tank == "3" ~ "32",
@@ -293,15 +293,15 @@ slowburn_metadata %>%
   mutate(Removed_Date = ymd(Removed_Date)) %>%
   mutate(mortality_date = ymd(mortality_date)) %>%
   mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
-  mutate(end_date =  replace(end_date, is.na(end_date), as.Date("2022-07-15"))) %>% 
   mutate(start_date="2022-06-25") %>% 
   mutate(start_date = ymd(start_date)) %>% 
   mutate(days_to_removed = end_date - start_date) %>% 
+  filter(!days_to_removed == "NA days") %>% 
   group_by(Species, Treatment) %>% 
-  summarise(averagedays = mean(days_to_removed), sd = sd(days_to_removed)) %>%
+  summarise(averagedays = mean(days_to_removed), se = std.error(days_to_removed)) %>%
   ggplot(., aes(x = Treatment, y = averagedays, fill = Treatment)) + 
   geom_bar(stat="identity", position = position_dodge()) + 
-  geom_errorbar(aes(ymin = averagedays - sd, ymax = averagedays + sd), width =
+  geom_errorbar(aes(ymin = averagedays - se, ymax = averagedays + se), width =
                   .2, position=position_dodge(.9)) +
   theme_classic() +
   facet_wrap(~Species, scales = "free_x") +
@@ -316,10 +316,10 @@ slowburn_metadata %>%
   mutate(Removed_Date = ymd(Removed_Date)) %>%
   mutate(mortality_date = ymd(mortality_date)) %>%
   mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
-  mutate(end_date =  replace(end_date, is.na(end_date), as.Date("2022-07-15"))) %>% 
   mutate(start_date="2022-06-25") %>% 
   mutate(start_date = ymd(start_date)) %>% 
   mutate(days_to_removed = end_date - start_date) %>% 
+  filter(!days_to_removed == "NA days") %>% 
   group_by(Species, Treatment, CBASS_temp) %>% 
   summarise(averagedays = mean(days_to_removed), se = std.error(days_to_removed)) %>%
   ggplot(., aes(x = CBASS_temp, y = averagedays, fill = Treatment)) + 
@@ -329,6 +329,28 @@ slowburn_metadata %>%
   theme_classic() +
   facet_wrap(~Species, scales = "free_x") +
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+```
+
+
+```{r}
+#for 
+slowburn_metadata %>% 
+  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  filter(!days_to_removed == "NA days") %>% 
+  group_by(Species,Treatment, Removed_Date, mortality_date, Reason_removed, slowburn) %>% 
+  summarise(count = n()) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) 
+
+#figure out reason for mortality in the ones that have mortality date -- check photos and notes
 ```
 
 3-way anova for species, treatment, and CBASS temp

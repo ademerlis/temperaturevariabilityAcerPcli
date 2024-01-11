@@ -289,16 +289,16 @@ ipam_data %>%
   rename(fvfm = "Y") %>% 
   rename(Ft = `F`) %>% 
   mutate(Date = lubridate::ymd(Date)) %>% 
-  mutate(Treatment_period = case_when(Date <= "2022-04-20"  ~ "Variable vs. control",
+  mutate(Treatment_period = case_when(Date <= "2022-04-20"  ~ "Temp Treatment",
                                       Date == "2022-04-22" ~ "CBASS")) %>% 
-  mutate(Treatment = case_when(Date <= "2022-04-20" & Tank == "1" ~ "Control",
-                               Date <= "2022-04-20" & Tank == "2" ~ "Variable",
-                               Date <= "2022-04-20" & Tank == "3" ~ "Variable",
-                               Date <= "2022-04-20" & Tank == "4" ~ "Control",
-                               Date <= "2022-04-20" & Tank == "5" ~ "Variable",
-                               Date <= "2022-04-20" & Tank == "6" ~ "Control",
-                               Date <= "2022-04-20" & Tank == "7" ~ "Control",
-                               Date <= "2022-04-20" & Tank == "8" ~ "Variable")) %>% 
+  mutate(Treatment = case_when(Date <= "2022-04-20" & Tank == "1" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "2" ~ "Treated",
+                               Date <= "2022-04-20" & Tank == "3" ~ "Treated",
+                               Date <= "2022-04-20" & Tank == "4" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "5" ~ "Treated",
+                               Date <= "2022-04-20" & Tank == "6" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "7" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "8" ~ "Treated")) %>% 
   mutate(CBASS_temp = case_when(Date == "2022-04-22" & Tank == "1" ~ "36",
                                Date == "2022-04-22" & Tank == "2" ~ "37",
                                Date == "2022-04-22" & Tank == "3" ~ "32",

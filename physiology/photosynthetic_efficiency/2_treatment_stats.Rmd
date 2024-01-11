@@ -24,14 +24,6 @@ treatment_time_bothspecies <- ipam_tidy_data %>%
   drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
   dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
   dplyr::filter(Date <= "2022-04-20") %>% 
-    mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
-                               Tank == "2" ~ "Treated",
-                               Tank == "3" ~ "Treated",
-                               Tank == "4" ~ "Untreated",
-                               Tank == "5" ~ "Treated", 
-                               Tank == "6" ~ "Untreated",
-                               Tank == "7" ~ "Untreated",
-                               Tank == "8" ~ "Treated")) %>% 
   pivot_wider(names_from = Date, values_from = fvfm) %>% 
    mutate(fvfm_t0 = case_when(Species == "Acervicornis" ~ `2022-03-16`,
                                   Species == "Pclivosa" ~ `2022-03-21`)) %>% 
@@ -52,14 +44,6 @@ treatment_normalized_bothspecies <- ipam_tidy_data %>%
   dplyr::filter(!Treatment_period == "CBASS") %>%
   drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
   dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species)  %>% 
-    mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
-                               Tank == "2" ~ "Treated",
-                               Tank == "3" ~ "Treated",
-                               Tank == "4" ~ "Untreated",
-                               Tank == "5" ~ "Treated", 
-                               Tank == "6" ~ "Untreated",
-                               Tank == "7" ~ "Untreated",
-                               Tank == "8" ~ "Treated")) %>% 
   dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
   pivot_wider(names_from = Date, values_from = fvfm) %>% 
   mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,

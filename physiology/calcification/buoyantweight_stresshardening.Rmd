@@ -17,14 +17,7 @@ metadata <- readxl::read_xlsx("../metadata.xlsx")
 
 buoyantweights<- metadata %>% 
     dplyr::select(Species, ID, Colony, Treatment, Treatment_Tank, Bw_initial_raw_mass:bw_final_temp) %>% 
-    mutate(Treatment = case_when(Treatment_Tank == "1" ~ "Untreated",
-                               Treatment_Tank == "2" ~ "Treated",
-                               Treatment_Tank == "3" ~ "Treated",
-                               Treatment_Tank == "4" ~ "Untreated",
-                               Treatment_Tank == "5" ~ "Treated", 
-                               Treatment_Tank == "6" ~ "Untreated",
-                               Treatment_Tank == "7" ~ "Untreated",
-                               Treatment_Tank == "8" ~ "Treated"))
+    drop_na(Treatment)
 
 #sample size
 buoyantweights %>% group_by(Species, Treatment) %>% summarise(count = n())
@@ -71,6 +64,22 @@ p1<- calc_bw_bothspecies_bothtimepoints %>%
   theme(legend.position="none")
 #ggsave("percentgrowth_speciestreatments.pdf")
 ```
+# mean/standard error growth rate bar chart
+```{r}
+p1<- calc_bw_bothspecies_bothtimepoints %>% 
+  group_by(Species, Treatment) %>% 
+  summarise(mean = mean(percent_change), se = std.error(percent_change)) %>% 
+  ggplot(., aes(x=Species, y = mean, fill = Treatment)) + 
+  geom_bar(stat = "identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width =
+                  .2, position=position_dodge(.9)) + 
+  theme_classic() + 
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y= "% Growth") +
+  theme(legend.position="none")
+```
+
 
 # stats 
 
@@ -111,7 +120,6 @@ bw_posthoc_results <- as.data.frame(dunn_results)
 ```
 
 
-
 # Calculating percent change of mass in air for both species and all genotypes separated
 ```{r}
 #determining seawater density using temperature and salinity (from Patrick Kiel's code)
@@ -150,6 +158,23 @@ p2 <- calc_bw_bothspeciesgenet_bothtimepoints %>%
   theme(text = element_text(size = 15)) +
   labs(y= "% Growth")
 ```
+# mean/standard error growth rate bar chart
+
+```{r}
+p2<-calc_bw_bothspecies_bothtimepoints %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(mean = mean(percent_change), se = std.error(percent_change)) %>% 
+  ggplot(., aes(x=Colony, y = mean, fill = Treatment)) + 
+  geom_bar(stat = "identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width =
+                  .2, position=position_dodge(.9)) + 
+  theme_classic() + 
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y= "% Growth") +
+  facet_wrap(~Species, scales = "free_x")
+```
+
 
 # stats for percent change in buoyant weight
 

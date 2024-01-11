@@ -629,14 +629,47 @@ heatstressassay %>%
 ```
 
 ```{r}
-heatstressassay$Time <- lubridate::round_date(heatstressassay$Time, unit = "15 min")
+heatstressassay$Time <- lubridate::round_date(heatstressassay$Time, unit = "60 min")
 
-# need to figure out troublesome time points for each tank
+
+heatstressassay %>% 
+ dplyr::select(Time, T3, T4, T7, T8) %>% 
+  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
+   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
+                               Tank == "T4" ~ "heatstress",
+                               Tank == "T7" ~ "ambient",
+                               Tank == "T8" ~ "heatstress")) %>% 
+  filter(Tank == "T3") %>% 
+  filter(Temp > 31) %>% 
+  arrange(desc(Time)) #T3 went all the way to july 22
+
+heatstressassay %>% 
+ dplyr::select(Time, T3, T4, T7, T8) %>% 
+  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
+   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
+                               Tank == "T4" ~ "heatstress",
+                               Tank == "T7" ~ "ambient",
+                               Tank == "T8" ~ "heatstress")) %>% 
+  filter(Tank == "T4") %>% 
+  filter(Temp > 31) %>% 
+  arrange(desc(Time)) #T4 went to july 22
+
+heatstressassay %>% 
+ dplyr::select(Time, T3, T4, T7, T8) %>% 
+  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
+   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
+                               Tank == "T4" ~ "heatstress",
+                               Tank == "T7" ~ "ambient",
+                               Tank == "T8" ~ "heatstress")) %>% 
+  filter(Tank == "T8") %>% 
+  filter(Temp > 31) %>% 
+  arrange(desc(Time)) #T8 stopped heat stress on july 13
+
+
 heatstressassay %>% 
   dplyr::select(Time, T3, T4, T7, T8) %>% 
   pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  filter(!(Time > "2022-06-25 00:00:00" & Temp < 28 & Tank != "T7")) %>% 
-  filter(Time <= as.Date("2022-07-15")) %>% 
+  filter(!(Time >= "2022-07-14 00:00:00" & Tank == "T8")) %>% 
    mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
                                Tank == "T4" ~ "heatstress",
                                Tank == "T7" ~ "ambient",
@@ -647,14 +680,14 @@ heatstressassay %>%
        aes(x = Time, y = mean_temp, color = Treatment)) +
   geom_point() + 
   theme_classic() +
-  labs(title = "Tank Temperatures",
-       y = "Temperature (°C)",
+  labs(y = "Temperature (°C)",
        x = "Date") +
   theme(text = element_text(size = 15)) +
-  geom_ribbon(aes(fill=Treatment, group = Treatment, ymin = mean_temp - se, ymax = mean_temp + se), alpha = 0.2) +
+  geom_point() + 
+  geom_errorbar(aes(fill=Treatment, group = Treatment, ymin = mean_temp - se, ymax = mean_temp + se), alpha = 0.2) +
   scale_color_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))+
   scale_fill_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))
-ggsave("slowburnheatstress.pdf", width = 10, height = 6)
+#ggsave("slowburnheatstress.pdf", width = 9, height = 6)
 ```
 
 
