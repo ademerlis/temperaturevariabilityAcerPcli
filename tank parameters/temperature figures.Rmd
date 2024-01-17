@@ -124,10 +124,6 @@ temptreatment %>%
 #ggsave("temptreatment_28d.pdf", width = 10, height = 6)
 ```
 
-There is something wrong with tank 8. It never reached 31ºC. 
-
-You can see it in the standard deviation plot below. 
-
 ```{r}
 #summary figure of average tank temp during 24-hr period over the 28 days
 temptreatment$Time <- lubridate::round_date(temptreatment$Time, unit = "15 min")
@@ -163,103 +159,6 @@ temptreatment %>%
 #ggsave("summarytemptreatment_stdeviation.pdf", width = 10, height = 6)
 ```
 
-Separate out tanks
-```{r}
-temptreatment %>% 
-  filter(Time >= "2022-03-24 09:00:00") %>% 
-  filter(Time <= "2022-04-20 09:00:00") %>% 
-    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
-  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
-  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
-  # mutate(treatment = case_when(Tank == "T1" ~ "control",
-  #                              Tank == "T2" ~ "variable",
-  #                              Tank == "T3" ~ "variable",
-  #                              Tank == "T4" ~ "control",
-  #                              Tank == "T5" ~ "variable", 
-  #                              Tank == "T6" ~ "control",
-  #                              Tank == "T7" ~ "control",
-  #                              Tank == "T8" ~ "variable")) %>% 
-  dplyr::group_by(Time, Tank) %>% 
-  dplyr::summarise(avg_temp = mean(Temp), sd = sd(Temp)) %>% 
-  ggplot(., aes(x=Time, y=avg_temp, color = Tank)) + 
-  theme_classic() +
-  geom_ribbon(aes(fill=Tank, group = Tank, ymin = avg_temp - sd, ymax = avg_temp + sd), alpha = 0.2) +
-   geom_line(aes(group = Tank)) +
-  scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
-  labs(y="Temperature (ºC)") +
- # scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))+
- # scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
-  theme(text = element_text(size = 15)) 
-#ggsave("summarytemptreatment_alltanks_sd.pdf", width = 10, height = 6)
-```
-
-Standard deviation with tank 8 separated
-```{r}
-temptreatment %>% 
-  filter(Time >= "2022-03-24 09:00:00") %>% 
-  filter(Time <= "2022-04-20 09:00:00") %>% 
-    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
-  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
-  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
-  mutate(treatment = case_when(Tank == "T1" ~ "control",
-                               Tank == "T2" ~ "variable",
-                               Tank == "T3" ~ "variable",
-                               Tank == "T4" ~ "control",
-                               Tank == "T5" ~ "variable",
-                               Tank == "T6" ~ "control",
-                               Tank == "T7" ~ "control")) %>%
-  dplyr::group_by(Time, treatment) %>% 
-  dplyr::summarise(avg_temp = mean(Temp), sd = sd(Temp)) %>% 
-  ggplot(., aes(x=Time, y=avg_temp, color = treatment)) + 
-  theme_classic() +
-  geom_ribbon(aes(fill=treatment, group = treatment, ymin = avg_temp - sd, ymax = avg_temp + sd), alpha = 0.2) +
-   geom_line(aes(group = treatment)) +
-  scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
-  labs(y="Temperature (C)") +
-  scale_color_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey"))+
-  scale_fill_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey")) +
-  theme(text = element_text(size = 15)) 
-#ggsave("summarytemptreatment_tank8separate_sd.pdf", width = 10, height = 6)
-```
-
-
-Standard error with tank 8 separated
-```{r}
-#with standard error instead of standard deviation
-
-temptreatment %>% 
-  filter(Time >= "2022-03-24 09:00:00") %>% 
-  filter(Time <= "2022-04-20 09:00:00") %>% 
-    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
-  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
-  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
-  mutate(treatment = case_when(Tank == "T1" ~ "control",
-                               Tank == "T2" ~ "variable",
-                               Tank == "T3" ~ "variable",
-                               Tank == "T4" ~ "control",
-                               Tank == "T5" ~ "variable", 
-                               Tank == "T6" ~ "control",
-                               Tank == "T7" ~ "control")) %>% 
-  dplyr::group_by(Time, treatment) %>% 
-  dplyr::summarise(avg_temp = mean(Temp), se = std.error(Temp)) %>% 
-  ggplot(., aes(x=Time, y=avg_temp, color = treatment)) + 
-  theme_classic() +
-  geom_ribbon(aes(fill=treatment, group = treatment, ymin = avg_temp - se, ymax = avg_temp + se), alpha = 0.2) +
-   geom_line(aes(group = treatment)) +
-  scale_x_discrete(breaks = c("03:00:00", "09:00:00", "15:00:00", "21:00:00")) +
-  labs(y="Temperature (C)") +
-  scale_color_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey"))+
-  scale_fill_manual(labels=c("Untreated", "Treated", "Tank 8"), values = c( "#60DBDB", "#F54A34", "grey")) +
-  theme(text = element_text(size = 20)) 
-#ggsave("summarytemptreatment_tank8separate_stderr.pdf", width = 10, height = 6)
-```
-
 Calculate the mean daily min, max, and variance for each tank/treatment over the 28-d period.
 ```{r}
 temptreatment %>% 
@@ -270,14 +169,14 @@ temptreatment %>%
   dplyr::select(Time:T8) %>% 
   pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
   tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
-  mutate(Treatment = case_when(Tank == "T1" ~ "control",
-                               Tank == "T2" ~ "variable",
-                               Tank == "T3" ~ "variable",
-                               Tank == "T4" ~ "control",
-                               Tank == "T5" ~ "variable", 
-                               Tank == "T6" ~ "control",
-                               Tank == "T7" ~ "control",
-                               Tank == "T8" ~ "tank_8")) %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "Untreated",
+                               Tank == "T2" ~ "Treated",
+                               Tank == "T3" ~ "Treated",
+                               Tank == "T4" ~ "Untreated",
+                               Tank == "T5" ~ "Treated", 
+                               Tank == "T6" ~ "Untreated",
+                               Tank == "T7" ~ "Untreated",
+                               Tank == "T8" ~ "Treated")) %>% 
   mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
                              Tank == "T2" ~ "Pclivosa",
                                Tank == "T3" ~ "Pclivosa",
@@ -293,7 +192,8 @@ temptreatment %>%
   summarise(mean_daily_max=mean(daily_max),sd_daily_max=sd(daily_max), mean_daily_min=mean(daily_min),sd_daily_min=sd(daily_min),mean_daily_range=mean(daily_max - daily_min), sd_daily_range=sd(daily_max - daily_min)) -> meanmaxminrange_summarytable
 
 meanmaxminrange_summarytable %>% 
-  group_by(Treatment) %>% summarise(mean_max=mean(mean_daily_max),sd_max=sd(mean_daily_max), mean_min=mean(mean_daily_min),sd_min=sd(mean_daily_min),mean_range=mean(mean_daily_max - mean_daily_min), sd_daily_range=sd(mean_daily_max - mean_daily_min))
+  group_by(Treatment) %>% summarise(mean_max=mean(mean_daily_max),sd_max=sd(mean_daily_max), mean_min=mean(mean_daily_min),sd_min=sd(mean_daily_min),mean_range=mean(mean_daily_max - mean_daily_min), sd_daily_range=sd(mean_daily_max - mean_daily_min)) %>% 
+  write_csv("meanmaxminrange.csv")
 
 ggplot(meanmaxminrange_summarytable, aes(x=Treatment, y=mean_daily_max, color=Tank)) +
   geom_point() +
@@ -551,6 +451,29 @@ CBASS %>%
 #ggsave("CBASStemps.pdf", width = 10)
 ```
 
+summarise tank temps 
+```{r}
+CBASS %>% 
+  dplyr::select(Time:`8`) %>% 
+  pivot_longer(`1`:`8`, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Time = hms(Time)) %>% 
+  filter(Time > "14 H 30 M 0 S" & Time < "17 H 30 M 0 S") %>% 
+  ggplot(., aes(x=Time, y=Temp, fill = Tank)) +
+  geom_line() +
+  scale_x_time()
+
+CBASS %>% 
+  dplyr::select(Time:`8`) %>% 
+  pivot_longer(`1`:`8`, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Time = hms(Time)) %>% 
+  filter(Time > "14 H 30 M 0 S" & Time < "17 H 30 M 0 S") %>% 
+  group_by(Tank) %>% 
+  summarise(mean_temp = mean(Temp), sd = sd(Temp))
+```
+
+
 # Recovery period
 ```{r}
 recovery %>% 
@@ -688,6 +611,21 @@ heatstressassay %>%
   scale_color_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))+
   scale_fill_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))
 #ggsave("slowburnheatstress.pdf", width = 9, height = 6)
+```
+
+```{r}
+heatstressassay %>% 
+  dplyr::select(Time, T3, T4, T7, T8) %>% 
+  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
+  filter(!(Time >= "2022-07-14 00:00:00" & Tank == "T8")) %>% 
+  filter(Time > "2022-06-25 21:00:00") %>% 
+   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
+                               Tank == "T4" ~ "heatstress",
+                               Tank == "T7" ~ "ambient",
+                               Tank == "T8" ~ "heatstress")) %>% 
+  drop_na() %>% 
+  group_by(Treatment) %>% 
+  summarise(mean_temp = mean(Temp), sd = sd(Temp)) 
 ```
 
 

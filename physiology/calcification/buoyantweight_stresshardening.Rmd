@@ -12,6 +12,7 @@ library(rstatix)
 library(ggsignif)
 library(dunn.test)
 library(cowplot)
+library(plotrix)
 
 metadata <- readxl::read_xlsx("../metadata.xlsx")
 
@@ -53,7 +54,7 @@ buoyantweights %>%
 
 #boxplot of % growth - all genotypes together
 ```{r}
-p1<- calc_bw_bothspecies_bothtimepoints %>% 
+calc_bw_bothspecies_bothtimepoints %>% 
   group_by(Treatment) %>% 
   ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
@@ -66,7 +67,7 @@ p1<- calc_bw_bothspecies_bothtimepoints %>%
 ```
 # mean/standard error growth rate bar chart
 ```{r}
-p1<- calc_bw_bothspecies_bothtimepoints %>% 
+calc_bw_bothspecies_bothtimepoints %>% 
   group_by(Species, Treatment) %>% 
   summarise(mean = mean(percent_change), se = std.error(percent_change)) %>% 
   ggplot(., aes(x=Species, y = mean, fill = Treatment)) + 
@@ -80,6 +81,54 @@ p1<- calc_bw_bothspecies_bothtimepoints %>%
   theme(legend.position="none")
 ```
 
+# for figure: mean/standard error points
+```{r}
+p1<- calc_bw_bothspecies_bothtimepoints %>% 
+  group_by(Species, Treatment) %>% 
+  mutate(mean_percentchange = mean(percent_change), se_percentchange = std.error(percent_change)) %>% 
+  ggplot(., aes(x = Treatment, y = mean_percentchange)) +
+  theme_classic()+
+  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Treatment, ymax = mean_percentchange+se_percentchange, ymin = mean_percentchange-se_percentchange, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Treatment, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Treatment")+
+  ylab("% Growth")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+```{r}
+p2<- calc_bw_bothspecies_bothtimepoints %>% 
+  group_by(Species, Treatment, Colony) %>% 
+  mutate(mean_percentchange = mean(percent_change), se_percentchange = std.error(percent_change)) %>% 
+  ggplot(., aes(x = Colony, y = mean_percentchange)) +
+  theme_classic()+
+  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Colony, ymax = mean_percentchange+se_percentchange, ymin = mean_percentchange-se_percentchange, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Colony, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Colony")+
+  ylab("% Growth")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15))
+```
+
+
+combined plot
+```{r}
+plot_grid(p1, p2, ncol = 2, rel_widths = c(1.5, 2))
+ggsave("growthrates_species_genet_dotplot.pdf", width = 12, height = 5)
+```
 
 # stats 
 
@@ -148,7 +197,7 @@ buoyantweights %>%
 
 #boxplot of % growth - genotypes separated
 ```{r}
-p2 <- calc_bw_bothspeciesgenet_bothtimepoints %>% 
+calc_bw_bothspeciesgenet_bothtimepoints %>% 
   group_by(Colony, Treatment) %>% 
   ggplot(., aes(x=Colony, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
@@ -161,7 +210,7 @@ p2 <- calc_bw_bothspeciesgenet_bothtimepoints %>%
 # mean/standard error growth rate bar chart
 
 ```{r}
-p2<-calc_bw_bothspecies_bothtimepoints %>% 
+calc_bw_bothspecies_bothtimepoints %>% 
   group_by(Species, Colony, Treatment) %>% 
   summarise(mean = mean(percent_change), se = std.error(percent_change)) %>% 
   ggplot(., aes(x=Colony, y = mean, fill = Treatment)) + 

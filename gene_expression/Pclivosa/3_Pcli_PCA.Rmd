@@ -38,7 +38,7 @@ g1 <- ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
    theme(panel.border = element_blank(), # Set border
          axis.line = element_line(colour = "black"), #Set axes color
          plot.background=element_blank()) +
-  scale_color_manual(values = c("grey", "#FF3333", "#00CCCC")) 
+  scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
 #ggsave("PCA_allgenets.pdf")
 
 ```
@@ -62,7 +62,7 @@ g2 <- ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment)) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("P.clivosa colony A") +
    theme_bw() + 
-   scale_color_manual(values = c("grey",  "#FF3333", "#00CCCC")) 
+   scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
 
 B <- metadata$Genotype == "B"
 B <- Vsd[, B]
@@ -75,7 +75,7 @@ g3 <- ggplot(vst_PCA_B, aes(PC1, PC2, color=Treatment)) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("P.clivosa colony B") +
    theme_bw() + 
-   scale_color_manual(values = c("grey",  "#FF3333", "#00CCCC"))
+    scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
 
 
 C <- metadata$Genotype == "C"
@@ -89,7 +89,7 @@ g4 <- ggplot(vst_PCA_C, aes(PC1, PC2, color=Treatment)) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("P.clivosa colony C") +
    theme_bw() + 
-   scale_color_manual(values = c("grey",  "#FF3333", "#00CCCC"))
+    scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
 
 
 combined_plot <- plot_grid(g1, g2, g3, g4, nrow = 2, ncol = 2)

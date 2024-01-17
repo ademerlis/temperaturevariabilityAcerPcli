@@ -1,0 +1,221 @@
+---
+title: "correlations"
+author: "allyson_demerlis"
+date: "2024-01-14"
+output: html_document
+---
+Load libraries
+```{r}
+library(tidyverse)
+library(janitor)
+library(rstatix)
+library(cowplot)
+library(plotrix)
+library(drc)
+```
+
+load data
+```{r}
+metadata <- readxl::read_xlsx("metadata.xlsx", sheet = "tidy_data")
+
+metadata$Removed_Date <- as.numeric(metadata$Removed_Date)
+metadata$Removed_Date <- as.Date(metadata$Removed_Date, origin = "1899-12-30")
+
+metadata$mortality_date <- as.numeric(metadata$mortality_date)
+metadata$mortality_date <- as.Date(metadata$mortality_date, origin = "1899-12-30")
+
+metadata %>% 
+  filter(!is.na(slowburn_heatstress_tank)) %>% 
+  select(Species:heatstress_recovery_tank) %>% 
+  mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
+                               CBASS_tank == "2" ~ "37",
+                               CBASS_tank == "3" ~ "32",
+                               CBASS_tank == "4" ~ "33",
+                               CBASS_tank == "5" ~ "35",
+                               CBASS_tank == "6" ~ "30",
+                               CBASS_tank == "7" ~ "34",
+                               CBASS_tank == "8" ~ "28")) %>% 
+  mutate(slowburn= case_when(slowburn_heatstress_tank == "7" ~ "ambient",
+                             TRUE ~ "heatstress_32")) -> slowburn_metadata
+
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>%
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
+
+
+ipam_tidy_data <- read.csv("photosynthetic_efficiency/ipam_tidy_data.csv")
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(!Treatment) -> ipam_tidy_CBASS
+
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>% 
+  dplyr::select(Tank, Puck, Colony, Treatment, Species) %>% 
+  distinct() %>% #283 rows = one coral ID per treatment, no repeats
+  mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
+                               Tank == "2" ~ "Treated",
+                               Tank == "3" ~ "Treated",
+                               Tank == "4" ~ "Untreated",
+                               Tank == "5" ~ "Treated", 
+                               Tank == "6" ~ "Untreated",
+                               Tank == "7" ~ "Untreated",
+                               Tank == "8" ~ "Treated")) %>% 
+  full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
+  drop_na() %>% 
+  rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) -> ipam_tidy_CBASS_treatments
+
+ipam_tidy_CBASS_treatments %>% 
+  mutate_at(vars(Colony, Puck, Treatment, Species), factor) -> ipam_tidy_CBASS_treatments
+
+ipam_tidy_CBASS_treatments %>% 
+  mutate(Species = case_when(Species == "Pclivosa" ~ "Pseudodiploria clivosa",
+                             Species == "Acervicornis" ~ "Acropora cervicornis")) %>% 
+  mutate(ID = gsub("[AP]", "", Puck)) -> ipam_tidy_CBASS_treatments
+```
+
+
+Correlation plot: fvfm vs days to removed
+```{r}
+slowburn_summary_data$ID <- as.character(slowburn_summary_data$ID)
+ipam_tidy_CBASS_treatments$CBASS_temp <- as.character(ipam_tidy_CBASS_treatments$CBASS_temp)
+
+full_join(slowburn_summary_data, ipam_tidy_CBASS_treatments, by = c("Species", "ID", "Colony", "Treatment", "CBASS_temp")) %>% 
+  drop_na() -> days_fvfm_data #76 corals
+
+days_fvfm_data %>% 
+  group_by(Species) %>% 
+  summarise(count = n()) #47 Acer, 29 Pcli
+
+p1<- ggplot(days_fvfm_data, aes(x=days_to_removed, y=fvfm, color = Treatment)) +
+  geom_point() +
+  facet_wrap(~Species, scales = "free_x") +
+  geom_smooth(method="lm", se = FALSE) +
+  theme_classic() +
+  labs(x="Days at 32ºC", y = "Fv/Fm") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15))  +
+  theme(legend.position="none")
+```
+
+stats for each linear regression
+```{r}
+days_fvfm_data %>% 
+  filter(Species == "Acropora cervicornis" & Treatment == "Untreated") %>% 
+  lm(fvfm ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_fvfm_data %>% 
+  filter(Species == "Acropora cervicornis" & Treatment == "Treated") %>% 
+  lm(fvfm ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_fvfm_data %>% 
+  filter(Species == "Pseudodiploria clivosa" & Treatment == "Untreated") %>% 
+  lm(fvfm ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_fvfm_data %>% 
+  filter(Species == "Pseudodiploria clivosa" & Treatment == "Treated") %>% 
+  lm(fvfm ~ days_to_removed, data = .) %>% 
+  summary()
+```
+
+Correlation plot: ED50 vs days to removed
+
+```{r}
+ipam_tidy_CBASS_treatments %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_CBASS
+
+Acer_CBASS$Colony_Treatment <- interaction(Acer_CBASS$Colony, Acer_CBASS$Treatment)
+
+Acer_CBASS$CBASS_temp <- as.integer(Acer_CBASS$CBASS_temp)
+
+DRC_Acer_colony_treatment = drm(fvfm ~ CBASS_temp, data = Acer_CBASS, curveid = Colony_Treatment,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRC_Acer_colony_treatment)
+
+Acer_coeff <- as.data.frame(DRC_Acer_colony_treatment$coefficients)
+
+Acer_coeff %>% 
+  rownames_to_column(var = "coeff_colony_treatment") %>% 
+  filter(grepl("ed50", coeff_colony_treatment)) %>% 
+  rename(ED50 = `DRC_Acer_colony_treatment$coefficients`) %>% 
+  separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Acer_ED50s
+
+ipam_tidy_CBASS_treatments %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_CBASS
+
+Pcli_CBASS$Colony_Treatment <- interaction(Pcli_CBASS$Colony, Pcli_CBASS$Treatment)
+
+Pcli_CBASS$CBASS_temp <- as.integer(Pcli_CBASS$CBASS_temp)
+
+DRC_Pcli_colony_treatment = drm(fvfm ~ CBASS_temp, data = Pcli_CBASS, curveid = Colony_Treatment,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRC_Pcli_colony_treatment)
+
+Pcli_coeff <- as.data.frame(DRC_Pcli_colony_treatment$coefficients)
+
+Pcli_coeff %>% 
+  rownames_to_column(var = "coeff_colony_treatment") %>% 
+  filter(grepl("ed50", coeff_colony_treatment)) %>% 
+  rename(ED50 = `DRC_Pcli_colony_treatment$coefficients`) %>% 
+  separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Pcli_ED50s
+```
+
+
+```{r}
+slowburn_summary_data %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  full_join(., Acer_ED50s, by = c("Colony", "Treatment")) -> days_ed50_acer_data
+
+slowburn_summary_data %>% 
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  full_join(., Pcli_ED50s, by = c("Colony", "Treatment")) -> days_ed50_Pcli_data
+
+p2<- rbind(days_ed50_acer_data, days_ed50_Pcli_data) %>% 
+  ggplot(., aes(x=days_to_removed, y=ED50, color = Treatment)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE) +
+  facet_wrap(~Species, scales = "free_x") +
+  theme_classic() +
+  labs(x="Days at 32ºC", y = "ED50") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15))
+
+days_ed50_acer_data %>% 
+  filter(Species == "Acropora cervicornis" & Treatment == "Untreated") %>% 
+  lm(ED50 ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_ed50_acer_data %>% 
+  filter(Species == "Acropora cervicornis" & Treatment == "Treated") %>% 
+  lm(ED50 ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_ed50_Pcli_data %>% 
+  filter(Species == "Pseudodiploria clivosa" & Treatment == "Untreated") %>% 
+  lm(ED50 ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_ed50_Pcli_data %>% 
+  filter(Species == "Pseudodiploria clivosa" & Treatment == "Treated") %>% 
+  lm(ED50 ~ days_to_removed, data = .) %>% 
+  summary()
+```
+
+
+combine plot
+```{r}
+plot_grid(p1,p2, ncol = 2, rel_widths = c(1.5, 2))
+#ggsave("correlationplots_IPAM_days.pdf", width = 12, height = 5)
+```
+

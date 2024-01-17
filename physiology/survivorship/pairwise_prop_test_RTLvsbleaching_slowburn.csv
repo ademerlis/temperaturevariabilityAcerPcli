@@ -1,0 +1,7 @@
+group1,group2,p,p.adj,p.adj.signif
+Acropora cervicornis.Treated,Acropora cervicornis.Untreated,0.994,1,ns
+Acropora cervicornis.Treated,Pseudodiploria clivosa.Treated,0.0125,0.0375,*
+Acropora cervicornis.Untreated,Pseudodiploria clivosa.Treated,0.00462,0.0185,*
+Acropora cervicornis.Treated,Pseudodiploria clivosa.Untreated,0.00346,0.0173,*
+Acropora cervicornis.Untreated,Pseudodiploria clivosa.Untreated,0.00093000000000000005,0.00558,**
+Pseudodiploria clivosa.Treated,Pseudodiploria clivosa.Untreated,1,1,ns

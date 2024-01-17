@@ -481,9 +481,15 @@ Acer_coeff %>%
 #statistics
 Acer_model <- lm(ED50 ~ Treatment, data = Acer_ED50s)
 Acer_model_metrics <- augment(Acer_model)
-plot(Acer_model) #not normal
+plot(Acer_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Acer_model_metrics) #not significant
+
 summary(aov(ED50 ~ Treatment, data = Acer_ED50s)) #not significant
-kruskal.test(ED50 ~ Treatment, data = Acer_ED50s) #not significant
 ```
 
 ### Pcli
@@ -516,9 +522,15 @@ Pcli_coeff %>%
 #statistics
 Pcli_model <- lm(ED50 ~ Treatment, data = Pcli_ED50s)
 Pcli_model_metrics <- augment(Pcli_model)
-plot(Pcli_model) # not normal
+plot(Pcli_model) 
 
-kruskal.test(ED50 ~ Treatment, data = Pcli_ED50s) #not significant
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Pcli_model_metrics) #not significant
+
+summary(aov(ED50 ~ Treatment, data = Pcli_ED50s)) 
 ```
 
 ## Kruskal Wallis for hill slope of curve
@@ -532,9 +544,15 @@ Acer_coeff %>%
 #statistics
 Acer_hill_model <- lm(hill ~ Treatment, data = Acer_hills)
 Acer_hill_model_metrics <- augment(Acer_hill_model)
-plot(Acer_hill_model) # need to do non parametric test
+plot(Acer_hill_model)
 
-kruskal.test(hill ~ Treatment, data = Acer_hills) #not significant
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_hill_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Acer_hill_model_metrics) #not significant
+
+summary(aov(hill ~ Treatment, data = Acer_hills)) 
 ```
 
 ```{r}
@@ -547,9 +565,15 @@ Pcli_coeff %>%
 #statistics
 Pcli_hill_model <- lm(hill ~ Treatment, data = Pcli_hills)
 Pcli_hill_model_metrics <- augment(Pcli_hill_model)
-plot(Pcli_hill_model) # do non parametric test
+plot(Pcli_hill_model)
 
-kruskal.test(hill ~ Treatment, data = Pcli_hills) #not significant
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_hill_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Pcli_hill_model_metrics) #not significant
+
+summary(aov(hill ~ Treatment, data = Pcli_hills)) 
 ```
 
 
@@ -633,6 +657,8 @@ treated_Acer_MBB_preddata = data.frame(treated_Acer_MBB_preddata, fvfm = treated
 coeff_untreated_Acer_MBB <- as.data.frame(untreated_Acer_MBB$coefficients) #hill, max, and ed50 values
 coeff_treated_Acer_MBB <- as.data.frame(treated_Acer_MBB$coefficients) #hill, max, and ed50 values
 ```
+
+
 ```{r}
 a2<- ggplot() +
   geom_jitter(data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis" & ipam_tidy_CBASS_treatments$Colony == "MB-B",], aes(x = CBASS_temp, y = fvfm, color =   Treatment), size = 1, width = 0.25) +
@@ -835,11 +861,11 @@ aov(fvfm ~ Treatment*CBASS_temp, data = Acer_SIC_CBASS)
 
 summary(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_SIC_CBASS))
 
-#capture.output(summary(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_MBB_CBASS)), file = "fvfm_CBASStemps_Acer_MBB_anova_table.csv")
+#capture.output(summary(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_SIC_CBASS)), file = "fvfm_CBASStemps_Acer_SIC_anova_table.csv")
 
-TukeyHSD(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_MBB_CBASS))
+TukeyHSD(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_SIC_CBASS))
          
-#capture.output(TukeyHSD(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_MBB_CBASS)), file = "fvfm_CBASStemps_Acer_MBB_anova_tukey.csv")
+#capture.output(TukeyHSD(aov(fvfm ~ Treatment*CBASS_temp, data = Acer_SIC_CBASS)), file = "fvfm_CBASStemps_Acer_SIC_anova_tukey.csv")
 ```
 
 ### Pcli colonies
@@ -1168,7 +1194,7 @@ summary(aov(ED50 ~ Species*Treatment, data = bothspecies_colony_ED50s))
 
 TukeyHSD(aov(ED50 ~ Species*Treatment, data = bothspecies_colony_ED50s))
          
-#capture.output(aov(ED50 ~ Species*Treatment, data = bothspecies_colony_ED50s), file = "bothspecies_colony_ED50s_anova_tukey.csv")
+#capture.output(TukeyHSD(aov(ED50 ~ Species*Treatment, data = bothspecies_colony_ED50s)), file = "bothspecies_colony_ED50s_anova_tukey.csv")
 ```
 
 
@@ -1225,7 +1251,7 @@ summary(aov(hill ~ Species*Treatment, data = bothspecies_colony_hills))
 
 TukeyHSD(aov(hill ~ Species*Treatment, data = bothspecies_colony_hills))
          
-#capture.output(aov(hill ~ Species*Treatment, data = bothspecies_colony_hills), file = "bothspecies_colony_hill_anova_tukey.csv")
+#capture.output(TukeyHSD(aov(hill ~ Species*Treatment, data = bothspecies_colony_hills)), file = "bothspecies_colony_hill_anova_tukey.csv")
 ```
 
 

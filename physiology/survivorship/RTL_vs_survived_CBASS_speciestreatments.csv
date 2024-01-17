@@ -1,0 +1,5 @@
+Species,Treatment,count_RTL,count_survived
+Acropora cervicornis,Treated,25,28
+Acropora cervicornis,Untreated,28,38
+Pseudodiploria clivosa,Treated,22,33
+Pseudodiploria clivosa,Untreated,25,32

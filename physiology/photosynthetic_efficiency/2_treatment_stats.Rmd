@@ -23,6 +23,7 @@ treatment_time_bothspecies <- ipam_tidy_data %>%
   dplyr::filter(!Treatment_period == "CBASS") %>%
   drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
   dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  mutate(Date = mdy(Date)) %>% 
   dplyr::filter(Date <= "2022-04-20") %>% 
   pivot_wider(names_from = Date, values_from = fvfm) %>% 
    mutate(fvfm_t0 = case_when(Species == "Acervicornis" ~ `2022-03-16`,
@@ -44,12 +45,13 @@ treatment_normalized_bothspecies <- ipam_tidy_data %>%
   dplyr::filter(!Treatment_period == "CBASS") %>%
   drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
   dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species)  %>% 
+  mutate(Date = mdy(Date)) %>% 
   dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
   pivot_wider(names_from = Date, values_from = fvfm) %>% 
   mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
                                Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
-  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ fvfm_loss/`2022-03-16`,
-                               Species == "Pclivosa" ~ fvfm_loss/`2022-03-21`))
+  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ (fvfm_loss/`2022-03-16`)*100,
+                               Species == "Pclivosa" ~ (fvfm_loss/`2022-03-21`)*100))
 ```
 
 
@@ -91,7 +93,7 @@ treatment_time_bothspecies%>%
 
 ## 2a. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
 ```{r, warning = F}
-p1<-treatment_normalized_bothspecies%>% 
+treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Treatment, y= fvfm_loss_norm, fill= Treatment)) +
   geom_boxplot() + 
   theme_classic() + 
@@ -152,7 +154,7 @@ TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bot
 
 ## 2b. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
 ```{r, warning = F}
-p2<-treatment_normalized_bothspecies%>% 
+treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Colony, y= fvfm_loss_norm, fill=Treatment)) +
   geom_boxplot() + 
   theme_classic() + labs(y = "% Decline in Fv/Fm", x="Colony") +
@@ -164,6 +166,9 @@ p2<-treatment_normalized_bothspecies%>%
 
 Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
 ```{r}
+#remake the treatment_normalized_bothspecies data frame before running this section of code
+
+
 treat_model <- lm(fvfm_loss_norm ~ Treatment*Species*Colony + Tank, data = treatment_normalized_bothspecies)
 treat_model_metrics <- augment(treat_model)
 plot(treat_model)
@@ -199,10 +204,56 @@ TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normali
 ```
 
 
+# for figure: mean standard error dot plots
+```{r}
+p1<-treatment_normalized_bothspecies %>% 
+  drop_na(fvfm_loss_norm) %>% 
+  group_by(Species, Treatment) %>% 
+  mutate(mean_fvfmlossnorm = mean(fvfm_loss_norm), se_fvfmlossnorm = std.error(fvfm_loss_norm)) %>% 
+  ggplot(., aes(x = Treatment, y = mean_fvfmlossnorm)) +
+  theme_classic()+
+  geom_jitter(aes(y=fvfm_loss_norm, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Treatment, ymax = mean_fvfmlossnorm+se_fvfmlossnorm, ymin = mean_fvfmlossnorm-se_fvfmlossnorm, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Treatment, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Treatment")+
+  ylab("% Decline in Fv/Fm")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15)) +
+  ylim(-4,40) +
+  theme(legend.position="none")
+```
+
+```{r}
+p2<-treatment_normalized_bothspecies %>% 
+  drop_na(fvfm_loss_norm) %>% 
+  group_by(Species, Treatment, Colony) %>% 
+  mutate(mean_fvfmlossnorm = mean(fvfm_loss_norm), se_fvfmlossnorm = std.error(fvfm_loss_norm)) %>% 
+  ggplot(., aes(x = Colony, y = mean_fvfmlossnorm)) +
+  theme_classic()+
+  geom_jitter(aes(y=fvfm_loss_norm, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Colony, ymax = mean_fvfmlossnorm+se_fvfmlossnorm, ymin = mean_fvfmlossnorm-se_fvfmlossnorm, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Colony, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Colony")+
+  ylab("% Decline in Fv/Fm")+
+  facet_wrap(~Species, scales = "free_x") +
+  ylim(-4,40) +
+  theme(text = element_text(size = 15))
+```
+
 
 create combined plot
 ```{r}
-plot_grid(p1, p2, rel_widths = c(1,1.5))
-#ggsave("treatment_boxplots_speciesgenets.pdf", width = 10, height = 5)
+plot_grid(p1, p2, rel_widths = c(1.5,2))
+#ggsave("treatment_percentfvfmloss_dotplot.pdf", width = 12, height = 5)
 ```
 

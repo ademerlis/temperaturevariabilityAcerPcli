@@ -13,6 +13,17 @@ library(cowplot)
 library(plotrix)
 
 metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
+
+str(metadata) #295 corals
+
+# metadata %>% 
+#   filter(!Removed_Date == "unknown") -> metadata #244 corals... 
+
+metadata$Removed_Date <- as.numeric(metadata$Removed_Date)
+metadata$Removed_Date <- as.Date(metadata$Removed_Date, origin = "1899-12-30")
+
+metadata$mortality_date <- as.numeric(metadata$mortality_date)
+metadata$mortality_date <- as.Date(metadata$mortality_date, origin = "1899-12-30")
 ```
 
 Tidy data 
@@ -43,7 +54,6 @@ metadata %>%
 
 # CBASS Mortality
 
-First plot the timeline of when corals were removed.
 ```{r}
 tidy_metadata %>%
   filter(Removed_Date < "2022-05-20") %>% 
@@ -65,7 +75,7 @@ CBASS_mortality <- tidy_metadata %>%
 ```
 
 
-Number of corals that died due to CBASS
+## Number of corals that died due to CBASS
 ```{r}
 tidy_metadata %>% 
   dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-26") %>%
@@ -119,6 +129,17 @@ tidy_metadata %>%
   labs(y="Count", fill = "Category") 
 ```
 
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_count) %>% 
+  mutate(count_survived = count_total-count_RTL) %>% 
+  select(!count_total) %>% 
+  
+  write_csv("RTL_vs_survived_CBASS_speciestreatments.csv")
+```
 
 
 ```{r}
@@ -142,7 +163,21 @@ tidy_metadata %>%
   labs(y="Count", fill = "Category") 
 ```
 
-test on counts (not standardized)
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment, CBASS_temp) %>% 
+  summarize(count_total = n()) %>% 
+  full_join(., RTL_species_treatment_CBASStemps) %>% 
+  drop_na(CBASS_temp) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  mutate(count_survived = if_else(is.na(count_survived),0,count_survived)) %>% 
+  select(!count_total) %>% 
+  write_csv("RTL_vs_survived_CBASS_byCBASStemp.csv")
+```
+
+## stats test on counts (not standardized)
 
 ```{r}
 #chi squared test for comparing mortality numbers
@@ -173,7 +208,7 @@ tidy_metadata %>%
   chisq_test() #very significant 
 ```
 
-post-hoc test for pairwise comparisons
+## post-hoc test for pairwise comparisons
 ```{r}
 tidy_metadata %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
@@ -191,11 +226,7 @@ tidy_metadata %>%
   # write_csv("pairwise_prop_test_RTLvsSurvivedCounts.csv")
 ```
 
-
-
-
-
-Proportions 
+## Proportions 
 
 ```{r}
 p1<- tidy_metadata %>% 
@@ -270,14 +301,12 @@ metadata %>%
                                CBASS_tank == "7" ~ "34",
                                CBASS_tank == "8" ~ "28")) %>% 
   mutate(slowburn= case_when(slowburn_heatstress_tank == "7" ~ "ambient",
-                             TRUE ~ "heatstress_32")) %>% 
-  group_by(Species, Treatment, slowburn)-> slowburn_metadata
+                             TRUE ~ "heatstress_32")) -> slowburn_metadata
 ```
-
-convert dates to days at 32ºC
+## days at 32ºC
 ```{r}
 slowburn_metadata %>% 
-  filter(Removed_Date >= "2022-06-21") %>% 
+  filter(Removed_Date >= "2022-06-25") %>% 
   mutate(start_date="2022-06-25") %>% 
   mutate(start_date = ymd(start_date)) %>% 
   mutate(Removed_Date = ymd(Removed_Date)) %>% 
@@ -289,7 +318,22 @@ slowburn_metadata %>%
 
 ```{r}
 slowburn_metadata %>% 
-  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25") %>% 
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>% 
+  mutate(days_to_removed = Removed_Date - start_date) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) %>% 
+  group_by(Species, Treatment) %>% 
+  summarise(mean=mean(days_to_removed), sd = sd(days_to_removed)) %>% 
+  as.data.frame()
+```
+
+```{r}
+b1<- slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
   mutate(Removed_Date = ymd(Removed_Date)) %>%
   mutate(mortality_date = ymd(mortality_date)) %>%
   mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
@@ -305,14 +349,109 @@ slowburn_metadata %>%
                   .2, position=position_dodge(.9)) +
   theme_classic() +
   facet_wrap(~Species, scales = "free_x") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  labs( y="Number of Days at 32ºC") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+
+```
+
+```{r}
+b2<- slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  filter(!days_to_removed == "NA days") %>% 
+  group_by(Species, Treatment, Colony) %>% 
+  summarise(averagedays = mean(days_to_removed), se = std.error(days_to_removed)) %>%
+  ggplot(., aes(x = Colony, y = averagedays, fill = Treatment)) + 
+  geom_bar(stat="identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = averagedays - se, ymax = averagedays + se), width =
+                  .2, position=position_dodge(.9)) +
+  theme_classic() +
+  facet_wrap(~Species, scales = "free_x") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  labs( y="Number of Days at 32ºC") +
+  theme(text = element_text(size = 15))
+```
+
+create combined plot
+```{r}
+plot_grid(b1, b2, rel_widths = c(1,2))
+#ggsave("daysat32_barplot_speciesgenet.pdf", width = 12, height = 5)
 ```
 
 
-separated by max CBASS temp
+## 2-way anova for species and treatment
+
+Change to factors
 ```{r}
 slowburn_metadata %>% 
-  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  filter(slowburn == "heatstress_32") %>%
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
+
+str(slowburn_summary_data)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+slowburn_summary_data %>% 
+  mutate_at(vars(Species, ID, Colony, Treatment, CBASS_temp), factor) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) -> slowburn_summary_data
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(days_to_removed ~ Treatment*Species + Colony, data = slowburn_summary_data)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+```
+
+Run Welch's ANOVA
+```{r}
+#make interaction term
+slowburn_summary_data$Species_Treatment <- interaction(slowburn_summary_data$Species, slowburn_summary_data$Treatment)
+
+#run Welch's anova
+oneway.test(days_to_removed ~ Species_Treatment, data = slowburn_summary_data, var.equal = FALSE) #significant
+
+#posthoc test: Games-Howell
+
+slowburn_summary_data %>% 
+  ungroup() %>% 
+games_howell_test(., days_to_removed ~ Species_Treatment)
+```
+
+### looking at just 28C CBASS corals in slowburn
+```{r}
+slowburn_summary_data %>% 
+  filter(CBASS_temp == "28") #6 corals, only Acer
+
+slowburn_metadata %>% 
+  filter(Species == "Pseudodiploria clivosa" & CBASS_temp == "28") #none of the Pcli that were at the "ambient' CBASS temperature made it to the slowburn heat stress.
+```
+
+##separated by max CBASS temp
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
   mutate(Removed_Date = ymd(Removed_Date)) %>%
   mutate(mortality_date = ymd(mortality_date)) %>%
   mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
@@ -328,14 +467,14 @@ slowburn_metadata %>%
                   .2, position=position_dodge(.9)) +
   theme_classic() +
   facet_wrap(~Species, scales = "free_x") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
-```
-
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  labs(x="CBASS Temperature", y="Number of Days at 32ºC")
+``` 
 
 ```{r}
-#for 
 slowburn_metadata %>% 
-  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
   mutate(Removed_Date = ymd(Removed_Date)) %>%
   mutate(mortality_date = ymd(mortality_date)) %>%
   mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
@@ -343,32 +482,32 @@ slowburn_metadata %>%
   mutate(start_date = ymd(start_date)) %>% 
   mutate(days_to_removed = end_date - start_date) %>% 
   filter(!days_to_removed == "NA days") %>% 
-  group_by(Species,Treatment, Removed_Date, mortality_date, Reason_removed, slowburn) %>% 
-  summarise(count = n()) %>% 
-  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
-                             Reason_removed == "RTL" ~ "RTL",
-                             Reason_removed == "paling" ~ "bleached", 
-                             Reason_removed == "bleaching" ~ "bleached")) 
-
-#figure out reason for mortality in the ones that have mortality date -- check photos and notes
+  group_by(Species, Treatment, CBASS_temp, Colony) %>% 
+  summarise(averagedays = mean(days_to_removed), se = std.error(days_to_removed)) %>%
+  ggplot(., aes(x = CBASS_temp, y = averagedays, fill = Treatment)) + 
+  geom_bar(stat="identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = averagedays - se, ymax = averagedays + se), width =
+                  .2, position=position_dodge(.9)) +
+  theme_classic() +
+  facet_wrap(~Species+Colony, scales = "free_x") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  labs(x="CBASS Temperature", y="Number of Days at 32ºC")
 ```
 
-3-way anova for species, treatment, and CBASS temp
+## 3-way anova for species, treatment, and CBASS temp
 
 Change to factors
 ```{r}
 slowburn_metadata %>% 
-  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  filter(slowburn == "heatstress_32") %>%
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
   mutate(Removed_Date = ymd(Removed_Date)) %>%
   mutate(mortality_date = ymd(mortality_date)) %>%
   mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
-  mutate(end_date =  replace(end_date, is.na(end_date), as.Date("2022-07-15"))) %>% 
   mutate(start_date="2022-06-25") %>% 
   mutate(start_date = ymd(start_date)) %>% 
   mutate(days_to_removed = end_date - start_date) %>% 
-  filter(days_to_removed > 0) #remove corals that were not in the 32ºC heat stress because they didn't make it
   select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
-
 
 str(slowburn_summary_data)
 #make factors: Colony, Puck, Tank, Treatment, Species
@@ -376,8 +515,6 @@ str(slowburn_summary_data)
 slowburn_summary_data %>% 
   mutate_at(vars(Species, ID, Colony, Treatment, CBASS_temp), factor) %>% 
   mutate(days_to_removed = as.numeric(days_to_removed)) -> slowburn_summary_data
-
-
 ```
 
 Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
@@ -397,10 +534,163 @@ Run 3-way ANOVA
 aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data)
 
 summary(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data))
-
+ 
 #capture.output(summary(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data)), file = "daysuntilremoved_slowburn_anova_table.csv")
 
 TukeyHSD(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data))
          
 #capture.output(TukeyHSD(aov(days_to_removed ~ Treatment*Species*CBASS_temp, data = slowburn_summary_data)), file = "daysuntilremoved_slowburn_anova_tukey.csv")
 ```
+
+
+## RTL vs Bleaching
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached"))  %>% 
+  
+  ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  facet_wrap(~Species)  +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(x="Category", y="Number of corals")
+```
+## proportion of bleaching vs RTL
+
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species,Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  ggplot(., aes(x=Treatment, y=count, fill = Reason_removed)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~Species)
+#ggsave("proportion_bleaching_RTL_species.pdf")
+```
+
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species,Treatment, Colony, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  ggplot(., aes(x=Colony, y=count, fill = Reason_removed)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~Species+Treatment, scales = "free_x")
+#ggsave("proportion_bleaching_RTL_bycolony.pdf")
+```
+
+
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species,Treatment, Reason_removed, CBASS_temp) %>% 
+  summarise(count = n()) %>% 
+  ggplot(., aes(x=CBASS_temp, y=count, fill = Reason_removed)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~Species+Treatment)
+```
+## chi squared test for counts of RTL vs bleaching (Species*Treatment)
+```{r}
+#chi squared test for comparing mortality numbers
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species,Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  drop_na() %>% 
+  unite("Species.Treatment", Species,Treatment, sep = ".") %>% 
+  pivot_wider(names_from="Reason_removed", values_from = "count") %>% 
+  column_to_rownames(var="Species.Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() # significant
+```
+
+## post-hoc test for pairwise comparisons (Species*Treatment)
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species,Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  unite("Species.Treatment", Species,Treatment, sep = ".") %>% 
+  pivot_wider(names_from="Reason_removed", values_from = "count") %>% 
+  column_to_rownames(var="Species.Treatment") %>% 
+  as.data.frame() %>% 
+  pairwise_prop_test() #%>% 
+  #write_csv("pairwise_prop_test_RTLvsbleaching_slowburn.csv")
+```
+
+
+## chi squared test for counts of RTL vs bleaching (Species*Colony*Treatment)
+```{r}
+#chi squared test for comparing mortality numbers
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species, Colony,Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  drop_na() %>% 
+  unite("Species.Colony.Treatment", Species,Colony,Treatment, sep = ".") %>% 
+  pivot_wider(names_from="Reason_removed", values_from = "count") %>% 
+  mutate(bleached = if_else(is.na(bleached),0,bleached)) %>% 
+  mutate(RTL = if_else(is.na(RTL),0,RTL)) %>% 
+  column_to_rownames(var="Species.Colony.Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() # significant
+```
+## post-hoc test for pairwise comparisons (Species*Colony*Treatment)
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  group_by(Species, Colony,Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  unite("Species.Colony.Treatment", Species,Colony,Treatment, sep = ".") %>% 
+  pivot_wider(names_from="Reason_removed", values_from = "count") %>% 
+  mutate(bleached = if_else(is.na(bleached),0,bleached)) %>% 
+  mutate(RTL = if_else(is.na(RTL),0,RTL)) %>% 
+  column_to_rownames(var="Species.Colony.Treatment") %>% 
+  as.data.frame() %>% 
+  pairwise_prop_test() #%>% 
+  #write_csv("pairwise_prop_test_RTLvsbleaching_slowburn.csv")
+```
+
+
+

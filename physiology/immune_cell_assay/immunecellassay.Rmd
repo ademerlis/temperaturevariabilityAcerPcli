@@ -931,7 +931,7 @@ percent_cells_df %>%
   group_by(num_days, Species, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
-  select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
   distinct() %>% 
   filter(num_days == "0" | num_days == "28") -> percent_cells_speciestreatments
 
@@ -1004,6 +1004,8 @@ plot2 <- percent_cells_df %>%
 
 ```{r}
 plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1,2))
+
+#ggsave("percentphagocyticactivity_species_genets.pdf", width = 10, height = 5)
 ```
 
 ### Statistics
@@ -1021,7 +1023,7 @@ percent_cells_df %>%
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
   ungroup() %>% 
-  select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
   distinct() %>% 
   filter(num_days == "0" | num_days == "28") -> Acer_percent_cells 
 
@@ -1056,15 +1058,52 @@ Acer_percent_cells$Treatment_Genotype_numdays <- interaction(Acer_model_metrics$
 kruskal_test(mean_replicate_percent_perID ~ Treatment_Genotype_numdays, data = Acer_percent_cells)#significant
 
 #posthoc test
-as.data.frame(dunn.test(Acer_percent_cells$mean_replicate_percent_perID, Acer_percent_cells$Treatment_Genotype_numdays, method = "bonferroni"))
+as.data.frame(dunn.test(Acer_percent_cells$mean_replicate_percent_perID, Acer_percent_cells$Treatment_Genotype_numdays, method = "bonferroni")) %>% 
+  write_csv("Acer_percent_cells_genet_posthoc.csv")
 
-#theres too many corrections going on here because Dunn test is overly conservative. I think some of the day 0 vs day 28 within each genotype could be significant but this test doesn't show that. I can either try to transform the data or subset it and just do within genotype tests, which could hopefully be ANOVAs. 
-
-#what about GLMs? 
 ```
 
+#### Pcli
+```{r}
+#average all technical replicates together before running stats
+percent_cells_df %>% 
+  filter(Species == "Pcli") %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") -> Pcli_percent_cells 
 
+str(Pcli_percent_cells)
 
+Pcli_percent_cells %>% 
+  dplyr::mutate_at(vars(Species, Genotype, Treatment, num_days), factor) -> Pcli_percent_cells
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+Pcli_model <- lm(mean_replicate_percent_perID ~ Treatment*Genotype*num_days + Tank, data = Pcli_percent_cells)
+Pcli_model_metrics <- augment(Pcli_model)
+plot(Pcli_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Genotype*num_days, data = Pcli_model_metrics) #not significant
+
+# identifying outliers
+Pcli_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 0 outliers
+
+#run two-way anova
+summary(aov(mean_replicate_percent_perID ~ Treatment*Genotype*num_days, data = Pcli_percent_cells)) #only num of days is significant
+
+#capture.output(TukeyHSD(aov(mean_replicate_percent_perID ~ Treatment*Genotype*num_days, data = Pcli_percent_cells)), file = "pcli_phagocytosis_posthoc.csv")
+```
 
 # Percent change over treatment 
 

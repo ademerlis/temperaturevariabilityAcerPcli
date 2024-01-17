@@ -4,19 +4,19 @@
 Fit: aov(formula = fvfm_loss_norm ~ Treatment * Species, data = treatment_normalized_bothspecies)
 
 $Treatment
-                        diff         lwr       upr     p adj
-Untreated-Treated 0.02252185 0.008770305 0.0362734 0.0014182
+                      diff       lwr      upr    p adj
+Untreated-Treated 2.030102 0.6039803 3.456223 0.005436
 
 $Species
-                            diff        lwr        upr p adj
-Pclivosa-Acervicornis -0.1246681 -0.1384163 -0.1109199     0
+                           diff       lwr       upr p adj
+Pclivosa-Acervicornis -12.13929 -13.56609 -10.71249     0
 
 $`Treatment:Species`
-                                                   diff         lwr         upr    p adj
-Untreated:Acervicornis-Treated:Acervicornis  0.08726576  0.06131568  0.11321583 0.00e+00
-Treated:Pclivosa-Treated:Acervicornis       -0.05664046 -0.08267871 -0.03060221 3.00e-07
-Untreated:Pclivosa-Treated:Acervicornis     -0.10055702 -0.12642112 -0.07469292 0.00e+00
-Treated:Pclivosa-Untreated:Acervicornis     -0.14390622 -0.16914860 -0.11866383 0.00e+00
-Untreated:Pclivosa-Untreated:Acervicornis   -0.18782277 -0.21288548 -0.16276007 0.00e+00
-Untreated:Pclivosa-Treated:Pclivosa         -0.04391656 -0.06907055 -0.01876257 5.63e-05
+                                                  diff        lwr        upr   p adj
+Untreated:Acervicornis-Treated:Acervicornis   8.726576   6.019690  11.433461 0.0e+00
+Treated:Pclivosa-Treated:Acervicornis        -5.139028  -7.828197  -2.449859 8.1e-06
+Untreated:Pclivosa-Treated:Acervicornis     -10.055702 -12.753619  -7.357785 0.0e+00
+Treated:Pclivosa-Untreated:Acervicornis     -13.865604 -16.470898 -11.260310 0.0e+00
+Untreated:Pclivosa-Untreated:Acervicornis   -18.782277 -21.396600 -16.167955 0.0e+00
+Untreated:Pclivosa-Treated:Pclivosa          -4.916674  -7.512648  -2.320699 1.0e-05
 
