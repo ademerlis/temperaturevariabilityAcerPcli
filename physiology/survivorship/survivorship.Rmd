@@ -402,6 +402,12 @@ slowburn_metadata %>%
   mutate(days_to_removed = end_date - start_date) %>% 
   select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
 
+#what are the sample sizes?
+slowburn_summary_data %>% 
+  drop_na() %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n())
+
 str(slowburn_summary_data)
 #make factors: Colony, Puck, Tank, Treatment, Species
 
@@ -438,14 +444,32 @@ slowburn_summary_data %>%
 games_howell_test(., days_to_removed ~ Species_Treatment)
 ```
 
-### looking at just 28C CBASS corals in slowburn
-```{r}
-slowburn_summary_data %>% 
-  filter(CBASS_temp == "28") #6 corals, only Acer
 
-slowburn_metadata %>% 
-  filter(Species == "Pseudodiploria clivosa" & CBASS_temp == "28") #none of the Pcli that were at the "ambient' CBASS temperature made it to the slowburn heat stress.
+### Welch's ANOVA for species, colony, and treatment
+```{r}
+treat_model <- lm(days_to_removed ~ Treatment*Species*Colony, data = slowburn_summary_data)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+
+#make interaction term
+slowburn_summary_data$Species_Treatment_Colony <- interaction(slowburn_summary_data$Species, slowburn_summary_data$Treatment, slowburn_summary_data$Colony)
+
+#run Welch's anova
+oneway.test(days_to_removed ~ Species_Treatment_Colony, data = slowburn_summary_data, var.equal = FALSE) #significant
+
+#posthoc test: Games-Howell
+
+slowburn_summary_data %>% 
+  ungroup() %>% 
+games_howell_test(., days_to_removed ~ Species_Treatment)
 ```
+
 
 ##separated by max CBASS temp
 ```{r}
