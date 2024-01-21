@@ -136,9 +136,9 @@ tidy_metadata %>%
   summarize(count_total = n()) %>% 
   full_join(., RTL_species_treatment_count) %>% 
   mutate(count_survived = count_total-count_RTL) %>% 
-  select(!count_total) %>% 
+  select(!count_total)
   
-  write_csv("RTL_vs_survived_CBASS_speciestreatments.csv")
+  #write_csv("RTL_vs_survived_CBASS_speciestreatments.csv")
 ```
 
 
@@ -303,6 +303,24 @@ metadata %>%
   mutate(slowburn= case_when(slowburn_heatstress_tank == "7" ~ "ambient",
                              TRUE ~ "heatstress_32")) -> slowburn_metadata
 ```
+## sample sizes going into slow-burn
+```{r}
+slowburn_metadata %>% 
+  filter(Removed_Date >= "2022-06-21" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(mortality_date = ymd(mortality_date)) %>%
+  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = end_date - start_date) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached"))  %>% 
+  group_by(Species, Treatment, Reason_removed) %>% 
+  summarise(count = n())
+```
+
 ## days at 32ºC
 ```{r}
 slowburn_metadata %>% 
@@ -329,6 +347,8 @@ slowburn_metadata %>%
   summarise(mean=mean(days_to_removed), sd = sd(days_to_removed)) %>% 
   as.data.frame()
 ```
+
+
 
 ```{r}
 b1<- slowburn_metadata %>% 
