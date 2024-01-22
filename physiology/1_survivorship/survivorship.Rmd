@@ -15,15 +15,6 @@ library(plotrix)
 metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
 
 str(metadata) #295 corals
-
-# metadata %>% 
-#   filter(!Removed_Date == "unknown") -> metadata #244 corals... 
-
-metadata$Removed_Date <- as.numeric(metadata$Removed_Date)
-metadata$Removed_Date <- as.Date(metadata$Removed_Date, origin = "1899-12-30")
-
-metadata$mortality_date <- as.numeric(metadata$mortality_date)
-metadata$mortality_date <- as.Date(metadata$mortality_date, origin = "1899-12-30")
 ```
 
 Tidy data 
@@ -45,7 +36,7 @@ There are two columns of significance for survivorship, Removed_Date and Mortali
 
 ```{r}
 metadata %>% 
-  filter(is.na(Removed_Date) & is.na(mortality_date)) #43 corals don't have either. But if they weren't assigned a heat-stress tank, that should indicate that they were removed/died before 06/15/2022
+  filter(is.na(Removed_Date) & is.na(mortality_date)) #41 corals don't have either. But if they weren't assigned a heat-stress tank, that should indicate that they were removed/died before 06/15/2022
 
 metadata %>% 
   filter(is.na(Removed_Date) & is.na(mortality_date) & is.na(slowburn_heatstress_tank)) # 5 corals. looks like the four Acer were tissue sampled and the Pcli who knows, it got buoyant weighed on April 21. they probably died sometime after CBASS and before heat stress.
@@ -72,8 +63,9 @@ ggplot(tidy_metadata, aes(x=mortality_date, fill = Treatment)) +
 CBASS_mortality <- tidy_metadata %>% 
   dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-26") 
 #for this time period, Removed_Date and mortality_date match up so there's no need to use the coalesce function
-```
 
+#99 corals died during CBASS
+```
 
 ## Number of corals that died due to CBASS
 ```{r}
@@ -81,7 +73,7 @@ tidy_metadata %>%
   dplyr::filter(Removed_Date >= "2022-04-20" & Removed_Date <= "2022-04-26") %>%
   drop_na(Species, Treatment, Reason_removed) %>% 
   group_by(Reason_removed, Species, Treatment) %>% 
-  summarize(count = n()) %>% 
+  dplyr::summarize(count = n()) %>% 
   ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
   geom_col(position = position_dodge()) +
   theme_classic() +
@@ -99,7 +91,7 @@ CBASS_mortality %>%
                              Reason_removed == "RTL" ~ "RTL")) %>% 
   drop_na(Species, Treatment) %>% 
   group_by(Species, Treatment) %>% 
-  summarize(count_RTL = n()) -> RTL_species_treatment_count
+  dplyr::summarize(count_RTL = n()) -> RTL_species_treatment_count
 
 CBASS_mortality %>% 
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
@@ -107,7 +99,7 @@ CBASS_mortality %>%
                              Reason_removed == "RTL" ~ "RTL")) %>% 
   drop_na(Species, Treatment) %>% 
   group_by(Species, Treatment, CBASS_temp) %>% 
-  summarize(count_RTL = n()) -> RTL_species_treatment_CBASStemps
+  dplyr::summarize(count_RTL = n()) -> RTL_species_treatment_CBASStemps
 ```
 
 
@@ -115,10 +107,10 @@ CBASS_mortality %>%
 tidy_metadata %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
   group_by(Species, Treatment) %>% 
-  summarize(count_total = n()) %>% 
+  dplyr::summarize(count_total = n()) %>% 
   full_join(., RTL_species_treatment_count) %>% 
   mutate(count_survived = count_total-count_RTL) %>% 
-  select(!count_total) %>% 
+  dplyr::select(!count_total) %>% 
   pivot_longer(count_RTL:count_survived, names_to="label", values_to="count") %>% 
   ggplot(., aes(x=Treatment, y=count, fill = label)) +
   geom_col() +
@@ -133,12 +125,12 @@ tidy_metadata %>%
 tidy_metadata %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
   group_by(Species, Treatment) %>% 
-  summarize(count_total = n()) %>% 
+  dplyr::summarize(count_total = n()) %>% 
   full_join(., RTL_species_treatment_count) %>% 
   mutate(count_survived = count_total-count_RTL) %>% 
-  select(!count_total)
+  dplyr::select(!count_total) 
   
-  #write_csv("RTL_vs_survived_CBASS_speciestreatments.csv")
+#write_csv("RTL_vs_survived_CBASS_speciestreatments.csv")
 ```
 
 
@@ -146,13 +138,13 @@ tidy_metadata %>%
 tidy_metadata %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
   group_by(Species, Treatment, CBASS_temp) %>% 
-  summarize(count_total = n()) %>% 
+  dplyr::summarize(count_total = n()) %>% 
   full_join(., RTL_species_treatment_CBASStemps) %>% 
   drop_na(CBASS_temp) %>% 
   mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
   mutate(count_survived = count_total-count_RTL) %>% 
   mutate(count_survived = if_else(is.na(count_survived),0,count_survived)) %>% 
-  select(!count_total) %>% 
+  dplyr::select(!count_total) %>% 
   pivot_longer(count_RTL:count_survived, names_to="label", values_to="count") %>% 
   ggplot(., aes(x=CBASS_temp, y=count, fill = label)) +
   geom_col() +
@@ -163,6 +155,7 @@ tidy_metadata %>%
   labs(y="Count", fill = "Category") 
 ```
 
+
 ```{r}
 tidy_metadata %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
@@ -173,8 +166,8 @@ tidy_metadata %>%
   mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
   mutate(count_survived = count_total-count_RTL) %>% 
   mutate(count_survived = if_else(is.na(count_survived),0,count_survived)) %>% 
-  select(!count_total) %>% 
-  write_csv("RTL_vs_survived_CBASS_byCBASStemp.csv")
+  select(!count_total) #%>% 
+  #write_csv("RTL_vs_survived_CBASS_byCBASStemp.csv")
 ```
 
 ## stats test on counts (not standardized)

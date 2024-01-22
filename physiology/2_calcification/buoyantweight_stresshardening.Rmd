@@ -22,6 +22,8 @@ buoyantweights<- metadata %>%
 
 #sample size
 buoyantweights %>% group_by(Species, Treatment) %>% summarise(count = n())
+
+#the final time point sample sizes are much lower because I didn't buoyant weigh any corals that got tissue sampled or FACS run (N=69 corals)
 ```
 
 

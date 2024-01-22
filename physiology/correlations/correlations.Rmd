@@ -24,6 +24,7 @@ metadata$Removed_Date <- as.Date(metadata$Removed_Date, origin = "1899-12-30")
 metadata$mortality_date <- as.numeric(metadata$mortality_date)
 metadata$mortality_date <- as.Date(metadata$mortality_date, origin = "1899-12-30")
 
+#number of days til bleaching/RTL
 metadata %>% 
   filter(!is.na(slowburn_heatstress_tank)) %>% 
   dplyr::select(Species:heatstress_recovery_tank) %>% 
@@ -49,7 +50,7 @@ slowburn_metadata %>%
   mutate(days_to_removed = end_date - start_date) %>% 
   dplyr::select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
 
-
+#fvfm data
 ipam_tidy_data <- read.csv("../photosynthetic_efficiency/ipam_tidy_data.csv")
 
 ipam_tidy_data %>% 
@@ -80,6 +81,38 @@ ipam_tidy_CBASS_treatments %>%
   mutate(Species = case_when(Species == "Pclivosa" ~ "Pseudodiploria clivosa",
                              Species == "Acervicornis" ~ "Acropora cervicornis")) %>% 
   mutate(ID = gsub("[AP]", "", Puck)) -> ipam_tidy_CBASS_treatments
+
+#immune cell data
+percent_cells_df <- read_csv("../immune_cell_assay/Grace_percentcells_alldata.csv") 
+
+percent_cells_df%>% 
+    mutate(Treatment = case_when(Treatment == "Control" ~ "Untreated",
+                               Treatment == "Variable" ~ "Treated")) -> percent_cells_df
+
+#there's one outlier to remove right off the bat: T1	Pcli	B	P9	r2	Percent=111.50	T1	Untreated
+percent_cells_df %>% 
+  filter(!(TimePoint=="T1" & Species == "Pcli" & Genotype == "B" & Treatment == "Untreated" & ID == "P9" & Replicate == "r2")) -> percent_cells_df
+
+percent_cells_df %>% 
+  mutate(num_days = case_when(TimePoint == "T0" ~ "0",
+                              TimePoint == "T1" ~ "7",
+                              TimePoint == "T2" ~ "28",
+                              TimePoint == "FollowUp" ~ "71")) %>% 
+  mutate(num_days = as.factor(num_days)) %>% 
+  mutate(num_days = fct_relevel(num_days, "0", "7", "28", "71")) -> percent_cells_df
+
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28" | num_days == "71") %>% 
+  mutate(Species = case_when(Species == "Pcli" ~ "Pseudodiploria clivosa",
+                             Species == "Acer" ~ "Acropora cervicornis")) %>% 
+  mutate(ID = gsub("[AP]", "", ID)) %>% 
+  dplyr::rename(Colony = Genotype) -> percent_cells_speciestreatments
 ```
 
 
@@ -224,3 +257,90 @@ plot_grid(p1,p2, ncol = 2, rel_widths = c(1.5, 2))
 
 
 # Correlation plot: immune cells vs. days to removed
+```{r}
+full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
+  drop_na() #36 corals that were tested for immune cells AND made it to the slowburn 
+
+#sample sizes:
+full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
+  drop_na() %>% 
+  group_by(Species, Treatment, num_days) %>% 
+  dplyr::summarise(count = n())
+
+full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
+  drop_na() %>% 
+  ggplot(., aes(x=days_to_removed, y=mean_replicate_percent_perID, color = Treatment)) +
+  geom_point() +
+  facet_wrap(~Species+num_days, scales = "free_x") +
+  geom_smooth(method="lm", se = FALSE) +
+  theme_classic() +
+  labs(x="Days at 32ºC", y = "% Immune Cell Activity") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) 
+
+# when separating individual coral IDs, there aren't enough data points to make correlations. 
+```
+
+```{r}
+#what if I take the mean for each Species*Colony*Treatment for the days at 32ºC and the % immune cell activity and then plot those points and look for a line of best fit? 
+# the CBASS temperature applied did not have a significant effect on number of days at 32ºC during slow-burn, so I won't include it as a grouping variable for now.
+
+slowburn_summary_data %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) %>% #108 corals
+  drop_na(days_to_removed) %>%  #76 corals
+  dplyr::group_by(Species, Colony, Treatment) %>% 
+  dplyr::summarise(mean_days_at32 = mean(days_to_removed)) -> slowburn_mean
+
+percent_cells_speciestreatments %>% 
+  dplyr::group_by(Species, Colony, Treatment, num_days) %>% 
+  dplyr::summarise(mean_percent = mean(mean_replicate_percent_perID)) -> mean_phagocytosis
+
+full_join(slowburn_mean, mean_phagocytosis, by = c("Species", "Colony", "Treatment")) %>% 
+  ggplot(., aes(x=mean_days_at32, y=mean_percent, color = Treatment)) +
+  geom_point() +
+  facet_wrap(~Species+num_days, scales = "free_x") +
+  geom_smooth(method="lm", se = FALSE) +
+  theme_classic() +
+  labs(x="Days at 32ºC", y = "% Immune Cell Activity") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) 
+#weird
+```
+
+# correlation plot: immune cell activity vs CBASS fvfm 
+```{r}
+# individual corals
+full_join(ipam_tidy_CBASS_treatments, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
+  drop_na() %>% 
+  dplyr::select(Colony:fvfm, CBASS_temp, ID, num_days, mean_replicate_percent_perID) %>% 
+  ggplot(., aes(x=mean_replicate_percent_perID, y=fvfm, color = Treatment)) +
+  geom_point() +
+  facet_wrap(~Species+num_days, scales = "free_x") +
+  geom_smooth(method="lm", se = FALSE) +
+  theme_classic() +
+  labs(x= "% Immune Cell Activity", y = "CBASS fvfm") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) 
+#weird
+
+# means
+ipam_tidy_CBASS_treatments %>% 
+  dplyr::group_by(Species, Colony, Treatment) %>% 
+  dplyr::summarise(mean_fvfm = mean(fvfm)) -> mean_ipam
+
+percent_cells_speciestreatments %>% 
+  dplyr::group_by(Species, Colony, Treatment, num_days) %>% 
+  dplyr::summarise(mean_percent = mean(mean_replicate_percent_perID)) -> mean_phagocytosis
+
+full_join(mean_ipam, mean_phagocytosis, by = c("Species", "Colony", "Treatment")) %>% 
+  ggplot(., aes(x=mean_percent, y=mean_fvfm, color = Treatment)) +
+  geom_point() +
+  facet_wrap(~Species+num_days, scales = "free_x") +
+  geom_smooth(method="lm", se = FALSE) +
+  theme_classic() +
+  labs(x= "% Immune Cell Activity", y = "CBASS fvfm") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) 
+#weirder
+```
+
