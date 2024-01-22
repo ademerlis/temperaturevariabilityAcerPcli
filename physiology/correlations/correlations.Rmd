@@ -4,7 +4,7 @@ author: "allyson_demerlis"
 date: "2024-01-14"
 output: html_document
 ---
-Load libraries
+# Load libraries
 ```{r}
 library(tidyverse)
 library(janitor)
@@ -14,9 +14,9 @@ library(plotrix)
 library(drc)
 ```
 
-load data
+# load data
 ```{r}
-metadata <- readxl::read_xlsx("metadata.xlsx", sheet = "tidy_data")
+metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
 
 metadata$Removed_Date <- as.numeric(metadata$Removed_Date)
 metadata$Removed_Date <- as.Date(metadata$Removed_Date, origin = "1899-12-30")
@@ -26,7 +26,7 @@ metadata$mortality_date <- as.Date(metadata$mortality_date, origin = "1899-12-30
 
 metadata %>% 
   filter(!is.na(slowburn_heatstress_tank)) %>% 
-  select(Species:heatstress_recovery_tank) %>% 
+  dplyr::select(Species:heatstress_recovery_tank) %>% 
   mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
                                CBASS_tank == "2" ~ "37",
                                CBASS_tank == "3" ~ "32",
@@ -47,10 +47,10 @@ slowburn_metadata %>%
   mutate(start_date="2022-06-25") %>% 
   mutate(start_date = ymd(start_date)) %>% 
   mutate(days_to_removed = end_date - start_date) %>% 
-  select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
+  dplyr::select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
 
 
-ipam_tidy_data <- read.csv("photosynthetic_efficiency/ipam_tidy_data.csv")
+ipam_tidy_data <- read.csv("../photosynthetic_efficiency/ipam_tidy_data.csv")
 
 ipam_tidy_data %>% 
   dplyr::filter(Treatment_period == "CBASS") %>% 
@@ -70,7 +70,7 @@ ipam_tidy_data %>%
                                Tank == "8" ~ "Treated")) %>% 
   full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
   drop_na() %>% 
-  rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
   dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) -> ipam_tidy_CBASS_treatments
 
 ipam_tidy_CBASS_treatments %>% 
@@ -83,7 +83,7 @@ ipam_tidy_CBASS_treatments %>%
 ```
 
 
-Correlation plot: fvfm vs days to removed
+# Correlation plot: fvfm vs days to removed
 ```{r}
 slowburn_summary_data$ID <- as.character(slowburn_summary_data$ID)
 ipam_tidy_CBASS_treatments$CBASS_temp <- as.character(ipam_tidy_CBASS_treatments$CBASS_temp)
@@ -106,7 +106,7 @@ p1<- ggplot(days_fvfm_data, aes(x=days_to_removed, y=fvfm, color = Treatment)) +
   theme(legend.position="none")
 ```
 
-stats for each linear regression
+## stats for each linear regression
 ```{r}
 days_fvfm_data %>% 
   filter(Species == "Acropora cervicornis" & Treatment == "Untreated") %>% 
@@ -129,7 +129,7 @@ days_fvfm_data %>%
   summary()
 ```
 
-Correlation plot: ED50 vs days to removed
+# Correlation plot: ED50 vs days to removed
 
 ```{r}
 ipam_tidy_CBASS_treatments %>% 
@@ -171,6 +171,7 @@ Pcli_coeff %>%
   separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Pcli_ED50s
 ```
 
+## stats
 
 ```{r}
 slowburn_summary_data %>% 
@@ -213,9 +214,13 @@ days_ed50_Pcli_data %>%
 ```
 
 
-combine plot
+## combine plot
 ```{r}
 plot_grid(p1,p2, ncol = 2, rel_widths = c(1.5, 2))
 #ggsave("correlationplots_IPAM_days.pdf", width = 12, height = 5)
 ```
 
+
+
+
+# Correlation plot: immune cells vs. days to removed
