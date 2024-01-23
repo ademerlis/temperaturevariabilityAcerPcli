@@ -1,0 +1,109 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = fvfm_loss_norm ~ Treatment * Species * Colony, data = treatment_normalized_bothspecies)
+
+$Treatment
+                      diff       lwr      upr     p adj
+Untreated-Treated 2.270352 0.9106711 3.630033 0.0011469
+
+$Species
+                           diff       lwr       upr p adj
+Pclivosa-Acervicornis -12.11248 -13.47248 -10.75247     0
+
+$Colony
+                  diff        lwr        upr     p adj
+B-A        -1.46117519 -4.8276749  1.9053245 0.8136621
+BC-8b-A    -3.74355838 -7.1421105 -0.3450063 0.0214056
+C-A        -4.36012005 -7.7931140 -0.9271261 0.0042956
+MB-B-A     -1.36175205 -4.7947460  2.0712419 0.8647686
+SI-C-A     -0.33695193 -3.9898210  3.3159172 0.9998223
+BC-8b-B    -2.28238319 -5.5750757  1.0103093 0.3508578
+C-B        -2.89894487 -6.2271748  0.4292851 0.1276585
+MB-B-B      0.09942314 -3.2288068  3.4276531 0.9999993
+SI-C-B      1.12422326 -2.4303682  4.6788147 0.9442508
+C-BC-8b    -0.61656168 -3.9772091  2.7440858 0.9950726
+MB-B-BC-8b  2.38180632 -0.9788411  5.7424538 0.3255941
+SI-C-BC-8b  3.40660645 -0.1783561  6.9915690 0.0731733
+MB-B-C      2.99836800 -0.3971057  6.3938417 0.1177896
+SI-C-C      4.02316812  0.4055380  7.6407982 0.0194895
+SI-C-MB-B   1.02480012 -2.5928300  4.6424302 0.9649366
+
+$`Treatment:Species`
+                                                  diff        lwr        upr   p adj
+Untreated:Acervicornis-Treated:Acervicornis   8.864310   6.289880  11.438741 0.0e+00
+Treated:Pclivosa-Treated:Acervicornis        -5.294249  -7.860078  -2.728421 1.2e-06
+Untreated:Pclivosa-Treated:Acervicornis      -9.672844 -12.230281  -7.115406 0.0e+00
+Treated:Pclivosa-Untreated:Acervicornis     -14.158560 -16.655488 -11.661632 0.0e+00
+Untreated:Pclivosa-Untreated:Acervicornis   -18.537154 -21.025459 -16.048850 0.0e+00
+Untreated:Pclivosa-Treated:Pclivosa          -4.378594  -6.857998  -1.899191 4.5e-05
+
+$`Treatment:Colony`
+                                      diff          lwr        upr     p adj
+Untreated:A-Treated:A           0.50683423  -5.13183950  6.1455080 1.0000000
+Treated:B-Treated:A            -1.82109201  -7.29841778  3.6562337 0.9946405
+Untreated:B-Treated:A          -0.65527088  -6.18257742  4.8720357 0.9999998
+Treated:BC-8b-Treated:A        -3.99504447  -9.57599177  1.5859028 0.4367232
+Untreated:BC-8b-Treated:A      -2.99843264  -8.52573918  2.5288739 0.8227545
+Treated:C-Treated:A            -6.69176595 -12.33043968 -1.0530922 0.0063772
+Untreated:C-Treated:A          -1.62042472  -7.20137202  3.9605226 0.9983807
+Treated:MB-B-Treated:A         -3.81714678  -9.51812819  1.8838346 0.5453567
+Untreated:MB-B-Treated:A        1.37480268  -4.15250386  6.9021092 0.9996186
+Treated:SI-C-Treated:A         -0.08953869  -6.19533721  6.0162598 1.0000000
+Untreated:SI-C-Treated:A        0.05559479  -5.78617279  5.8973624 1.0000000
+Treated:B-Untreated:A          -2.32792624  -7.74037023  3.0845177 0.9590740
+Untreated:B-Untreated:A        -1.16210511  -6.62512351  4.3009133 0.9999172
+Treated:BC-8b-Untreated:A      -4.50187870 -10.01916292  1.0154055 0.2367428
+Untreated:BC-8b-Untreated:A    -3.50526687  -8.96828527  1.9577515 0.6118581
+Treated:C-Untreated:A          -7.19860018 -12.77426999 -1.6229304 0.0016894
+Untreated:C-Untreated:A        -2.12725895  -7.64454317  3.3900253 0.9819522
+Treated:MB-B-Untreated:A       -4.32398101  -9.96265474  1.3146927 0.3268296
+Untreated:MB-B-Untreated:A      0.86796845  -4.59504995  6.3309869 0.9999958
+Treated:SI-C-Untreated:A       -0.59637292  -6.64403594  5.4512901 1.0000000
+Untreated:SI-C-Untreated:A     -0.45123944  -6.23221694  5.3297381 1.0000000
+Untreated:B-Treated:B           1.16582114  -4.13050081  6.4621431 0.9998838
+Treated:BC-8b-Treated:B        -2.17395246  -7.52623060  3.1783257 0.9731026
+Untreated:BC-8b-Treated:B      -1.17734062  -6.47366257  4.1189813 0.9998720
+Treated:C-Treated:B            -4.87067394 -10.28311793  0.5417701 0.1242743
+Untreated:C-Treated:B           0.20066729  -5.15161085  5.5529454 1.0000000
+Treated:MB-B-Treated:B         -1.99605477  -7.47338053  3.4812710 0.9884826
+Untreated:MB-B-Treated:B        3.19589470  -2.10042725  8.4922166 0.6999492
+Treated:SI-C-Treated:B          1.73155332  -4.16596176  7.6290684 0.9982082
+Untreated:SI-C-Treated:B        1.87668680  -3.74702700  7.5004006 0.9944685
+Treated:BC-8b-Untreated:B      -3.33977359  -8.74318931  2.0636421 0.6668015
+Untreated:BC-8b-Untreated:B    -2.34316176  -7.69115637  3.0048328 0.9533386
+Treated:C-Untreated:B          -6.03649507 -11.49951347 -0.5734767 0.0165788
+Untreated:C-Untreated:B        -0.96515384  -6.36856956  4.4382619 0.9999858
+Treated:MB-B-Untreated:B       -3.16187591  -8.68918245  2.3654306 0.7666818
+Untreated:MB-B-Untreated:B      2.03007356  -3.31792104  7.3780682 0.9840333
+Treated:SI-C-Untreated:B        0.56573219  -5.37823149  6.5096959 1.0000000
+Untreated:SI-C-Untreated:B      0.71086567  -4.96153921  6.3832705 0.9999997
+Untreated:BC-8b-Treated:BC-8b   0.99661183  -4.40680389  6.4000276 0.9999803
+Treated:C-Treated:BC-8b        -2.69672148  -8.21400570  2.8205627 0.9034940
+Untreated:C-Treated:BC-8b       2.37461975  -3.08365439  7.8328939 0.9556091
+Treated:MB-B-Treated:BC-8b      0.17789769  -5.40304962  5.7588450 1.0000000
+Untreated:MB-B-Treated:BC-8b    5.36984715  -0.03356857 10.7732629 0.0531297
+Treated:SI-C-Treated:BC-8b      3.90550578  -2.08837104  9.8993826 0.5882489
+Untreated:SI-C-Treated:BC-8b    4.05063926  -1.67404695  9.7753255 0.4556987
+Treated:C-Untreated:BC-8b      -3.69333331  -9.15635171  1.7696851 0.5298536
+Untreated:C-Untreated:BC-8b     1.37800792  -4.02540780  6.7814236 0.9995159
+Treated:MB-B-Untreated:BC-8b   -0.81871415  -6.34602069  4.7085924 0.9999980
+Untreated:MB-B-Untreated:BC-8b  4.37323532  -0.97475928  9.7212299 0.2338195
+Treated:SI-C-Untreated:BC-8b    2.90889395  -3.03506973  8.8528576 0.9027410
+Untreated:SI-C-Untreated:BC-8b  3.05402743  -2.61837745  8.7264323 0.8298755
+Untreated:C-Treated:C           5.07134123  -0.44594299 10.5886255 0.1055050
+Treated:MB-B-Treated:C          2.87461917  -2.76405456  8.5132929 0.8753204
+Untreated:MB-B-Treated:C        8.06656863   2.60355023 13.5295870 0.0001212
+Treated:SI-C-Treated:C          6.60222726   0.55456424 12.6498903 0.0192129
+Untreated:SI-C-Treated:C        6.74736074   0.96638324 12.5283382 0.0080753
+Treated:MB-B-Untreated:C       -2.19672206  -7.77766936  3.3842252 0.9788170
+Untreated:MB-B-Untreated:C      2.99522741  -2.40818831  8.3986431 0.8011955
+Treated:SI-C-Untreated:C        1.53088603  -4.46299079  7.5247629 0.9995089
+Untreated:SI-C-Untreated:C      1.67601951  -4.04866670  7.4007057 0.9982539
+Untreated:MB-B-Treated:MB-B     5.19194947  -0.33535708 10.7192560 0.0883668
+Treated:SI-C-Treated:MB-B       3.72760809  -2.37819043  9.8334066 0.6840645
+Untreated:SI-C-Treated:MB-B     3.87274158  -1.96902600  9.7145092 0.5611607
+Treated:SI-C-Untreated:MB-B    -1.46434137  -7.40830506  4.4796223 0.9996521
+Untreated:SI-C-Untreated:MB-B  -1.31920789  -6.99161277  4.3531970 0.9998007
+Untreated:SI-C-Treated:SI-C     0.14513348  -6.09232073  6.3825877 1.0000000
+

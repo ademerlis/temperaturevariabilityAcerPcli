@@ -1,0 +1,434 @@
+---
+title: "other_DRC_modeling"
+author: "allyson_demerlis"
+date: "2023-12-28"
+output: html_document
+---
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(plotrix)
+library(glmmTMB)
+library(emmeans)
+library(lme4)
+library(ggpubr)
+library(drc) #for the function "drm" dose-response model
+library(broom) #for the tidy function needed for dose response model
+library(car)
+library(rstatix)
+library(rcompanion)
+library(nlme)
+library(multcomp)
+library(MASS)
+```
+
+# Import and tidy data
+
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(!Treatment) -> ipam_tidy_CBASS
+
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>% 
+  dplyr::select(Tank, Puck, Colony, Treatment, Species) %>% 
+  distinct() %>% #283 rows = one coral ID per treatment, no repeats
+  mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
+                               Tank == "2" ~ "Treated",
+                               Tank == "3" ~ "Treated",
+                               Tank == "4" ~ "Untreated",
+                               Tank == "5" ~ "Treated", 
+                               Tank == "6" ~ "Untreated",
+                               Tank == "7" ~ "Untreated",
+                               Tank == "8" ~ "tank_8")) %>% 
+  full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
+  drop_na() %>% 
+  rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) %>% 
+  filter(!fvfm==0) -> ipam_tidy_CBASS_treatments
+
+ipam_tidy_CBASS_treatments %>% 
+  dplyr::filter(Species  == "Acervicornis") %>% 
+  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Acer_ipam_CBASS
+
+ipam_tidy_CBASS_treatments %>% 
+  dplyr::filter(Species  == "Pclivosa") %>% 
+  mutate(CBASS_temp=as.factor(CBASS_temp)) -> Pcli_ipam_CBASS
+```
+
+
+# Ross Cunning's DRC analysis
+
+```{r}
+# Define dose-response curves using same constraints
+ll3 <- function(data) {
+  drm(fvfm ~ CBASS_temp, data = data,
+      fct = LL.3(names = c("hill", "max", "ED50")),
+      upperl = c(120, 0.72, 40),
+      lowerl = c(10, 0.01, 30))} 
+
+# I changed the max value from 0.55 to 0.01 so I don't get NaN for std.error, statistic, or p-value.
+#these are the limits Ross had set in his code:
+#upperl = c(120, 0.72, 40),
+#lowerl = c(10, 0.55, 30))
+
+tryll3 <- possibly(ll3, otherwise = NULL)
+
+# Fit model to each coral, get parameters, fitted values, and residuals
+initmods_species <- ipam_tidy_CBASS_treatments %>%
+  dplyr::select(!c(Colony, Tank, Date, Treatment_period)) %>% 
+  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
+  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
+  # Get model parameters and fitted values/residuals
+  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
+         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
+
+# Extract ed50 parameter values for each Species and Treatment combination from model fits
+ed50_species <- initmods_species %>% 
+  unnest(data) %>% 
+  dplyr::select(Species, Treatment, pars) %>%
+  unnest(pars) %>%
+  filter(term == "ED50")
+
+ed50_species %>% distinct() -> ed50_species
+
+# Collect raw data, fitted values, and ed50 estimates
+fvals_species <- initmods_species %>%
+  dplyr::select(Species, Treatment, pred) %>%
+  unnest(pred) %>%
+  full_join(ed50_species) %>%
+  rename(ed50 = estimate)
+```
+
+
+```{r}
+ggplot(data = fvals_species, aes(x=CBASS_temp, y=fvfm)) +
+  geom_point(data = fvals_species, aes(color=Treatment)) +
+    geom_line(data = drop_na(fvals_species, .fitted),
+              aes(y = .fitted)) +
+    geom_vline(data = distinct(fvals_species, Species, Treatment, ed50), 
+               aes(xintercept = ed50), 
+               lwd = 0.2, lty = 2) +
+    geom_text(data = distinct(fvals_species, Species, Treatment, ed50),
+              aes(x = ed50, y = 0.05, label = round(ed50, 2)), 
+              hjust = 1, nudge_x = -0.2, size = 3) +
+    facet_grid(vars(Treatment), vars(Species)) +
+  labs(x = "Temperature (C)", y = "Fv/Fm") +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_bw() +
+  theme(text = element_text(size = 14)) 
+```
+
+## 3f. Hill slope (i wrote this)
+
+### DRC for Species
+```{r}
+# Define dose-response curves using same constraints
+ll3 <- function(data) {
+  drm(fvfm ~ CBASS_temp, data = data,
+      fct = LL.3(names = c("hill", "max", "ED50")),
+      upperl = c(120, 0.72, 40),
+      lowerl = c(10, 0.01, 30))} 
+
+# I changed the max value from 0.55 to 0.01 so I don't get NaN for std.error, statistic, or p-value.
+#these are the limits Ross had set in his code:
+#upperl = c(120, 0.72, 40),
+#lowerl = c(10, 0.55, 30))
+
+tryll3 <- possibly(ll3, otherwise = NULL)
+
+# Fit model to each coral, get parameters, fitted values, and residuals
+initmods_species <- ipam_tidy_CBASS_treatments %>%
+  dplyr::select(!c(Colony, Tank, Date, Treatment_period)) %>% 
+  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
+  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
+  # Get model parameters and fitted values/residuals
+  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
+         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
+
+# Extract ed50 parameter values for each Species and Treatment combination from model fits
+hill_species <- initmods_species %>% 
+  unnest(data) %>% 
+  dplyr::select(Species, Treatment, pars) %>%
+  unnest(pars) %>%
+  filter(term == "hill")
+
+hill_species %>% distinct() -> hill_species
+
+# Collect raw data, fitted values, and ed50 estimates
+fvals_species_hill <- initmods_species %>%
+  dplyr::select(Species, Treatment, pred) %>%
+  unnest(pred) %>%
+  full_join(hill_species) %>%
+  rename(hill = estimate)
+```
+
+
+## 3f. ED50 DRM curves for raw fv/fm with colony 
+
+### DRC for Colony
+```{r, include = F}
+# Define dose-response curves using same constraints
+ll3 <- function(data) {
+  drm(fvfm ~ CBASS_temp, data = data,
+      fct = LL.3(names = c("hill", "max", "ED50")),
+      upperl = c(120, 0.72, 40),
+      lowerl = c(10, 0.01, 30))} 
+
+# when I remove the lower limit from the ll3 function, SI-C variable ED50 is 36.25712. But when I keep both limits, it is 35.96952 but the std.error, statistic, and p-value are NaN. I narrowed it down and it is an issue with the "max" value. I changed it from 0.55 to 0.01, and I get 36.25712 for the ED50. Below are the upper and lower limits set by Ross in his code.
+#upperl = c(120, 0.72, 40),
+#lowerl = c(10, 0.55, 30))
+
+tryll3 <- possibly(ll3, otherwise = NULL)
+
+# Fit model to each coral, get parameters, fitted values, and residuals
+initmods_colony <- ipam_tidy_CBASS_treatments %>%
+  dplyr::select(!c(Tank, Date, Treatment_period)) %>% 
+  nest(data = c(Puck, CBASS_temp, fvfm)) %>% #this line wasn't working for the longest time because I hadn't added "Puck" to the list for the nested data. 
+  mutate(ll3 = map(data, tryll3)) %>% # Fit the model to each coral
+  # Get model parameters and fitted values/residuals
+  mutate(pars = map(ll3, tidy), #tidy comes from the broom package I think?
+         pred = map2(ll3, data, ~augment(.x, drop_na(.y, fvfm))))
+
+# Extract ed50 parameter values for each Colony and Treatment combination from model fits
+ed50_colony <- initmods_colony%>% 
+  unnest(data) %>% 
+  dplyr::select(Colony, Treatment, pars) %>%
+  unnest(pars) %>%
+  filter(term == "ED50")
+
+ed50_colony %>% distinct() -> ed50_colony
+
+# Collect raw data, fitted values, and ed50 estimates
+fvals_colony <- initmods_colony %>%
+  dplyr::select(Species, Treatment, Colony, pred) %>%
+  unnest(pred) %>%
+  full_join(ed50_colony) %>%
+  rename(ed50 = estimate)
+```
+
+
+```{r}
+fvals_colony$Colony <- factor(fvals_colony$Colony, levels = c('MB-B', 'BC-8b', 'SI-C', 'A', 'B', 'C'))
+
+fvals_colony
+
+ggplot(data = fvals_colony, aes(x=CBASS_temp, y=fvfm)) +
+  geom_point(data = fvals_colony, aes(color=Treatment)) +
+    geom_line(data = drop_na(fvals_colony, .fitted),
+              aes(y = .fitted)) +
+    geom_vline(data = distinct(fvals_colony, Colony, Treatment, ed50), 
+               aes(xintercept = ed50), 
+               lwd = 0.2, lty = 2) +
+    geom_text(data = distinct(fvals_colony, Colony, Treatment, ed50),
+              aes(x = ed50, y = 0.05, label = round(ed50, 2)), 
+              hjust = 1, nudge_x = -0.2, size = 3) +
+    facet_grid(vars(Treatment), vars(Colony)) +
+  labs(x = "Temperature (C)", y = "Fv/Fm") +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_bw() +
+  theme(text = element_text(size = 14)) 
+```
+
+### ED50 Statistical test 
+
+Take all genotypes together and compare the mean ED50 of treatment (that way you have multiple samples to add to the total group mean)
+
+Kruskall-wallis test
+```{r}
+#Acer
+ed50_colony %>% 
+  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
+kruskal_test(data = ., estimate ~ Treatment) #not significant
+
+
+#Pcli
+ed50_colony %>% 
+  filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
+kruskal_test(data = ., estimate ~ Treatment) #not significant
+```
+
+### Independent t-test for Acer
+```{r}
+ed50_colony %>% 
+  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
+  group_by(Treatment) %>% 
+  shapiro_test(estimate) #normality test not significant
+
+ed50_colony %>% 
+  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
+  levene_test(estimate ~ Treatment) # variances are equal (p-value not significant)
+
+ed50_colony %>% 
+  filter(Colony == "BC-8b" | Colony == "MB-B" | Colony == "SI-C") %>% 
+  t_test(estimate ~ Treatment) #ed50s are not significantly different for Acer
+```
+
+### Independent t-test for Pcli
+```{r}
+ed50_colony %>% 
+  filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
+  group_by(Treatment) %>% 
+  shapiro_test(estimate) #normality test not significant
+
+ed50_colony %>% 
+   filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
+  levene_test(estimate ~ Treatment) # variances are equal (p-value not significant)
+
+ed50_colony %>% 
+   filter(Colony == "A" | Colony == "B" | Colony == "C") %>% 
+  t_test(estimate ~ Treatment) #ed50s are not significantly different for Pcli
+```
+
+
+
+
+# Rachel Alderice DRC analysis
+
+```{r}
+#curve ID treatment - filter for control
+ipam_tidy_CBASS_treatments %>% filter(Treatment == "Control") -> control
+
+DRCpam_control = drm(fvfm ~ CBASS_temp, data = control, curveid = Species,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRCpam_control)
+compParm(DRCpam_control, 'ed50')
+compParm(DRCpam_control, 'ed50', "-")
+plot(DRCpam_control)
+
+#significant!!
+
+compParm(DRCpam_control, 'hill')
+compParm(DRCpam_control, 'hill', "-")
+
+#curve ID treatment - filter for variable
+ipam_tidy_CBASS_treatments %>% filter(Treatment == "Variable") -> variable
+
+DRCpam_variable = drm(fvfm ~ CBASS_temp, data = variable, curveid = Species,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRCpam_variable)
+compParm(DRCpam_variable, 'ed50')
+#significant!
+compParm(DRCpam_variable, 'ed50', "-")
+plot(DRCpam_variable)
+
+compParm(DRCpam_variable, 'hill')
+compParm(DRCpam_variable, 'hill', "-")
+```
+
+
+# Evensen DRC analysis
+
+```{r}
+Acer_ipam_CBASS -> Acer_CBASS
+Acer_CBASS$CBASS_temp <- as.numeric(as.character(Acer_CBASS$CBASS_temp))
+CBASS_Acer_DRC <- drm(fvfm ~ CBASS_temp, data = Acer_CBASS, curveid = Treatment, fct = LL.3(names = c('hill', 'max', 'ed50')))
+mselect(CBASS_Acer_DRC, list(LL.2(), LL.4(), LL.5(), LL2.2(), LL2.3(), LL2.4(), LL2.5(), AR.2(), AR.3(), EXD.2(), EXD.3()), icfct = AIC)
+modelFit(CBASS_Acer_DRC)
+summary(CBASS_Acer_DRC)
+plot(CBASS_Acer_DRC)
+
+#extract ED50
+Acer_CBASS_variable_coeff<-CBASS_Acer_DRC$coefficients[5]
+Acer_CBASS_control_coeff<-CBASS_Acer_DRC$coefficients[6]
+
+Acer_coeff <- data.frame(Acer_CBASS_variable_coeff,Acer_CBASS_control_coeff)
+
+control_CBASS <- drm(fvfm ~ CBASS_temp, data = Acer_CBASS[Acer_CBASS$Treatment=="Control",], fct = LL.3())
+summary(control_CBASS)
+plot(control_CBASS)
+
+variable_CBASS <- drm(fvfm ~ CBASS_temp, data = Acer_CBASS[Acer_CBASS$Treatment=="Variable",], fct = LL.3())
+summary(variable_CBASS)
+plot(variable_CBASS)
+
+control_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
+control_CBASS_pred = as.data.frame(predict(control_CBASS, newdata = control_CBASS_preddata, interval = 'confidence'))
+control_CBASS_preddata = data.frame(control_CBASS_preddata, fvfm = control_CBASS_pred$Prediction, Lower = control_CBASS_pred$Lower, Upper = control_CBASS_pred$Upper)
+
+variable_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
+variable_CBASS_pred = as.data.frame(predict(variable_CBASS, newdata = variable_CBASS_preddata, interval = 'confidence'))
+variable_CBASS_preddata = data.frame(variable_CBASS_preddata, fvfm = variable_CBASS_pred$Prediction, Lower = variable_CBASS_pred$Lower, Upper = variable_CBASS_pred$Upper)
+
+
+ggplot() +
+  geom_jitter(data = Acer_CBASS, aes(x = CBASS_temp, y = fvfm, color = Treatment), size = 1, width = 0.25) +
+  scale_x_continuous(limits=c(26,40), breaks=c(26,28,30,32,34,36,38)) +
+  scale_y_continuous(limits=c(-0.1, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
+  geom_line(data = control_CBASS_preddata, aes(x = temp, y = fvfm), color = '#66ccfe', show.legend = FALSE) +
+  geom_ribbon(data = control_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#66ccfe', linetype=2, alpha = 0.2) +
+  geom_vline(data = Acer_coeff, aes(xintercept = Acer_CBASS_control_coeff), color = '#66ccfe', show.legend = FALSE) +
+  geom_text(data = Acer_coeff, aes(label = Acer_CBASS_control_coeff), x = 30, y = 0.2, show.legend = FALSE, color = '#66ccfe') +
+ 
+  geom_line(data = variable_CBASS_preddata, aes(x = temp, y = fvfm), color = '#e92000', show.legend = FALSE) +
+  geom_ribbon(data = variable_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#e92000', linetype=2, alpha = 0.2) +
+  geom_vline(data = Acer_coeff, aes(xintercept = Acer_CBASS_variable_coeff), color = '#e92000', show.legend = FALSE) +
+  geom_text(data = Acer_coeff, aes(label = Acer_CBASS_variable_coeff), x = 30, y = 0.1, show.legend = FALSE, color = '#e92000') +
+
+  scale_color_manual(values=c('#66ccfe','#e92000')) +
+  ylab("Fv/Fm") +
+  xlab("Temperature (°C)") +
+  theme_bw() +
+  labs(title = "Acervicornis")
+```
+
+Pcli
+```{r}
+Pcli_ipam_CBASS -> Pcli_CBASS
+Pcli_CBASS$CBASS_temp <- as.numeric(as.character(Pcli_CBASS$CBASS_temp))
+CBASS_Pcli_DRC <- drm(fvfm ~ CBASS_temp, data = Pcli_CBASS, curveid = Treatment, fct = LL.3(names = c('hill', 'max', 'ed50')))
+mselect(CBASS_Pcli_DRC, list(LL.2(), LL.4(), LL.5(), LL2.2(), LL2.3(), LL2.4(), LL2.5(), AR.2(), AR.3(), EXD.2(), EXD.3()), icfct = AIC)
+modelFit(CBASS_Pcli_DRC)
+summary(CBASS_Pcli_DRC)
+plot(CBASS_Pcli_DRC)
+
+#extract ED50
+Pcli_CBASS_variable_coeff<-CBASS_Pcli_DRC$coefficients[5]
+Pcli_CBASS_control_coeff<-CBASS_Pcli_DRC$coefficients[6]
+
+Pcli_coeff <- data.frame(Pcli_CBASS_variable_coeff,Pcli_CBASS_control_coeff)
+
+control_CBASS <- drm(fvfm ~ CBASS_temp, data = Pcli_CBASS[Pcli_CBASS$Treatment=="Control",], fct = LL.3())
+summary(control_CBASS)
+plot(control_CBASS)
+
+variable_CBASS <- drm(fvfm ~ CBASS_temp, data = Pcli_CBASS[Pcli_CBASS$Treatment=="Variable",], fct = LL.3())
+summary(variable_CBASS)
+plot(variable_CBASS)
+
+control_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
+control_CBASS_pred = as.data.frame(predict(control_CBASS, newdata = control_CBASS_preddata, interval = 'confidence'))
+control_CBASS_preddata = data.frame(control_CBASS_preddata, fvfm = control_CBASS_pred$Prediction, Lower = control_CBASS_pred$Lower, Upper = control_CBASS_pred$Upper)
+
+variable_CBASS_preddata = data.frame(temp = seq(27,39, length.out = 100))
+variable_CBASS_pred = as.data.frame(predict(variable_CBASS, newdata = variable_CBASS_preddata, interval = 'confidence'))
+variable_CBASS_preddata = data.frame(variable_CBASS_preddata, fvfm = variable_CBASS_pred$Prediction, Lower = variable_CBASS_pred$Lower, Upper = variable_CBASS_pred$Upper)
+
+
+ggplot() +
+  geom_jitter(data = Pcli_CBASS, aes(x = CBASS_temp, y = fvfm, color = Treatment), size = 1, width = 0.25) +
+  scale_x_continuous(limits=c(26,40), breaks=c(26,28,30,32,34,36,38)) +
+  scale_y_continuous(limits=c(-0.1, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
+  geom_line(data = control_CBASS_preddata, aes(x = temp, y = fvfm), color = '#66ccfe', show.legend = FALSE) +
+  geom_ribbon(data = control_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#66ccfe', linetype=2, alpha = 0.2) +
+  geom_vline(data = Pcli_coeff, aes(xintercept = Pcli_CBASS_control_coeff), color = '#66ccfe', show.legend = FALSE) +
+  geom_text(data = Pcli_coeff, aes(label = Pcli_CBASS_control_coeff), x = 30, y = 0.2, show.legend = FALSE, color = '#66ccfe') +
+ 
+  geom_line(data = variable_CBASS_preddata, aes(x = temp, y = fvfm), color = '#e92000', show.legend = FALSE) +
+  geom_ribbon(data = variable_CBASS_preddata, aes(x = temp, ymin=Lower, ymax=Upper), color = '#e92000', linetype=2, alpha = 0.2) +
+  geom_vline(data = Pcli_coeff, aes(xintercept = Pcli_CBASS_variable_coeff), color = '#e92000', show.legend = FALSE) +
+  geom_text(data = Pcli_coeff, aes(label = Pcli_CBASS_variable_coeff), x = 30, y = 0.1, show.legend = FALSE, color = '#e92000') +
+
+  scale_color_manual(values=c('#66ccfe','#e92000')) +
+  ylab("Fv/Fm") +
+  xlab("Temperature (°C)") +
+  theme_bw() +
+  labs(title = "Pclivosa")
+```
+
+
+

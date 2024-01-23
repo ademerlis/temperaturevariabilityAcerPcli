@@ -1,0 +1,45 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = percent_change ~ Treatment * Species, data = slowburn_Rintensity)
+
+$Treatment
+                     diff       lwr      upr     p adj
+Untreated-Treated 4.09559 -1.486594 9.677773 0.1485357
+
+$Species
+                                                diff      lwr      upr
+Pseudodiploria clivosa-Acropora cervicornis 12.63097 5.412552 19.84939
+                                                p adj
+Pseudodiploria clivosa-Acropora cervicornis 0.0007745
+
+$`Treatment:Species`
+                                                                     diff
+Untreated:Acropora cervicornis-Treated:Acropora cervicornis      7.523062
+Treated:Pseudodiploria clivosa-Treated:Acropora cervicornis     14.659844
+Untreated:Pseudodiploria clivosa-Treated:Acropora cervicornis   18.882130
+Treated:Pseudodiploria clivosa-Untreated:Acropora cervicornis    7.136782
+Untreated:Pseudodiploria clivosa-Untreated:Acropora cervicornis 11.359068
+Untreated:Pseudodiploria clivosa-Treated:Pseudodiploria clivosa  4.222286
+                                                                       lwr
+Untreated:Acropora cervicornis-Treated:Acropora cervicornis     -10.119673
+Treated:Pseudodiploria clivosa-Treated:Acropora cervicornis      -0.318804
+Untreated:Pseudodiploria clivosa-Treated:Acropora cervicornis     3.985110
+Treated:Pseudodiploria clivosa-Untreated:Acropora cervicornis    -5.320732
+Untreated:Pseudodiploria clivosa-Untreated:Acropora cervicornis  -1.000177
+Untreated:Pseudodiploria clivosa-Treated:Pseudodiploria clivosa  -3.892192
+                                                                     upr
+Untreated:Acropora cervicornis-Treated:Acropora cervicornis     25.16580
+Treated:Pseudodiploria clivosa-Treated:Acropora cervicornis     29.63849
+Untreated:Pseudodiploria clivosa-Treated:Acropora cervicornis   33.77915
+Treated:Pseudodiploria clivosa-Untreated:Acropora cervicornis   19.59430
+Untreated:Pseudodiploria clivosa-Untreated:Acropora cervicornis 23.71831
+Untreated:Pseudodiploria clivosa-Treated:Pseudodiploria clivosa 12.33676
+                                                                    p adj
+Untreated:Acropora cervicornis-Treated:Acropora cervicornis     0.6811643
+Treated:Pseudodiploria clivosa-Treated:Acropora cervicornis     0.0574153
+Untreated:Pseudodiploria clivosa-Treated:Acropora cervicornis   0.0070048
+Treated:Pseudodiploria clivosa-Untreated:Acropora cervicornis   0.4426496
+Untreated:Pseudodiploria clivosa-Untreated:Acropora cervicornis 0.0832992
+Untreated:Pseudodiploria clivosa-Treated:Pseudodiploria clivosa 0.5269757
+

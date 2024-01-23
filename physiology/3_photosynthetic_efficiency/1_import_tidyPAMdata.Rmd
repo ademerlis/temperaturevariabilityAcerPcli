@@ -1,0 +1,331 @@
+---
+title: "photosyntheticefficiency"
+author: "allyson_demerlis"
+date: "2023-08-27"
+output: html_document
+---
+## Load libraries
+
+```{r}
+library(tidyverse)
+library(janitor) #for converting excel numbers into actual dates
+library(readxl)
+library(lubridate)
+library(rstatix) #pipe-friendly statistics functions
+
+library(joeyr) #for filtering and QC of IPAM data (following Cunning et al. 2021)
+```
+
+## Load metadata 
+
+```{r}
+metadata <- read_xlsx("../metadata.xlsx", sheet = "data")
+```
+
+
+## Importing and tidying PAM data
+
+```{r importing PAM files, include = F}
+#This package was developed by Ross Cunning. Found on GitHub here: https://github.com/jrcunning/IPAM2R
+import_ipam <- function(dir, ipam.pattern="*.csv", info.pattern="*ids.txt") {
+  ipam <- list.files(path=dir, pattern=ipam.pattern, full.names=TRUE)
+  basenames <- gsub("\\..*$", "", basename(ipam))
+  if (!is.null(info.pattern)) {
+    info <- list.files(path=dir, pattern=info.pattern, full.names=TRUE)
+  } else {
+    info <- NULL
+  }
+  
+  # Read in each file
+  for (i in 1:length(ipam)) {
+    
+    # Read in IPAM data file (should be a single row, ;-delimited)
+    df <- read.delim(ipam[i], sep=";")
+    # Get rid of trailing NA
+    df <- df %>% select_if(~ !any(is.na(.))) # I changed this from Ross's original code b/c it wasn't working to import some of the files. this seems to work for all of them.
+        
+  # Check if the dataframe has more than one row 
+  if (nrow(df) > 1) {
+    # Remove the second row
+    df <- df[-2, ] # I added this part in from Ross's original code because I had some csv files with two rows of identical data (got exported twice maybe?) and so the reshape2 function didn't work 
+  }
+    
+    # Make data long form and recast with rows for each AOI (based on column names)
+    df2 <- reshape2::melt(df)
+    df2$AOI <- stringr::str_extract(string=df2$variable, pattern="[0-9]+")
+    df2$AOI <- as.numeric(as.character(df2$AOI))
+    df2$var <- stringr::str_extract(string=df2$variable, pattern="[^0-9|\\.]+")
+    df3 <- reshape2::dcast(na.omit(df2), AOI ~ var)
+    
+    # Read in sample names from ids file (if provided) and merge data
+    if (!is.null(info)) {
+      nm <- read.table(info[i])
+      colnames(nm) <- "ID"
+      df4 <- data.frame(nm, df3)
+    } else {
+      df4 <- df3
+    }
+    
+    # Merge data with IDs and assign to global environment
+    df4$file <- basenames[i]
+    assign(basenames[i], df4)
+  }
+  
+  # Merge all data frames together
+  result <- do.call(bind_rows, mget(basenames)) # NOTE: I changed this from Ross's original code from rbind to bind_rows. rbind requires all data frames to have same number of columns, and some of the csv files had qN in them while others didn't.
+  rownames(result) <- NULL  # gets rid of rownames
+  
+  # Return final data frame
+  return(result)
+}
+```
+
+
+```{r import PAM files, include = F}
+march_16<-import_ipam(dir="ipam_data/march 16 2022 test 2/", info.pattern = NULL)
+
+march_21<-import_ipam(dir="ipam_data/march 21 2022/", info.pattern = NULL)
+
+april_6<-import_ipam(dir="ipam_data/april 6 2022/", info.pattern = NULL)   #there was an error in the april 6 files because some of the csvs have "qN" as a column, and some don't.
+#no NAs
+
+april_20 <- import_ipam(dir="ipam_data/april 20 2022/", info.pattern = NULL)
+
+april_22 <- import_ipam(dir="ipam_data/april 22 2022/", info.pattern = NULL)
+
+may_25 <- import_ipam(dir="ipam_data/may 25 2022/", info.pattern = NULL)
+```
+
+
+```{r attach metadata/photo files to the imported csvs, include = F}
+#stress-hardening tanks and CBASS tanks were different, so I needed to split up the data tidying so that tanks didn't all get grouped together for both treatment and CBASS
+metadata %>% 
+  dplyr::select(Species, ID, Colony, Random_Tank) %>% 
+  rename(Tank ="Random_Tank") %>% 
+  rename(Puck = "ID") %>% 
+  unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck))-> data_pre_CBASS  #these are the tank assignments for the stress-hardening portion (march 16 to april 20)
+
+#data_pre_CBASS nrows = 295
+
+metadata %>% 
+  dplyr::select(Species, ID, Colony, CBASS_tank) %>% 
+  rename(Tank ="CBASS_tank") %>% 
+  rename(Puck = "ID") %>% 
+  unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck)) -> data_CBASS #this is for the april 22 time point only
+#data_CBASS nrows = 295
+
+metadata %>% 
+  dplyr::select(Species, ID, Colony, post_CBASS_tank) %>% 
+  rename(Tank ="post_CBASS_tank") %>% 
+  rename(Puck = "ID") %>% 
+  unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck)) -> data_post_CBASS #this is for may 25 time point since tanks got reassigned again
+
+#making metadata files from PAM google sheet
+
+march_16_metadata <- read_excel("PAM file and photo data.xlsx", sheet = "March 16 2022")
+march_16_metadata <- march_16_metadata %>% rename("file" = `photo number`)
+march_16_metadata$file <- as.character(march_16_metadata$file)
+march_16_metadata %>% dplyr::select(Tank:file) -> march_16_metadata
+
+march_21_metadata <- read_excel("PAM file and photo data.xlsx", sheet = "March 21 2022")
+march_21_metadata <- march_21_metadata %>% rename("file" = `photo number`)
+march_21_metadata$file <- as.character(march_21_metadata$file)
+march_21_metadata %>% dplyr::select(Tank:file) -> march_21_metadata
+
+april_6_metadata <- read_excel("PAM file and photo data.xlsx", sheet = "April 6 2022")
+#there are 3 coral IDs with NA for AOI and photo number
+april_6_metadata <- april_6_metadata %>% rename("file" = `photo number`)
+april_6_metadata$file <- as.character(april_6_metadata$file)
+april_6_metadata %>% 
+  dplyr::select(Tank:file) %>% 
+  drop_na(AOI) -> april_6_metadata
+
+april_20_metadata <- read_excel("PAM file and photo data.xlsx", sheet = "april 20 2022")
+april_20_metadata <- april_20_metadata %>% rename("file" = `photo number`)
+april_20_metadata$file <- as.character(april_20_metadata$file)
+april_20_metadata %>% dplyr::select(Tank:file) -> april_20_metadata
+
+april_22_metadata <- read_excel("PAM file and photo data.xlsx", sheet = "april 22 2022")
+april_22_metadata <- april_22_metadata %>% rename("file" = `photo number`)
+april_22_metadata$file <- as.character(april_22_metadata$file)
+april_22_metadata %>% dplyr::select(Tank:file) -> april_22_metadata
+
+may_25_metadata <- read_excel("PAM file and photo data.xlsx", sheet = "may 25 2022")
+may_25_metadata <- may_25_metadata %>% rename("file" = `photo number`)
+may_25_metadata$file <- as.character(may_25_metadata$file)
+may_25_metadata %>% dplyr::select(Tank:file) -> may_25_metadata
+```
+
+
+```{r, include  = F}
+march_16 %>% 
+    left_join(march_16_metadata, by = c('file', 'AOI')) -> march_16
+#nrows =135 before join, nrows  = 135 after join
+march_16 %>% 
+  filter(is.na(Tank)) #2 rows
+
+march_21 %>% 
+    left_join(march_21_metadata, by = c('file', 'AOI')) -> march_21
+#nrows = 149 before  join, 150 after join (there is one row that has fvfm data but no puck assigned to it)
+march_21 %>% 
+  filter(is.na(Tank)) # 1  row
+
+april_6 %>% 
+    left_join(april_6_metadata, by = c('file', 'AOI')) -> april_6
+#278 before join, 281 after join (there are three rows in the metadata file that dont have AOIs assigned to them)
+#there are some fv/fm values that don't have tank/puck info but they do have AOI and file numbers.
+april_6 %>% 
+  filter(is.na(Tank)) # 5 rows
+
+april_20 %>% 
+  left_join(april_20_metadata, by = c('file', 'AOI')) -> april_20
+#277 before join, 280 after join
+
+april_20 %>% 
+  filter(is.na(Tank)) #3 rows
+
+april_22 %>% 
+  left_join(april_22_metadata, by = c('file', 'AOI')) -> april_22
+#281 before join, 281 after join
+
+april_22 %>% 
+  filter(is.na(Tank)) #none 
+
+may_25 %>% left_join(may_25_metadata, by = c('file', 'AOI')) -> may_25
+```
+
+
+```{r, include  = F}
+#Added a species column and then edited Puck IDs to include a prefix of A or P based on species, so it matched up with april_22 
+march_16 %>% 
+  mutate(Species = case_when(Tank == "1"  ~ "Pseudodiploria clivosa",
+                             Tank == "2"  ~ "Pseudodiploria clivosa",
+                             Tank == "3"  ~ "Pseudodiploria clivosa",
+                             Tank == "4"  ~ "Pseudodiploria clivosa",
+                             Tank == "5"  ~ "Acropora cervicornis",
+                             Tank == "6"  ~ "Acropora cervicornis",
+                             Tank == "7"  ~ "Acropora cervicornis",
+                             Tank == "8"  ~ "Acropora cervicornis")) %>% 
+   unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck))-> march_16
+
+march_21 %>% 
+  mutate(Species = case_when(Tank == "1"  ~ "Pseudodiploria clivosa",
+                             Tank == "2"  ~ "Pseudodiploria clivosa",
+                             Tank == "3"  ~ "Pseudodiploria clivosa",
+                             Tank == "4"  ~ "Pseudodiploria clivosa",
+                             Tank == "5"  ~ "Acropora cervicornis",
+                             Tank == "6"  ~ "Acropora cervicornis",
+                             Tank == "7"  ~ "Acropora cervicornis",
+                             Tank == "8"  ~ "Acropora cervicornis")) %>% 
+   unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck))-> march_21
+
+april_6 %>% 
+  mutate(Species = case_when(Tank == "1"  ~ "Pseudodiploria clivosa",
+                             Tank == "2"  ~ "Pseudodiploria clivosa",
+                             Tank == "3"  ~ "Pseudodiploria clivosa",
+                             Tank == "4"  ~ "Pseudodiploria clivosa",
+                             Tank == "5"  ~ "Acropora cervicornis",
+                             Tank == "6"  ~ "Acropora cervicornis",
+                             Tank == "7"  ~ "Acropora cervicornis",
+                             Tank == "8"  ~ "Acropora cervicornis")) %>% 
+   unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck))-> april_6
+
+april_20 %>% 
+  mutate(Species = case_when(Tank == "1"  ~ "Pseudodiploria clivosa",
+                             Tank == "2"  ~ "Pseudodiploria clivosa",
+                             Tank == "3"  ~ "Pseudodiploria clivosa",
+                             Tank == "4"  ~ "Pseudodiploria clivosa",
+                             Tank == "5"  ~ "Acropora cervicornis",
+                             Tank == "6"  ~ "Acropora cervicornis",
+                             Tank == "7"  ~ "Acropora cervicornis",
+                             Tank == "8"  ~ "Acropora cervicornis")) %>% 
+   unite("Puck", Species:Puck, sep = "") %>% 
+  mutate(Puck = gsub("[a-z]", "", Puck)) %>% 
+  mutate(Puck = gsub(" ","",Puck))-> april_20
+
+april_6 %>% 
+  left_join(data_pre_CBASS, by = c('Puck', 'Tank')) -> april_6
+april_6 %>% mutate(Date = "22/04/06") -> april_6
+
+march_16 %>% 
+  left_join(data_pre_CBASS, by = c('Puck', 'Tank')) -> march_16
+march_16 %>% mutate(Date = "22/03/16") -> march_16
+
+march_21 %>% 
+  left_join(data_pre_CBASS, by = c('Puck', 'Tank')) -> march_21
+march_21 %>% mutate(Date = "22/03/21") -> march_21
+
+april_20 %>% 
+  left_join(data_pre_CBASS, by = c('Puck', 'Tank')) -> april_20
+april_20 %>% mutate(Date  = "22/04/20") -> april_20
+
+april_22 %>% 
+  left_join(data_CBASS, by = c('Puck', 'Tank')) -> april_22
+april_22 %>% mutate(Date  = "22/04/22") -> april_22
+
+may_25 %>% 
+  left_join(data_post_CBASS, by = c('Puck', 'Tank')) -> may_25
+may_25 %>% mutate(Date = "22/05/25") -> may_25
+
+bind_rows(april_6, march_16, march_21, april_20, april_22, may_25) -> ipam_data
+```
+
+
+```{r IPAM data tidying, include = F}
+ipam_data %>% 
+  dplyr::select(!qN) %>% 
+  rename(fvfm = "Y") %>% 
+  rename(Ft = `F`) %>% 
+  mutate(Date = lubridate::ymd(Date)) %>% 
+  mutate(Treatment_period = case_when(Date <= "2022-04-20"  ~ "Temp Treatment",
+                                      Date == "2022-04-22" ~ "CBASS")) %>% 
+  mutate(Treatment = case_when(Date <= "2022-04-20" & Tank == "1" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "2" ~ "Treated",
+                               Date <= "2022-04-20" & Tank == "3" ~ "Treated",
+                               Date <= "2022-04-20" & Tank == "4" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "5" ~ "Treated",
+                               Date <= "2022-04-20" & Tank == "6" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "7" ~ "Untreated",
+                               Date <= "2022-04-20" & Tank == "8" ~ "Treated")) %>% 
+  mutate(CBASS_temp = case_when(Date == "2022-04-22" & Tank == "1" ~ "36",
+                               Date == "2022-04-22" & Tank == "2" ~ "37",
+                               Date == "2022-04-22" & Tank == "3" ~ "32",
+                               Date == "2022-04-22" & Tank == "4" ~ "33",
+                               Date == "2022-04-22" & Tank == "5" ~ "35",
+                               Date == "2022-04-22" & Tank == "6" ~ "30",
+                               Date == "2022-04-22" & Tank == "7" ~ "34",
+                               Date == "2022-04-22" & Tank == "8" ~ "28")) %>% 
+  mutate(Species = case_when(grepl("A", Puck) ~ "Acervicornis",
+                             grepl("P", Puck) ~ "Pclivosa")) -> ipam_tidy_data
+
+#write.csv(ipam_tidy_data, "ipam_tidy_data.csv")
+```
+
+
+```{r}
+#need dataset that just has puck, colony, species, and treatment
+ipam_tidy_data %>% 
+  select(Puck, Colony, Species, Treatment) %>% 
+  drop_na(Treatment) %>% 
+  distinct() -> metadata_treatment #282 corals from variable vs. control treatment 
+
+#need dataset that is just puck, colony, species, and CBASS temp
+ipam_tidy_data %>% 
+  select(Puck, Colony, Species, CBASS_temp) %>% 
+  drop_na(CBASS_temp) %>% 
+  distinct() -> metadata_CBASS #281 corals
+```
+
+

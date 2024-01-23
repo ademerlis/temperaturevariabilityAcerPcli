@@ -1,0 +1,29 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = ED50 ~ Species * Treatment, data = bothspecies_colony_ED50s)
+
+$Species
+                           diff        lwr       upr     p adj
+Pclivosa-Acervicornis 0.2980266 0.04593863 0.5501146 0.0259968
+
+$Treatment
+                         diff       lwr      upr     p adj
+Untreated-Treated -0.05322402 -0.305312 0.198864 0.6394072
+
+$`Species:Treatment`
+                                                   diff        lwr       upr
+Pclivosa:Treated-Acervicornis:Treated        0.28769512 -0.2073857 0.7827760
+Acervicornis:Untreated-Acervicornis:Treated -0.06355553 -0.5586364 0.4315253
+Pclivosa:Untreated-Acervicornis:Treated      0.24480261 -0.2502783 0.7398835
+Acervicornis:Untreated-Pclivosa:Treated     -0.35125065 -0.8463315 0.1438302
+Pclivosa:Untreated-Pclivosa:Treated         -0.04289251 -0.5379734 0.4521884
+Pclivosa:Untreated-Acervicornis:Untreated    0.30835813 -0.1867227 0.8034390
+                                                p adj
+Pclivosa:Treated-Acervicornis:Treated       0.3150836
+Acervicornis:Untreated-Acervicornis:Treated 0.9750186
+Pclivosa:Untreated-Acervicornis:Treated     0.4380078
+Acervicornis:Untreated-Pclivosa:Treated     0.1839742
+Pclivosa:Untreated-Pclivosa:Treated         0.9919582
+Pclivosa:Untreated-Acervicornis:Untreated   0.2659131
+

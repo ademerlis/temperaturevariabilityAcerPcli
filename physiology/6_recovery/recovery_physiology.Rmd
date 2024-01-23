@@ -1,0 +1,290 @@
+---
+title: "recovery_physiology"
+author: "allyson_demerlis"
+date: "2024-01-12"
+output: html_document
+---
+Load libraries
+```{r}
+library(tidyverse)
+library(readxl)
+library(rstatix)
+library(plotrix)
+library(ggpubr)
+library(cowplot)
+library(dunn.test)
+```
+
+Import data
+```{r}
+coral_metadata <- readxl::read_xlsx("metadata.xlsx")
+
+fvfm <- read.csv("photosynthetic_efficiency/ipam_tidy_data.csv")
+
+Rscoredata <- read_xlsx("R_intensity/data_rscores.xlsx")
+
+april18 <- read_xlsx("R_intensity/photo_metadata.xlsx", sheet = "april 18")
+june21 <- read_xlsx("R_intensity/photo_metadata.xlsx", sheet = "june 21")
+
+percent_cells_df <- read_csv("immune_cell_assay/Grace_percentcells_alldata.csv") 
+```
+
+Tidy fvfm data
+```{r}
+treatment_metadata<-fvfm %>% 
+  select(Puck, Treatment) %>% 
+  distinct() %>% 
+  drop_na() #282 corals
+
+treatment_time_bothspecies
+  
+  
+fvfm %>% 
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  select(fvfm, Puck, Colony, Date, Species) %>% 
+  filter(Date == "4/20/22" | Date == "4/22/22" | Date == "5/25/22") %>% 
+  full_join(., treatment_metadata, by = "Puck") %>% 
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  select(!"NA") %>% 
+  drop_na() %>% 
+  mutate(change=(`4/22/22`-`5/25/22`)/`4/22/22`*100) -> fvfm_recovery_change
+
+fvfm_recovery_change %>% 
+  arrange(change) #there is one outlier
+
+fvfm_recovery_change %>% 
+  filter(change > -39) -> fvfm_recovery_change
+```
+
+
+```{r}
+p1<-fvfm_recovery_change %>% 
+  group_by(Species, Treatment) %>% 
+  mutate(mean_fvfmlossnorm = mean(change), se_fvfmlossnorm = std.error(change)) %>% 
+  ggplot(., aes(x = Treatment, y = mean_fvfmlossnorm)) +
+  theme_classic()+
+  geom_jitter(aes(y=change, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Treatment, ymax = mean_fvfmlossnorm+se_fvfmlossnorm, ymin = mean_fvfmlossnorm-se_fvfmlossnorm, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Treatment, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Treatment")+
+  ylab("% Decline in Fv/Fm")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+```{r}
+p2<-fvfm_recovery_change %>% 
+  group_by(Species, Treatment, Colony) %>% 
+  mutate(mean_fvfmlossnorm = mean(change), se_fvfmlossnorm = std.error(change)) %>% 
+  ggplot(., aes(x = Colony, y = mean_fvfmlossnorm)) +
+  theme_classic()+
+  geom_jitter(aes(y=change, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Colony, ymax = mean_fvfmlossnorm+se_fvfmlossnorm, ymin = mean_fvfmlossnorm-se_fvfmlossnorm, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Colony, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Colony")+
+  ylab("% Decline in Fv/Fm")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15))
+```
+
+create combined plot
+```{r}
+plot_grid(p1, p2, rel_widths = c(1.5,2))
+#ggsave("recoveryperiod_percentfvfmloss_dotplot.pdf", width = 12, height = 5)
+```
+
+
+Tidy color score data
+```{r}
+Rscoredata %>% 
+  select(`Date (Folder Name)`) %>% 
+  distinct() #Dates with scores: 3/8-3/18 (Initial), 4/18, 6/21, 7/8 
+
+Rscoredata %>% 
+  rename(`Photo ID` = `Image #`) %>% 
+  rename(Date = `Date (Folder Name)`) -> Rscoredata
+
+april18 %>% 
+  select(`Photo ID`:`Coral Position`) -> april18
+
+june21%>% 
+  select(`Photo ID`:`Coral Position`) -> june21
+
+full_join(april18, june21) %>% 
+  mutate(Species = case_when(Species == "Acer" ~ "Acropora cervicornis",
+                             Species == "Pcli" ~ "Pseudodiploria clivosa")) %>% 
+ rename(ID = `Puck ID`) -> allRscores
+
+full_join(allRscores, coral_metadata, by = c("Species", "ID")) %>% 
+  drop_na(`Photo ID`)  -> R_metadata #821 rows 
+
+full_join(R_metadata, Rscoredata, by = c("Date", "Photo ID", "Coral Position")) %>% 
+ select(!Genotype) -> Rintensity_withmetadata
+
+Rintensity_withmetadata$month <- format(Rintensity_withmetadata$Date, "%m")
+
+Rintensity_withmetadata$Date <- as.factor(Rintensity_withmetadata$Date)
+
+Rintensity_withmetadata$month <- as.factor(Rintensity_withmetadata$month)
+
+Rintensity_withmetadata %>% 
+  group_by(ID, Species, Colony, Treatment, month) %>% 
+  mutate(mean_Rintensity_percoral = mean(Mean)) %>% 
+  drop_na(ID) -> Rintensity_withmetadata
+
+Rintensity_withmetadata %>% 
+  ungroup() %>% 
+  filter(month == "04" | month == "06") %>% 
+  select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
+  mutate(percent_change = ((`06`-`04`)/`04`)*100) %>% 
+  drop_na() -> percentchange
+```
+
+```{r}
+g1<- percentchange %>% 
+  group_by(Species, Treatment) %>% 
+  mutate(mean_change = mean(percent_change), se_change = std.error(percent_change)) %>% 
+  ggplot(., aes(x = Treatment, y = mean_change)) +
+  theme_classic()+
+  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Treatment, ymax = mean_change+se_change, ymin = mean_change-se_change, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Treatment, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Treatment")+
+  ylab("% Change R-Intensity")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+
+```{r}
+g2<-percentchange %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  mutate(mean_change = mean(percent_change), se_change = std.error(percent_change)) %>% 
+  ggplot(., aes(x = Colony, y = mean_change)) +
+  theme_classic()+
+  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.1, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = Colony, ymax = mean_change+se_change, ymin = mean_change-se_change, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = Colony, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Colony")+
+  ylab("% Change R-Intensity")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15))
+```
+
+
+create combined plot
+```{r}
+plot_grid(g1, g2, rel_widths = c(1.5,2))
+#ggsave("treatment_percentRintensity_dotplot.pdf", width = 12, height = 5)
+```
+
+
+tidy immune cell data
+```{r}
+percent_cells_df%>% 
+    mutate(Treatment = case_when(Treatment == "Control" ~ "Untreated",
+                               Treatment == "Variable" ~ "Treated")) -> percent_cells_df
+
+#there's one outlier to remove right off the bat: T1	Pcli	B	P9	r2	Percent=111.50	T1	Untreated
+percent_cells_df %>% 
+  filter(!(TimePoint=="T1" & Species == "Pcli" & Genotype == "B" & Treatment == "Untreated" & ID == "P9" & Replicate == "r2")) -> percent_cells_df
+
+#replicates are technical replicates of the same coral fragment
+#time points:
+#T0 = initial pre-treatment (March 22)
+#T1 = one week into treatment (March 30)
+#T2 = end of treatment (April 20)
+#follow-up = post CBASS and treatment follow-up (June 1)
+
+percent_cells_df %>% 
+  filter(TimePoint == "T2" | TimePoint == "FollowUp") %>% 
+  mutate(num_days = case_when(TimePoint == "T2" ~ "0",
+                              TimePoint == "FollowUp" ~ "43")) %>% 
+  mutate(num_days = as.factor(num_days)) %>% 
+  mutate(num_days = fct_relevel(num_days, "0", "43")) -> percent_cells_df
+```
+
+```{r}
+a1<- percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  dplyr::group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::group_by(num_days, Species, Treatment) %>% 
+  dplyr::mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x = num_days, y = avg_percent_per_genet))+
+  theme_classic()+
+  geom_jitter(aes(y=mean_replicate_percent_perID, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.2, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .3, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = num_days, fill = Treatment), size = 2, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Day")+
+  ylab("% Phagocytic Activity")+
+  facet_wrap(~Species, scales = "free_x", dir = "v") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+
+
+```{r}
+a2<- percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  group_by(num_days, Species, Genotype, Treatment) %>% 
+  dplyr::mutate(avg_percent_per_genet = mean(mean_replicate_percent_perID), se_percent_per_genet = std.error(mean_replicate_percent_perID)) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x = num_days, y = avg_percent_per_genet))+
+  theme_classic()+
+  geom_jitter(aes(y=mean_replicate_percent_perID, color = Treatment, fill = Treatment),
+              position=position_dodge(width=0.8),
+              alpha=0.2, pch = 21,
+              color = "black") +
+  geom_errorbar(aes(x = num_days, ymax = avg_percent_per_genet+se_percent_per_genet, ymin = avg_percent_per_genet-se_percent_per_genet, color = Treatment), width = .3, position = position_dodge(width=0.8)) +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_point(mapping = aes(x = num_days, fill = Treatment), size = 2, pch = 21, color = "black", position = position_dodge(width=0.8))+
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Day")+
+  ylab("% Phagocytic Activity")+
+  facet_wrap(~Species+Genotype, scales = "free_x") +
+  theme(text = element_text(size = 15))
+```
+
+create combined plot
+```{r}
+plot_grid(a1, a2, rel_widths = c(1,2))
+#ggsave("recovery_phagocytosis_dotplot.pdf", width = 12, height = 5)
+```
+
+
