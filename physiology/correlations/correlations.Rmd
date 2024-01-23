@@ -18,12 +18,6 @@ library(drc)
 ```{r}
 metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
 
-metadata$Removed_Date <- as.numeric(metadata$Removed_Date)
-metadata$Removed_Date <- as.Date(metadata$Removed_Date, origin = "1899-12-30")
-
-metadata$mortality_date <- as.numeric(metadata$mortality_date)
-metadata$mortality_date <- as.Date(metadata$mortality_date, origin = "1899-12-30")
-
 #number of days til bleaching/RTL
 metadata %>% 
   filter(!is.na(slowburn_heatstress_tank)) %>% 
@@ -43,11 +37,9 @@ slowburn_metadata %>%
   filter(slowburn == "heatstress_32") %>%
   filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
   mutate(Removed_Date = ymd(Removed_Date)) %>%
-  mutate(mortality_date = ymd(mortality_date)) %>%
-  mutate(end_date = coalesce(Removed_Date, mortality_date)) %>% #if removed_date is NA, then look and use the date from mortality date
   mutate(start_date="2022-06-25") %>% 
   mutate(start_date = ymd(start_date)) %>% 
-  mutate(days_to_removed = end_date - start_date) %>% 
+  mutate(days_to_removed = Removed_Date - start_date) %>% 
   dplyr::select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
 
 #fvfm data
@@ -122,11 +114,11 @@ slowburn_summary_data$ID <- as.character(slowburn_summary_data$ID)
 ipam_tidy_CBASS_treatments$CBASS_temp <- as.character(ipam_tidy_CBASS_treatments$CBASS_temp)
 
 full_join(slowburn_summary_data, ipam_tidy_CBASS_treatments, by = c("Species", "ID", "Colony", "Treatment", "CBASS_temp")) %>% 
-  drop_na() -> days_fvfm_data #76 corals
+  drop_na() -> days_fvfm_data #74 corals
 
 days_fvfm_data %>% 
   group_by(Species) %>% 
-  summarise(count = n()) #47 Acer, 29 Pcli
+  summarise(count = n()) #45 Acer, 29 Pcli
 
 p1<- ggplot(days_fvfm_data, aes(x=days_to_removed, y=fvfm, color = Treatment)) +
   geom_point() +
@@ -259,7 +251,7 @@ plot_grid(p1,p2, ncol = 2, rel_widths = c(1.5, 2))
 # Correlation plot: immune cells vs. days to removed
 ```{r}
 full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
-  drop_na() #36 corals that were tested for immune cells AND made it to the slowburn 
+  drop_na() #35 corals that were tested for immune cells AND made it to the slowburn 
 
 #sample sizes:
 full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
