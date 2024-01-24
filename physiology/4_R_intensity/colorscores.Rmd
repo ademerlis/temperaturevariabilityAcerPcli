@@ -203,18 +203,18 @@ str(percentchange) #275 rows
 percentchange %>% 
   mutate_at(vars(Colony, Treatment, Species), factor) -> percentchange
 
-treat_model <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = percentchange)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
+treat_model_1 <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = percentchange)
+treat_model_metrics_1 <- augment(treat_model_1)
+plot(treat_model_1)
 
 # assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) #significant
+shapiro_test(treat_model_metrics_1$.resid) #significant
 
 # assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics_1) #significant
 
 # identifying outliers
-treat_model_metrics %>% 
+treat_model_metrics_1 %>% 
   filter(abs(.std.resid) > 3)
 # 7 outliers 
 
@@ -226,11 +226,11 @@ percentchange  %>%
   filter(percent_change < 180) -> percentchange
 
 #rerun
-treat_model <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = percentchange)
-treat_model_metrics <- augment(treat_model)
+treat_model_1 <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = percentchange)
+treat_model_metrics_1 <- augment(treat_model_1)
 
-shapiro_test(treat_model_metrics$.resid) #still significant
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #still significant
+shapiro_test(treat_model_metrics_1$.resid) #still significant
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics_1) #still significant
 
 #run kruskal-wallis test
 
@@ -414,7 +414,7 @@ levene_test(.resid ~ Treatment*Colony, data = Acer_R_model_model_metrics) #not s
 
 # anova
 
-summary(aov(percent_change ~ Treatment*Colony, data = Acer_slowburn_Rintensity)) #significant for species
+summary(aov(percent_change ~ Treatment*Colony, data = Acer_slowburn_Rintensity)) 
 
 TukeyHSD(aov(percent_change ~ Treatment*Colony, data = Acer_slowburn_Rintensity))
 ```

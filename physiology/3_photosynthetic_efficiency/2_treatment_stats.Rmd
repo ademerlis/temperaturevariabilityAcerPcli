@@ -128,34 +128,36 @@ treatment_normalized_bothspecies %>%
 
 Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
 ```{r}
-treat_model <- lm(fvfm_loss_norm ~ Treatment*Species + Colony + Tank, data = treatment_normalized_bothspecies)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
+treat_model_1 <- lm(fvfm_loss_norm ~ Treatment*Species + Colony + Tank, data = treatment_normalized_bothspecies)
+treat_model_metrics_1 <- augment(treat_model_1)
+plot(treat_model_1)
 
 # assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # not significant
+shapiro_test(treat_model_metrics_1$.resid) # not significant
 
 # assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics_1) #not significant
 
 # identifying outliers
-treat_model_metrics %>% 
-  filter(abs(.std.resid) > 3) -> treat_outliers
+treat_model_metrics_1 %>% 
+  filter(abs(.std.resid) > 3) -> treat_outliers_1
 # 2 outliers
 
 #remove outliers
-treatment_normalized_bothspecies <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers$.rownames,]
+treatment_normalized_bothspecies_2wayanova <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers_1$.rownames,]
+
+#two corals were indeed removed from data frame
 ```
 
 Run 2-way ANOVA
 ```{r}
-aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)
+aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova)
 
-summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies))
+summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova))
 
 #capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_table.csv")
 
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies))
+TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova))
          
 #capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
 ```
@@ -175,41 +177,37 @@ treatment_normalized_bothspecies%>%
 
 Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
 ```{r}
-#remake the treatment_normalized_bothspecies data frame before running this section of code
-
-
-treat_model <- lm(fvfm_loss_norm ~ Treatment*Species*Colony + Tank, data = treatment_normalized_bothspecies)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
+treat_model_2 <- lm(fvfm_loss_norm ~ Treatment*Species*Colony + Tank, data = treatment_normalized_bothspecies)
+treat_model_metrics_2 <- augment(treat_model_2)
+plot(treat_model_2)
 
 # assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # not significant
+shapiro_test(treat_model_metrics_2$.resid) # not significant
 
 # assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species*Colony, data = treat_model_metrics) #not significant
+levene_test(.resid ~ Treatment*Species*Colony, data = treat_model_metrics_2) #not significant
 
 # identifying outliers
-treat_model_metrics %>% 
-  filter(abs(.std.resid) > 3) -> treat_outliers
+treat_model_metrics_2 %>% 
+  filter(abs(.std.resid) > 3) -> treat_outliers_2
 # 2 outliers
 
 #remove outliers
-treatment_normalized_bothspecies <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers$.rownames,]
+treatment_normalized_bothspecies_3wayanova <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers_2$.rownames,]
 ```
 
 
 Run 3-way ANOVA
 ```{r}
-aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies)
+aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova)
 
-summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies))
+summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova))
 
-#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspeciesgenet_anova_table.csv")
+#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova)), file = "fvfm_loss_norm_bothspeciesgenet_anova_table.csv")
 
-
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies))
+TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova))
          
-#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspeciesgenet_anova_tukey.csv")
+#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova)), file = "fvfm_loss_norm_bothspeciesgenet_anova_tukey.csv")
 ```
 
 
