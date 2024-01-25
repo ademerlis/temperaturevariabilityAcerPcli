@@ -408,124 +408,81 @@ save(Treated_vs_Untreated.p,file="Rdata_files/Treated_vs_Untreated_lpv.RData")
 load("RData_files/realModels_Acer.RData")
 load("RData_files/pvals.RData")
 
-#Control_Day0 vs Control_Day29
-as.data.frame(control0_control29) %>%
+#Untreated vs. Initial
+as.data.frame(Treatment_Untreated_vs_Initial) %>%
   rownames_to_column(var="gene") %>% 
   filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("control0_control29_annotatedDGEs.csv")
-#16,022 genes 
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("UntreatedvsInitial_annotatedDGEs.csv")
+#8,643 genes 
 
-as.data.frame(control0_control29) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("control0_control29_annot_padjL2FC.csv")
-#864 genes
-
-#Variable Day 0 vs Variable Day 29
-as.data.frame(variable0_variable29) %>%
+#Treated vs. Initial
+as.data.frame(Treatment_Treated_vs_Initial) %>%
   rownames_to_column(var="gene") %>% 
   filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_variable29_annotatedDGEs.csv")
-#10,540 genes
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("TreatedvsInitial_annotatedDGEs.csv")
+#7,004 genes
 
-as.data.frame(variable0_variable29) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_variable29_annot_padjL2FC.csv")
-#273 genes
 
-#Variable_Day29 vs Control_Day29
-as.data.frame(variable29_control29) %>%
+#Treated vs. Untreated
+as.data.frame(Treatment_Treated_vs_Untreated) %>%
   rownames_to_column(var="gene") %>% 
   filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable29_control29_annotatedDGEs.csv")
-#4,060 genes
-
-as.data.frame(variable29_control29) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable29_control29_annot_padjL2FC.csv")
-#126 genes
-
-#Variable Day 0 vs Control Day 0
-as.data.frame(variable0_control0) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_control0_annotatedDGEs.csv")
-#149 genes
-
-as.data.frame(variable0_control0) %>%
-  rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1 & abs(log2FoldChange) >= 2) %>% 
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
-                       sep = "\t",
-                       quote="", fill=FALSE) %>%
-              mutate(gene = V1,
-                     annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("variable0_control0_annot_padjL2FC.csv")
-# 1 gene
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("TreatedvsUntreated_annotatedDGEs.csv")
+#2,295 genes
 
 
 #### CHERRY PICKING ####
 
-load("RData_files/variable0_control0_lpv.RData")
-variable0_variable29.p %>%
+load("RData_files/Untreated_vs_Initial_lpv.RData")
+Untreated_vs_Initial.p %>% 
   filter(abs(lpv) >= 1) %>%
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
   filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
-  write.csv("variable0variable29_cherrypicking.csv")
+  write.csv("UntreatedvsInitial_cherrypicking.csv")
 
-load("RData_files/variable29_control29_lpv.RData")
-control0_control29.p %>%
+load("RData_files/Treated_vs_Initial_lpv.RData")
+Treated_vs_Initial.p %>%
   filter(abs(lpv) >= 1) %>%
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
   filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
-  write.csv("control0control29_cherrypicking.csv")
+  write.csv("TreatedvsInitial_cherrypicking.csv")
+
+load("RData_files/Treated_vs_Untreated_lpv.RData")
+Treated_vs_Untreated.p %>%
+  filter(abs(lpv) >= 1) %>%
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% 
+  filter(str_detect(annot, 'NF-kappaB|peroxidas|TGF-beta|protein tyrosine kinase|fibrinogen|WD repeat-containing protein|apoptosis|extracellular matrix')) %>% 
+  write.csv("TreatedvsUntreated_cherrypicking.csv")
 
 
 

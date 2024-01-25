@@ -18,16 +18,14 @@ library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
 
-#setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
-
 #### DATA IMPORT and TRAITS ####
 
 # importing data generated from DESeq2 script
 lnames=load("RData_files/data4wgcna.RData")
 lnames # "vsd.wg"  "design" # log-transformed variance-stabilized gene expression, and table or experimental conditions
 datt=t(vsd.wg)
-ncol(datt) #27829
-nrow(datt) #45
+ncol(datt) #15526
+nrow(datt) #44
 
 head(design)
 str(design)
@@ -45,30 +43,20 @@ all.equal(colnames(vsd.wg), rownames(design)) #TRUE
 
 rownames(datt)
 
-#change treatment to be binary (control = 0, variable = 1)
-variable = as.numeric(design$Treatment=="variable")
-control = as.numeric(design$Treatment == "control")
+#change treatment to be binary (0 = FALSE, 1 = TRUE)
+Initial = as.numeric(design$Treatment=="Initial")
+Untreated = as.numeric(design$Treatment == "Untreated")
+Treated = as.numeric(design$Treatment == "Treated")
 
 # assembling table of traits
 
-# coding genotype as binary (0/1, yes/no)
+# coding genotype as binary (0 = FALSE, 1 = TRUE)
 design$Genotype
 SI_C = as.numeric(design$Genotype == "SI_C")
 BC_8b = as.numeric(design$Genotype == "BC_8b")
 MB_B = as.numeric(design$Genotype == "MB_B")
 
-#change time point to be binary (for day0, when time_point = Day_0 it encodes it as "1". for day_29 same thing)
-Day0 = as.numeric(design$time_point=="Day_0")
-Day29 =as.numeric(design$time_point=="Day_29")
-
-#change group to be binary
-design$group
-control_Day0 = as.numeric(design$group=="control_Day_0")
-control_Day29 = as.numeric(design$group=="control_Day_29")
-variable_Day0 = as.numeric(design$group=="variable_Day_0")
-variable_Day29 = as.numeric(design$group=="variable_Day_29")
-
-traits <- data.frame(cbind(variable, control, SI_C,BC_8b, MB_B, Day0, Day29, control_Day0, control_Day29, variable_Day0, variable_Day29))
+traits <- data.frame(cbind(Initial, Untreated, Treated, SI_C,BC_8b, MB_B))
 
 head(traits)
 
@@ -87,12 +75,11 @@ NumberMissingByArray
 # in this case, all samples OK
 
 # plots mean expression across all samples
-pdf("~/OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/WGCNA/sample_mean_expression.pdf",height=4, width=8)
+quartz()
 barplot(meanExpressionByArray,
         xlab = "Sample", ylab = "Mean expression",
         main ="Mean expression across samples",
-        names.arg = c(1:45), cex.names = 0.7)
-dev.off()
+        names.arg = c(1:44), cex.names = 0.7)
 # look for any obvious deviations in expression across samples
 
 # sample dendrogram and trait heat map showing outliers
@@ -122,10 +109,24 @@ plotDendroAndColors(sampleTree,groupLabels=names(datColors), colors=datColors,ma
 remove.samples= Z.k<thresholdZ.k | is.na(Z.k)
 datt=datt[!remove.samples,]
 traits=traits[!remove.samples,] #1 sample removed
+
+str(datt) #43 
+str(traits) #43
   
 write.csv(traits, file="traits.csv")
 
 save(datt,traits,file="wgcnaData.RData")
+
+#### ADD PHYSIOLOGICAL TRAITS ####
+
+traits #this has the binary encoded categorical traits
+# first need to get list of samples for rownames for traits so I append things in the right order
+
+rownames(design)
+str(design) #44 samples, need to remove the one outlier
+design=design[!remove.samples,]
+str(design) #43 samples
+
 
 
 #### SOFT THRESHOLDS ####
@@ -137,9 +138,12 @@ library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
 
-load("RData_files/data4wgcna.RData")
+load("RData_files/wgcnaData.RData")
 
-datt=t(vsd.wg)
+#datt=t(vsd.wg)
+str(datt) #43
+
+#datt=t(vsd.wg) this resets the number of samples back to 44 - outlier from above section not removed
 
 # Try different betas ("soft threshold") - power factor for calling connections between genes
 powers = c(seq(from = 2, to=26, by=1))
@@ -149,6 +153,7 @@ sft = pickSoftThreshold(datt, powerVector = powers, verbose = 8,networkType="sig
 # Plot the results:
 # Run from the line below to dev.off()
 sizeGrWindow(9, 5)
+quartz()
 pdf("soft_threshold_signed.pdf",height=4, width=8)
 
 par(mfrow = c(1,2));
@@ -177,10 +182,8 @@ dev.off()
 # take a look at the threshold plots produced above, and the output table from the pickSoftThreshold command
 # pick the power that corresponds with a SFT.R.sq value above 0.90
 
-#none of them are above 0.90....the closest is 0.895 and that corresponds to sft power of 21
-
 # run from the line below to the save command
-s.th=21 # re-specify according to previous section
+s.th=19 # re-specify according to previous section
 adjacency = adjacency(datt, power = s.th,type="signed");
 TOM = TOMsimilarity(adjacency,TOMType="signed");
 rm(adjacency) #for memory space
@@ -271,8 +274,8 @@ load(file = "RData_files/networkdata_signed.RData")
 load(file = "RData_files/wgcnaData.RData");
 
 # Define numbers of genes and samples
-nGenes = ncol(datt); #27829
-nSamples = nrow(datt); #44
+nGenes = ncol(datt); #15526
+nSamples = nrow(datt); #43
 # Recalculate MEs with color labels
 MEs0 = moduleEigengenes(datt, moduleColors)$eigengenes
 MEs = orderMEs(MEs0)
@@ -285,7 +288,7 @@ moduleTraitCor = cor(MEs, traits, use = "p");
 moduleTraitPvalue = corPvalueStudent(moduleTraitCor, nSamples);
 
 # module-trait correlations
-quartz()
+
 textMatrix = paste(signif(moduleTraitCor, 2), "\n(",
 signif(moduleTraitPvalue, 1), ")", sep = "");
 dim(textMatrix) = dim(moduleTraitCor)
@@ -358,7 +361,7 @@ traits
 table(moduleColors)
 
 # run for each of these statements individually
-#whichTrait="control_Day0"
+whichTrait="Initial"
 #whichTrait="control_Day29"
 #whichTrait="variable_Day0"
 whichTrait="variable_Day29"

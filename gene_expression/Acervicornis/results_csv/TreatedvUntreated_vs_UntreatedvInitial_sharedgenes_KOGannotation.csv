@@ -1,0 +1,1736 @@
+gene,lpv_Treated_vs_Untreated,lpv_Untreated_vs_Initial,annot,KOG
+Acropora_000021,2.9996169966384953,-1.7243978716381023,structural molecule activity,structural molecule activity
+Acropora_000030,-2.738663886418828,11.363108105238645,3-hydroxy-3-methylglutaryl-coenzyme A reductase,3-hydroxy-3-methylglutaryl-coenzyme A reductase
+Acropora_000033,2.011823703911968,-4.955347578822484,B cell differentiation,B cell differentiation
+Acropora_000036,-1.0224575084550565,1.853946052345943,intermembrane sphingolipid transfer activity,intermembrane sphingolipid transfer activity
+Acropora_000049,-3.5294993406768396,9.949591525673581,Threonyl and Alanyl tRNA synthetase second additional domain,Threonyl and Alanyl tRNA synthetase second additional domain
+Acropora_000054,-2.2717385425285195,7.081777830246089,NA,NA
+Acropora_000056,-1.6830587332210105,1.5565509060277456,NA,NA
+Acropora_000059,-1.1665659205156618,5.8284994910323915,NA,NA
+Acropora_000087,3.374254667269099,-5.060564187367188,positive regulation of maintenance of mitotic sister chromatid cohesion,positive regulation of maintenance of mitotic sister chromatid cohesion
+Acropora_000114,-1.1908924687312359,2.4210744145426646,NA,NA
+Acropora_000140,3.3664210337763905,-4.660542691871182,Coiled-coil and C2,Coiled-coil and C2
+Acropora_000146,-2.641737309253442,10.589032192313054,NA,NA
+Acropora_000147,-6.389305888343196,8.298030457582579,NA,NA
+Acropora_000151,3.724336972504151,-16.018293564369493,Tektin family,Tektin family
+Acropora_000152,2.0952231209380945,-19.355947014945972,NA,NA
+Acropora_000153,1.0184281153317438,-3.853568009988771,NA,NA
+Acropora_000155,-2.3343915305792247,1.9807609512280078,SUN domain containing ossification factor,SUN domain containing ossification factor
+Acropora_000184,-1.417084566159661,8.389993365460034,Cytochrome c oxidase subunit Va,Cytochrome c oxidase subunit Va
+Acropora_000196,1.0099643666647955,-5.946033124150825,NA,NA
+Acropora_000208,1.0665484683233986,-1.0369032816130752,NA,NA
+Acropora_000215,1.8215801130035796,-3.4419605065679,aldehyde dehydrogenase (NAD) activity,aldehyde dehydrogenase (NAD) activity
+Acropora_000237,3.9920387785379035,-7.9309059661495755,Histone H2A,Histone H2A
+Acropora_000238,1.311560466945075,-1.2750121350494479,"Core component of nucleosome. Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template. Histones thereby play a central role in transcription regulation, DNA repair, DNA replication and chromosomal stability. DNA accessibility is regulated via a complex set of post-translational modifications of histones, also called histone code, and nucleosome remodeling","Core component of nucleosome. Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template. Histones thereby play a central role in transcription regulation, DNA repair, DNA replication and chromosomal stability. DNA accessibility is regulated via a complex set of post-translational modifications of histones, also called histone code, and nucleosome remodeling"
+Acropora_000239,2.237427012444334,-6.012777465890468,Core histone H2A/H2B/H3/H4,Core histone H2A/H2B/H3/H4
+Acropora_000242,-2.964537731829304,14.253739455840886,lymphoid tissue lymphoma translocation,lymphoid tissue lymphoma translocation
+Acropora_000258,2.8517470093333643,-2.399014839079955,NA,NA
+Acropora_000262,1.0617198528804517,-3.2448907596360788,Failed axon connections homolog,Failed axon connections homolog
+Acropora_000263,2.0409997386702647,-11.801166617174308,Stimulated by retinoic acid gene 6 protein homolog,Stimulated by retinoic acid gene 6 protein homolog
+Acropora_000287,1.1322925467455005,-1.2131114058637675,Hydrolyzes the sphingolipid ceramide into sphingosine and free fatty acid,Hydrolyzes the sphingolipid ceramide into sphingosine and free fatty acid
+Acropora_000291,-3.577835861723984,2.118213081650924,negative chemotaxis,negative chemotaxis
+Acropora_000315,-9.741206303338595,7.517346131905555,NA,NA
+Acropora_000331,-2.3434534880654816,15.752057115406856,protein auto-ADP-ribosylation,protein auto-ADP-ribosylation
+Acropora_000402,1.5171850639451938,-5.285557440272335,mitotic cell cycle checkpoint,mitotic cell cycle checkpoint
+Acropora_000437,-3.4277998586859115,5.533086832733151,La ribonucleoprotein domain family member 6,La ribonucleoprotein domain family member 6
+Acropora_000444,-1.9592056741142483,3.5370155545189688,Sodium/calcium exchanger protein,Sodium/calcium exchanger protein
+Acropora_000498,-1.2304714218277957,8.096712718513903,structural constituent of ribosome,structural constituent of ribosome
+Acropora_000501,1.4412886562541662,-7.234015312988124,Homer protein homolog,Homer protein homolog
+Acropora_000509,-13.662746958682964,1.7629988833448857,protein disulfide isomerase activity,protein disulfide isomerase activity
+Acropora_000511,3.566181084103517,-11.252258302588729,NA,NA
+Acropora_000519,-1.8352906051969953,9.947918445689393,NA,NA
+Acropora_000546,1.3344864383462134,-2.212809090783393,NA,NA
+Acropora_000570,1.2779350343461853,-1.6702026237210492,positive regulation of transcription by RNA polymerase II,positive regulation of transcription by RNA polymerase II
+Acropora_000582,-1.6953652780647945,4.510106495094916,NA,NA
+Acropora_000628,1.4163263808625215,-1.4827623712327016,NA,NA
+Acropora_000629,3.0763337756805287,-13.056276966852217,negative regulation of negative chemotaxis,negative regulation of negative chemotaxis
+Acropora_000651,1.072651988352053,-1.4321763837195054,betaine-homocysteine S-methyltransferase activity,betaine-homocysteine S-methyltransferase activity
+Acropora_000719,-1.5667826392929027,13.338528226850018,NA,NA
+Acropora_000724,2.9996169966384953,-1.7724438459612086,NA,NA
+Acropora_000725,-1.3435999397227782,5.078351694488488,NA,NA
+Acropora_000736,1.5263907726866448,-3.9652305209534298,regulation of nucleic acid-templated transcription,regulation of nucleic acid-templated transcription
+Acropora_000748,-1.3201000512305894,4.627186357520294,negative regulation of smooth muscle cell differentiation,negative regulation of smooth muscle cell differentiation
+Acropora_000750,1.1959870898119613,-2.316362458470335,negative regulation of smooth muscle cell differentiation,negative regulation of smooth muscle cell differentiation
+Acropora_000754,2.693536894777531,-5.0161592931378935,negative regulation of smooth muscle cell differentiation,negative regulation of smooth muscle cell differentiation
+Acropora_000755,3.444205477695422,-4.87433180262204,interkinetic nuclear migration,interkinetic nuclear migration
+Acropora_000757,-1.4912517184783631,2.2404469647309977,calcium ion binding,calcium ion binding
+Acropora_000759,-1.1736901181031958,5.981611384457428,regulation of proteasomal ubiquitin-dependent protein catabolic process,regulation of proteasomal ubiquitin-dependent protein catabolic process
+Acropora_000761,1.2221008421231916,-1.0623718185152724,"chromatin assembly factor 1, subunit A","chromatin assembly factor 1, subunit A"
+Acropora_000764,3.782090092917207,-22.45684962636883,NA,NA
+Acropora_000832,3.1577284747721266,-8.457947766417632,NA,NA
+Acropora_000851,-1.4778834576982132,6.808062295969702,Myb/SANT-like DNA-binding domain,Myb/SANT-like DNA-binding domain
+Acropora_000962,1.4884109781934491,-12.371494896538662,NA,NA
+Acropora_000981,1.0357568882009958,-7.42148572512811,Ras GTPase-activating-like protein IQGAP1,Ras GTPase-activating-like protein IQGAP1
+Acropora_001108,1.9896252210476897,-2.971421650512276,NA,NA
+Acropora_001109,-1.2634499778955477,1.071301502209488,vesicle-mediated cholesterol transport,vesicle-mediated cholesterol transport
+Acropora_001182,-1.5305555411887535,15.09927894796454,NA,NA
+Acropora_001187,-1.2444753168116607,8.577723656640122,ubiquitin-dependent protein catabolic process via the multivesicular body sorting pathway,ubiquitin-dependent protein catabolic process via the multivesicular body sorting pathway
+Acropora_001215,1.4143299288021391,-2.940303800512056,NA,NA
+Acropora_001254,-1.5587090982357559,7.120204963006013,synaptic vesicle cytoskeletal transport,synaptic vesicle cytoskeletal transport
+Acropora_001276,1.7270208413496082,-3.2230032976964664,NA,NA
+Acropora_001296,-1.5037883158173568,11.55024556551421,cell surface receptor signaling pathway,cell surface receptor signaling pathway
+Acropora_001298,-1.0923298373992036,3.9865872519966294,"ATP-dependent serine protease that mediates the selective degradation of misfolded, unassembled or oxidatively damaged polypeptides as well as certain short-lived regulatory proteins in the mitochondrial matrix. May also have a chaperone function in the assembly of inner membrane protein complexes. Participates in the regulation of mitochondrial gene expression and in the maintenance of the integrity of the mitochondrial genome. Binds to mitochondrial","ATP-dependent serine protease that mediates the selective degradation of misfolded, unassembled or oxidatively damaged polypeptides as well as certain short-lived regulatory proteins in the mitochondrial matrix. May also have a chaperone function in the assembly of inner membrane protein complexes. Participates in the regulation of mitochondrial gene expression and in the maintenance of the integrity of the mitochondrial genome. Binds to mitochondrial"
+Acropora_001320,1.1776715688758175,-3.2983609451310003,Myosin. Large ATPases.,Myosin. Large ATPases.
+Acropora_001323,-1.4112563587661575,7.140113035844405,phosphatidylserine metabolic process,phosphatidylserine metabolic process
+Acropora_001502,-6.793769928638816,1.5887680902355192,NA,NA
+Acropora_001538,4.081654944140961,-1.1677483541724754,"Crystallin, zeta (quinone reductase)","Crystallin, zeta (quinone reductase)"
+Acropora_001557,7.363327089282746,-14.436705885706305,NA,NA
+Acropora_001560,3.013251477893698,-5.174627772953042,NA,NA
+Acropora_001581,5.424088719078084,-15.670634284606107,NA,NA
+Acropora_001587,1.9074241270848702,-1.9008409586274058,NA,NA
+Acropora_001595,-1.8524869066842247,1.6265079296800125,NA,NA
+Acropora_001602,-31.411293981032,5.665254306793253,Belongs to the heat shock protein 70 family,Belongs to the heat shock protein 70 family
+Acropora_001646,-1.507209648234735,2.2945218660740707,Poly(ADP-ribose) polymerase catalytic domain,Poly(ADP-ribose) polymerase catalytic domain
+Acropora_001647,-1.0635239199998283,17.271470925208618,fatty acid beta-oxidation using acyl-CoA dehydrogenase,fatty acid beta-oxidation using acyl-CoA dehydrogenase
+Acropora_001694,1.0346363856916525,-4.439481767861605,regulation of mitotic cell cycle,regulation of mitotic cell cycle
+Acropora_001708,-1.0918057511817514,2.3750154368395844,NA,NA
+Acropora_001731,-1.244435908351023,5.876535425660932,metalloendopeptidase activity,metalloendopeptidase activity
+Acropora_001767,-1.309180282646319,1.115884900771222,TCDD-inducible poly(ADP-ribose) polymerase,TCDD-inducible poly(ADP-ribose) polymerase
+Acropora_001793,-1.9414041718590949,8.677378771972874,It is involved in the biological process described with,It is involved in the biological process described with
+Acropora_001805,1.1426911401218136,-1.7379294874710833,peptide-O-fucosyltransferase activity,peptide-O-fucosyltransferase activity
+Acropora_001853,1.3053777235776294,11.226063039969555,NA,NA
+Acropora_001857,3.351024531919484,-2.0140474400180235,NA,NA
+Acropora_001859,-3.669232057236757,2.4411001756820356,vesicle fusion with Golgi apparatus,vesicle fusion with Golgi apparatus
+Acropora_001872,-1.0653486938827592,5.539384382237422,"retrograde vesicle-mediated transport, Golgi to ER","retrograde vesicle-mediated transport, Golgi to ER"
+Acropora_001888,-3.628560917563429,3.0831815150757937,NA,NA
+Acropora_001897,2.6043651807799675,-6.15910610703905,Si ch211-39a7.1,Si ch211-39a7.1
+Acropora_001916,-2.050848343407355,1.1621220580558012,NA,NA
+Acropora_001925,1.2115027513048238,-2.446372091195311,U2 snRNA binding,U2 snRNA binding
+Acropora_001930,-1.1275578781486464,3.975852477895779,anandamide amidohydrolase activity,anandamide amidohydrolase activity
+Acropora_001953,-3.2302418463815123,3.224224570033661,NA,NA
+Acropora_001960,-1.625777044089214,3.744018891244208,SUMO transferase activity,SUMO transferase activity
+Acropora_001975,1.3834000064283463,-4.339713713602868,NA,NA
+Acropora_001995,2.669198427939393,-4.252021021957843,NA,NA
+Acropora_001996,-3.057510601375827,3.5766756037777276,NA,NA
+Acropora_002000,1.0453164265886166,-6.890236683614219,NA,NA
+Acropora_002020,-1.0967923186867272,3.7945600896064784,endodermal-mesodermal cell signaling,endodermal-mesodermal cell signaling
+Acropora_002034,-1.5498699617550582,7.833776868305482,Calcium-binding protein,Calcium-binding protein
+Acropora_002036,1.6459724465715901,-1.2144898718098505,Heparan-alpha-glucosaminide N-acetyltransferase,Heparan-alpha-glucosaminide N-acetyltransferase
+Acropora_002050,-1.3738794871722855,3.744018891244208,NA,NA
+Acropora_002052,-4.857507344858315,9.792463637873755,carbohydrate binding,carbohydrate binding
+Acropora_002072,3.314313711641831,-4.282594197446557,NA,NA
+Acropora_002077,-1.3834000064283463,5.259004788724848,translation activator activity,translation activator activity
+Acropora_002078,-1.0653486938827592,4.317683202855402,signal peptide processing,signal peptide processing
+Acropora_002084,-1.368150480403083,1.634429673682699,NA,NA
+Acropora_002088,2.0661333180598676,-4.345788142997532,Protein tyrosine kinase,Protein tyrosine kinase
+Acropora_002098,1.1333553998907884,-3.508199268130024,chromosome 9 open reading frame 78,chromosome 9 open reading frame 78
+Acropora_002102,1.220142059011218,-4.226591111714211,carbohydrate binding,carbohydrate binding
+Acropora_002118,5.649235525318616,-14.040934289189451,sequence-specific DNA binding,sequence-specific DNA binding
+Acropora_002124,-3.780982411110891,6.365183928427929,electron transfer activity,electron transfer activity
+Acropora_002129,-3.57558688014283,8.603627937883484,NA,NA
+Acropora_002130,2.0670407276851175,-2.2919134049331142,NA,NA
+Acropora_002137,-1.7589028586634503,9.287982832433507,threonine-type endopeptidase activity,threonine-type endopeptidase activity
+Acropora_002140,2.908829109244092,-1.5678361221673096,DNA polymerase epsilon subunit 3,DNA polymerase epsilon subunit 3
+Acropora_002160,-1.3863464608722658,1.9643674071046593,positive regulation of DNA binding,positive regulation of DNA binding
+Acropora_002190,-3.7569339500457053,6.2460193596035305,NA,NA
+Acropora_002204,1.9417246398440868,-5.671911659710311,RNA polymerase II,RNA polymerase II
+Acropora_002205,-1.863260232839569,-3.7621711353933738,Heme binding protein 2,Heme binding protein 2
+Acropora_002219,-1.294770204936905,2.4627154829240014,DNA repair protein SWI5 homolog,DNA repair protein SWI5 homolog
+Acropora_002225,3.7707197991525803,-6.868655387548037,negative regulation of protein depolymerization,negative regulation of protein depolymerization
+Acropora_002262,2.229397359079288,-1.1214274720031139,sulfuric ester hydrolase activity,sulfuric ester hydrolase activity
+Acropora_002291,1.0599824969016938,-4.657711474550822,NA,NA
+Acropora_002301,2.2726669167411253,-6.623324263514289,NA,NA
+Acropora_002306,5.929316014171079,-4.734982489463442,DNA (cytosine-5-)-methyltransferase activity,DNA (cytosine-5-)-methyltransferase activity
+Acropora_002307,1.2202735659508355,-1.761383771180609,NA,NA
+Acropora_002342,-2.3201068155412825,4.819470620481068,otolith formation,otolith formation
+Acropora_002380,-1.0824930863430273,9.142699178978017,Prefoldin subunit 6,Prefoldin subunit 6
+Acropora_002387,1.0457436530854867,-4.899121936632126,PFAM Alcohol dehydrogenase zinc-binding domain protein,PFAM Alcohol dehydrogenase zinc-binding domain protein
+Acropora_002391,1.2819518011781303,1.1837728254160889,NA,NA
+Acropora_002394,2.5771383358657283,-2.4438339381809113,phosphatidylserine binding,phosphatidylserine binding
+Acropora_002399,-1.5708466385242255,6.127234012655521,"subunit, beta","subunit, beta"
+Acropora_002410,-1.0118347982092115,7.757160367788664,endoplasmic reticulum stress-induced pre-emptive quality control,endoplasmic reticulum stress-induced pre-emptive quality control
+Acropora_002421,1.6704056867149477,-4.082071671422013,CMP metabolic process,CMP metabolic process
+Acropora_002470,8.031740344185318,-25.873015249711532,positive regulation of presynaptic membrane organization,positive regulation of presynaptic membrane organization
+Acropora_002474,-1.0210901667208578,1.9136728638765215,Nidogen 1a,Nidogen 1a
+Acropora_002504,1.1007946514418703,-2.0370486158440273,flavoprotein involved in K transport,flavoprotein involved in K transport
+Acropora_002518,1.9272601651917103,-13.877822716312592,Trypsin-like serine protease,Trypsin-like serine protease
+Acropora_002532,-1.0049161048644775,11.917090121589334,clathrin heavy chain binding,clathrin heavy chain binding
+Acropora_002536,-1.1607326269218838,3.314142825486163,ankyrin repeat,ankyrin repeat
+Acropora_002539,-1.409535056751759,4.9579264559708625,structural constituent of ribosome,structural constituent of ribosome
+Acropora_002555,-1.088247428021292,10.718665650063834,laminin subunit,laminin subunit
+Acropora_002565,2.0430419222880336,-1.4466180334370988,store-operated calcium channel activity,store-operated calcium channel activity
+Acropora_002586,1.436186429559741,-2.494598253020097,proteasome regulatory particle assembly,proteasome regulatory particle assembly
+Acropora_002595,-1.0542452711289143,9.243556899368288,tachykinin receptor activity,tachykinin receptor activity
+Acropora_002599,1.0989495771232445,-2.959198016455492,NA,NA
+Acropora_002614,-1.361566269398607,10.832111418549724,SNAP receptor activity,SNAP receptor activity
+Acropora_002615,-2.1091480057391268,1.6033773494955987,haloacid dehalogenase-like hydrolase,haloacid dehalogenase-like hydrolase
+Acropora_002620,2.0486910346958767,-7.255258276362264,Dienelactone hydrolase family,Dienelactone hydrolase family
+Acropora_002625,-1.2335790143901366,9.617965718205754,60S ribosomal protein,60S ribosomal protein
+Acropora_002632,-3.9208561688679477,3.7258877088139695,calcium ion binding,calcium ion binding
+Acropora_002642,-1.0507277596647793,8.828528387245301,Ubiquitin carboxyl-terminal hydrolase,Ubiquitin carboxyl-terminal hydrolase
+Acropora_002656,-1.4098802371612729,1.3059508689732489,trans-L-3-hydroxyproline dehydratase activity,trans-L-3-hydroxyproline dehydratase activity
+Acropora_002679,-1.4711305303876676,15.189403786470411,NA,NA
+Acropora_002710,2.088065172182568,-3.796348573074975,heparan sulfate 2-O-sulfotransferase activity,heparan sulfate 2-O-sulfotransferase activity
+Acropora_002712,-1.3770074990830576,-2.238550836639502,NA,NA
+Acropora_002731,1.0190197736397917,-3.1854265585704984,NA,NA
+Acropora_002796,1.4194385859128376,-9.418399777934036,Rho guanine nucleotide exchange factor,Rho guanine nucleotide exchange factor
+Acropora_002828,-2.423927550512444,4.024178119912061,"Involved in nuclear export of spliced and unspliced mRNA. Assembling component of the TREX complex which is thought to couple mRNA transcription, processing and nuclear export, and specifically associates with spliced mRNA and not with unspliced pre-mRNA. TREX is recruited to spliced mRNAs by a transcription- independent mechanism, binds to mRNA upstream of the exon-junction complex (EJC) and is recruited in a splicing- and cap-dependent manner to a region near the 5' end of the mRNA where it functions in mRNA export to the cytoplasm via the TAP NFX1 pathway. May undergo several rounds of ATP hydrolysis during assembly of TREX to drive subsequent loading of components such as ALYREF THOC and CHTOP onto mRNA","Involved in nuclear export of spliced and unspliced mRNA. Assembling component of the TREX complex which is thought to couple mRNA transcription, processing and nuclear export, and specifically associates with spliced mRNA and not with unspliced pre-mRNA. TREX is recruited to spliced mRNAs by a transcription- independent mechanism, binds to mRNA upstream of the exon-junction complex (EJC) and is recruited in a splicing- and cap-dependent manner to a region near the 5' end of the mRNA where it functions in mRNA export to the cytoplasm via the TAP NFX1 pathway. May undergo several rounds of ATP hydrolysis during assembly of TREX to drive subsequent loading of components such as ALYREF THOC and CHTOP onto mRNA"
+Acropora_002838,-1.088120986944483,1.9424629314519795,72 kDa inositol polyphosphate,72 kDa inositol polyphosphate
+Acropora_002850,1.1745284687148245,-1.9539365440056882,"Glomulin, FKBP associated protein","Glomulin, FKBP associated protein"
+Acropora_002864,1.4001162591715008,-2.2945189939938606,isocitrate dehydrogenase (NADP+) activity,isocitrate dehydrogenase (NADP+) activity
+Acropora_002881,1.2324894548142153,-6.875290869188063,NA,NA
+Acropora_002965,2.730595054705739,-1.6769121333125516,methanethiol oxidase activity,methanethiol oxidase activity
+Acropora_002969,1.5534247643657157,-2.5316776879289904,NA,NA
+Acropora_002975,1.7172017802870287,-1.2457134707399045,NA,NA
+Acropora_003027,1.1876120824398608,-1.7400514038485075,NA,NA
+Acropora_003036,1.693454335543189,-3.574567304489323,Universal stress protein family,Universal stress protein family
+Acropora_003043,1.1197585503306482,-4.9363138846533605,Universal stress protein family,Universal stress protein family
+Acropora_003070,-2.074895631871203,1.3657796461684588,Required for protein import into peroxisomes,Required for protein import into peroxisomes
+Acropora_003258,-1.5181793049102694,2.4832773275168747,attachment of GPI anchor to protein,attachment of GPI anchor to protein
+Acropora_003261,1.3617222719611182,-2.6088696811690144,Phosphoethanolamine methyltransferase,Phosphoethanolamine methyltransferase
+Acropora_003267,2.326659386146212,-1.5440563014858566,Chromatin organization modifier domain,Chromatin organization modifier domain
+Acropora_003268,2.0171894982608367,-2.223958585310541,Fanconi anaemia group A protein N terminus,Fanconi anaemia group A protein N terminus
+Acropora_003285,1.8469588017514293,-1.5052852059335309,NA,NA
+Acropora_003305,-2.5011247575131015,1.6909657710121155,positive regulation of interleukin-13 biosynthetic process,positive regulation of interleukin-13 biosynthetic process
+Acropora_003330,2.530830883406172,2.3951380525459247,NA,NA
+Acropora_003339,1.7016061610564397,-2.3779742210239263,G-protein coupled GABA receptor activity. It is involved in the biological process described with G-protein coupled receptor signaling pathway,G-protein coupled GABA receptor activity. It is involved in the biological process described with G-protein coupled receptor signaling pathway
+Acropora_003353,2.338576270790336,-1.6252937934153582,15-hydroxyprostaglandin dehydrogenase (NAD+) activity,15-hydroxyprostaglandin dehydrogenase (NAD+) activity
+Acropora_003361,-1.2039011677435596,2.854233075470708,NA,NA
+Acropora_003362,-1.2940419530696523,5.256142748126,acetylesterase activity,acetylesterase activity
+Acropora_003418,1.3639954131006702,-13.007866304113683,adenylate cyclase-activating G-protein coupled receptor signaling pathway,adenylate cyclase-activating G-protein coupled receptor signaling pathway
+Acropora_003427,-1.2909157876502044,10.946072013096275,Cleavage and polyadenylation,Cleavage and polyadenylation
+Acropora_003432,1.531462223485397,-1.905854665423785,NA,NA
+Acropora_003463,-1.0713761842181977,1.773637182162884,NA,NA
+Acropora_003465,-5.874803509970185,2.017580298920334,negative regulation of renal output by angiotensin,negative regulation of renal output by angiotensin
+Acropora_003481,-1.5704493110305775,1.9246933725839452,arachidonate 5-lipoxygenase activity,arachidonate 5-lipoxygenase activity
+Acropora_003492,-1.8419684340265816,-3.5602910808691894,Cystatin-like domain,Cystatin-like domain
+Acropora_003500,-1.0434588343457594,-1.0558527995026181,glucan metabolic process,glucan metabolic process
+Acropora_003509,1.3399267771431553,-3.5220559290526583,NA,NA
+Acropora_003548,-2.693536894777531,1.1244747336231407,NA,NA
+Acropora_003561,1.4523009917621121,-2.2893723320244774,NA,NA
+Acropora_003566,1.9078676543529758,-3.5694909611773182,NA,NA
+Acropora_003567,1.0087097933062241,-2.455510549027796,NA,NA
+Acropora_003570,-1.7263126637719366,2.573715508733319,mechanosensitive ion channel activity,mechanosensitive ion channel activity
+Acropora_003575,2.52008314227224,-9.665729559531812,G-protein beta/gamma-subunit complex binding,G-protein beta/gamma-subunit complex binding
+Acropora_003578,3.036555072469452,-8.965047466763123,Protein tyrosine kinase,Protein tyrosine kinase
+Acropora_003632,1.048049768262224,-1.9180341633529199,Membrane-bound transcription factor,Membrane-bound transcription factor
+Acropora_003640,1.5171850639451938,-6.619553056463011,calretinin,calretinin
+Acropora_003641,4.683385235912622,-15.734558335206799,NA,NA
+Acropora_003666,2.3288266392597587,-7.766175334767813,establishment of animal organ orientation,establishment of animal organ orientation
+Acropora_003672,1.742804289075341,-2.186629545080019,Transcription factor,Transcription factor
+Acropora_003708,-1.3029208927255915,-1.4117008140075047,protein monoubiquitination,protein monoubiquitination
+Acropora_003710,-1.0087097933062241,1.3041226796171999,NA,NA
+Acropora_003724,-1.2329845847605003,1.4364569789723312,positive regulation of centriole elongation,positive regulation of centriole elongation
+Acropora_003727,1.6963278382698683,-6.909360693860187,NA,NA
+Acropora_003774,-2.3224482033506075,12.104095757879614,NA,NA
+Acropora_003794,3.691872322492917,-9.42565638731837,regulation of mitotic cell cycle,regulation of mitotic cell cycle
+Acropora_003816,2.0798647980751794,-5.776110593177577,NA,NA
+Acropora_003835,2.2405313445865374,-6.051165968774918,NA,NA
+Acropora_003836,1.1855453206297561,-2.527506488507557,mitotic G2 DNA damage checkpoint,mitotic G2 DNA damage checkpoint
+Acropora_003842,2.1943839032615506,-2.00428733755876,NA,NA
+Acropora_003861,-1.1634031192766519,1.2578252102774155,homophilic cell adhesion via plasma membrane adhesion molecules,homophilic cell adhesion via plasma membrane adhesion molecules
+Acropora_003878,1.930524515160573,-4.227922755379117,glutathione synthase activity,glutathione synthase activity
+Acropora_003881,1.7155736049563324,-2.6658858550484266,NA,NA
+Acropora_003903,-3.0821542116109777,-1.0984097271063167,NA,NA
+Acropora_003927,-2.307669014657428,3.0105239588609214,NA,NA
+Acropora_003940,-2.0479401375573385,12.627732373932503,NA,NA
+Acropora_003949,1.4372978030352959,-4.388892198937593,calcium ion binding,calcium ion binding
+Acropora_003960,-3.6072024650766874,4.170307203999119,NA,NA
+Acropora_003986,1.2604485798790124,-2.117026443480301,zinc ion binding,zinc ion binding
+Acropora_003997,1.205300584723165,-9.595095770805194,protein kinase activity,protein kinase activity
+Acropora_004000,-1.3785513793602853,2.9808474033999954,magnesium-dependent phosphatase 1,magnesium-dependent phosphatase 1
+Acropora_004017,1.0444989746405977,-2.1788310874854204,asparagine catabolic process via L-aspartate,asparagine catabolic process via L-aspartate
+Acropora_004018,1.625777044089214,-1.3194753827847612,NA,NA
+Acropora_004025,-3.018080539309414,3.5442506884010307,NA,NA
+Acropora_004026,1.1917583636256615,-1.2373947867500683,alanine-oxo-acid transaminase activity,alanine-oxo-acid transaminase activity
+Acropora_004048,1.2228184602507526,-1.977872573251405,regulation of RNA splicing,regulation of RNA splicing
+Acropora_004084,-1.1115775879857934,-2.3293765571410385,"Zinc finger, NFX1-type containing 1","Zinc finger, NFX1-type containing 1"
+Acropora_004087,1.0860936961367957,-2.495453210645012,negative regulation of transcription by RNA polymerase II,negative regulation of transcription by RNA polymerase II
+Acropora_004125,2.674537478047756,-5.366904492549191,Belongs to the G-protein coupled receptor 1 family,Belongs to the G-protein coupled receptor 1 family
+Acropora_004129,3.3861584099922055,-9.261952854544656,NA,NA
+Acropora_004141,-1.4842992718407595,4.752463326177801,protein localization to cytosolic proteasome complex involved in ERAD pathway,protein localization to cytosolic proteasome complex involved in ERAD pathway
+Acropora_004149,1.0704409615528427,-3.0291323272755335,RNA binding,RNA binding
+Acropora_004167,-1.5244373038003631,5.86284527371415,"Endoplasmic reticulum protein ERp29, C-terminal domain","Endoplasmic reticulum protein ERp29, C-terminal domain"
+Acropora_004169,1.258981830280763,-1.1097373803296817,NA,NA
+Acropora_004185,1.3403112525436625,-4.682885930176049,helicase activity,helicase activity
+Acropora_004202,-1.893368013610194,1.563820419186098,NA,NA
+Acropora_004203,-2.453774750542028,5.883770659076957,Belongs to the syntaxin family,Belongs to the syntaxin family
+Acropora_004221,-1.3931992913941205,8.504665345020113,syndrome nuclear autoantigen 1,syndrome nuclear autoantigen 1
+Acropora_004225,1.2444753168116607,-7.0378762398917925,NA,NA
+Acropora_004232,1.648387327263394,-1.113539903338118,structural constituent of cuticle,structural constituent of cuticle
+Acropora_004256,-3.2852961751077228,1.193424956613551,NA,NA
+Acropora_004263,-1.0601993907145968,7.2254331162778325,50S ribosome-binding GTPase,50S ribosome-binding GTPase
+Acropora_004336,-1.0054059356164287,1.0693159597462858,NA,NA
+Acropora_004349,3.0211670782755307,-9.018558900203388,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family
+Acropora_004357,-1.6086493977818201,3.807620654661163,Galactosyltransferase,Galactosyltransferase
+Acropora_004361,1.2042807888350653,-6.152144287230285,NA,NA
+Acropora_004370,-1.7008334353904184,15.362806481247764,heat shock protein binding,heat shock protein binding
+Acropora_004380,-1.2909157876502044,2.194039115847709,NA,NA
+Acropora_004404,1.359091881373616,-5.17397626259208,M-phase phosphoprotein 6,M-phase phosphoprotein 6
+Acropora_004421,-1.1947123352863978,10.74712625378613,NA,NA
+Acropora_004423,-1.0158080121224666,4.820924503301755,"RAB30, member RAS oncogene family","RAB30, member RAS oncogene family"
+Acropora_004446,5.050716210425027,-6.972441058636864,importin-alpha family protein binding,importin-alpha family protein binding
+Acropora_004458,-3.35182299545959,1.4767616347910464,antigen processing and presentation of exogenous peptide antigen via MHC class I,antigen processing and presentation of exogenous peptide antigen via MHC class I
+Acropora_004471,2.062683721242324,-3.9567987912220888,NA,NA
+Acropora_004493,1.8996634423052876,-9.72155496425417,"Myosin, light","Myosin, light"
+Acropora_004505,1.0248466030944041,-2.4583401653696297,nucleosome assembly,nucleosome assembly
+Acropora_004520,-1.2543509744398382,9.102506626320745,structural constituent of cytoskeleton,structural constituent of cytoskeleton
+Acropora_004530,2.3869263927425335,-1.922808259677412,NA,NA
+Acropora_004536,-1.754125431749603,1.7835687458331753,mitotic chromosome condensation,mitotic chromosome condensation
+Acropora_004555,-3.408217421621715,10.403589399767673,threonine-type endopeptidase activity,threonine-type endopeptidase activity
+Acropora_004556,1.4760021778371961,-10.552472033008437,NA,NA
+Acropora_004589,1.0920946221413983,-3.1208060754323843,serine threonine-protein kinase PRP4 homolog,serine threonine-protein kinase PRP4 homolog
+Acropora_004591,2.2889525110594455,-4.266316928137662,Poly (ADP-ribose) polymerase,Poly (ADP-ribose) polymerase
+Acropora_004597,-4.582450971150042,6.498451295272949,NA,NA
+Acropora_004635,-1.003665872713892,4.588377349190643,structural constituent of ribosome,structural constituent of ribosome
+Acropora_004660,1.1444646275989836,-3.104200011311288,NA,NA
+Acropora_004793,1.1749928958029008,-2.8071072342735888,N-terminal domain of CBF1 interacting co-repressor CIR,N-terminal domain of CBF1 interacting co-repressor CIR
+Acropora_004814,1.7522757112006107,-6.381073808157932,primary miRNA methylation,primary miRNA methylation
+Acropora_004835,-2.0419648161095116,3.3775903735382955,NA,NA
+Acropora_004848,1.925062309917897,-10.673421749719045,NA,NA
+Acropora_004854,-1.7549173974711545,11.790214227615316,NA,NA
+Acropora_004856,-1.0528087912756745,4.849655381961471,acetyl-CoA C-acyltransferase activity,acetyl-CoA C-acyltransferase activity
+Acropora_004860,1.0049161048644775,-1.1336795498349987,SMAD binding,SMAD binding
+Acropora_004869,4.31675366113792,-6.083327227609618,NA,NA
+Acropora_004917,1.7815341399965838,-4.526572837434712,guanylate cyclase activity,guanylate cyclase activity
+Acropora_004941,2.0076320712825315,-2.0370486158440273,metalloendopeptidase activity,metalloendopeptidase activity
+Acropora_005185,2.450141865965567,-5.518106454047958,regulation of ryanodine-sensitive calcium-release channel activity,regulation of ryanodine-sensitive calcium-release channel activity
+Acropora_005229,-1.0104800860680643,2.3131765496242287,NA,NA
+Acropora_005230,1.9500489118643385,-2.864073427597058,ATP-dependent RNA helicase,ATP-dependent RNA helicase
+Acropora_005233,2.6043651807799675,-1.1102981901595794,RNA pseudouridylate synthase,RNA pseudouridylate synthase
+Acropora_005297,1.1306193058471532,-4.757947423763941,NA,NA
+Acropora_005352,-1.274892510760006,4.659836042741988,NA,NA
+Acropora_005397,1.0210901667208578,-1.3557082754116883,NA,NA
+Acropora_005398,1.2686102204715064,-2.305242241384656,NA,NA
+Acropora_005417,1.6031291899867923,-3.334013368085906,snRNA export from nucleus,snRNA export from nucleus
+Acropora_005421,-1.5702336967077573,3.1742575207802948,sorting nexin,sorting nexin
+Acropora_005422,-2.4496970001128293,2.7814280985447564,protein adenylyltransferase activity,protein adenylyltransferase activity
+Acropora_005445,1.3019673948306016,-1.6562857053535953,NA,NA
+Acropora_005451,1.1251113247860498,-5.272064257575057,NA,NA
+Acropora_005526,1.5867585123365504,-6.490892815093253,protein linear deubiquitination,protein linear deubiquitination
+Acropora_005568,1.2171673078167387,-3.1122548634636753,dihydropyrimidinase activity,dihydropyrimidinase activity
+Acropora_005572,2.568574221638828,-4.280245242680292,NA,NA
+Acropora_005691,-1.1855453206297561,3.947168731542341,PHD finger protein 13,PHD finger protein 13
+Acropora_005711,1.1959870898119613,-5.970670495446631,GTPase activity,GTPase activity
+Acropora_005717,-1.309946973194503,3.0266223571845816,NA,NA
+Acropora_005724,-2.945561572382107,5.689801717671785,Rab GTPase binding,Rab GTPase binding
+Acropora_005760,-7.750256692124093,3.4417930144405173,chromatin remodeling,chromatin remodeling
+Acropora_005784,-1.240616743404978,2.8079627276738033,NA,NA
+Acropora_005791,-1.6622802994291357,9.226341221534444,sodium-dependent glucose transporter,sodium-dependent glucose transporter
+Acropora_005814,1.8326901159240623,-5.240573419663348,microtubule motor activity,microtubule motor activity
+Acropora_005854,-1.250928466577933,14.823971317101476,uniporter activity,uniporter activity
+Acropora_005872,1.309946973194503,-1.3787877699581848,NA,NA
+Acropora_005882,-1.1069336036960409,5.5288313287723865,transmembrane protein 199,transmembrane protein 199
+Acropora_005885,-2.430827768922952,1.9070995971516436,motor activity,motor activity
+Acropora_005900,1.680790728640419,-4.087702630976437,NA,NA
+Acropora_005903,-2.4352054805925407,5.949179810666432,Nuclear factor NF-kappa-B p105 subunit,Nuclear factor NF-kappa-B p105 subunit
+Acropora_005935,4.835790129876877,-6.019134569329861,NA,NA
+Acropora_005936,2.6575925464734045,-7.829709174421783,NA,NA
+Acropora_005941,1.2909157876502044,-2.0970192769818183,protein serine/threonine kinase activity,protein serine/threonine kinase activity
+Acropora_005950,1.1188108465310056,-1.1887354168799469,NA,NA
+Acropora_005969,1.9434509140053509,-7.020147150626249,NA,NA
+Acropora_006002,1.4054596850957877,-2.985866959141922,N-acetyl-beta-glucosaminyl-glycoprotein 4-beta-N-acetylgalactosaminyltransferase activity,N-acetyl-beta-glucosaminyl-glycoprotein 4-beta-N-acetylgalactosaminyltransferase activity
+Acropora_006003,-1.0432424706466243,9.117946668699542,chitinase activity,chitinase activity
+Acropora_006009,-1.3923217814266042,14.41176956389305,alpha-catenin binding,alpha-catenin binding
+Acropora_006012,-2.918304772883585,14.837160816467064,Golgi ribbon formation,Golgi ribbon formation
+Acropora_006024,2.1428736485988145,-2.4138894503747887,NA,NA
+Acropora_006040,1.4824262392123597,-1.7298106805850528,procollagen-proline 3-dioxygenase activity,procollagen-proline 3-dioxygenase activity
+Acropora_006054,1.011659428565015,-1.0019227398611676,organic anion transmembrane transporter activity,organic anion transmembrane transporter activity
+Acropora_006070,1.74271624432816,-11.49007412874177,organic anion transmembrane transporter activity,organic anion transmembrane transporter activity
+Acropora_006125,1.0821973482225813,-1.828456059189189,X-ray repair complementing defective repair in Chinese hamster cells 4,X-ray repair complementing defective repair in Chinese hamster cells 4
+Acropora_006153,-1.8824187275598647,13.803619379210046,"Arrestin (or S-antigen), N-terminal domain","Arrestin (or S-antigen), N-terminal domain"
+Acropora_006175,1.0989495771232445,-1.1404584997158278,negative regulation of Rho protein signal transduction,negative regulation of Rho protein signal transduction
+Acropora_006199,1.3024365931364685,-1.3931008505296585,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle
+Acropora_006209,-1.0225597041159584,2.1099154196658385,NA,NA
+Acropora_006211,2.436087477303694,-2.026700583486471,assembly factor 2,assembly factor 2
+Acropora_006216,1.245055943868346,-2.8102907771088597,NA,NA
+Acropora_006252,1.1335631285106675,-2.9547635294195764,ATP-dependent RNA helicase,ATP-dependent RNA helicase
+Acropora_006256,2.77880756347862,-2.8807125487628364,Lysyl oxidase-like 2,Lysyl oxidase-like 2
+Acropora_006265,-2.1730149560613925,1.3684116399294615,Cytochrome P450,Cytochrome P450
+Acropora_006275,1.077363034304895,-1.230784505571306,NA,NA
+Acropora_006281,1.0706766432306638,-1.4405450642432545,Tetratricopeptide repeat,Tetratricopeptide repeat
+Acropora_006288,-4.441143735234741,2.1371210941706686,NFX1-type zinc finger-containing protein,NFX1-type zinc finger-containing protein
+Acropora_006393,1.023340425896596,-6.131360774351109,NA,NA
+Acropora_006396,-2.0590785978704895,1.8187762982002613,NA,NA
+Acropora_006404,-3.5839590968425736,6.355415485189439,NA,NA
+Acropora_006413,-1.6229557205352059,3.2207234919164693,NA,NA
+Acropora_006422,-1.1275578781486464,7.864651552046856,GDP binding,GDP binding
+Acropora_006451,2.1943839032615506,-8.485628999593857,plasma membrane repair,plasma membrane repair
+Acropora_006478,1.2921712262588456,-9.304731376359348,SCP / Tpx-1 / Ag5 / PR-1 / Sc7 family of extracellular domains.,SCP / Tpx-1 / Ag5 / PR-1 / Sc7 family of extracellular domains.
+Acropora_006492,1.082995750520745,-5.771323786036559,"oxidoreductase activity, oxidizing metal ions, oxygen as acceptor","oxidoreductase activity, oxidizing metal ions, oxygen as acceptor"
+Acropora_006523,1.3529698728024593,-3.165562483696642,NA,NA
+Acropora_006536,-1.0485377977334338,6.825986558147441,Belongs to the small GTPase superfamily. Arf family,Belongs to the small GTPase superfamily. Arf family
+Acropora_006554,1.2141089693739704,-2.6493417247349895,May promote cell cycle arrest by enhancing the inhibition of CDK2 activity by CDKN1A. May be required for repair of DNA damage by homologous recombination in conjunction with BRCA2. May not be involved in non-homologous end joining (NHEJ),May promote cell cycle arrest by enhancing the inhibition of CDK2 activity by CDKN1A. May be required for repair of DNA damage by homologous recombination in conjunction with BRCA2. May not be involved in non-homologous end joining (NHEJ)
+Acropora_006559,-1.205300584723165,1.501079176861372,NA,NA
+Acropora_006629,3.2302418463815123,-2.2098689650277836,NA,NA
+Acropora_006644,-1.8644347693337455,3.2414976162672775,regulation of endoplasmic reticulum stress-induced eIF2 alpha phosphorylation,regulation of endoplasmic reticulum stress-induced eIF2 alpha phosphorylation
+Acropora_006658,1.5702336967077573,-7.121673892716816,Leydig cell differentiation,Leydig cell differentiation
+Acropora_006662,2.3252633704835626,-2.060028467723183,GABA-A receptor activity,GABA-A receptor activity
+Acropora_006674,-5.927901569647666,11.18405158211674,NA,NA
+Acropora_006685,2.41205578636823,-27.96219743047879,SRY (sex determining region Y)-box 30,SRY (sex determining region Y)-box 30
+Acropora_006687,2.906121759149772,-15.492769847964464,"ATP-dependent microtubule motor activity, plus-end-directed","ATP-dependent microtubule motor activity, plus-end-directed"
+Acropora_006702,-5.972718632412539,2.679673493020625,folate import across plasma membrane,folate import across plasma membrane
+Acropora_006716,1.8365792207842242,-1.908078198796095,SWIB/MDM2 domain,SWIB/MDM2 domain
+Acropora_006719,1.8627147164919322,-2.944902753973639,NA,NA
+Acropora_006738,1.5073064251546058,-2.2379355205289704,NK6 homeobox 1,NK6 homeobox 1
+Acropora_006739,1.5502487375557825,-16.655778206387502,smoothened signaling pathway,smoothened signaling pathway
+Acropora_006805,1.410953560325938,-3.8703611042884445,Nucleophosmin,Nucleophosmin
+Acropora_006810,-3.4277998586859115,4.238981532432228,NA,NA
+Acropora_006820,1.771413458137169,-5.327600602910805,"Catenin (Cadherin-associated protein), alpha","Catenin (Cadherin-associated protein), alpha"
+Acropora_006825,-2.978133552614196,2.3935266386744285,Glutaredoxin 3,Glutaredoxin 3
+Acropora_006836,-1.9500489118643385,8.05273496901574,NA,NA
+Acropora_006841,1.6012798821253427,-2.7090403493242965,microtubule motor activity,microtubule motor activity
+Acropora_006854,1.0781880384490083,-2.941746525054784,NA,NA
+Acropora_006865,2.727195298176872,-8.453310027289016,Disintegrin and metalloproteinase domain-containing protein,Disintegrin and metalloproteinase domain-containing protein
+Acropora_006880,2.650741141706007,-2.3496878750281582,-,-
+Acropora_006882,-1.2371376303436563,2.7501548642796285,protein-cysteine S-acyltransferase activity,protein-cysteine S-acyltransferase activity
+Acropora_006883,-1.641186545283151,2.12715040142489,NA,NA
+Acropora_006886,-7.632138840369608,2.289293990897649,tetracycline transmembrane transporter activity,tetracycline transmembrane transporter activity
+Acropora_006906,-1.1188108465310056,1.883932058725876,clathrin binding,clathrin binding
+Acropora_006908,2.737287660014278,-3.716690508563735,regulation of chromosome segregation,regulation of chromosome segregation
+Acropora_006945,-1.2329106280325715,-1.1641108149231314,protein tyrosine/threonine phosphatase activity,protein tyrosine/threonine phosphatase activity
+Acropora_006953,1.3978039088185175,-4.063890566085416,renal vesicle induction,renal vesicle induction
+Acropora_006958,1.2018105159998826,-1.6008817301907203,Programmed cell death,Programmed cell death
+Acropora_006973,2.0787443374700705,-1.0350852384628682,"Fanconi anemia, complementation group I","Fanconi anemia, complementation group I"
+Acropora_007005,-1.184429245237071,2.4206521955133997,zinc ion binding,zinc ion binding
+Acropora_007014,-5.0859182089373185,1.3513929300425518,NA,NA
+Acropora_007019,1.0989495771232445,-3.9761260839999255,Transcription elongation regulator,Transcription elongation regulator
+Acropora_007036,1.8816177837884227,-5.669050770306118,NA,NA
+Acropora_007059,1.809435502400189,-1.7143742283923367,NA,NA
+Acropora_007095,1.0087097933062241,-6.855585568161329,NA,NA
+Acropora_007169,1.726622428805386,-9.973666714409216,fibroblast growth factor-activated receptor activity,fibroblast growth factor-activated receptor activity
+Acropora_007303,1.4796376815202572,-1.7475809214127442,plus-end-directed vesicle transport along microtubule,plus-end-directed vesicle transport along microtubule
+Acropora_007320,-1.3609899865914596,6.107138242246834,Nidogen-like,Nidogen-like
+Acropora_007323,-1.1745284687148245,1.453557303504513,neurotransmitter:sodium symporter activity,neurotransmitter:sodium symporter activity
+Acropora_007329,5.0358424152472585,-3.1332456987496866,mothers against decapentaplegic homolog,mothers against decapentaplegic homolog
+Acropora_007344,-1.2664082057787494,5.746375235384432,NA,NA
+Acropora_007365,-1.2703344787633424,7.548991993491547,NA,NA
+Acropora_007366,-2.5641873579515395,11.739518897122192,NA,NA
+Acropora_007388,-1.4770624520301816,5.51975150268505,heme binding,heme binding
+Acropora_007405,1.4886035123440067,-1.4847427046146804,NA,NA
+Acropora_007435,1.9502311582587115,-1.7150394178389277,Interferon-induced transmembrane protein,Interferon-induced transmembrane protein
+Acropora_007447,3.566181084103517,-4.097215166260673,NA,NA
+Acropora_007448,1.1947123352863978,-2.5560652531073083,sphingosine N-acyltransferase activity,sphingosine N-acyltransferase activity
+Acropora_007492,-1.5313673361366595,8.09693585476871,ubiquitin conjugating enzyme binding,ubiquitin conjugating enzyme binding
+Acropora_007494,-1.0342275273149917,12.21866697869979,intra-Golgi vesicle-mediated transport,intra-Golgi vesicle-mediated transport
+Acropora_007508,1.5483972589258912,-2.5701643641199494,NA,NA
+Acropora_007522,-2.553750953771349,4.698870833572748,protein transport,protein transport
+Acropora_007524,1.2322418708921512,-1.0281364309686458,mitotic chromosome condensation,mitotic chromosome condensation
+Acropora_007533,1.8215801130035796,-4.938267081512752,NA,NA
+Acropora_007568,1.6424737346370024,-6.105474584342306,NA,NA
+Acropora_007577,1.3848099706412154,-9.889832710354069,Transient receptor potential cation channel subfamily M member,Transient receptor potential cation channel subfamily M member
+Acropora_007590,4.101054334137381,-9.010893722690707,NA,NA
+Acropora_007604,4.779545911688208,-3.6418840455165595,resolution of meiotic recombination intermediates,resolution of meiotic recombination intermediates
+Acropora_007614,1.693454335543189,-1.8583616615306888,"Inner centromere protein, ARK binding region","Inner centromere protein, ARK binding region"
+Acropora_007616,6.127026212073509,-12.744476412369004,NA,NA
+Acropora_007622,-1.9500489118643385,4.9581980013478075,Diacylglycerol kinase,Diacylglycerol kinase
+Acropora_007628,-1.2844975566677852,4.018159698088112,NA,NA
+Acropora_007641,-1.0434276276636396,4.3752909250441645,Ankyrin repeats (3 copies),Ankyrin repeats (3 copies)
+Acropora_007652,-11.832972163482365,8.267584060452212,Copper/zinc superoxide dismutase (SODC),Copper/zinc superoxide dismutase (SODC)
+Acropora_007662,1.0693524802013696,-3.857505383953485,Transposase IS4,Transposase IS4
+Acropora_007695,-1.52070811656752,13.63478164419432,Belongs to the peptidase C1 family,Belongs to the peptidase C1 family
+Acropora_007708,1.4182567430565107,-9.767977880781116,demethylase,demethylase
+Acropora_007734,1.5171850639451938,-7.601051710497436,GTPase activity,GTPase activity
+Acropora_007740,-1.074287349664281,10.864815511828528,NA,NA
+Acropora_007741,-1.68459412381811,7.029333056140895,oxidative phosphorylation uncoupler activity,oxidative phosphorylation uncoupler activity
+Acropora_007742,-1.1490258473127741,16.89474832509402,sedoheptulose-7-phosphate:D-glyceraldehyde-3-phosphate glyceronetransferase activity,sedoheptulose-7-phosphate:D-glyceraldehyde-3-phosphate glyceronetransferase activity
+Acropora_007791,-1.3942897910632106,4.316243455836798,"family with sequence similarity 175, member B","family with sequence similarity 175, member B"
+Acropora_007794,-1.2091096573223745,3.8624386090355647,macromolecule glycosylation,macromolecule glycosylation
+Acropora_007811,-1.7633582727969717,20.469245216842804,"hydrolase activity, acting on ester bonds","hydrolase activity, acting on ester bonds"
+Acropora_007813,-1.0239447575275546,3.426126711628677,zinc ion binding,zinc ion binding
+Acropora_007853,1.2804181271414043,-6.288080863001428,NA,NA
+Acropora_007860,2.423927550512444,-3.8092609698390314,NA,NA
+Acropora_007875,-1.3608921255390218,6.622566880642731,calcium-dependent phospholipid binding,calcium-dependent phospholipid binding
+Acropora_007877,1.5978969234716107,-1.1425868524925777,NA,NA
+Acropora_007883,-3.7569339500457053,6.183417446850324,non-haem dioxygenase in morphine synthesis N-terminal,non-haem dioxygenase in morphine synthesis N-terminal
+Acropora_007897,-1.4159346513361175,1.8953886636371415,signal peptide processing,signal peptide processing
+Acropora_007947,-1.2759549789496167,4.4316465366676105,vesicle-mediated transport,vesicle-mediated transport
+Acropora_007955,-1.0399915339955652,8.345108942181652,ganglioside GM2 binding,ganglioside GM2 binding
+Acropora_007960,1.3434802888781008,-4.434044710735334,MFS_1 like family,MFS_1 like family
+Acropora_007963,-2.4276716916049845,12.599506309247595,regulation of smoothened signaling pathway,regulation of smoothened signaling pathway
+Acropora_007990,2.074134164060131,-4.804079259748069,coiled-coil domain-containing protein 34,coiled-coil domain-containing protein 34
+Acropora_007996,1.4009475948803738,-3.7522105864835216,NA,NA
+Acropora_008002,8.896664671657843,-15.734558335206799,neurotransmitter:sodium symporter activity,neurotransmitter:sodium symporter activity
+Acropora_008011,-1.0723843798044186,4.711348906990115,NA,NA
+Acropora_008013,-1.2385927751192989,6.2231563368754275,NA,NA
+Acropora_008066,3.39500610762951,-5.070939206789101,positive regulation of DNA endoreduplication,positive regulation of DNA endoreduplication
+Acropora_008068,2.190405826302299,-8.775751465573288,protein-glutamine gamma-glutamyltransferase activity,protein-glutamine gamma-glutamyltransferase activity
+Acropora_008070,5.585299676192838,-14.125811546713505,protein-glutamine gamma-glutamyltransferase activity,protein-glutamine gamma-glutamyltransferase activity
+Acropora_008072,2.1442664598834624,-1.7160426439015073,Catalytic LigB subunit of aromatic ring-opening dioxygenase,Catalytic LigB subunit of aromatic ring-opening dioxygenase
+Acropora_008077,-1.0501010523387144,1.6667991789603112,NA,NA
+Acropora_008078,2.229397359079288,-10.282410735024127,NA,NA
+Acropora_008080,-2.3434534880654816,4.3752909250441645,gene silencing by RNA,gene silencing by RNA
+Acropora_008133,-1.610385614937589,6.061293286674264,protein transport,protein transport
+Acropora_008134,1.4595652971432214,-6.0196925970304465,NA,NA
+Acropora_008143,1.8547710011375205,-6.581784172098355,NA,NA
+Acropora_008169,-1.925591434747463,4.852991033139917,Ral GTPase binding,Ral GTPase binding
+Acropora_008193,1.6622802994291357,2.2640003238856785,"obsolete transcriptional repressor activity, RNA polymerase II transcription factor binding","obsolete transcriptional repressor activity, RNA polymerase II transcription factor binding"
+Acropora_008226,-6.392367420802704,2.90519562820766,vesicle-mediated cholesterol transport,vesicle-mediated cholesterol transport
+Acropora_008233,-1.4013595303486137,5.977224438141549,"fast, calcium ion-dependent exocytosis of neurotransmitter","fast, calcium ion-dependent exocytosis of neurotransmitter"
+Acropora_008240,-1.1268661985937767,5.355866276686101,Adp-ribosylation factor,Adp-ribosylation factor
+Acropora_008251,1.0989495771232445,-1.938434370110012,NA,NA
+Acropora_008280,-1.2460412255932025,11.498257518903642,ATP binding,ATP binding
+Acropora_008414,-2.8945301332780695,3.1897399486424787,heat shock-mediated polytene chromosome puffing,heat shock-mediated polytene chromosome puffing
+Acropora_008417,-1.263338068827537,3.334013368085906,NA,NA
+Acropora_008433,1.1745284687148245,-7.400604665577861,NA,NA
+Acropora_008434,1.0507915239005226,-4.468778648560555,NA,NA
+Acropora_008450,-7.0578665076206955,11.707812612624675,NA,NA
+Acropora_008456,-1.5513908814791908,17.271470925208618,Phosphoglycerate mutase family,Phosphoglycerate mutase family
+Acropora_008468,1.1663761283604746,-1.0592898612606607,adenylate cyclase-activating G-protein coupled receptor signaling pathway,adenylate cyclase-activating G-protein coupled receptor signaling pathway
+Acropora_008475,-1.3637650664652994,5.1858526188156935,Domain of unknown function (DUF4062),Domain of unknown function (DUF4062)
+Acropora_008484,-4.7412811658226826,32.05871797802783,NA,NA
+Acropora_008487,2.936050696182397,-4.209129017300648,NACHT and WD repeat,NACHT and WD repeat
+Acropora_008510,-1.3270600739086067,7.3915788178981146,calcium ion homeostasis,calcium ion homeostasis
+Acropora_008519,-1.9134131766033964,6.396387859314019,store-operated calcium channel activity,store-operated calcium channel activity
+Acropora_008533,2.430827768922952,-3.813026824725221,NA,NA
+Acropora_008550,1.41663936258414,-1.3479944135783473,G-protein coupled receptor activity,G-protein coupled receptor activity
+Acropora_008600,1.1426756303037118,-1.7330526730445375,PRELI domain containing 2,PRELI domain containing 2
+Acropora_008603,-4.702279126055402,4.11850672424766,Ion transport protein,Ion transport protein
+Acropora_008605,1.198966715853818,-11.299497730576368,acetyl-CoA,acetyl-CoA
+Acropora_008613,2.74668828888629,-5.717132187538608,axonogenesis involved in innervation,axonogenesis involved in innervation
+Acropora_008616,-1.2034246065855128,3.872130471948719,Cytochrome P450,Cytochrome P450
+Acropora_008617,1.4288868663958154,-4.6117049827273275,keratinization,keratinization
+Acropora_008625,1.3672259314507056,-8.34048881123216,"solute carrier family 39 (zinc transporter), member 12","solute carrier family 39 (zinc transporter), member 12"
+Acropora_008650,-1.611728241470841,1.5587840349577096,TeTratriCopeptide repeat,TeTratriCopeptide repeat
+Acropora_008667,1.2366313835085196,-1.1322911735577652,NA,NA
+Acropora_008708,1.1855453206297561,-1.4714793945654416,NA,NA
+Acropora_008715,3.691872322492917,-2.292335440044472,NA,NA
+Acropora_008760,1.2446401248232395,-1.9652301978453564,NA,NA
+Acropora_008766,1.072651988352053,-1.7117382501947616,"nuclear-transcribed mRNA catabolic process, no-go decay","nuclear-transcribed mRNA catabolic process, no-go decay"
+Acropora_008770,-4.539738633042014,8.555002726364888,NA,NA
+Acropora_008811,8.45807641075441,-20.33267661740734,NA,NA
+Acropora_008813,2.275336822147384,-9.53877292529219,WD repeat domain 7,WD repeat domain 7
+Acropora_008820,-1.0640483509605945,13.554585920589764,cell wall polysaccharide biosynthetic process,cell wall polysaccharide biosynthetic process
+Acropora_008839,-1.3142305146434465,1.6656896229570892,Sulfotransferase family,Sulfotransferase family
+Acropora_008843,1.434065726821389,-2.4283266290629713,NA,NA
+Acropora_008857,-8.101995814058487,12.391887078893529,homolog subfamily B member,homolog subfamily B member
+Acropora_008866,-1.5483972589258912,3.649907106013753,galactosyltransferase activity,galactosyltransferase activity
+Acropora_008872,-1.0901376196462824,4.69314441997402,NA,NA
+Acropora_008880,-1.287569034417908,2.2216895378379378,"ATP-binding cassette, subfamily B (MDR TAP), member","ATP-binding cassette, subfamily B (MDR TAP), member"
+Acropora_008902,-1.2442596923540845,1.3736646010006845,DNA binding,DNA binding
+Acropora_008914,-1.5717977835060817,1.0457980143694268,Peptidyl-prolyl cis-trans isomerase,Peptidyl-prolyl cis-trans isomerase
+Acropora_008923,1.0609718597130005,-3.7783903552070255,NA,NA
+Acropora_008931,2.0392522143533314,-20.261607165535597,Short calmodulin-binding motif containing conserved Ile and Gln residues.,Short calmodulin-binding motif containing conserved Ile and Gln residues.
+Acropora_008940,-1.648387327263394,1.740898552456413,"ERK and JNK pathways, inhibitor","ERK and JNK pathways, inhibitor"
+Acropora_008943,-2.6876511350673806,6.072945117040684,thiol-dependent ubiquitin-specific protease activity,thiol-dependent ubiquitin-specific protease activity
+Acropora_008945,2.187234803753723,-4.87433180262204,NA,NA
+Acropora_008954,-2.103847009585412,9.109441094568677,signal peptide processing,signal peptide processing
+Acropora_008963,1.3890356023543022,-4.436617010879171,Hepatic leukemia factor,Hepatic leukemia factor
+Acropora_008983,-2.7177273477417683,4.582033011557026,NA,NA
+Acropora_009003,-1.5431988760264985,1.8165820303703373,hyaluronic acid binding,hyaluronic acid binding
+Acropora_009016,-1.5666235215764581,3.904594975094903,NA,NA
+Acropora_009091,-1.9372503188424561,3.7903800034743345,phospholipid-translocating ATPase activity,phospholipid-translocating ATPase activity
+Acropora_009137,-1.7016061610564397,2.9929449954190037,B-cell translocation gene 1,B-cell translocation gene 1
+Acropora_009141,3.0256436569373273,-4.760106853204173,ion transport,ion transport
+Acropora_009163,-1.4343332087190135,11.87598381906397,positive regulation of DNA N-glycosylase activity,positive regulation of DNA N-glycosylase activity
+Acropora_009164,-2.0486910346958767,7.432285459416434,NA,NA
+Acropora_009168,-2.2058650974617584,9.625625575694189,NA,NA
+Acropora_009173,1.0901376196462824,1.2943485868423017,regulation of cardiac muscle cell myoblast differentiation,regulation of cardiac muscle cell myoblast differentiation
+Acropora_009174,-2.626797348002064,4.9440930247398915,zinc ion binding,zinc ion binding
+Acropora_009184,1.8611021634368552,-8.01044194460636,Centrosomal protein,Centrosomal protein
+Acropora_009209,-3.792307044611306,4.237924070229162,negative regulation of cell growth,negative regulation of cell growth
+Acropora_009215,-4.502245337895948,3.034543431995211,NA,NA
+Acropora_009223,-1.0049161048644775,6.345784329564571,rho guanine nucleotide exchange factor,rho guanine nucleotide exchange factor
+Acropora_009228,1.693454335543189,-5.941866529637674,"inositol 1,4,5-trisphosphate-sensitive calcium-release channel activity","inositol 1,4,5-trisphosphate-sensitive calcium-release channel activity"
+Acropora_009243,-1.304834797382683,6.332065125317851,"Family with sequence similarity 160, member","Family with sequence similarity 160, member"
+Acropora_009248,2.63066455558901,-3.7943344911514627,Pyridoxal-dependent decarboxylase conserved domain,Pyridoxal-dependent decarboxylase conserved domain
+Acropora_009271,1.8281799347984076,-1.2615244603737137,NA,NA
+Acropora_009287,-1.016614818494483,1.970955004797401,NA,NA
+Acropora_009299,1.1271620881612179,-2.4144844729637263,factor 1,factor 1
+Acropora_009317,-2.9390646630827235,3.9173474158743824,NA,NA
+Acropora_009330,1.444884734737399,-1.193819202020969,U1 snRNA 3'-end processing,U1 snRNA 3'-end processing
+Acropora_009336,-1.3431191215833855,1.8670882448712895,cellular response to vasopressin,cellular response to vasopressin
+Acropora_009363,-1.7648674952081698,-7.019736458145729,NA,NA
+Acropora_009408,1.0419875571632116,-5.554952435006352,NA,NA
+Acropora_009457,2.0730725718286753,-4.756846551905123,GTP binding,GTP binding
+Acropora_009486,-4.955236128585332,9.272235411072687,magnesium ion transmembrane transporter activity,magnesium ion transmembrane transporter activity
+Acropora_009522,2.874646295805967,-10.289504322685248,NA,NA
+Acropora_009527,2.450141865965567,-10.140508352968748,G1 to G0 transition involved in cell differentiation,G1 to G0 transition involved in cell differentiation
+Acropora_009565,-3.9808713969719407,4.627186357520294,NA,NA
+Acropora_009578,2.1617381857490816,-10.997371013831835,NA,NA
+Acropora_009581,-3.28871853658401,5.16651066319294,Ubiquitin-conjugating enzyme,Ubiquitin-conjugating enzyme
+Acropora_009588,1.380690452621398,-4.528277282129094,NACHT and WD repeat,NACHT and WD repeat
+Acropora_009622,1.5520637301086222,-3.330574272623438,rho guanine nucleotide exchange factor,rho guanine nucleotide exchange factor
+Acropora_009633,-5.134205894112574,-2.119824047706466,NA,NA
+Acropora_009639,1.0184281153317438,-1.0951210396778146,NA,NA
+Acropora_009648,1.5825993770416047,-1.4502554868357338,cell cycle,cell cycle
+Acropora_009650,-1.9560262126722026,6.927239806817773,-,-
+Acropora_009660,1.443790731772035,-2.2804483301389826,NA,NA
+Acropora_009763,-1.4856415058112562,10.527344640326032,positive regulation of histone H3-K79 methylation,positive regulation of histone H3-K79 methylation
+Acropora_009771,1.3952662347701688,-4.836085643464259,Domain of unknown function (DUF4795),Domain of unknown function (DUF4795)
+Acropora_009775,2.936050696182397,-1.9862858470213642,NA,NA
+Acropora_009776,3.2302418463815123,-2.0124357693042554,Collagen triple helix,Collagen triple helix
+Acropora_009796,-1.3581320620678428,2.562519352462875,reverse transcriptase,reverse transcriptase
+Acropora_009817,-2.3056860689401923,6.884585439476595,NA,NA
+Acropora_009881,1.0507915239005226,-4.957732123846532,NA,NA
+Acropora_009948,6.2129691121751796,-2.640211910981712,frizzled binding,frizzled binding
+Acropora_009949,2.047289973051816,-5.3530169195102975,ELKS RAB6-interacting CAST family member,ELKS RAB6-interacting CAST family member
+Acropora_009970,-1.443790731772035,12.453460897658907,pyrroline-5-carboxylate reductase activity,pyrroline-5-carboxylate reductase activity
+Acropora_009972,-1.4232008252090353,9.059456786317051,NA,NA
+Acropora_009983,-1.1607436364676973,1.0569188698619953,NA,NA
+Acropora_009985,1.8821418643704475,3.367731029266721,"dolichyl pyrophosphate Man9GlcNAc2 alpha-1,3-glucosyltransferase activity","dolichyl pyrophosphate Man9GlcNAc2 alpha-1,3-glucosyltransferase activity"
+Acropora_009986,3.1425454307116345,-4.058987796516094,metal ion binding,metal ion binding
+Acropora_010000,2.0138359922207556,-5.085424834955018,NA,NA
+Acropora_010002,-1.0923298373992036,6.822497517055348,maintenance of translational fidelity,maintenance of translational fidelity
+Acropora_010083,-3.669605961794665,5.545383395932712,Ubiquitin-2 like Rad60 SUMO-like,Ubiquitin-2 like Rad60 SUMO-like
+Acropora_010084,-1.4009475948803738,6.051165968774918,member RAS oncogene family,member RAS oncogene family
+Acropora_010086,-1.9612131654284033,3.9741873342739544,Thioesterase superfamily member 6,Thioesterase superfamily member 6
+Acropora_010089,-1.246428046251015,1.4855161492027096,NA,NA
+Acropora_010094,-1.973864094035657,2.468472780263262,Subtilase family,Subtilase family
+Acropora_010097,-1.4490334053699387,5.596137169242673,RNA polymerase I transcription factor binding,RNA polymerase I transcription factor binding
+Acropora_010099,1.6776261048834467,-1.7474717117218432,Integrin linked kinase,Integrin linked kinase
+Acropora_010131,-5.090397124879728,9.41778170610202,It is involved in the biological process described with,It is involved in the biological process described with
+Acropora_010152,-1.7312006996762523,1.235299432708258,IgLON family member 5,IgLON family member 5
+Acropora_010170,1.919637907503934,-5.827410479893434,response to cell cycle checkpoint signaling,response to cell cycle checkpoint signaling
+Acropora_010229,4.292676712355693,-2.422009228443052,Arachidonate 5-lipoxygenase,Arachidonate 5-lipoxygenase
+Acropora_010237,-7.282095266252284,9.498448503864672,unfolded protein binding,unfolded protein binding
+Acropora_010282,-2.3224482033506075,8.045150621090068,NA,NA
+Acropora_010286,2.423927550512444,-3.950337116227262,PFAM Glycosyl transferases group 1,PFAM Glycosyl transferases group 1
+Acropora_010289,-1.4315569733399307,4.805328817865268,NA,NA
+Acropora_010290,-2.424091652466368,14.192652756499694,Belongs to the peptidase S1 family,Belongs to the peptidase S1 family
+Acropora_010312,2.3224482033506075,-6.590889886342115,NA,NA
+Acropora_010314,-1.5321169298163793,4.008129206776872,steroid receptor RNA activator 1,steroid receptor RNA activator 1
+Acropora_010315,-1.7115289732284436,1.8011942262517346,stromal interaction molecule,stromal interaction molecule
+Acropora_010328,1.4289152771136533,-2.560135809238545,cAMP-dependent protein kinase regulator activity,cAMP-dependent protein kinase regulator activity
+Acropora_010329,2.2475561702916855,-4.053989757870193,Extracellular matrix protein,Extracellular matrix protein
+Acropora_010346,2.5791731413495915,-2.366705953367222,NA,NA
+Acropora_010416,1.720534237389516,-9.472437343376754,Transmembrane protein 131-like,Transmembrane protein 131-like
+Acropora_010419,-1.1275578781486464,7.29926576799246,protein-cysteine S-acyltransferase activity,protein-cysteine S-acyltransferase activity
+Acropora_010441,-1.64544527640609,10.593487092963608,NA,NA
+Acropora_010456,-1.306280222541513,5.855744662421852,NA,NA
+Acropora_010494,1.4835736451264656,-2.805867797121712,transmembrane receptor protein tyrosine kinase activity,transmembrane receptor protein tyrosine kinase activity
+Acropora_010519,2.5695886724314305,-12.198956560428401,NA,NA
+Acropora_010521,3.039451035636946,-9.97262343986736,NA,NA
+Acropora_010538,3.1432094458435738,-16.860935225572064,NA,NA
+Acropora_010547,2.076080969435031,-5.335769475917867,NA,NA
+Acropora_010549,-3.39500610762951,-3.7383388544245335,microtubule motor activity,microtubule motor activity
+Acropora_010587,1.3295654773640215,2.758099757198392,NA,NA
+Acropora_010588,-5.964692128756754,13.130283949249511,NA,NA
+Acropora_010593,5.929316014171079,-11.085294000227785,NA,NA
+Acropora_010595,-1.9829443870650685,4.311365196927248,Protein of unknown function (DUF719),Protein of unknown function (DUF719)
+Acropora_010599,-1.0141487880355873,6.431105877686241,WW domain binding,WW domain binding
+Acropora_010600,-1.3487701784126838,1.2091916770106688,NA,NA
+Acropora_010604,1.0821973482225813,-1.6628281794792252,"Sarcoglycan, beta (43kDa dystrophin-associated glycoprotein)","Sarcoglycan, beta (43kDa dystrophin-associated glycoprotein)"
+Acropora_010625,-7.678905252671594,8.311187445002718,NA,NA
+Acropora_010627,-8.534623304956648,4.723884756924041,NA,NA
+Acropora_010628,-9.17121882763388,5.7856590343024505,NA,NA
+Acropora_010672,-2.3407341078543586,7.221068040657367,Endomembrane protein 70,Endomembrane protein 70
+Acropora_010684,-1.6396366177330144,4.472173917182406,Kunitz/Bovine pancreatic trypsin inhibitor domain,Kunitz/Bovine pancreatic trypsin inhibitor domain
+Acropora_010688,-1.2909157876502044,12.617722083519695,histone H2A acetylation,histone H2A acetylation
+Acropora_010696,-1.6864108696913345,9.308898500918039,intracellular cholesterol transport,intracellular cholesterol transport
+Acropora_010718,-1.3668862357741625,-2.173195364411621,extracellular ligand-gated ion channel activity,extracellular ligand-gated ion channel activity
+Acropora_010747,-1.4534195403407462,8.997758323928158,dolichyl-diphosphooligosaccharide-protein glycotransferase activity,dolichyl-diphosphooligosaccharide-protein glycotransferase activity
+Acropora_010749,1.0507277596647793,-3.747049006873201,transcriptional regulator,transcriptional regulator
+Acropora_010760,-2.5959764019766163,6.735871488149187,NA,NA
+Acropora_010775,1.2799098146779746,-3.1837912962335877,NA,NA
+Acropora_010778,-1.0432424706466243,1.2097571507081264,BTB And C-terminal Kelch,BTB And C-terminal Kelch
+Acropora_010783,2.290687680201197,-1.157057654960751,Green fluorescent protein,Green fluorescent protein
+Acropora_010796,-1.1657454402783527,7.906526655952982,protein kinase activity,protein kinase activity
+Acropora_010815,-1.5195718672703091,13.263070318808154,DIS3 exosome endoribonuclease and 3'-5' exoribonuclease,DIS3 exosome endoribonuclease and 3'-5' exoribonuclease
+Acropora_010816,-1.8764590448681098,27.6636798298591,NA,NA
+Acropora_010828,-1.9414041718590949,4.77458160178416,ATP:ADP antiporter activity,ATP:ADP antiporter activity
+Acropora_010839,1.6210591658201479,-1.7575149172770432,NA,NA
+Acropora_010848,7.070728471098075,-6.608442184078899,Tower,Tower
+Acropora_010870,-1.205300584723165,2.4439445682765637,Belongs to the AB hydrolase superfamily. Lipase family,Belongs to the AB hydrolase superfamily. Lipase family
+Acropora_010911,-3.0756391011994593,8.139045449517878,NA,NA
+Acropora_010917,-6.804477040184134,4.083071456624237,NA,NA
+Acropora_010931,2.6368078786672764,-12.08113236440684,NA,NA
+Acropora_010941,1.3952662347701688,-3.2416491525458486,heterotrimeric G-protein binding,heterotrimeric G-protein binding
+Acropora_010948,1.2392139058557983,-2.356234156781922,It is involved in the biological process described with signal transduction,It is involved in the biological process described with signal transduction
+Acropora_010967,1.1099405432930705,-3.1661016372754442,NA,NA
+Acropora_010972,4.092890408854837,-2.2840658915735266,Belongs to the MCM family,Belongs to the MCM family
+Acropora_010973,-2.689032015806964,-1.5789472710115435,Nuclear factor erythroid,Nuclear factor erythroid
+Acropora_010981,-1.5648369542700198,11.498257518903642,Ubiquitin-2 like Rad60 SUMO-like,Ubiquitin-2 like Rad60 SUMO-like
+Acropora_011001,10.498111564280455,-19.805896250079016,calcium ion-regulated exocytosis of neurotransmitter,calcium ion-regulated exocytosis of neurotransmitter
+Acropora_011016,-2.9597998107999706,3.251412412730177,"Solute carrier family 35, member B1","Solute carrier family 35, member B1"
+Acropora_011023,1.1496631721219737,-2.4662518047050033,stabilization of membrane potential,stabilization of membrane potential
+Acropora_011082,1.8167508505041263,-3.9026304322460423,NMDA glutamate receptor activity,NMDA glutamate receptor activity
+Acropora_011089,-1.4219227554494154,3.0044593107332216,TFIIH basal transcription factor complex helicase XPB,TFIIH basal transcription factor complex helicase XPB
+Acropora_011102,2.0418778064532628,-6.674011964464642,NA,NA
+Acropora_011129,1.2821950275219267,-3.2885936562244473,NA,NA
+Acropora_011132,1.705927061866875,-10.786659453490234,NA,NA
+Acropora_011133,1.0066731979031842,-4.157572021780118,NA,NA
+Acropora_011143,5.5137095686175055,-13.319085811029902,NA,NA
+Acropora_011149,2.279568530062291,-5.993866354519076,"Transfers N-acetylgalactosamine (GalNAc) from UDP-GalNAc to N-acetylglucosamine-beta-benzyl with a beta-1,4-linkage to form N,N'-diacetyllactosediamine, GalNAc-beta-1,4-GlcNAc structures in N-linked glycans and probably O-linked glycans","Transfers N-acetylgalactosamine (GalNAc) from UDP-GalNAc to N-acetylglucosamine-beta-benzyl with a beta-1,4-linkage to form N,N'-diacetyllactosediamine, GalNAc-beta-1,4-GlcNAc structures in N-linked glycans and probably O-linked glycans"
+Acropora_011173,3.303791787463358,-17.45167318304676,NA,NA
+Acropora_011181,-1.9829443870650685,6.67963028112944,Chondroitin,Chondroitin
+Acropora_011186,2.0723002532687715,-2.835393120503907,calcium ion-regulated exocytosis of neurotransmitter,calcium ion-regulated exocytosis of neurotransmitter
+Acropora_011188,1.1239382595545748,-3.209167142253655,calcium ion-regulated exocytosis of neurotransmitter,calcium ion-regulated exocytosis of neurotransmitter
+Acropora_011194,2.5561755724409925,-1.2260830966336917,"Linear amide C-N hydrolases, choloylglycine hydrolase family","Linear amide C-N hydrolases, choloylglycine hydrolase family"
+Acropora_011200,-5.510280953835452,19.328653185836217,phagocytosis,phagocytosis
+Acropora_011205,1.01820864407461,-2.2593490958611877,NA,NA
+Acropora_011208,5.506211563497822,-9.122070300299448,NA,NA
+Acropora_011209,1.0946784607033653,-1.4070441132461844,NA,NA
+Acropora_011218,1.1582918661853918,-1.8744991542826308,NA,NA
+Acropora_011226,1.9721218579379398,-2.813634655295084,NA,NA
+Acropora_011244,5.044507024658301,-8.40391571399065,NA,NA
+Acropora_011245,3.1374408395915894,-4.85958479274037,NA,NA
+Acropora_011246,4.1025137480656015,-7.552665583472049,NA,NA
+Acropora_011262,5.015257412381,-8.224349785894251,NA,NA
+Acropora_011268,-2.751280889463976,8.036242511802806,NA,NA
+Acropora_011285,-1.0432424706466243,3.9970644853116424,Erythrocyte membrane protein band 4.1 like,Erythrocyte membrane protein band 4.1 like
+Acropora_011301,1.0096655676698014,-2.235595115937606,NA,NA
+Acropora_011311,1.4040582455106616,-1.2607249710449469,apoptotic mitochondrial changes,apoptotic mitochondrial changes
+Acropora_011334,-1.6304516625274856,3.6116045899860594,Golgi organization,Golgi organization
+Acropora_011357,-1.7165605914240925,6.452843839158183,"ATP-binding cassette, sub-family F","ATP-binding cassette, sub-family F"
+Acropora_011388,1.41663936258414,-5.0138159833671585,"Responsible for the deacetylation of lysine residues on the N-terminal part of the core histones (H2A, H2B, H3 and H4). Histone deacetylation gives a tag for epigenetic repression and plays an important role in transcriptional regulation, cell cycle progression and developmental events","Responsible for the deacetylation of lysine residues on the N-terminal part of the core histones (H2A, H2B, H3 and H4). Histone deacetylation gives a tag for epigenetic repression and plays an important role in transcriptional regulation, cell cycle progression and developmental events"
+Acropora_011390,1.440685843489072,-4.819602599100812,positive regulation of type B pancreatic cell proliferation,positive regulation of type B pancreatic cell proliferation
+Acropora_011391,2.2217271734992723,-5.435011036142955,SKI DACH domain containing 1,SKI DACH domain containing 1
+Acropora_011416,1.467573013377469,-3.4867683261614077,NA,NA
+Acropora_011419,2.0730725718286753,-2.864928617649828,NA,NA
+Acropora_011480,1.1256580887853398,-1.2470491583663412,PMS1 postmeiotic segregation increased 1 (S. cerevisiae),PMS1 postmeiotic segregation increased 1 (S. cerevisiae)
+Acropora_011500,1.7589028586634503,-1.8580191254538652,"mitochondrial electron transport, NADH to ubiquinone","mitochondrial electron transport, NADH to ubiquinone"
+Acropora_011510,1.4710823244004976,-3.2516670142313258,amine sulfotransferase activity,amine sulfotransferase activity
+Acropora_011511,-1.2256670783813217,3.1717551432856395,amine sulfotransferase activity,amine sulfotransferase activity
+Acropora_011514,1.8865172231657554,-4.538473030857348,NA,NA
+Acropora_011604,-3.8490539587227155,6.803644310067131,NA,NA
+Acropora_011605,-1.2255709979818579,2.3110287510027376,protein kinase C activity,protein kinase C activity
+Acropora_011607,-2.236882861755093,2.9161514385943352,NA,NA
+Acropora_011609,-1.0825656648327198,4.766753251775234,metal ion binding,metal ion binding
+Acropora_011724,1.1613700617151674,-3.513986322949603,zinc ion binding,zinc ion binding
+Acropora_011905,-2.3860690069088943,4.252994626893548,NA,NA
+Acropora_011943,-5.425350305567188,11.436368450847326,NA,NA
+Acropora_011944,-2.509866628269821,1.2075694569660516,MFS_1 like family,MFS_1 like family
+Acropora_011954,-1.9354179593865888,5.035007037018527,NA,NA
+Acropora_011965,-3.595082555493646,24.23268245654695,NA,NA
+Acropora_011992,-1.3762602510063053,7.084135886315102,[heparan sulfate]-glucosamine 3-sulfotransferase 1 activity,[heparan sulfate]-glucosamine 3-sulfotransferase 1 activity
+Acropora_012129,-1.048806671051748,10.286210049971727,NA,NA
+Acropora_012149,-8.534623304956648,2.9335375611827748,NA,NA
+Acropora_012388,1.1507844488779129,-2.5129672702423953,Leucine rich repeat containing 45,Leucine rich repeat containing 45
+Acropora_012400,5.081700042707973,-4.972419163931531,"DNA (cytosine-5-)-methyltransferase activity, acting on CpN substrates","DNA (cytosine-5-)-methyltransferase activity, acting on CpN substrates"
+Acropora_012525,1.9721218579379398,-8.642618426762848,NA,NA
+Acropora_012558,1.6704246103077818,-6.444549428476065,protein O-linked glycosylation via threonine,protein O-linked glycosylation via threonine
+Acropora_012569,1.0970495806983995,-8.752378517127049,CW-type Zinc Finger,CW-type Zinc Finger
+Acropora_012600,1.4206420574021528,-3.6751429432619567,NA,NA
+Acropora_012605,1.841966923588032,-2.0644781520292232,gamma-tubulin binding,gamma-tubulin binding
+Acropora_012877,-2.201677015005094,4.350711868159688,Promotes transcriptional elongation by Su(Tpl) ELL. Essential for development (By similarity),Promotes transcriptional elongation by Su(Tpl) ELL. Essential for development (By similarity)
+Acropora_012878,-3.871731103008105,15.572037764774217,positive regulation of epithelial to mesenchymal transition,positive regulation of epithelial to mesenchymal transition
+Acropora_012906,-1.7798741830549931,3.6484098945617442,negative regulation of endoplasmic reticulum stress-induced intrinsic apoptotic signaling pathway,negative regulation of endoplasmic reticulum stress-induced intrinsic apoptotic signaling pathway
+Acropora_012929,-3.9519905258788137,2.6628349679798946,NA,NA
+Acropora_012934,1.3234461865008615,-1.8163985161807863,Transcriptional activator GLI3,Transcriptional activator GLI3
+Acropora_012938,-1.6442683058567522,12.434851594485334,non-membrane spanning protein tyrosine phosphatase activity,non-membrane spanning protein tyrosine phosphatase activity
+Acropora_012941,-1.0286309972114038,1.7056085508684748,NA,NA
+Acropora_012944,-2.294378487462894,3.4409768403731373,Regulator of chromosome condensation (RCC1) repeat,Regulator of chromosome condensation (RCC1) repeat
+Acropora_012945,-1.1356474476706735,2.0197883786953663,"Tubulin tyrosine ligase-like family, member 4","Tubulin tyrosine ligase-like family, member 4"
+Acropora_012973,-2.196428894406677,14.77964047893075,ribosomal protein,ribosomal protein
+Acropora_012980,1.4360901871824485,-2.7194011436585517,Dickkopf N-terminal cysteine-rich region,Dickkopf N-terminal cysteine-rich region
+Acropora_012982,-1.4922061200961376,7.055771838510311,Protein transport protein SEC61 subunit,Protein transport protein SEC61 subunit
+Acropora_012990,-2.2530111914713533,1.4695017438161198,helix loop helix domain,helix loop helix domain
+Acropora_013023,2.0061805711597755,-5.161035292521089,Serine threonine-protein kinase tousled-like,Serine threonine-protein kinase tousled-like
+Acropora_013043,1.0687005944142793,-2.249289429929345,Universal stress protein family,Universal stress protein family
+Acropora_013044,1.0338355280498044,-2.363544261936671,NA,NA
+Acropora_013078,2.77880756347862,-8.941298947527942,endoplasmic reticulum-plasma membrane tethering,endoplasmic reticulum-plasma membrane tethering
+Acropora_013082,-1.5375936767450509,-3.338833417106372,NA,NA
+Acropora_013107,-9.741206303338595,3.5483296029642584,WD40 repeats,WD40 repeats
+Acropora_013142,1.5305555411887535,-2.8309508572420965,RNA recognition motif,RNA recognition motif
+Acropora_013151,1.2021891400292624,-5.544531208031378,homeobox,homeobox
+Acropora_013164,-1.2821950275219267,6.1164721282157775,pyridoxal phosphatase activity,pyridoxal phosphatase activity
+Acropora_013170,-2.472701247691628,18.309685941393827,NA,NA
+Acropora_013196,-1.368260915234397,12.45819371513897,NADH dehydrogenase ubiquinone 1 alpha subcomplex,NADH dehydrogenase ubiquinone 1 alpha subcomplex
+Acropora_013199,-1.5377853491262157,7.446790153373293,regulation of cellular macromolecule biosynthetic process,regulation of cellular macromolecule biosynthetic process
+Acropora_013219,1.1118026425312357,-2.6692652600770232,NA,NA
+Acropora_013277,1.5181793049102694,-4.933523015500998,RNA secondary structure unwinding,RNA secondary structure unwinding
+Acropora_013297,2.011056793063284,-5.286737746153797,"Protein tyrosine phosphatase, receptor type","Protein tyrosine phosphatase, receptor type"
+Acropora_013300,3.9428629857597794,-2.607814466976894,NA,NA
+Acropora_013311,1.0263036988979586,-5.858966510049636,NA,NA
+Acropora_013317,1.3883026587502012,-6.479241742163763,NA,NA
+Acropora_013326,1.3466798798503972,-6.034822407184164,protein ubiquitination,protein ubiquitination
+Acropora_013327,1.9002917198247729,-12.618125601840681,protein ubiquitination,protein ubiquitination
+Acropora_013337,-1.1240742125540926,6.484815041073065,Belongs to the protein kinase superfamily,Belongs to the protein kinase superfamily
+Acropora_013380,-1.1733329007552253,1.3041032240446222,integrin-mediated signaling pathway,integrin-mediated signaling pathway
+Acropora_013393,1.9324193084019274,-1.6240060344551002,cellular response to bleomycin,cellular response to bleomycin
+Acropora_013396,2.9838897968108378,-9.441702417246985,Has a role in the perception of gravity,Has a role in the perception of gravity
+Acropora_013403,-7.863863808735434,6.872637628720904,NA,NA
+Acropora_013440,-3.0974491278193255,2.4573924515087326,tooth eruption,tooth eruption
+Acropora_013479,-1.0500744973866483,6.56573633493296,microtubule nucleation,microtubule nucleation
+Acropora_013482,-2.188808807940293,1.431109443773284,DBD domain binding,DBD domain binding
+Acropora_013499,-3.727011830870472,2.7643527899366487,zinc ion binding,zinc ion binding
+Acropora_013500,-1.6213824782954778,4.280811904912225,NA,NA
+Acropora_013509,-1.4145204296817335,4.477015624959543,RNA binding,RNA binding
+Acropora_013590,4.472088205780537,-12.08113236440684,forkhead box,forkhead box
+Acropora_013591,-1.3981536211043626,17.277286658760232,intracellular protein transport,intracellular protein transport
+Acropora_013598,1.4117765489065697,-1.535268847584199,zymogen granule exocytosis,zymogen granule exocytosis
+Acropora_013599,-1.549828070191631,10.08070655197172,signal peptide processing,signal peptide processing
+Acropora_013627,-1.0009537261572512,2.2368311776668284,tRNA (N(6)-L-threonylcarbamoyladenosine(37)-C(2))-methylthiotransferase,tRNA (N(6)-L-threonylcarbamoyladenosine(37)-C(2))-methylthiotransferase
+Acropora_013651,-1.3199083365059012,1.1410128562276949,NA,NA
+Acropora_013659,-1.4491911369890909,8.913907699597312,Cytosolic acyl coenzyme A thioester,Cytosolic acyl coenzyme A thioester
+Acropora_013672,-1.9272601651917103,8.707236782494299,"3-kinase, catalytic subunit","3-kinase, catalytic subunit"
+Acropora_013679,3.1916210695874336,-3.3375742291395576,c-SKI Smad4 binding domain,c-SKI Smad4 binding domain
+Acropora_013680,1.5110509384736948,-2.8778558780631904,rho guanine nucleotide exchange factor,rho guanine nucleotide exchange factor
+Acropora_013682,2.062683721242324,-3.655373804674622,positive regulation of bicellular tight junction assembly,positive regulation of bicellular tight junction assembly
+Acropora_013689,-1.3691172233403328,4.560588095916339,endocytosis,endocytosis
+Acropora_013696,2.047289973051816,-1.0953198642874495,EF-hand domain pair,EF-hand domain pair
+Acropora_013703,1.1607326269218838,-1.2962933992066388,frizzled binding,frizzled binding
+Acropora_013707,7.6560789855907885,-1.528946965857078,homophilic cell adhesion via plasma membrane adhesion molecules,homophilic cell adhesion via plasma membrane adhesion molecules
+Acropora_013729,1.7604870373682273,-5.0281978745777405,-,-
+Acropora_013750,2.7406279531444264,-1.9205197358468877,ATP-dependent RNA helicase,ATP-dependent RNA helicase
+Acropora_013789,-1.480197369801752,18.54289166021468,phosphopyruvate hydratase activity,phosphopyruvate hydratase activity
+Acropora_013796,-1.0562519777471504,8.905212935150793,eukaryotic translation initiation factor,eukaryotic translation initiation factor
+Acropora_013797,-1.205300584723165,7.688686858599709,procollagen-proline 4-dioxygenase activity,procollagen-proline 4-dioxygenase activity
+Acropora_013803,1.1496631721219737,-1.9659558065730205,NA,NA
+Acropora_013812,1.0594561789701782,-7.6465258161678555,"Pleckstrin homology domain containing, family G (with RhoGef domain) member","Pleckstrin homology domain containing, family G (with RhoGef domain) member"
+Acropora_013822,1.0049161048644775,3.6275684753911044,NA,NA
+Acropora_013832,-1.2122585284298009,9.753674526304232,sequence-specific DNA binding,sequence-specific DNA binding
+Acropora_013834,2.5329826534232236,-5.326567659656683,transcription activator 1,transcription activator 1
+Acropora_013840,-1.0009537261572512,9.647734559965457,NA,NA
+Acropora_013863,1.0959968999398955,-3.3302121637379956,NA,NA
+Acropora_013880,3.2165104295134572,-28.034554400343378,NA,NA
+Acropora_013887,2.447571201250865,-13.050932821485977,NA,NA
+Acropora_013889,1.359091881373616,-2.120441805510119,carbohydrate binding,carbohydrate binding
+Acropora_013902,1.7277575646552488,-1.6347250599468528,DDB1- and CUL4-associated factor 10,DDB1- and CUL4-associated factor 10
+Acropora_013931,1.64544527640609,-2.8809902364705895,"base-excision repair, DNA ligation","base-excision repair, DNA ligation"
+Acropora_013932,2.164395924020364,-2.0131223171929116,glyceraldehyde-3-phosphate dehydrogenase (NAD(P)+) (phosphorylating) activity,glyceraldehyde-3-phosphate dehydrogenase (NAD(P)+) (phosphorylating) activity
+Acropora_013936,3.213917749779303,-12.348277321132496,NA,NA
+Acropora_013974,4.663803878534321,-12.529578123073525,"Urease alpha-subunit, N-terminal domain","Urease alpha-subunit, N-terminal domain"
+Acropora_014007,-1.2322418708921512,1.525558299232871,hydrolase activity,hydrolase activity
+Acropora_014032,1.7622470896659708,-6.316834256841391,NA,NA
+Acropora_014074,-2.5695886724314305,1.7968237139145602,NA,NA
+Acropora_014094,-2.080708317613831,2.2242494902325602,Signal recognition particle receptor,Signal recognition particle receptor
+Acropora_014116,-1.1422181813968773,3.8816821830601356,BMP signaling pathway involved in spinal cord dorsal/ventral patterning,BMP signaling pathway involved in spinal cord dorsal/ventral patterning
+Acropora_014127,-1.1431251583302686,1.5360474607485217,Domain of unknown function (DUF4419),Domain of unknown function (DUF4419)
+Acropora_014229,-2.5597281036929322,5.746628156498966,Domain of unknown function (DUF4419),Domain of unknown function (DUF4419)
+Acropora_014322,-1.0054059356164287,5.324015142335985,exocyst assembly,exocyst assembly
+Acropora_014341,-1.2529001724836697,5.986734197732528,NA,NA
+Acropora_014372,1.1335631285106675,-1.5843863219813143,AMPA glutamate receptor activity,AMPA glutamate receptor activity
+Acropora_014379,1.5319892436213658,-4.363682192216897,nuclear pore complex assembly,nuclear pore complex assembly
+Acropora_014387,1.0507915239005226,-2.9798919768180228,nuclear export,nuclear export
+Acropora_014558,-2.144049197267014,4.223024346176972,NA,NA
+Acropora_014596,1.3755557648131589,-2.5783096504290324,NA,NA
+Acropora_014669,1.9999481029302282,-1.8993355746057232,NA,NA
+Acropora_014682,1.2824491707564862,-1.0557990414933351,cerebellar Purkinje cell layer maturation,cerebellar Purkinje cell layer maturation
+Acropora_014701,-2.1260231535489327,15.843315246978845,translocon-associated protein,translocon-associated protein
+Acropora_014702,-1.5155819220030011,1.5224803073446134,RNA polymerase II subunit A C-terminal domain phosphatase,RNA polymerase II subunit A C-terminal domain phosphatase
+Acropora_014703,-1.436186429559741,4.906019475478378,negative regulation of programmed cell death,negative regulation of programmed cell death
+Acropora_014709,2.2319272648063473,-5.370165678191212,Poly (ADP-ribose) polymerase,Poly (ADP-ribose) polymerase
+Acropora_014719,-1.1249950277770868,3.187897097593348,cationic amino acid transporter,cationic amino acid transporter
+Acropora_014722,-1.2228184602507526,4.147496118347389,NA,NA
+Acropora_014727,8.212983923253692,-8.69072668949614,Low affinity cationic amino acid transporter 2-like,Low affinity cationic amino acid transporter 2-like
+Acropora_014757,-2.161177563338767,8.092181054235647,"Solute carrier family 33 (acetyl-CoA transporter), member 1","Solute carrier family 33 (acetyl-CoA transporter), member 1"
+Acropora_014766,-4.547051070929751,5.662997778563147,Hemicentin 1,Hemicentin 1
+Acropora_014847,4.8129638316226515,-5.2699948173597395,NA,NA
+Acropora_014874,2.360830947313897,-5.686455287336439,telomerase activity,telomerase activity
+Acropora_014875,-2.5902511604049603,-1.7866561883281702,Monoamine oxidase,Monoamine oxidase
+Acropora_014883,-1.3086432253843534,4.672910293561327,NA,NA
+Acropora_014885,-1.1661681628174254,10.245735058426568,tubulin complex assembly,tubulin complex assembly
+Acropora_014902,-1.0049161048644775,4.437922253026761,Zinc-binding dehydrogenase,Zinc-binding dehydrogenase
+Acropora_014941,1.0824930863430273,-4.946236242769489,"RNA splicing, via transesterification reactions with bulged adenosine as nucleophile","RNA splicing, via transesterification reactions with bulged adenosine as nucleophile"
+Acropora_014965,-1.4096172336700894,1.550600411036239,radial spoke head protein 3 homolog,radial spoke head protein 3 homolog
+Acropora_014986,-3.0736030901513325,18.507115584291796,sequestering of actin monomers,sequestering of actin monomers
+Acropora_014987,-2.8957023334438103,8.894656510219999,NA,NA
+Acropora_015004,5.072745833823411,-6.030076135563786,NA,NA
+Acropora_015007,-1.8376706367313422,-4.35022644797613,3-hydroxyacyl-[acyl-carrier-protein] dehydratase activity,3-hydroxyacyl-[acyl-carrier-protein] dehydratase activity
+Acropora_015023,-1.6704246103077818,6.183417446850324,-,-
+Acropora_015024,-1.5880268505257897,7.6876816142519875,Destroys radicals which are normally produced within the cells and which are toxic to biological systems,Destroys radicals which are normally produced within the cells and which are toxic to biological systems
+Acropora_015031,1.358316792098042,-3.4709943104302896,May play a role in anchoring the cytoskeleton to the plasma membrane,May play a role in anchoring the cytoskeleton to the plasma membrane
+Acropora_015034,2.5425225717756006,-1.892544318305927,NA,NA
+Acropora_015037,-1.5155819220030011,4.294262088350479,NA,NA
+Acropora_015041,-1.6459724465715901,1.960639390890784,NA,NA
+Acropora_015050,-1.6459724465715901,4.130439693487723,Methyltransferase domain,Methyltransferase domain
+Acropora_015051,1.8821418643704475,-13.627629846639655,NA,NA
+Acropora_015089,-1.6207645530294306,6.206163869279718,vacuolar transport,vacuolar transport
+Acropora_015093,-1.3215813574807291,-1.1387657183637285,structural constituent of cuticle,structural constituent of cuticle
+Acropora_015119,-1.1275578781486464,1.3901836397903224,Olfactomedin-like,Olfactomedin-like
+Acropora_015134,-1.2708707616109014,5.080338934744161,inositol,inositol
+Acropora_015148,-2.397953497665939,5.071319907177651,Wnt-protein binding,Wnt-protein binding
+Acropora_015149,3.2926372028227076,-6.1862476851371335,NA,NA
+Acropora_015150,1.2366313835085196,-1.7243465233116921,NA,NA
+Acropora_015162,-6.80698647295344,9.467746421686483,PEST proteolytic signal containing nuclear protein,PEST proteolytic signal containing nuclear protein
+Acropora_015163,-3.3906142578016216,4.743168953308037,NA,NA
+Acropora_015165,-3.556591074548762,15.584786044827577,"negative regulation of retrograde protein transport, ER to cytosol","negative regulation of retrograde protein transport, ER to cytosol"
+Acropora_015174,3.374254667269099,-3.6826457061186817,regulation of phosphorylation of RNA polymerase II C-terminal domain,regulation of phosphorylation of RNA polymerase II C-terminal domain
+Acropora_015187,-1.7589028586634503,8.358777521094025,activating signal cointegrator 1 complex subunit,activating signal cointegrator 1 complex subunit
+Acropora_015216,1.5408188990634164,-5.883905990338201,-,-
+Acropora_015225,-1.68459412381811,2.986489051774062,alkaline phosphatase activity,alkaline phosphatase activity
+Acropora_015243,-1.3890356023543022,8.842807064726179,"SH3-binding, glutamic acid-rich protein","SH3-binding, glutamic acid-rich protein"
+Acropora_015245,1.4763364712868854,-4.44115977667359,"Solute carrier organic anion transporter family, member","Solute carrier organic anion transporter family, member"
+Acropora_015257,1.0158635816304582,-2.357883598033071,EF-hand domain pair,EF-hand domain pair
+Acropora_015270,1.01023558619184,-6.107138242246834,calcium ion-regulated exocytosis of neurotransmitter,calcium ion-regulated exocytosis of neurotransmitter
+Acropora_015274,-1.7072795171498514,4.0803738399679546,lactation elevated,lactation elevated
+Acropora_015278,-2.2607276517423194,4.184704377733224,NA,NA
+Acropora_015316,7.495995937315756,-8.650003558682897,coagulation factor V,coagulation factor V
+Acropora_015317,9.136062812387475,-7.293654732869551,Contactin associated protein-like 2a,Contactin associated protein-like 2a
+Acropora_015323,1.474566745306752,-2.117026443480301,Structural maintenance of chromosomes,Structural maintenance of chromosomes
+Acropora_015337,1.6714708786864207,-3.0332264246588583,glutathione hydrolase activity,glutathione hydrolase activity
+Acropora_015349,-2.085285973174652,1.1931653887114029,serine-pyruvate transaminase activity,serine-pyruvate transaminase activity
+Acropora_015355,1.5142409245867203,-2.3395056044365243,NA,NA
+Acropora_015356,3.05141040545431,-8.58543899249341,NA,NA
+Acropora_015366,-1.9215811848085878,1.742057769639905,spectrin binding,spectrin binding
+Acropora_015371,1.9821025629280797,-5.735869081583435,motor activity,motor activity
+Acropora_015375,-2.065946850937717,11.214995522233338,"negative regulation of mRNA splicing, via spliceosome","negative regulation of mRNA splicing, via spliceosome"
+Acropora_015379,1.6459724465715901,-2.3509311665007253,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family
+Acropora_015389,10.397715422224119,-17.09704554709162,NADP-retinol dehydrogenase activity,NADP-retinol dehydrogenase activity
+Acropora_015453,2.088222977462992,-3.2075759251686233,NA,NA
+Acropora_015455,-3.9360021191548005,9.303713049303433,peptidyl-tryptophan modification,peptidyl-tryptophan modification
+Acropora_015541,4.8050499158545925,-17.100512148542045,NA,NA
+Acropora_015559,1.3479933331294964,-2.820882039223477,NA,NA
+Acropora_015577,1.330676570442714,-1.2177481401374453,Subtilase family,Subtilase family
+Acropora_015582,1.766782879720598,-16.172392844550366,NA,NA
+Acropora_015598,6.44435194797761,-3.425954678144587,Belongs to the MCM family,Belongs to the MCM family
+Acropora_015611,-2.2088274389764257,1.8312332522955068,Belongs to the peptidase M10A family,Belongs to the peptidase M10A family
+Acropora_015612,-1.5715255476250254,1.1374371655733018,Belongs to the peptidase M10A family,Belongs to the peptidase M10A family
+Acropora_015613,-2.3224482033506075,2.6690971508945505,NA,NA
+Acropora_015620,1.3270600739086067,-5.370165678191212,NA,NA
+Acropora_015646,-1.256214119560413,13.774730719512936,UPF0364 protein C6orf211 homolog,UPF0364 protein C6orf211 homolog
+Acropora_015678,4.935478940172993,-14.651175341611467,von Willebrand factor (vWF) type A domain,von Willebrand factor (vWF) type A domain
+Acropora_015683,3.541337639268053,-4.8842220298593055,cell division,cell division
+Acropora_015693,-1.3650911502624328,2.0780607329695964,activation of NF-kappaB-inducing kinase activity,activation of NF-kappaB-inducing kinase activity
+Acropora_015703,1.9821025629280797,-8.558757716258691,phosphatidylinositol-3-phosphate binding,phosphatidylinositol-3-phosphate binding
+Acropora_015708,-1.6554054924063406,9.515655671297205,"Phosphorylase is an important allosteric enzyme in carbohydrate metabolism. Enzymes from different sources differ in their regulatory mechanisms and in their natural substrates. However, all known phosphorylases share catalytic and structural properties","Phosphorylase is an important allosteric enzyme in carbohydrate metabolism. Enzymes from different sources differ in their regulatory mechanisms and in their natural substrates. However, all known phosphorylases share catalytic and structural properties"
+Acropora_015724,-1.5588955493986423,1.3136001550259642,NA,NA
+Acropora_015731,-1.4749099455166357,6.054511081262905,NA,NA
+Acropora_015744,1.8384526480157797,-5.23002088377871,amine oxidase,amine oxidase
+Acropora_015764,-1.2734808320523352,2.984929087286624,bicarbonate binding,bicarbonate binding
+Acropora_015765,-1.847141921085238,1.0408036837648214,transmembrane receptor protein tyrosine kinase activity,transmembrane receptor protein tyrosine kinase activity
+Acropora_015766,-1.0049161048644775,7.902575761967186,acetyl-CoA metabolic process,acetyl-CoA metabolic process
+Acropora_015802,1.3989476960342553,-1.0988204340147154,tetraterpenoid metabolic process,tetraterpenoid metabolic process
+Acropora_015804,3.052177316999664,-4.633157327592748,tetraterpenoid metabolic process,tetraterpenoid metabolic process
+Acropora_015832,1.0663563279240778,-2.5850746106791,NA,NA
+Acropora_015865,-2.011056793063284,7.63942045952925,glutaminyl-peptide cyclotransferase activity,glutaminyl-peptide cyclotransferase activity
+Acropora_015869,2.53507406706901,-5.0549410072239525,NA,NA
+Acropora_015875,-1.5708466385242255,19.83386712409748,glycine N-methyltransferase activity,glycine N-methyltransferase activity
+Acropora_015879,-1.0798828184044766,9.284416471817197,Belongs to the eukaryotic ribosomal protein eS30 family,Belongs to the eukaryotic ribosomal protein eS30 family
+Acropora_015889,2.486230877971537,-8.606368018019444,calcium-dependent cysteine-type endopeptidase activity,calcium-dependent cysteine-type endopeptidase activity
+Acropora_015915,1.4534195403407462,-1.5041305790662336,belongs to the protein kinase superfamily,belongs to the protein kinase superfamily
+Acropora_015920,-1.0957310484066936,3.213337192173271,NA,NA
+Acropora_015923,-1.3035473255581247,1.9902871104683506,NA,NA
+Acropora_015941,1.4538745230666237,-6.103739422123951,NA,NA
+Acropora_015971,1.8832214738716027,-5.2232855529325,NA,NA
+Acropora_015975,1.4001942694737026,-1.2493662812178559,D-glutamate cyclase activity,D-glutamate cyclase activity
+Acropora_015985,1.3295654773640215,-1.221744835461506,zinc ion binding,zinc ion binding
+Acropora_015986,-1.0186457461625127,5.232338986926067,ubiquinone biosynthetic process,ubiquinone biosynthetic process
+Acropora_016021,-1.3923217814266042,3.6491044789959175,monocarboxylate transporter,monocarboxylate transporter
+Acropora_016031,-1.7008334353904184,1.084362952149104,Calmodulin,Calmodulin
+Acropora_016042,-2.478066438230215,1.1004069907408622,molybdopterin molybdotransferase activity,molybdopterin molybdotransferase activity
+Acropora_016099,-1.8698660549602184,-1.010340901755817,-,-
+Acropora_016108,-1.7165605914240925,6.865969047070033,Attachment Protein,Attachment Protein
+Acropora_016119,1.1224146506565793,-2.0059933778914885,"Zinc finger, C3HC4 type (RING finger)","Zinc finger, C3HC4 type (RING finger)"
+Acropora_016123,-2.3940616726222643,5.981004075312568,NA,NA
+Acropora_016155,-1.5711267691131385,1.9084097066141368,dsRNA-gated channel SID-1,dsRNA-gated channel SID-1
+Acropora_016180,1.657172525988731,-2.1109220154912522,"D-isomer specific 2-hydroxyacid dehydrogenase, NAD binding domain","D-isomer specific 2-hydroxyacid dehydrogenase, NAD binding domain"
+Acropora_016183,1.4538745230666237,-7.850984473134068,NA,NA
+Acropora_016205,2.1428736485988145,-13.932249111602605,negative regulation of inclusion body assembly,negative regulation of inclusion body assembly
+Acropora_016209,1.055131076845961,-2.4233333961069894,Maguk P55 subfamily member,Maguk P55 subfamily member
+Acropora_016306,-3.524297108037426,4.788721996323071,NA,NA
+Acropora_016342,-1.0989495771232445,4.856869049976578,NA,NA
+Acropora_016349,5.546960756954106,-6.778336251439391,Phospholipase A2,Phospholipase A2
+Acropora_016386,-1.074287349664281,3.540193310157963,distal tubule morphogenesis,distal tubule morphogenesis
+Acropora_016411,1.098172715009843,-1.0661273798359205,"Tubulin tyrosine ligase-like family, member 5","Tubulin tyrosine ligase-like family, member 5"
+Acropora_016418,-1.1251113247860498,3.3723105207052955,NADP-retinol dehydrogenase activity,NADP-retinol dehydrogenase activity
+Acropora_016448,2.0184229440422436,-2.4329653697416083,NA,NA
+Acropora_016590,1.2385927751192989,-1.3657570157661676,NA,NA
+Acropora_016605,-1.3337135078911624,12.006582990650791,Papain family cysteine protease,Papain family cysteine protease
+Acropora_016638,1.5752113981278326,-1.8283105241013893,NA,NA
+Acropora_016696,1.8400980574077306,-6.516803492421087,NA,NA
+Acropora_016703,3.4510818382001163,-2.0970192769818183,chromosome condensation,chromosome condensation
+Acropora_016706,-1.2186653940715455,3.1159591905049044,NA,NA
+Acropora_016868,1.1118360532407876,-1.227314144533556,Si ch211-69l10.4,Si ch211-69l10.4
+Acropora_016954,-1.330676570442714,4.38562613791326,NA,NA
+Acropora_017032,-1.0079147750272655,3.6979400067338757,thyroid adenoma-associated protein,thyroid adenoma-associated protein
+Acropora_017046,-1.7366178543723012,5.959259470078664,NA,NA
+Acropora_017072,-3.26772829302116,11.150350794467865,Ubiquitin homologues,Ubiquitin homologues
+Acropora_017124,-1.5850502871487282,11.283072508265747,"Leucine-rich repeats, outliers","Leucine-rich repeats, outliers"
+Acropora_017193,2.3858171101407244,-6.089332122898167,"Tumor necrosis factor receptor superfamily, member 4","Tumor necrosis factor receptor superfamily, member 4"
+Acropora_017220,1.180765812498283,-13.053103381801705,NA,NA
+Acropora_017276,-1.648387327263394,8.830107486915601,threonine-type endopeptidase activity,threonine-type endopeptidase activity
+Acropora_017349,1.2374874970197138,-3.4621981497904906,NA,NA
+Acropora_017373,-1.1275578781486464,12.095574652114117,NA,NA
+Acropora_017427,2.8399786465766508,-6.823620578079596,NA,NA
+Acropora_017440,-1.2266319628468705,8.642065273000986,positive regulation of anterograde axonal transport of mitochondrion,positive regulation of anterograde axonal transport of mitochondrion
+Acropora_017441,-1.4289152771136533,4.737568344378467,"N(alpha)-acetyltransferase 30, NatC catalytic subunit","N(alpha)-acetyltransferase 30, NatC catalytic subunit"
+Acropora_017452,-1.4182567430565107,5.581192520256302,NA,NA
+Acropora_017457,-2.397953497665939,3.668922271397029,"Nuclear receptor subfamily 2, group E, member 3","Nuclear receptor subfamily 2, group E, member 3"
+Acropora_017465,1.5752113981278326,-2.600776126008202,NA,NA
+Acropora_017470,-1.509296052736883,6.235272710992731,RNA polymerase II transcription coactivator activity involved in preinitiation complex assembly,RNA polymerase II transcription coactivator activity involved in preinitiation complex assembly
+Acropora_017490,1.0603701537835357,-1.390038935616827,Chromosome 15 open reading frame 41,Chromosome 15 open reading frame 41
+Acropora_017507,-1.0436930458137514,6.108247097924304,Belongs to the protein-tyrosine phosphatase family. Non-receptor class myotubularin subfamily,Belongs to the protein-tyrosine phosphatase family. Non-receptor class myotubularin subfamily
+Acropora_017508,-1.5857481521566252,15.588184017856772,NA,NA
+Acropora_017524,1.5108198815366063,-5.194486645615881,NA,NA
+Acropora_017527,2.3071539281725846,-3.895154392506709,NA,NA
+Acropora_017532,2.4019933963071747,-3.721964411612014,NA,NA
+Acropora_017536,-1.1388346536914666,1.727094621139179,NA,NA
+Acropora_017577,-1.3091134572676957,1.484395312250405,NA,NA
+Acropora_017592,-1.2139076705477834,10.839799218734534,positive regulation of Notch signaling pathway,positive regulation of Notch signaling pathway
+Acropora_017608,2.9439206062446694,-2.0337300203735222,NA,NA
+Acropora_017618,-2.0798647980751794,7.657170367171039,Angiopoietin-like 1,Angiopoietin-like 1
+Acropora_017649,1.2446401248232395,-5.509785674115459,factor 1,factor 1
+Acropora_017650,1.0489482782576238,-3.5537659339777825,NA,NA
+Acropora_017652,2.523769209472075,-10.438746507523305,catalytic activity. It is involved in the biological process described with metabolic process,catalytic activity. It is involved in the biological process described with metabolic process
+Acropora_017656,-1.4844755589145224,3.6893650531246505,catalytic activity. It is involved in the biological process described with metabolic process,catalytic activity. It is involved in the biological process described with metabolic process
+Acropora_017709,1.3207364876774248,-2.061964883050575,5-methyltetrahydrofolate-dependent methyltransferase activity,5-methyltetrahydrofolate-dependent methyltransferase activity
+Acropora_017729,-3.4575922360762594,6.456360723975824,protein kinase D signaling,protein kinase D signaling
+Acropora_017735,-1.6383448679023882,-4.940812720222436,unfolded protein binding,unfolded protein binding
+Acropora_017737,1.241626004383593,3.8816328634454025,protein ADP-ribosylase activity,protein ADP-ribosylase activity
+Acropora_017740,4.2752220695514165,-26.684162453501706,NA,NA
+Acropora_017741,2.2475561702916855,-6.756069672590539,NA,NA
+Acropora_017782,1.3234461865008615,-1.1438779885195958,NA,NA
+Acropora_017783,1.0130934018538538,-16.63103053504731,NA,NA
+Acropora_017801,1.0269524597761612,-2.2037154588224857,NA,NA
+Acropora_017802,-1.1607326269218838,6.512760950344691,"The proteasome is a multicatalytic proteinase complex which is characterized by its ability to cleave peptides with Arg, Phe, Tyr, Leu, and Glu adjacent to the leaving group at neutral or slightly basic pH","The proteasome is a multicatalytic proteinase complex which is characterized by its ability to cleave peptides with Arg, Phe, Tyr, Leu, and Glu adjacent to the leaving group at neutral or slightly basic pH"
+Acropora_017831,-1.8423592848603154,6.066865899025968,NA,NA
+Acropora_017868,2.422028546846467,-3.218033876073318,FAD-AMP lyase (cyclizing) activity,FAD-AMP lyase (cyclizing) activity
+Acropora_017898,-1.5521870042835169,9.339916428816768,"aspartic endopeptidase activity, intramembrane cleaving","aspartic endopeptidase activity, intramembrane cleaving"
+Acropora_017921,-1.8318905181458756,6.844296689800485,NA,NA
+Acropora_017922,-3.8099758079330277,6.787805981584943,E3 ubiquitin-protein ligase synoviolin,E3 ubiquitin-protein ligase synoviolin
+Acropora_017935,-1.766612642044117,5.483061416301954,hydrolase activity,hydrolase activity
+Acropora_017969,1.1383033205023612,-2.217588947707841,NA,NA
+Acropora_017995,1.4849026423564657,-20.25905329635005,NA,NA
+Acropora_017998,-1.6031291899867923,1.4523152520017437,regulation of resting membrane potential,regulation of resting membrane potential
+Acropora_018017,1.720534237389516,-4.674058912632073,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family
+Acropora_018045,-1.0241889127247412,8.868739797154774,glucosamine 6-phosphate N-acetyltransferase activity,glucosamine 6-phosphate N-acetyltransferase activity
+Acropora_018053,-1.5255993653809157,2.3285400565200667,hippo signaling,hippo signaling
+Acropora_018088,-1.3443125386346306,4.354154403091163,NA,NA
+Acropora_018090,1.705927061866875,-2.3580603627058845,orexin receptor activity,orexin receptor activity
+Acropora_018092,1.6773618255276126,-1.6717205685414303,integral membrane protein,integral membrane protein
+Acropora_018114,1.2256670783813217,-11.622565331756507,NA,NA
+Acropora_018143,-2.539181825893705,2.78439082427932,NA,NA
+Acropora_018161,1.67463492062298,-1.2660467768144905,Fibrosin-1-like,Fibrosin-1-like
+Acropora_018168,2.3018006565242564,-1.1774831374405832,glutathione hydrolase activity,glutathione hydrolase activity
+Acropora_018171,1.4495521284323865,-3.929079989099446,Signal transducer activity. It is involved in the biological process described with intracellular signal transduction,Signal transducer activity. It is involved in the biological process described with intracellular signal transduction
+Acropora_018189,-1.8215801130035796,2.113734725891731,protein-disulfide reductase activity,protein-disulfide reductase activity
+Acropora_018236,-1.0507915239005226,13.730987703787257,FK506 binding,FK506 binding
+Acropora_018268,1.1099405432930705,-1.5130899695257771,NA,NA
+Acropora_018272,-1.4163263808625215,15.890660518203807,structural constituent of ribosome,structural constituent of ribosome
+Acropora_018281,1.5228905746863164,-10.999122818697725,NA,NA
+Acropora_018285,2.1730149560613925,-2.598597346290954,NA,NA
+Acropora_018289,-1.2770217037490836,15.923092020527783,Belongs to the enoyl-CoA hydratase isomerase family,Belongs to the enoyl-CoA hydratase isomerase family
+Acropora_018312,-2.430827768922952,6.171235831231704,NA,NA
+Acropora_018323,-4.4583549809883145,1.9072459503589185,NA,NA
+Acropora_018328,-1.3837166801616991,4.430518499143796,Belongs to the ubiquitin-conjugating enzyme family,Belongs to the ubiquitin-conjugating enzyme family
+Acropora_018329,1.6813627920993166,-1.1677450300000414,NA,NA
+Acropora_018336,-1.2982974542899781,2.7292901720036995,NA,NA
+Acropora_018339,2.6575925464734045,-4.454882842088956,Coiled-coil domain-containing protein 62,Coiled-coil domain-containing protein 62
+Acropora_018340,1.1851067462802323,-3.9741873342739544,NA,NA
+Acropora_018356,-1.4542173563108407,1.1679784107467661,NA,NA
+Acropora_018368,-2.918304772883585,5.883905990338201,Belongs to the G-protein coupled receptor 2 family,Belongs to the G-protein coupled receptor 2 family
+Acropora_018387,-2.3018006565242564,12.599506309247595,NADH ubiquinone oxidoreductase 11.5kD subunit,NADH ubiquinone oxidoreductase 11.5kD subunit
+Acropora_018391,-1.8480426819211153,6.504551939946489,negative regulation of translational initiation in response to stress,negative regulation of translational initiation in response to stress
+Acropora_018412,-1.22272134220744,-2.0170131922764667,cortical actin cytoskeleton organization,cortical actin cytoskeleton organization
+Acropora_018491,3.98769724573189,-12.320746900937928,Transcription factor,Transcription factor
+Acropora_018504,2.1943839032615506,-10.485669744286934,NA,NA
+Acropora_018519,1.220142059011218,-1.6933590330127617,DNA primase is the polymerase that synthesizes small RNA primers for the Okazaki fragments made during discontinuous DNA replication,DNA primase is the polymerase that synthesizes small RNA primers for the Okazaki fragments made during discontinuous DNA replication
+Acropora_018536,-1.5454240701319595,9.290861816970667,positive regulation of protein glycosylation in Golgi,positive regulation of protein glycosylation in Golgi
+Acropora_018568,-4.071337587760597,-1.471337036999869,peroxidase activity,peroxidase activity
+Acropora_018569,-3.849139432382859,2.456835278503255,Animal haem peroxidase,Animal haem peroxidase
+Acropora_018570,-1.930524515160573,6.651112030419128,Animal haem peroxidase,Animal haem peroxidase
+Acropora_018582,-1.1156257048911096,-1.6548169508212793,NA,NA
+Acropora_018585,2.5653313645087747,-6.102494264154709,acetate-CoA ligase activity,acetate-CoA ligase activity
+Acropora_018586,2.9996169966384953,-6.129599517619572,ankyrin repeats,ankyrin repeats
+Acropora_018596,-1.5475584031675045,1.620916425021958,NA,NA
+Acropora_018599,-1.0432424706466243,9.989338270372079,serine threonine-protein kinase,serine threonine-protein kinase
+Acropora_018606,1.2208335068306468,-1.4701900521008533,NA,NA
+Acropora_018636,-1.440685843489072,8.175215223809953,"Taurine catabolism dioxygenase TauD, TfdA family","Taurine catabolism dioxygenase TauD, TfdA family"
+Acropora_018662,-1.196734507343007,3.3441313878328707,"Platelet-derived and vascular endothelial growth factors (PDGF, VEGF) family","Platelet-derived and vascular endothelial growth factors (PDGF, VEGF) family"
+Acropora_018663,-1.6116714065688917,6.673314961463916,NA,NA
+Acropora_018665,-1.443790731772035,-1.2509308147645024,NA,NA
+Acropora_018667,-1.5301547893741683,11.298666202143481,Arf GTPase-activating protein,Arf GTPase-activating protein
+Acropora_018742,1.3641643964066519,-1.7190069242841264,histone H4-K20 monomethylation,histone H4-K20 monomethylation
+Acropora_018750,-1.046339976392579,7.646799870480095,translational elongation,translational elongation
+Acropora_018763,1.5648369542700198,-1.836268496307295,aspartate dehydrogenase activity,aspartate dehydrogenase activity
+Acropora_018778,-1.3923217814266042,6.872637628720904,hydrolase activity,hydrolase activity
+Acropora_018801,1.742804289075341,-3.2762363495452917,ISXO2-like transposase domain,ISXO2-like transposase domain
+Acropora_018835,1.2876383339508803,-1.443274352533848,NA,NA
+Acropora_018908,1.6309936470380877,-2.007119710609332,NA,NA
+Acropora_018925,-5.49653050657577,1.208644290346449,"phospholipase A2 activity (consuming 1,2-dipalmitoylphosphatidylcholine)","phospholipase A2 activity (consuming 1,2-dipalmitoylphosphatidylcholine)"
+Acropora_018932,3.3861584099922055,-9.72680244750478,NA,NA
+Acropora_018936,-1.0196460438592894,8.868739797154774,Phytochelatin synthase,Phytochelatin synthase
+Acropora_018942,2.1315815237655515,-7.947160294734197,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle
+Acropora_018975,-4.546098504953759,4.719992723775861,NA,NA
+Acropora_019167,-3.351024531919484,10.214738916168528,NA,NA
+Acropora_019176,1.5218538569131421,-1.3550403882574593,RWD,RWD
+Acropora_019177,-1.2556850999629727,5.123636408978989,N-terminal peptidyl-methionine acetylation,N-terminal peptidyl-methionine acetylation
+Acropora_019179,-1.1634031192766519,8.719617792165389,protein import into mitochondrial inner membrane,protein import into mitochondrial inner membrane
+Acropora_019192,-1.3504634245557559,1.073523040305871,EP4 subtype prostaglandin E2 receptor binding,EP4 subtype prostaglandin E2 receptor binding
+Acropora_019199,1.093397073445635,-3.3106309181395077,NA,NA
+Acropora_019204,2.2405313445865374,-4.991831215163929,negative regulation of Schwann cell proliferation,negative regulation of Schwann cell proliferation
+Acropora_019223,1.3733732174883289,-1.6610865114313103,"Broad-Complex, Tramtrack and Bric a brac","Broad-Complex, Tramtrack and Bric a brac"
+Acropora_019364,1.0238373427164473,-5.744586027486564,cAMP-dependent protein kinase regulator activity,cAMP-dependent protein kinase regulator activity
+Acropora_019379,-4.732464671032586,1.9176947314410846,NA,NA
+Acropora_019381,1.684748183654363,-3.91529822842647,NA,NA
+Acropora_019387,1.5987356721889139,-1.411944892739451,NA,NA
+Acropora_019388,-1.5648369542700198,3.2159036238816414,Belongs to the small GTPase superfamily. Arf family,Belongs to the small GTPase superfamily. Arf family
+Acropora_019417,-2.6777326705426696,5.42362416839616,NA,NA
+Acropora_019423,-1.9877960387136335,6.000964894768012,Calcium- and,Calcium- and
+Acropora_019447,7.547244264986361,-11.49007412874177,10-hydroxy-9-(phosphonooxy)octadecanoate phosphatase activity,10-hydroxy-9-(phosphonooxy)octadecanoate phosphatase activity
+Acropora_019459,1.0405552642409417,-6.820676323927792,NA,NA
+Acropora_019462,3.4277998586859115,-10.881974086556427,NA,NA
+Acropora_019486,1.6110584031426851,-4.753973103926153,NA,NA
+Acropora_019504,-1.7277575646552488,5.363373960918497,leukocyte migration involved in immune response,leukocyte migration involved in immune response
+Acropora_019518,-1.7072795171498514,9.102844455117996,cytosine C-5 DNA demethylase activity,cytosine C-5 DNA demethylase activity
+Acropora_019553,1.690197005901681,-1.8516508687007496,UPF0378 protein KIAA0100 homolog,UPF0378 protein KIAA0100 homolog
+Acropora_019557,4.301627229030226,-4.745686802746229,poly(U) RNA binding,poly(U) RNA binding
+Acropora_019596,-1.006834308964972,7.896784767636262,G-protein coupled receptor activity,G-protein coupled receptor activity
+Acropora_019611,1.0238373427164473,-6.431105877686241,NA,NA
+Acropora_019641,-2.918304772883585,9.73015035180513,"Ubiquinol-cytochrome c reductase, complex III subunit X","Ubiquinol-cytochrome c reductase, complex III subunit X"
+Acropora_019648,-1.512338139972034,2.1278233761762912,NA,NA
+Acropora_019649,-1.2256670783813217,10.349408892427165,"retrograde transport, endosome to Golgi","retrograde transport, endosome to Golgi"
+Acropora_019676,3.0650400642201783,-4.933523015500998,BRCA1 interacting protein C-terminal helicase 1,BRCA1 interacting protein C-terminal helicase 1
+Acropora_019679,-1.0196460438592894,7.149482538513253,GTP binding,GTP binding
+Acropora_019702,1.0451078899742692,-1.9153018795694188,activation of NF-kappaB-inducing kinase activity,activation of NF-kappaB-inducing kinase activity
+Acropora_019722,1.1876120824398608,-3.338833417106372,Domain of unknown function (DUF384),Domain of unknown function (DUF384)
+Acropora_019723,1.2653057749964693,-2.3765699298755862,NA,NA
+Acropora_019729,3.154874876940312,-6.080328504192031,NA,NA
+Acropora_019745,2.2607276517423194,-5.498237878304298,NA,NA
+Acropora_019749,1.7626184229311872,-2.176142148818508,glycoside hydrolase family 63,glycoside hydrolase family 63
+Acropora_019753,1.1374250593127206,-1.3086885366503962,intra-S DNA damage checkpoint,intra-S DNA damage checkpoint
+Acropora_019766,1.054386367091461,-3.0272785167487437,positive regulation of renal water transport,positive regulation of renal water transport
+Acropora_019776,1.6014051136053011,-9.193801717589913,carbonic anhydrase,carbonic anhydrase
+Acropora_019779,1.032020858132353,-4.2669380913268595,positive regulation of dipeptide transport,positive regulation of dipeptide transport
+Acropora_019784,1.3225977677187355,-2.197655609327188,F-box LRR-repeat protein,F-box LRR-repeat protein
+Acropora_019815,-3.0256436569373273,4.589120487959365,Belongs to the peptidase C14A family,Belongs to the peptidase C14A family
+Acropora_019817,-1.0457436530854867,9.189141026432857,Belongs to the peptidase C14A family,Belongs to the peptidase C14A family
+Acropora_019833,-4.032104674588706,6.58707465178405,regulation of endoplasmic reticulum stress-induced intrinsic apoptotic signaling pathway,regulation of endoplasmic reticulum stress-induced intrinsic apoptotic signaling pathway
+Acropora_019859,1.961760315110205,-5.409366892903997,NA,NA
+Acropora_019862,1.8636859944312327,-4.4316465366676105,"Domain in meprin, A5, receptor protein tyrosine phosphatase mu (and others)","Domain in meprin, A5, receptor protein tyrosine phosphatase mu (and others)"
+Acropora_019866,-1.7630285581921175,8.352177501111449,Trypsin-like serine protease,Trypsin-like serine protease
+Acropora_019886,-7.282095266252284,13.554585920589764,interleukin-5 receptor binding,interleukin-5 receptor binding
+Acropora_019898,-2.3450612897539966,1.0404415864269456,peptidase inhibitor activity,peptidase inhibitor activity
+Acropora_019916,1.4206420574021528,-2.7012299419278287,double-stranded RNA-specific ribonuclease activity,double-stranded RNA-specific ribonuclease activity
+Acropora_019918,1.2973425518289108,-6.968568020735887,C2H2 zinc finger domain binding,C2H2 zinc finger domain binding
+Acropora_019929,1.2655294428335138,-1.7236349381620129,DNA replication,DNA replication
+Acropora_019933,2.2518839388740233,-15.588184017856772,Ligand-gated ion channel,Ligand-gated ion channel
+Acropora_019935,1.393402277818016,-22.53663695450232,NA,NA
+Acropora_019936,-3.6710036152373977,1.6291932448219786,Tissue factor pathway inhibitor,Tissue factor pathway inhibitor
+Acropora_019949,-1.0507915239005226,5.566805876758473,Syntaxin-7,Syntaxin-7
+Acropora_019956,2.337936617539428,-5.0601482760713,NA,NA
+Acropora_019972,-1.97345788800567,1.2100036800945864,NA,NA
+Acropora_020019,1.9829443870650685,-1.1997012203212063,NAADP-sensitive calcium-release channel activity,NAADP-sensitive calcium-release channel activity
+Acropora_020031,-2.309734141497138,14.416879198265395,regulation of cellular response to hypoxia,regulation of cellular response to hypoxia
+Acropora_020054,-1.134032180513827,2.197655609327188,Dynein light chain type 1,Dynein light chain type 1
+Acropora_020056,2.650741141706007,-9.999910478820976,Ankyrin repeats (many copies),Ankyrin repeats (many copies)
+Acropora_020078,-1.9329870547292243,9.01219633589078,Glycosyltransferase 1 domain-containing protein 1,Glycosyltransferase 1 domain-containing protein 1
+Acropora_020090,1.8333861972656105,-6.448150365977743,Small G protein signaling modulator,Small G protein signaling modulator
+Acropora_020091,1.7122258924468736,-2.703487833214557,NA,NA
+Acropora_020093,-1.427050211099978,1.5640408212073165,"RAB35, member RAS oncogene family","RAB35, member RAS oncogene family"
+Acropora_020114,-2.080934646343542,14.026903953855513,Cytochrome c oxidase subunit,Cytochrome c oxidase subunit
+Acropora_020127,-1.6997923589615413,8.19668058039607,Functions as component of the Arp2 3 complex which is involved in regulation of actin polymerization and together with an activating nucleation-promoting factor (NPF) mediates the formation of branched actin networks,Functions as component of the Arp2 3 complex which is involved in regulation of actin polymerization and together with an activating nucleation-promoting factor (NPF) mediates the formation of branched actin networks
+Acropora_020131,-1.2127492966688507,16.612789358560626,Belongs to the peptidase C19 family,Belongs to the peptidase C19 family
+Acropora_020145,-1.9984234861234187,12.98818735487869,snRNA import into nucleus,snRNA import into nucleus
+Acropora_020149,-7.329818405312453,5.24740731900495,calcium-transporting ATPase activity,calcium-transporting ATPase activity
+Acropora_020158,1.5825993770416047,-3.2364897932091266,NA,NA
+Acropora_020180,3.0904462184178554,-5.861431254966764,DNA synthesis involved in DNA repair,DNA synthesis involved in DNA repair
+Acropora_020189,1.5157568152525085,-1.2457951168569419,NA,NA
+Acropora_020193,-1.625777044089214,8.410637718551765,Belongs to the eukaryotic ribosomal protein eS21 family,Belongs to the eukaryotic ribosomal protein eS21 family
+Acropora_020194,-1.6604364185666571,1.2662992270013604,NA,NA
+Acropora_020199,1.4054596850957877,-1.644222918956874,LON peptidase N-terminal domain and RING finger,LON peptidase N-terminal domain and RING finger
+Acropora_020223,-1.283687063466414,18.54289166021468,methyltransferase activity,methyltransferase activity
+Acropora_020227,3.8317490623130284,-10.366427416379317,NA,NA
+Acropora_020250,-1.721035024538913,10.211190586096295,fibroblast growth factor-activated receptor activity,fibroblast growth factor-activated receptor activity
+Acropora_020316,-1.2921712262588456,4.0379042626344805,Chromosome X open reading frame 58,Chromosome X open reading frame 58
+Acropora_020325,-1.330676570442714,5.740186866158279,transcription by RNA polymerase III,transcription by RNA polymerase III
+Acropora_020327,-1.559788917581502,4.665989991094056,NA,NA
+Acropora_020397,-1.3117719159228989,9.101373862107467,Pbx knotted 1 homeobox,Pbx knotted 1 homeobox
+Acropora_020408,-1.0406800902333753,3.540193310157963,NA,NA
+Acropora_020442,2.2607276517423194,-1.6831075023905757,cobalamin catabolic process,cobalamin catabolic process
+Acropora_020444,2.478066438230215,-3.4884732347519427,NA,NA
+Acropora_020445,2.834397099896395,-2.1903827719022027,NA,NA
+Acropora_020448,2.7394812563723274,-1.855226000913451,Zona pellucida (ZP) domain,Zona pellucida (ZP) domain
+Acropora_020449,2.1428736485988145,-7.655856742518567,NA,NA
+Acropora_020487,-2.3567480617274748,2.0008381176729615,NA,NA
+Acropora_020521,2.744137612155641,-1.9622324584615793,cell adhesion,cell adhesion
+Acropora_020528,2.2556825495997193,-8.237004513680509,NA,NA
+Acropora_020554,5.242771651857199,-8.357907679202405,"ATPase activity, coupled to transmembrane movement of substances","ATPase activity, coupled to transmembrane movement of substances"
+Acropora_020558,-4.6686852513604755,4.36810889085201,erythroblast transformation specific domain,erythroblast transformation specific domain
+Acropora_020559,-2.953488041833896,-2.962843304459522,NA,NA
+Acropora_020566,1.11454422442005,-2.285265979607762,NA,NA
+Acropora_020568,2.423927550512444,-4.220729827572031,"nucleotide-excision repair, DNA gap filling","nucleotide-excision repair, DNA gap filling"
+Acropora_020574,-1.525752704304536,1.0617328557395813,NA,NA
+Acropora_020578,1.747705315918453,-4.615280680984196,NA,NA
+Acropora_020610,-1.2459348186641583,8.954672897690664,NA,NA
+Acropora_020611,-1.7954709101200435,4.667421017952726,NA,NA
+Acropora_020612,-1.3060755932397523,2.674909196563639,NA,NA
+Acropora_020615,-1.380690452621398,-9.38538648372216,NA,NA
+Acropora_020619,-2.852869549678755,16.66654846522561,regulation of nitric oxide metabolic process,regulation of nitric oxide metabolic process
+Acropora_020621,-3.036639702062074,2.1808117750140994,B-cell CLL lymphoma 3,B-cell CLL lymphoma 3
+Acropora_020645,-1.4523460721122239,6.112697139067912,-,-
+Acropora_020750,-4.071337587760597,3.615436990573238,NA,NA
+Acropora_020761,-1.048557267246609,4.064870993138077,mitochondrion disassembly,mitochondrion disassembly
+Acropora_020780,-1.5171850639451938,3.704926578829133,fibroblast growth factor-activated receptor activity,fibroblast growth factor-activated receptor activity
+Acropora_020805,-1.0810521992019697,6.340845295657287,lipoprotein receptor-related protein 6,lipoprotein receptor-related protein 6
+Acropora_020809,-1.6793136539054416,1.484776278152861,NA,NA
+Acropora_020810,-1.2034246065855128,8.570573618771254,lipoprotein receptor-related protein 6,lipoprotein receptor-related protein 6
+Acropora_020832,2.0461702285761794,-1.1504516497633364,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle
+Acropora_020840,9.254492875886568,-34.17910550691254,L-glutamate import across plasma membrane,L-glutamate import across plasma membrane
+Acropora_021100,-1.3365032601492128,2.615463274781418,NA,NA
+Acropora_021159,2.876667893444529,-1.0557990414933351,regulation of mitotic spindle assembly,regulation of mitotic spindle assembly
+Acropora_021170,-2.202162004429969,1.6868733020869444,NA,NA
+Acropora_021251,-1.5542791440111312,6.107138242246834,NA,NA
+Acropora_021262,1.0273229915605457,-8.742303063379156,NA,NA
+Acropora_021305,1.7648674952081698,-3.3566205621532657,NA,NA
+Acropora_021455,-1.742804289075341,9.926612042361713,NA,NA
+Acropora_021462,-1.4096172336700894,10.103745185116656,NA,NA
+Acropora_021510,1.41663936258414,-11.86831181991861,NA,NA
+Acropora_021531,-3.579698560489768,3.9081664052069693,NA,NA
+Acropora_021660,-2.3567480617274748,6.918968544349078,Amyloid beta (A4),Amyloid beta (A4)
+Acropora_021686,2.46275416283414,-3.1318576872474044,protein localization to nucleoplasm,protein localization to nucleoplasm
+Acropora_021687,1.1734670753001264,-2.4101957477052847,NA,NA
+Acropora_021694,-3.9428629857597794,1.5899707440999915,NA,NA
+Acropora_021721,4.779545911688208,-13.410142243061138,NA,NA
+Acropora_021724,2.239775126259061,-1.7848100111548233,S-formylglutathione hydrolase activity,S-formylglutathione hydrolase activity
+Acropora_021734,1.6220245491224596,-3.2953807844876226,thioesterase binding,thioesterase binding
+Acropora_021740,-1.2909157876502044,4.919316887932862,nucleic acid-templated transcription,nucleic acid-templated transcription
+Acropora_021763,2.5486116423237597,-13.45656830398367,Rho guanyl-nucleotide exchange factor activity,Rho guanyl-nucleotide exchange factor activity
+Acropora_021769,-1.56212610515787,4.637263274832345,NA,NA
+Acropora_021802,-1.4013595303486137,1.198661679176514,pre-mRNA 3'-splice site binding,pre-mRNA 3'-splice site binding
+Acropora_021834,-1.0821973482225813,7.1025394049035615,ATP synthesis coupled proton transport,ATP synthesis coupled proton transport
+Acropora_021842,1.5556974611631977,-1.9671043708684244,NA,NA
+Acropora_021844,-1.7085803873447292,13.219983554274277,NA,NA
+Acropora_021845,-2.1428736485988145,1.4832123281479714,NA,NA
+Acropora_021885,1.157853570408131,-2.138324565755676,Domain of unknown function (DUF4591),Domain of unknown function (DUF4591)
+Acropora_021893,3.348471867402507,-17.876946716253787,NA,NA
+Acropora_021915,-2.3018006565242564,12.06106840074016,Major Facilitator Superfamily,Major Facilitator Superfamily
+Acropora_021916,-2.2151895435072584,6.49171628903024,NA,NA
+Acropora_021928,1.1140686328893212,-2.979571567857507,NA,NA
+Acropora_021947,2.365828003207736,-4.615280680984196,NA,NA
+Acropora_021962,-1.0241889127247412,2.096049829579004,glycogenin glucosyltransferase activity,glycogenin glucosyltransferase activity
+Acropora_021989,1.2888906813425829,-9.451754558269622,Histone-lysine N-methyltransferase,Histone-lysine N-methyltransferase
+Acropora_022000,7.786097304177598,-8.454999979267804,NA,NA
+Acropora_022001,7.652912270279798,-18.358181230775898,NA,NA
+Acropora_022003,4.307173845126898,-19.72694831430746,NA,NA
+Acropora_022017,-1.5711267691131385,3.2890772225857248,NA,NA
+Acropora_022027,1.6077495580862957,-8.390853174416,WASH complex subunit,WASH complex subunit
+Acropora_022031,1.5321169298163793,-5.940547436485954,"the binding appears to require additional receptor determinants exposed only in the active receptor conformation. The beta-arrestins target many receptors for internalization by acting as endocytic adapters (CLASPs, clathrin-associated sorting proteins) and recruiting the GPRCs to the adapter protein 2 complex 2 (AP-2) in clathrin-coated pits (CCPs). However, the extent of beta-arrestin involvement appears to vary significantly depending on the receptor, agonist and cell type. Internalized arrestin-receptor complexes traffic to intracellular endosomes, where they remain uncoupled from G-proteins. Two different modes of arrestin-mediated internalization occur. Class A receptors, like ADRB2, OPRM1, ENDRA, D1AR and ADRA1B dissociate from beta- arrestin at or near the plasma membrane and undergo rapid recycling. Class B receptors, like AVPR2, AGTR1, NTSR1, TRHR and TACR1 internalize as a complex with arrestin and traffic with it to endosomal vesicles, presumably as desensitized receptors, for extended periods of time. Receptor resensitization then requires that receptor-bound arrestin is removed so that the receptor can be dephosphorylated and returned to the plasma membrane. Involved in internalization of P2RY4 and UTP-stimulated internalization of P2RY2. Involved in phosphorylation-dependent internalization of OPRD1 ands subsequent recycling. Involved in the degradation of cAMP by recruiting cAMP phosphodiesterases to ligand-activated receptors. Beta-arrestins function as multivalent adapter proteins that can switch the GPCR from a G-protein signaling mode that transmits short-lived signals from the plasma membrane via small molecule second messengers and ion channels to a beta-arrestin signaling mode that transmits a distinct set of signals that are initiated as the receptor internalizes and transits the intracellular compartment. Acts as signaling scaffold for MAPK pathways such as MAPK1 3 (ERK1 2). ERK1 2 activated by the beta- arrestin scaffold is largely excluded from the nucleus and confined to cytoplasmic locations such as endocytic vesicles, also called beta-arrestin signalosomes. Recruits c-Src SRC to ADRB2 resulting in ERK activation. GPCRs for which the beta-arrestin- mediated signaling relies on both ARRB1 and ARRB2 (codependent regulation) include ADRB2, F2RL1 and PTH1R. For some GPCRs the beta-arrestin-mediated signaling relies on either ARRB1 or ARRB2 and is inhibited by the other respective beta-arrestin form (reciprocal regulation). Inhibits ERK1 2 signaling in AGTR1- and AVPR2-mediated activation (reciprocal regulation). Is required for SP-stimulated endocytosis of NK1R and recruits c-Src SRC to internalized NK1R resulting in ERK1 2 activation, which is required for the antiapoptotic effects of SP. Is involved in proteinase-activated F2RL1-mediated ERK activity. Acts as signaling scaffold for the AKT1 pathway. Is involved in alpha- thrombin-stimulated AKT1 signaling. Is involved in IGF1-stimulated AKT1 signaling leading to increased protection from apoptosis. Involved in activation of the p38 MAPK signaling pathway and in actin bundle formation. Involved in F2RL1-mediated cytoskeletal rearrangement and chemotaxis. Involved in AGTR1-mediated stress fiber formation by acting together with GNAQ to activate RHOA. Appears to function as signaling scaffold involved in regulation of MIP-1-beta-stimulated CCR5-dependent chemotaxis. Involved in attenuation of NF-kappa-B-dependent transcription in response to GPCR or cytokine stimulation by interacting with and stabilizing CHUK. May serve as nuclear messenger for GPCRs. Involved in OPRD1- stimulated transcriptional regulation by translocating to CDKN1B and FOS promoter regions and recruiting EP300 resulting in acetylation of histone H4. Involved in regulation of LEF1 transcriptional activity via interaction with DVL1 and or DVL2 Also involved in regulation of receptors other than GPCRs. Involved in Toll-like receptor and IL-1 receptor signaling through the interaction with TRAF6 which prevents TRAF6 autoubiquitination and oligomerization required for activation of NF-kappa-B and JUN","the binding appears to require additional receptor determinants exposed only in the active receptor conformation. The beta-arrestins target many receptors for internalization by acting as endocytic adapters (CLASPs, clathrin-associated sorting proteins) and recruiting the GPRCs to the adapter protein 2 complex 2 (AP-2) in clathrin-coated pits (CCPs). However, the extent of beta-arrestin involvement appears to vary significantly depending on the receptor, agonist and cell type. Internalized arrestin-receptor complexes traffic to intracellular endosomes, where they remain uncoupled from G-proteins. Two different modes of arrestin-mediated internalization occur. Class A receptors, like ADRB2, OPRM1, ENDRA, D1AR and ADRA1B dissociate from beta- arrestin at or near the plasma membrane and undergo rapid recycling. Class B receptors, like AVPR2, AGTR1, NTSR1, TRHR and TACR1 internalize as a complex with arrestin and traffic with it to endosomal vesicles, presumably as desensitized receptors, for extended periods of time. Receptor resensitization then requires that receptor-bound arrestin is removed so that the receptor can be dephosphorylated and returned to the plasma membrane. Involved in internalization of P2RY4 and UTP-stimulated internalization of P2RY2. Involved in phosphorylation-dependent internalization of OPRD1 ands subsequent recycling. Involved in the degradation of cAMP by recruiting cAMP phosphodiesterases to ligand-activated receptors. Beta-arrestins function as multivalent adapter proteins that can switch the GPCR from a G-protein signaling mode that transmits short-lived signals from the plasma membrane via small molecule second messengers and ion channels to a beta-arrestin signaling mode that transmits a distinct set of signals that are initiated as the receptor internalizes and transits the intracellular compartment. Acts as signaling scaffold for MAPK pathways such as MAPK1 3 (ERK1 2). ERK1 2 activated by the beta- arrestin scaffold is largely excluded from the nucleus and confined to cytoplasmic locations such as endocytic vesicles, also called beta-arrestin signalosomes. Recruits c-Src SRC to ADRB2 resulting in ERK activation. GPCRs for which the beta-arrestin- mediated signaling relies on both ARRB1 and ARRB2 (codependent regulation) include ADRB2, F2RL1 and PTH1R. For some GPCRs the beta-arrestin-mediated signaling relies on either ARRB1 or ARRB2 and is inhibited by the other respective beta-arrestin form (reciprocal regulation). Inhibits ERK1 2 signaling in AGTR1- and AVPR2-mediated activation (reciprocal regulation). Is required for SP-stimulated endocytosis of NK1R and recruits c-Src SRC to internalized NK1R resulting in ERK1 2 activation, which is required for the antiapoptotic effects of SP. Is involved in proteinase-activated F2RL1-mediated ERK activity. Acts as signaling scaffold for the AKT1 pathway. Is involved in alpha- thrombin-stimulated AKT1 signaling. Is involved in IGF1-stimulated AKT1 signaling leading to increased protection from apoptosis. Involved in activation of the p38 MAPK signaling pathway and in actin bundle formation. Involved in F2RL1-mediated cytoskeletal rearrangement and chemotaxis. Involved in AGTR1-mediated stress fiber formation by acting together with GNAQ to activate RHOA. Appears to function as signaling scaffold involved in regulation of MIP-1-beta-stimulated CCR5-dependent chemotaxis. Involved in attenuation of NF-kappa-B-dependent transcription in response to GPCR or cytokine stimulation by interacting with and stabilizing CHUK. May serve as nuclear messenger for GPCRs. Involved in OPRD1- stimulated transcriptional regulation by translocating to CDKN1B and FOS promoter regions and recruiting EP300 resulting in acetylation of histone H4. Involved in regulation of LEF1 transcriptional activity via interaction with DVL1 and or DVL2 Also involved in regulation of receptors other than GPCRs. Involved in Toll-like receptor and IL-1 receptor signaling through the interaction with TRAF6 which prevents TRAF6 autoubiquitination and oligomerization required for activation of NF-kappa-B and JUN"
+Acropora_022046,-1.309946973194503,6.624981944312329,Restriction endonuclease,Restriction endonuclease
+Acropora_022060,3.579698560489768,-10.74063938821205,Protein tyrosine kinase,Protein tyrosine kinase
+Acropora_022061,2.1442664598834624,-6.322847634587837,"ADAM metallopeptidase with thrombospondin type 1 motif, 7","ADAM metallopeptidase with thrombospondin type 1 motif, 7"
+Acropora_022064,1.0405238624099937,-13.98652723556797,G-protein coupled receptor activity,G-protein coupled receptor activity
+Acropora_022069,2.1730149560613925,-6.256169335516236,Ligand for members of the frizzled family of seven transmembrane receptors,Ligand for members of the frizzled family of seven transmembrane receptors
+Acropora_022094,1.6563599525712143,-4.260595262105022,NA,NA
+Acropora_022098,-2.035098309135796,6.685711106906076,UFM1 transferase activity,UFM1 transferase activity
+Acropora_022116,1.0549284070505658,-1.4121238211951066,NA,NA
+Acropora_022152,-2.3416495516975835,6.400277865084456,Electron transfer flavoprotein subunit,Electron transfer flavoprotein subunit
+Acropora_022173,-2.834397099896395,2.8040876214813326,Rhomboid domain containing 1,Rhomboid domain containing 1
+Acropora_022177,1.6459724465715901,-6.19763188128352,mRNA-containing ribonucleoprotein complex export from nucleus,mRNA-containing ribonucleoprotein complex export from nucleus
+Acropora_022190,-1.42816539233153,5.875668169773774,NA,NA
+Acropora_022194,-1.0588547159477553,1.687789265546551,28 kDa A-kinase anchor,28 kDa A-kinase anchor
+Acropora_022196,-1.2322418708921512,3.6170231685203604,"Tyrosine kinase, catalytic domain","Tyrosine kinase, catalytic domain"
+Acropora_022221,-3.6442656918094083,3.0428195522172894,member RAS oncogene family,member RAS oncogene family
+Acropora_022246,-1.1908924687312359,3.451588348157186,biological adhesion,biological adhesion
+Acropora_022251,-2.3506636024082734,6.685692254031972,NA,NA
+Acropora_022254,2.436087477303694,-4.371350659826428,NA,NA
+Acropora_022285,-1.0442051572209943,12.525932181808633,"This is a component of the ubiquinol-cytochrome c reductase complex (complex III or cytochrome b-c1 complex), which is part of the mitochondrial respiratory chain. This protein may mediate formation of the complex between cytochromes c and c1","This is a component of the ubiquinol-cytochrome c reductase complex (complex III or cytochrome b-c1 complex), which is part of the mitochondrial respiratory chain. This protein may mediate formation of the complex between cytochromes c and c1"
+Acropora_022287,1.52070811656752,-5.809343310913237,Rho guanyl-nucleotide exchange factor activity,Rho guanyl-nucleotide exchange factor activity
+Acropora_022291,1.2435375587354407,-2.277659138642414,somatostatin receptor activity,somatostatin receptor activity
+Acropora_022295,1.608719046094708,-2.072798360948115,NA,NA
+Acropora_022304,-1.6431294717444027,4.47106907431951,deadenylation-dependent decapping of nuclear-transcribed mRNA,deadenylation-dependent decapping of nuclear-transcribed mRNA
+Acropora_022348,1.0945310974155575,-1.8824899758638818,NA,NA
+Acropora_022364,-2.3177730336289564,6.994441550779169,-,-
+Acropora_022365,-6.063203181454775,12.325565931678424,-,-
+Acropora_022389,-1.9547790152183502,4.4785310742841995,ubiquitin-like protein ligase activity,ubiquitin-like protein ligase activity
+Acropora_022399,-1.1356474476706735,6.78059581098901,"ATPase activity, coupled to transmembrane movement of substances","ATPase activity, coupled to transmembrane movement of substances"
+Acropora_022410,1.8821418643704475,-4.1291362426621,"Microtubule associated monooxygenase, calponin and LIM domain containing","Microtubule associated monooxygenase, calponin and LIM domain containing"
+Acropora_022419,-2.022858683076906,1.9342945283352488,"regulation of ATP-dependent microtubule motor activity, plus-end-directed","regulation of ATP-dependent microtubule motor activity, plus-end-directed"
+Acropora_022422,-1.2909157876502044,8.455750112919853,"splicing factor 3b, subunit 5","splicing factor 3b, subunit 5"
+Acropora_022425,2.181385816764443,-3.2832909242462316,NA,NA
+Acropora_022453,-1.3263759011056575,1.4386963208062602,protein monoubiquitination,protein monoubiquitination
+Acropora_022467,-1.4796376815202572,5.398316463212245,positive regulation of protein monoubiquitination,positive regulation of protein monoubiquitination
+Acropora_022469,1.6368519951796414,-1.2791746613574628,mannosyl-glycoprotein endo-beta-N-acetylglucosaminidase activity,mannosyl-glycoprotein endo-beta-N-acetylglucosaminidase activity
+Acropora_022476,1.0130934018538538,-2.790392401052774,ATP-binding cassette sub-family A,ATP-binding cassette sub-family A
+Acropora_022491,1.3142305146434465,-7.28226479016349,NA,NA
+Acropora_022494,3.3983782797515087,-6.326739267474842,aryl hydrocarbon receptor activity,aryl hydrocarbon receptor activity
+Acropora_022518,-3.3960417302128807,6.321897250551982,NA,NA
+Acropora_022519,-1.4145204296817335,5.156234041052608,mitochondrion organization,mitochondrion organization
+Acropora_022527,1.5171850639451938,-1.3210951433505473,NA,NA
+Acropora_022535,1.5099404924182218,-5.883770659076957,ATP binding,ATP binding
+Acropora_022536,1.5526156040458878,-1.163755020884548,belongs to the actin family,belongs to the actin family
+Acropora_022546,2.009328247413902,-3.2926480735258385,kinetochore binding,kinetochore binding
+Acropora_022550,1.998997619508877,-4.0047432588192695,PLAC8 family,PLAC8 family
+Acropora_022555,1.314311409460423,-12.798730216376672,Helicase with zinc finger,Helicase with zinc finger
+Acropora_022561,1.1607436364676973,-7.54525430026343,Helicase with zinc finger,Helicase with zinc finger
+Acropora_022562,2.202162004429969,-11.917090121589334,nuclear receptor transcription coactivator activity,nuclear receptor transcription coactivator activity
+Acropora_022572,-3.1129443025739834,4.635408713492489,NA,NA
+Acropora_022592,-1.8611021634368552,1.3338945060337026,Ubiquitin homologues,Ubiquitin homologues
+Acropora_022601,-1.7347953794303517,4.433373489159266,phosphomannomutase activity,phosphomannomutase activity
+Acropora_022621,1.11454422442005,-6.0893324628022985,NA,NA
+Acropora_022625,1.3216250351541108,-4.341735638362697,single-stranded DNA 3'-5' exodeoxyribonuclease activity,single-stranded DNA 3'-5' exodeoxyribonuclease activity
+Acropora_022633,1.3981666838292013,-17.072404555935513,NA,NA
+Acropora_022642,-1.2770217037490836,3.2842848351618747,NA,NA
+Acropora_022677,-1.0096655676698014,2.20544348763475,cytolysis,cytolysis
+Acropora_022681,-1.8946380662641695,7.767386203567261,retrograde trans-synaptic signaling by lipid,retrograde trans-synaptic signaling by lipid
+Acropora_022694,-1.0374093073876847,3.77509659431896,response to brefeldin A,response to brefeldin A
+Acropora_022697,-1.4301841789179015,2.850424907661136,transferase activity,transferase activity
+Acropora_022725,-4.1844115174626975,3.300627534270906,transducer of ERBB2,transducer of ERBB2
+Acropora_022727,4.725400942624316,-3.007417631480971,Okazaki fragment processing involved in mitotic DNA replication,Okazaki fragment processing involved in mitotic DNA replication
+Acropora_022733,-1.2335790143901366,3.652035431082218,Possible lysine decarboxylase,Possible lysine decarboxylase
+Acropora_022741,1.0337293766120486,-2.6138623198476676,NA,NA
+Acropora_022756,-1.5194805248028502,3.932540257374381,NA,NA
+Acropora_022768,1.8037614810998965,-5.760201832331934,guanylate cyclase activity,guanylate cyclase activity
+Acropora_022802,-4.032104674588706,5.520043101106684,cellular calcium ion homeostasis,cellular calcium ion homeostasis
+Acropora_022818,2.045623176085927,-3.0723565837984133,mitotic spindle assembly,mitotic spindle assembly
+Acropora_022873,-1.1613700617151674,3.421313751134179,ubiquitin protein ligase binding,ubiquitin protein ligase binding
+Acropora_022952,2.047289973051816,-5.799325749482999,intracellular chloride channel activity,intracellular chloride channel activity
+Acropora_022962,1.4045439523827816,-4.674504708361367,(R)-3-amino-2-methylpropionate-pyruvate transaminase activity,(R)-3-amino-2-methylpropionate-pyruvate transaminase activity
+Acropora_022983,3.3983782797515087,-12.231291087838478,low voltage-gated calcium channel activity,low voltage-gated calcium channel activity
+Acropora_022990,-2.3234005040439327,3.565648893229972,steroid hormone mediated signaling pathway,steroid hormone mediated signaling pathway
+Acropora_022992,1.7194160763373016,-5.5833529936100526,BPTI/Kunitz family of serine protease inhibitors.,BPTI/Kunitz family of serine protease inhibitors.
+Acropora_023020,-1.0268827575069497,11.253668249677228,aconitate hydratase activity,aconitate hydratase activity
+Acropora_023060,-2.3869263927425335,2.4276107796914164,Spermatogenesis-associated protein 20,Spermatogenesis-associated protein 20
+Acropora_023076,2.394428499839689,-3.7320498640108486,NA,NA
+Acropora_023086,1.6379341884692675,-5.170134630536646,negative regulation of intrinsic apoptotic signaling pathway in response to DNA damage by p53 class mediator,negative regulation of intrinsic apoptotic signaling pathway in response to DNA damage by p53 class mediator
+Acropora_023089,1.3234461865008615,-3.9847084625711533,NA,NA
+Acropora_023157,1.7622470896659708,-1.735166233141234,NA,NA
+Acropora_023231,1.3201164740831235,-3.7607725071953184,NA,NA
+Acropora_023233,-1.9547790152183502,12.25613332905449,"oxidoreductase activity, acting on a heme group of donors, oxygen as acceptor","oxidoreductase activity, acting on a heme group of donors, oxygen as acceptor"
+Acropora_023269,-1.0049161048644775,2.8995802270039412,Serine threonine-protein phosphatase,Serine threonine-protein phosphatase
+Acropora_023340,1.2653057749964693,-1.3175095464040605,NA,NA
+Acropora_023344,2.922080397047646,-1.743640690366031,Methyltransferase domain,Methyltransferase domain
+Acropora_023429,1.0533311602629662,-8.781582174454671,gamma-aminobutyric acid:proton symporter activity,gamma-aminobutyric acid:proton symporter activity
+Acropora_023439,-1.0489482782576238,3.390804114860324,NA,NA
+Acropora_023486,1.4949934617105725,-1.2568350830697856,Belongs to the class-III pyridoxal-phosphate-dependent aminotransferase family,Belongs to the class-III pyridoxal-phosphate-dependent aminotransferase family
+Acropora_023497,1.9179722967450876,-1.5041796792933337,Sodium-driven chloride bicarbonate exchanger,Sodium-driven chloride bicarbonate exchanger
+Acropora_023517,-3.4510818382001163,9.536493422795594,NA,NA
+Acropora_023525,1.0468345632168479,-5.436740385794943,Elongation of very long chain fatty acids protein,Elongation of very long chain fatty acids protein
+Acropora_023530,-1.960197745726394,1.2067341281859314,sequence-specific DNA binding,sequence-specific DNA binding
+Acropora_023532,7.6560789855907885,-12.515036023335679,TeTratriCopeptide repeat,TeTratriCopeptide repeat
+Acropora_023546,1.9790190971209318,6.984342480471,Calcium ion binding,Calcium ion binding
+Acropora_023563,-1.9999481029302282,1.323135122185157,NA,NA
+Acropora_023576,-2.631001333832954,8.053974988996998,Myelin regulatory factor,Myelin regulatory factor
+Acropora_023577,1.8565164034957802,-3.4569593968674606,microtubule plus-end binding,microtubule plus-end binding
+Acropora_023578,-1.1188108465310056,13.474504802474428,transmembrane transport,transmembrane transport
+Acropora_023597,1.3668862357741625,-6.568600092343931,Belongs to the protein-tyrosine phosphatase family. Non-receptor class myotubularin subfamily,Belongs to the protein-tyrosine phosphatase family. Non-receptor class myotubularin subfamily
+Acropora_023617,1.5498699617550582,-3.0150043045932726,negative regulation of fibroblast apoptotic process,negative regulation of fibroblast apoptotic process
+Acropora_023652,-7.056698333318372,11.46948139672049,NA,NA
+Acropora_023653,-5.271567185672731,5.992742285599554,NA,NA
+Acropora_023661,-1.8948839252784453,5.415388050392797,DEAD/DEAH box helicase,DEAD/DEAH box helicase
+Acropora_023665,-1.3431191215833855,2.1250409824402055,cellular developmental process,cellular developmental process
+Acropora_023677,-3.746278053567401,11.58497012665757,NA,NA
+Acropora_023681,-2.426155502042974,6.031503968327921,NA,NA
+Acropora_023691,9.336691394098839,-9.241464969472826,NA,NA
+Acropora_023692,-3.2926372028227076,9.920308945404875,NA,NA
+Acropora_023702,1.9947990911573241,-3.6067583049398872,NA,NA
+Acropora_023713,3.170236916531318,-2.909937837502627,7 transmembrane receptor (rhodopsin family),7 transmembrane receptor (rhodopsin family)
+Acropora_023771,-6.189882505331075,2.9181562280137086,chromatin binding,chromatin binding
+Acropora_023791,1.4289152771136533,-2.106896771705304,Beta-eliminating lyase,Beta-eliminating lyase
+Acropora_023824,1.2186653940715455,-4.039423643670352,potassium voltage-gated channel,potassium voltage-gated channel
+Acropora_023847,-1.2503434699417035,5.5454846170884275,CD151 molecule (Raph blood group),CD151 molecule (Raph blood group)
+Acropora_023854,-1.2658160558428768,4.389658596773821,"CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase, mitochondrial","CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase, mitochondrial"
+Acropora_023860,-1.0102269406191937,2.230129162919118,Protein of unknown function with motif GDWWSH,Protein of unknown function with motif GDWWSH
+Acropora_023865,-4.1844115174626975,4.8662905300347665,Activating transcription factor 4b1 (tax-responsive enhancer element B67),Activating transcription factor 4b1 (tax-responsive enhancer element B67)
+Acropora_023876,3.669605961794665,-4.533200222755029,NA,NA
+Acropora_023881,1.8483861578967196,-4.717102175853477,protein side chain deglutamylation,protein side chain deglutamylation
+Acropora_023882,1.6887796420550298,-7.245256785143403,G-protein coupled receptor activity,G-protein coupled receptor activity
+Acropora_023892,2.5355118389620075,-5.6408381259222775,Belongs to the sodium solute symporter (SSF) (TC 2.A.21) family,Belongs to the sodium solute symporter (SSF) (TC 2.A.21) family
+Acropora_023893,1.1718630340311798,-1.9867245853656548,ubiquitin protein ligase binding,ubiquitin protein ligase binding
+Acropora_023911,-2.5959764019766163,2.0216243019891085,Endoribonuclease XendoU,Endoribonuclease XendoU
+Acropora_023920,8.15603583282869,-6.685711106906076,NA,NA
+Acropora_023922,-10.828878816178833,6.87227459725412,sequence-specific DNA binding,sequence-specific DNA binding
+Acropora_023949,-1.2392139058557983,3.0211303181177187,"zinc finger, DHHC-type containing 17","zinc finger, DHHC-type containing 17"
+Acropora_023978,1.030380660793607,-1.9146701011120872,microtubule motor activity,microtubule motor activity
+Acropora_023989,1.4168835249760734,-6.057019094046103,1-phosphatidylinositol-4-phosphate 5-kinase activity,1-phosphatidylinositol-4-phosphate 5-kinase activity
+Acropora_023998,3.909493084330556,-2.3912359016262057,cAMP-dependent protein kinase regulator activity,cAMP-dependent protein kinase regulator activity
+Acropora_024008,-1.1851067462802323,11.214995522233338,lipoprotein receptor-related protein,lipoprotein receptor-related protein
+Acropora_024010,-2.002474299809792,3.7876438022388923,"coreceptor activity involved in Wnt signaling pathway, planar cell polarity pathway","coreceptor activity involved in Wnt signaling pathway, planar cell polarity pathway"
+Acropora_024023,1.2289348823214317,-1.7738659500965528,N-acetyl-beta-glucosaminyl-glycoprotein 4-beta-N-acetylgalactosaminyltransferase activity,N-acetyl-beta-glucosaminyl-glycoprotein 4-beta-N-acetylgalactosaminyltransferase activity
+Acropora_024077,1.5075157786969786,-10.656661659886746,ammonium transmembrane transporter activity,ammonium transmembrane transporter activity
+Acropora_024093,1.231746116150418,-1.1941072301824793,-,-
+Acropora_024095,1.0248466030944041,-2.531455713882895,Belongs to the adenylyl cyclase class-4 guanylyl cyclase family,Belongs to the adenylyl cyclase class-4 guanylyl cyclase family
+Acropora_024101,1.2587126600334035,-3.4796257408789466,protein-hormone receptor activity,protein-hormone receptor activity
+Acropora_024135,-1.6535153958881814,1.117578104295012,BTB/POZ domain,BTB/POZ domain
+Acropora_024139,-3.9544577967072683,12.696759234639936,regulation of vesicle fusion,regulation of vesicle fusion
+Acropora_024147,1.4856415058112562,-4.678271141493655,alpha-protein kinase 1,alpha-protein kinase 1
+Acropora_024234,-3.6072024650766874,1.528946965857078,Transmembrane protein 87A,Transmembrane protein 87A
+Acropora_024236,2.0061805711597755,1.318486139409936,NA,NA
+Acropora_024259,-1.0599824969016938,9.128362169081859,cysteine-type endopeptidase activity,cysteine-type endopeptidase activity
+Acropora_024264,-1.0518499029437378,4.78338921216907,animal organ development,animal organ development
+Acropora_024310,1.2392139058557983,-3.0007379756730255,MAP kinase kinase kinase activity,MAP kinase kinase kinase activity
+Acropora_024312,1.4141266538453912,1.8201565599532838,Cellulase (glycosyl hydrolase family 5),Cellulase (glycosyl hydrolase family 5)
+Acropora_024319,1.0746064366572778,-12.47636729109722,NA,NA
+Acropora_024326,3.4877322222912586,-10.356640112122873,negative regulation of motor neuron migration,negative regulation of motor neuron migration
+Acropora_024354,1.6813300708844492,-2.6692652600770232,NA,NA
+Acropora_024385,-1.252324063336014,-5.2627981116178475,response to hypoxia,response to hypoxia
+Acropora_024402,1.3744462500334975,-2.5397121152257385,membrane addition at site of cytokinesis,membrane addition at site of cytokinesis
+Acropora_024417,2.2058650974617584,-14.355806128653331,actin filament severing,actin filament severing
+Acropora_024426,1.1422181813968773,-6.9671958215372305,"Domain present in PSD-95, Dlg, and ZO-1/2.","Domain present in PSD-95, Dlg, and ZO-1/2."
+Acropora_024488,-2.3085648656080426,6.071368328067464,organic anion transmembrane transporter activity,organic anion transmembrane transporter activity
+Acropora_024489,-1.420150247917645,11.651067014484958,endoribonuclease activity,endoribonuclease activity
+Acropora_024516,-1.1247636334934,4.814990725926251,endoplasmic reticulum lectin 1,endoplasmic reticulum lectin 1
+Acropora_024577,-1.3506825919526908,10.673421749719045,NA,NA
+Acropora_024716,1.321680115103498,-2.6432667432077896,NA,NA
+Acropora_024846,1.3142305146434465,-1.7222211598759203,arachidonic acid secretion,arachidonic acid secretion
+Acropora_024933,-1.6396366177330144,7.258439065423897,"Solute carrier family 35, member G1","Solute carrier family 35, member G1"
+Acropora_024937,2.1617381857490816,-7.221068040657367,"spectrin, beta","spectrin, beta"
+Acropora_024955,2.180713092223472,-1.5482608242945175,NA,NA
+Acropora_024956,1.0457436530854867,-3.0600682956336414,NA,NA
+Acropora_024996,-1.1975041130467083,5.445105294743571,endosomal vesicle fusion,endosomal vesicle fusion
+Acropora_025009,1.0803746929723683,-1.878876020363859,NA,NA
+Acropora_025074,-11.266830716723806,22.62400725919027,NA,NA
+Acropora_025224,1.1650988206755186,-2.1596569962829966,Transposase IS4,Transposase IS4
+Acropora_025268,1.549443857390147,-1.619126807260575,DNA binding,DNA binding
+Acropora_025340,-1.5171850639451938,3.702548336159588,NA,NA
+Acropora_025532,-3.780982411110891,3.494520813739492,NA,NA
+Acropora_025573,-1.0500744973866483,7.405601256710906,NA,NA
+Acropora_025669,1.0713761842181977,-3.4854546176801597,receptor localization to synapse,receptor localization to synapse
+Acropora_025675,1.5609324090004646,-3.610481869513345,Centrosomal protein,Centrosomal protein
+Acropora_025713,-3.0820970432240555,1.0162571645806624,NA,NA
+Acropora_025819,1.0713761842181977,-2.496892590196376,NA,NA
+Acropora_025824,-1.2478716134001235,1.4753809761744086,carbohydrate binding,carbohydrate binding
+Acropora_025840,1.7589028586634503,-1.72593902885349,GPCR-Autoproteolysis INducing (GAIN) domain,GPCR-Autoproteolysis INducing (GAIN) domain
+Acropora_025851,9.566222010819551,-8.389015188457797,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle
+Acropora_025852,15.666884385050375,-16.017004730487926,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle
+Acropora_025853,1.693454335543189,-1.7107715706674966,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle,Mediates cleavage of dimethlysulfonioproprionate (DMSP) into dimethyl sulfide (DMS) and acrylate. DMS is the principal form by which sulfur is transported from oceans to the atmosphere and is a key component of the ocean sulfur cycle
+Acropora_025907,3.4081620090460305,-4.719806109176799,transcription corepressor activity,transcription corepressor activity
+Acropora_025931,-1.1836791168263223,5.675732390720094,peroxiredoxin activity,peroxiredoxin activity
+Acropora_025932,4.36506398969285,-6.9569654631064655,NA,NA
+Acropora_026008,-1.5099404924182218,1.6835739520263884,Belongs to the SNF7 family,Belongs to the SNF7 family
+Acropora_026034,-1.4480394884331829,12.215917409052524,intra-Golgi vesicle-mediated transport,intra-Golgi vesicle-mediated transport
+Acropora_026067,1.959343500394617,-3.5050756990026706,NA,NA
+Acropora_026070,-1.649932634890497,7.205913212581066,Involved in the regulation of homocysteine metabolism,Involved in the regulation of homocysteine metabolism
+Acropora_026074,2.9879711293152753,-22.831908836281503,NA,NA
+Acropora_026079,2.3506636024082734,-10.038614844603748,Protein kinase C conserved region 2 (CalB),Protein kinase C conserved region 2 (CalB)
+Acropora_026081,1.436186429559741,-3.860848375503514,Protein kinase C conserved region 2 (CalB),Protein kinase C conserved region 2 (CalB)
+Acropora_026084,1.1908360314171291,-4.648750228255695,late endosome to lysosome transport,late endosome to lysosome transport
+Acropora_026111,2.7929446133413394,-3.9426057258595435,NA,NA
+Acropora_026122,1.6925121197057889,-4.884373223106937,identical protein binding,identical protein binding
+Acropora_026127,1.0821973482225813,-3.856344883384919,nucleoside transmembrane transporter activity,nucleoside transmembrane transporter activity
+Acropora_026140,2.290967181523896,-8.837816315611699,phosphatidylinositol phospholipase C activity,phosphatidylinositol phospholipase C activity
+Acropora_026170,-2.0433070048892357,3.5107244697429034,NA,NA
+Acropora_026171,-1.9269439126467243,1.5098899728819948,NA,NA
+Acropora_026172,-1.1092843492714732,1.3402628627140958,choline O-acetyltransferase activity,choline O-acetyltransferase activity
+Acropora_026173,1.232182803869093,-3.26289719320895,1-phosphatidylinositol-3-phosphate 5-kinase activity,1-phosphatidylinositol-3-phosphate 5-kinase activity
+Acropora_026215,-4.3787369495644395,7.688319700794682,endoplasmic reticulum,endoplasmic reticulum
+Acropora_026219,-2.3018006565242564,1.5164435281293114,NA,NA
+Acropora_026228,1.0432424706466243,1.2501021981489482,Inward rectifier potassium channel,Inward rectifier potassium channel
+Acropora_026237,-2.304064569313295,6.842989400265384,"posttranslational protein targeting to membrane, translocation","posttranslational protein targeting to membrane, translocation"
+Acropora_026243,-1.0594398961187859,8.778666684789801,MiCRoSpherule Protein 1,MiCRoSpherule Protein 1
+Acropora_026248,-2.0833225569933997,9.963971078477435,"Filamin C, gamma","Filamin C, gamma"
+Acropora_026255,-1.3091134572676957,13.791337798527506,calcium ion export across plasma membrane,calcium ion export across plasma membrane
+Acropora_026256,-1.7192860943751933,1.3058163024794567,Spermatogenesis-associated serine-rich protein 2,Spermatogenesis-associated serine-rich protein 2
+Acropora_026260,-7.277356673880123,3.895208601596002,unfolded protein binding,unfolded protein binding
+Acropora_026262,1.8024865225063558,-3.315718751279826,DNA-binding transcription factor activity,DNA-binding transcription factor activity
+Acropora_026270,1.2770217037490836,-3.9840591228364297,mesenchymal stem cell proliferation,mesenchymal stem cell proliferation
+Acropora_026271,1.0281875322248752,-3.386421419182911,optic vesicle morphogenesis,optic vesicle morphogenesis
+Acropora_026280,-1.4912517184783631,3.6729624453937397,"ATPase activity, coupled to transmembrane movement of substances","ATPase activity, coupled to transmembrane movement of substances"
+Acropora_026287,1.5099404924182218,-3.224237959373196,MAP kinase kinase kinase activity,MAP kinase kinase kinase activity
+Acropora_026310,-12.253557470222631,2.3934672209876315,protein disulfide isomerase activity,protein disulfide isomerase activity
+Acropora_026312,-1.839185036573612,1.9344699681911521,positive regulation of interleukin-13 biosynthetic process,positive regulation of interleukin-13 biosynthetic process
+Acropora_026329,9.432117453816005,-2.7063596979220197,trypsinogen activation,trypsinogen activation
+Acropora_026340,-1.600124804177735,7.525451757765002,Dolichyl-diphosphooligosaccharide--protein glycosyltransferase subunit,Dolichyl-diphosphooligosaccharide--protein glycosyltransferase subunit
+Acropora_026342,1.8483861578967196,-8.748581116294178,NA,NA
+Acropora_026353,-2.5972973109537767,16.46921813518394,glucuronosyl-N-acetylglucosaminyl-proteoglycan 4-alpha-N-acetylglucosaminyltransferase activity,glucuronosyl-N-acetylglucosaminyl-proteoglycan 4-alpha-N-acetylglucosaminyltransferase activity
+Acropora_026358,-1.8832214738716027,1.1355721516606119,adenylate cyclase-inhibiting G-protein coupled glutamate receptor signaling pathway,adenylate cyclase-inhibiting G-protein coupled glutamate receptor signaling pathway
+Acropora_026362,1.2275439974551479,-1.5055015437379276,Belongs to the membrane-bound acyltransferase family,Belongs to the membrane-bound acyltransferase family
+Acropora_026368,2.9045151218591396,-10.173136684184994,Guanylate kinase,Guanylate kinase
+Acropora_026399,-1.600547665478825,6.763071942323876,translocation of peptides or proteins into other organism involved in symbiotic interaction,translocation of peptides or proteins into other organism involved in symbiotic interaction
+Acropora_026400,-2.9583579365255543,18.879113276571214,protein transport,protein transport
+Acropora_026402,-1.8844666703631754,12.786467709916888,transcription elongation from RNA polymerase II promoter,transcription elongation from RNA polymerase II promoter
+Acropora_026407,-2.423927550512444,10.349269728243414,protein homodimerization activity,protein homodimerization activity
+Acropora_026408,-1.6533136281496215,6.332065125317851,RNA splicing,RNA splicing
+Acropora_026409,3.154874876940312,-3.6016864952995684,Structural maintenance of chromosomes flexible hinge,Structural maintenance of chromosomes flexible hinge
+Acropora_026410,-1.2876383339508803,4.517175236124445,co-translational protein modification,co-translational protein modification
+Acropora_026415,-1.3234461865008615,8.517177404685008,Belongs to the universal ribosomal protein uL5 family,Belongs to the universal ribosomal protein uL5 family
+Acropora_026428,3.1941423963476065,-1.2762923700334436,guanine/thymine mispair binding,guanine/thymine mispair binding
+Acropora_026447,-1.5305555411887535,1.0067383658886155,adenylate cyclase-activating G-protein coupled receptor signaling pathway,adenylate cyclase-activating G-protein coupled receptor signaling pathway
+Acropora_026464,1.642427747750018,-9.41693940041491,ATPase inhibitor activity,ATPase inhibitor activity
+Acropora_026478,-2.4045050869889257,6.449252671325103,NA,NA
+Acropora_026535,-3.1380729157137486,10.200597867660326,NA,NA
+Acropora_026548,1.0723843798044186,-1.7577402859162419,E2F/DP family winged-helix DNA-binding domain,E2F/DP family winged-helix DNA-binding domain
+Acropora_026563,1.0687306790545321,-1.0061081609977576,protein-DNA loading ATPase activity,protein-DNA loading ATPase activity
+Acropora_026566,1.5932180714241928,-1.4679995514345892,NA,NA
+Acropora_026569,-1.1650988206755186,8.267489013845484,NA,NA
+Acropora_026577,1.7481735091827066,-2.499644874878495,chitinase activity,chitinase activity
+Acropora_026580,1.4168835249760734,-1.158678698962349,zinc ion binding,zinc ion binding
+Acropora_026588,-1.4182567430565107,6.491140623014962,thick ascending limb development,thick ascending limb development
+Acropora_026604,-1.9355469235086085,2.3852570214377447,NA,NA
+Acropora_026622,-3.615504593109242,4.5422957408997915,NA,NA
+Acropora_026628,-2.011823703911968,9.80707483885977,NA,NA
+Acropora_026630,-1.4212594559889828,2.7384128695852876,scavenger receptor activity,scavenger receptor activity
+Acropora_026636,-1.7192860943751933,9.467746421686483,NA,NA
+Acropora_026637,-1.9273644746391163,4.874165405060077,NA,NA
+Acropora_026652,2.7170383522719175,-7.657590441062868,oxoglutarate dehydrogenase (succinyl-transferring) activity,oxoglutarate dehydrogenase (succinyl-transferring) activity
+Acropora_026655,-1.7171687967147575,1.2488487319822419,NA,NA
+Acropora_026670,-3.3456406148262046,7.298637606364043,NA,NA
+Acropora_026671,-2.3506636024082734,3.658369140191398,scavenger receptor activity,scavenger receptor activity
+Acropora_026677,-4.465749570992507,9.545515868142088,NA,NA
+Acropora_026678,-1.047338901836912,7.068143102827975,NA,NA
+Acropora_026681,-1.0865779435781653,4.517175236124445,FAD transmembrane transport,FAD transmembrane transport
+Acropora_026717,-1.1817551471187908,4.396209804297218,Belongs to the FPP GGPP synthase family,Belongs to the FPP GGPP synthase family
+Acropora_026736,2.3277613069367984,-7.88498819289509,NA,NA
+Acropora_026747,-1.3130237215864833,2.3437696741031666,"Essential component of the TIM23 complex, a complex that mediates the translocation of transit peptide-containing proteins across the mitochondrial inner membrane","Essential component of the TIM23 complex, a complex that mediates the translocation of transit peptide-containing proteins across the mitochondrial inner membrane"
+Acropora_026757,-1.134032180513827,7.100996405766206,medium-chain fatty acid-CoA ligase activity,medium-chain fatty acid-CoA ligase activity
+Acropora_026785,2.1799600493147917,-5.99457271540918,subunit beta-like,subunit beta-like
+Acropora_026791,-1.7511048027449752,2.988406784027357,fibroblast growth factor,fibroblast growth factor
+Acropora_026799,2.0054290457813537,-2.8191997573877003,NA,NA
+Acropora_026802,-1.1188108465310056,2.281214547552495,Family of unknown function with LKAAEAR motif,Family of unknown function with LKAAEAR motif
+Acropora_026807,2.7602611354546136,-1.5734489610832112,peptidyl-tRNA hydrolase,peptidyl-tRNA hydrolase
+Acropora_026811,-3.378122919670044,15.713833489726545,Belongs to the SKP1 family,Belongs to the SKP1 family
+Acropora_026815,4.94741673331535,-3.9209019503817055,NA,NA
+Acropora_026847,-1.7270208413496082,2.8138259751785357,NA,NA
+Acropora_026850,-5.832812837683387,9.53042957324261,NA,NA
+Acropora_026851,-2.308725050200407,13.98652723556797,NA,NA
+Acropora_026909,2.852869549678755,-6.314889246344733,NA,NA
+Acropora_026935,-1.5171850639451938,13.27516232951032,translation elongation factor activity,translation elongation factor activity
+Acropora_027057,1.2363266635538415,-3.371876966439976,NA,NA
+Acropora_027106,1.443790731772035,-4.800416350854577,NA,NA
+Acropora_027152,1.4950286641190051,9.536493422795594,Pentafunctional AROM polypeptide-like,Pentafunctional AROM polypeptide-like
+Acropora_027253,-1.194064466921918,-2.5733540444332115,scavenger receptor activity,scavenger receptor activity
+Acropora_027257,-1.0049161048644775,9.796430435780168,NA,NA
+Acropora_027294,1.4348650691053302,-3.2707026824566947,NA,NA
+Acropora_027295,-1.8206868580862123,3.9417807821252033,"Constitutes one of the two catalytic subunit of the tRNA-splicing endonuclease complex, a complex responsible for identification and cleavage of the splice sites in pre-tRNA. It cleaves pre-tRNA at the 5'- and 3'-splice sites to release the intron. The products are an intron and two tRNA half-molecules bearing 2',3'-cyclic phosphate and 5'-OH termini. There are no conserved sequences at the splice sites, but the intron is invariably located at the same site in the gene, placing the splice sites an invariant distance from the constant structural features of the tRNA body","Constitutes one of the two catalytic subunit of the tRNA-splicing endonuclease complex, a complex responsible for identification and cleavage of the splice sites in pre-tRNA. It cleaves pre-tRNA at the 5'- and 3'-splice sites to release the intron. The products are an intron and two tRNA half-molecules bearing 2',3'-cyclic phosphate and 5'-OH termini. There are no conserved sequences at the splice sites, but the intron is invariably located at the same site in the gene, placing the splice sites an invariant distance from the constant structural features of the tRNA body"
+Acropora_027348,2.264328363185788,-1.4360927180475462,ubiquitin binding,ubiquitin binding
+Acropora_027374,-1.3668862357741625,16.087821725578724,ribosome biogenesis,ribosome biogenesis
+Acropora_027377,2.1260231535489327,-2.324166063045599,NA,NA
+Acropora_027414,1.4816659137100718,-1.359368988991691,Coiled-coil,Coiled-coil
+Acropora_027417,-1.4156628201292536,-1.0224256289625955,NA,NA
+Acropora_027431,-1.0459397371542447,5.838388511702946,AMPA glutamate receptor activity,AMPA glutamate receptor activity
+Acropora_027492,-1.0235803406403736,-1.7813635968023163,zinc finger CCCH-type containing,zinc finger CCCH-type containing
+Acropora_027515,2.9820941714821245,-10.810430006439299,ubiquitin-protein transferase activity,ubiquitin-protein transferase activity
+Acropora_027521,-1.4235421977089509,4.70300722952444,Mindbomb E3 ubiquitin protein ligase 2,Mindbomb E3 ubiquitin protein ligase 2
+Acropora_027532,-1.9241538530110702,2.3854971515352874,NA,NA
+Acropora_027533,-1.5194805248028502,1.714517271365678,NA,NA
+Acropora_027552,-4.963372451374818,7.894149329249467,adenylate cyclase-activating G-protein coupled receptor signaling pathway,adenylate cyclase-activating G-protein coupled receptor signaling pathway
+Acropora_027597,-1.8670521033730725,15.229003243611471,NA,NA
+Acropora_027692,-1.2546710875265445,3.1341811375658293,NA,NA
+Acropora_027695,-1.3942897910632106,3.8496961076723735,interferon regulatory factor 1,interferon regulatory factor 1
+Acropora_027708,1.511529749883775,-7.090025915752352,NA,NA
+Acropora_027727,1.64544527640609,-1.2191860861466035,NA,NA
+Acropora_027734,1.0298159880596491,-2.7604949072374656,NA,NA
+Acropora_027735,1.642427747750018,-3.0731373756327844,NA,NA
+Acropora_027738,1.3321643153254321,-3.242615642342028,metalloendopeptidase activity,metalloendopeptidase activity
+Acropora_027745,-1.2393757528920282,3.948750021823008,NA,NA
+Acropora_027748,1.8454889006308584,-9.119943544135381,NA,NA
+Acropora_027752,2.736785356997015,-7.070389357332027,amyloid precursor protein metabolic process,amyloid precursor protein metabolic process
+Acropora_027765,-1.2722227637788142,1.1230204466464908,NA,NA
+Acropora_027789,-1.4040582455106616,13.445669926439367,embryonic brain development,embryonic brain development
+Acropora_027872,-4.100247362806158,-1.303492790666571,Neural cell adhesion molecule,Neural cell adhesion molecule
+Acropora_027874,1.512338139972034,-1.3281267003592299,Nucleoporin-like protein 2,Nucleoporin-like protein 2
+Acropora_027919,2.5681853043734897,-1.6986461537869557,organic anion transmembrane transporter activity,organic anion transmembrane transporter activity
+Acropora_027920,-1.0793416230193555,5.554240332903408,regulation of response to stimulus,regulation of response to stimulus
+Acropora_027933,-2.953488041833896,5.369781735927422,Marginal zone B and,Marginal zone B and
+Acropora_027942,-1.1496631721219737,10.260616009801378,cellular response to dsDNA,cellular response to dsDNA
+Acropora_027944,-1.003078092242972,2.4269248019109857,epithelial to mesenchymal transition,epithelial to mesenchymal transition
+Acropora_027946,2.5758948229352296,-3.790748227415321,NA,NA
+Acropora_027954,-1.928533918395325,2.5579263685997633,dolichyl-phosphate-mannose-protein mannosyltransferase activity,dolichyl-phosphate-mannose-protein mannosyltransferase activity
+Acropora_027956,-5.625912069856273,11.459265082953497,Impact RWD domain protein,Impact RWD domain protein
+Acropora_028023,1.1496631721219737,-3.415852426747239,Calponin homology domain,Calponin homology domain
+Acropora_028079,1.107783244219418,-1.604001495058842,Cenp-F N-terminal domain,Cenp-F N-terminal domain
+Acropora_028085,1.2018105159998826,-2.2368311776668284,DNA replication origin binding,DNA replication origin binding
+Acropora_028096,4.194345232978925,-8.883105749392731,NA,NA
+Acropora_028098,2.7170383522719175,-10.03261128921154,NA,NA
+Acropora_028103,4.353291726804698,-6.785930568921875,glucose:sodium symporter activity,glucose:sodium symporter activity
+Acropora_028115,-1.5194805248028502,6.220224213889245,regulation of calcium-mediated signaling,regulation of calcium-mediated signaling
+Acropora_028118,1.4950286641190051,-3.5591976304132835,zinc ion binding,zinc ion binding
+Acropora_028135,1.0210901667208578,-8.053974988996998,NA,NA
+Acropora_028139,-5.8577899679172285,18.879113276571214,calcium ion transport,calcium ion transport
+Acropora_028171,3.05141040545431,-4.0167448336824005,NA,NA
+Acropora_028212,-10.397715422224119,19.80150043023416,calcium ion transport,calcium ion transport
+Acropora_028224,-15.043747535523455,15.289998694702755,Mesencephalic astrocyte-derived neurotrophic factor,Mesencephalic astrocyte-derived neurotrophic factor
+Acropora_028236,-1.048557267246609,5.661592253947199,NA,NA
+Acropora_028271,1.3019673948306016,-6.031503968327921,NA,NA
+Acropora_028277,1.34321311512655,-1.0318470783117806,14-3-3 protein binding,14-3-3 protein binding
+Acropora_028286,-1.9547790152183502,17.648020543886627,"Translocon-associated protein, delta subunit precursor (TRAP-delta)","Translocon-associated protein, delta subunit precursor (TRAP-delta)"
+Acropora_028300,1.2208335068306468,-1.834430926217338,acylamino-acid-releasing enzyme,acylamino-acid-releasing enzyme
+Acropora_028331,-2.1597455148355147,8.09693585476871,NA,NA
+Acropora_028337,1.6079165093133703,-15.623254293024901,regulation of mitotic cell cycle,regulation of mitotic cell cycle
+Acropora_028339,1.8275962199035012,-1.8882114918961168,NA,NA
+Acropora_028348,1.1221849442985834,-4.2548007478894245,Domain of unknown function (DUF4594),Domain of unknown function (DUF4594)
+Acropora_028379,-1.0312200444993693,1.4997634317015014,NA,NA
+Acropora_028383,-2.2018518774577345,1.7698774641615194,lysosomal lumen pH elevation,lysosomal lumen pH elevation
+Acropora_028386,7.634006907659878,-7.094748318647836,NA,NA
+Acropora_028397,1.412564481450752,-2.3991122790468653,Tubulin gamma complex associated protein 6,Tubulin gamma complex associated protein 6
+Acropora_028406,1.8024865225063558,-12.506873192887628,regulation of mitotic cell cycle,regulation of mitotic cell cycle
+Acropora_028409,1.0500744973866483,-3.87814623805781,NA,NA
+Acropora_028480,1.9677563529348359,-1.1272847354593247,helix loop helix domain,helix loop helix domain
+Acropora_028488,6.494453416627658,-4.155128784256467,helix loop helix domain,helix loop helix domain
+Acropora_028497,2.8902357860938794,-5.923753842476923,fibroblast growth factor-activated receptor activity,fibroblast growth factor-activated receptor activity
+Acropora_028504,1.4635772610328741,-13.897318070373384,fibroblast growth factor-activated receptor activity,fibroblast growth factor-activated receptor activity
+Acropora_028514,-2.898070807576929,11.585366877691031,regulation of chemokine (C-C motif) ligand 2 secretion,regulation of chemokine (C-C motif) ligand 2 secretion
+Acropora_028516,1.4435333408529911,-5.962773380150787,kinetochore assembly,kinetochore assembly
+Acropora_028517,1.7568219256710587,2.456089514817935,DNA repair protein complementing XP-C cells,DNA repair protein complementing XP-C cells
+Acropora_028519,1.1569423011314246,-1.6304535767992479,Beta-lactamase,Beta-lactamase
+Acropora_028525,4.986868219694588,-5.192934139222204,NA,NA
+Acropora_028530,1.2434246792115629,-5.101693453097104,NA,NA
+Acropora_028531,-3.762801191079782,4.123987225217606,NA,NA
+Acropora_028543,1.7638876269988137,-9.46030595243085,NA,NA
+Acropora_028560,1.1682919790291681,-1.1863907589060265,NA,NA
+Acropora_028567,1.9329870547292243,-6.432863808261469,NA,NA
+Acropora_028619,-1.5319892436213658,2.3189116216569787,NA,NA
+Acropora_028639,-1.6087283492107236,5.021062848422626,phosphatidylinositol binding,phosphatidylinositol binding
+Acropora_028641,1.19842371513383,-3.1232060680073257,sequence-specific DNA binding,sequence-specific DNA binding
+Acropora_028713,1.409535056751759,-5.277824160387185,Dehydratase family,Dehydratase family
+Acropora_028820,-1.9414041718590949,5.548646834332575,SCF-dependent proteasomal ubiquitin-dependent protein catabolic process,SCF-dependent proteasomal ubiquitin-dependent protein catabolic process
+Acropora_028893,-1.5867585123365504,14.64555863935326,NA,NA
+Acropora_028926,-2.4288883031759307,1.4025748571810626,"TBC1 domain family, member 25","TBC1 domain family, member 25"
+Acropora_028927,-1.088247428021292,2.4795856947898485,Chromosome 9 open reading frame 116,Chromosome 9 open reading frame 116
+Acropora_028994,2.1537011091275944,3.076341204682742,NA,NA
+Acropora_029159,1.154565309831624,-5.883770659076957,chromatin remodeling,chromatin remodeling
+Acropora_029215,2.609199860166075,-7.911414330664932,NA,NA
+Acropora_029357,1.0309911669065692,-2.8474724184955864,regulator of nonsense transcripts,regulator of nonsense transcripts
+Acropora_029358,1.128055854263865,-2.989425158079953,UPF0577 protein,UPF0577 protein
+Acropora_029364,2.9149787397787015,-3.8666795965898526,Sulfotransferase domain,Sulfotransferase domain
+Acropora_029367,2.0331797842007813,-3.9795715411694803,hydrolase activity,hydrolase activity
+Acropora_029432,5.972718632412539,-10.90743418673537,CUB domain-containing protein 2,CUB domain-containing protein 2
+Acropora_029456,-1.2614180827926866,1.4021284058588623,"Possible plasma membrane-binding motif in junctophilins, PIP-5-kinases and protein kinases.","Possible plasma membrane-binding motif in junctophilins, PIP-5-kinases and protein kinases."
+Acropora_029513,1.720534237389516,-1.344798802084994,GABA-A receptor activity,GABA-A receptor activity
+Acropora_029514,4.779545911688208,-3.33663645948595,Belongs to the ligand-gated ion channel (TC 1.A.9) family,Belongs to the ligand-gated ion channel (TC 1.A.9) family
+Acropora_029524,1.4774989510686132,-1.1568857194996995,NA,NA
+Acropora_029565,-1.5110509384736948,6.588932818384803,26s proteasome non-ATPase regulatory subunit,26s proteasome non-ATPase regulatory subunit
+Acropora_029576,1.047338901836912,-1.0173984171814072,NA,NA
+Acropora_029597,3.4342553592240814,-10.625628201897227,NA,NA
+Acropora_029598,3.7707197991525803,-6.452843839158183,biological adhesion,biological adhesion
+Acropora_029599,2.0968495874955377,-11.814376042040045,positive regulation of cysteine-type endopeptidase activity involved in apoptotic process,positive regulation of cysteine-type endopeptidase activity involved in apoptotic process
+Acropora_029602,3.1194539679117783,-4.3517419448313195,heme binding,heme binding
+Acropora_029604,1.3726822542786248,-3.4695625297174844,heme binding,heme binding
+Acropora_029605,3.330398929785252,-4.406458673315565,heme binding,heme binding
+Acropora_029622,1.2932492793570378,-1.8283105241013893,NA,NA
+Acropora_029627,-2.3362138952880316,4.191952201682541,NA,NA
+Acropora_029632,-1.039794072810984,-1.105775839997482,NA,NA
+Acropora_029704,-1.0130934018538538,5.500504839694535,NA,NA
+Acropora_029718,3.4272114489970558,-1.519120564199862,NA,NA
+Acropora_029735,2.2230554934329008,-13.68102144608424,"Filamin C, gamma","Filamin C, gamma"
+Acropora_029739,-3.351024531919484,5.590156280582179,Transketolase,Transketolase
+Acropora_029756,-1.4874234846816343,7.556305754436881,Belongs to the eukaryotic ribosomal protein eL20 family,Belongs to the eukaryotic ribosomal protein eL20 family
+Acropora_029770,1.0196460438592894,-5.920696728939684,Periphilin 1,Periphilin 1
+Acropora_029778,1.4400157936495823,-2.530405183495835,cilium movement involved in cell motility,cilium movement involved in cell motility
+Acropora_029783,1.796837365135443,-2.1875931212315547,NA,NA
+Acropora_029799,-2.423927550512444,2.152397527991662,Transmembrane protein 43,Transmembrane protein 43
+Acropora_029807,-1.3189816587519247,2.9927746067786862,G-protein coupled receptor activity,G-protein coupled receptor activity
+Acropora_029821,1.5110509384736948,-1.2806514646411835,regulation of ARF protein signal transduction,regulation of ARF protein signal transduction
+Acropora_029827,1.016892852470472,-2.913385213493802,NA,NA
+Acropora_029834,1.4560588985114897,-2.0422138170735096,NA,NA
+Acropora_029849,-1.6533136281496215,7.216966540341211,intraflagellar transport,intraflagellar transport
+Acropora_029869,1.507209648234735,-1.1716857887065633,Spindle assembly abnormal protein 6 homolog,Spindle assembly abnormal protein 6 homolog
+Acropora_029880,1.180765812498283,-2.166264130117188,NA,NA
+Acropora_029885,1.3181673577485093,-1.0159208223806702,Calponin homology domain,Calponin homology domain
+Acropora_029886,1.427050211099978,-3.8910409881196895,protein autoubiquitination,protein autoubiquitination
+Acropora_029888,3.0767623437631535,-2.819672125125842,Transforming growth  factor-beta (TGF-beta) family,Transforming growth  factor-beta (TGF-beta) family
+Acropora_029897,1.7622470896659708,-10.108624825111498,Belongs to the AB hydrolase superfamily. Lipase family,Belongs to the AB hydrolase superfamily. Lipase family
+Acropora_029904,-1.5181793049102694,2.7644531559355827,positive regulation of Wnt protein secretion,positive regulation of Wnt protein secretion
+Acropora_029962,-5.792879595430376,13.229520477844122,NA,NA
+Acropora_029965,-4.457843789632432,1.2912653898687272,Belongs to the AB hydrolase superfamily. Lipase family,Belongs to the AB hydrolase superfamily. Lipase family
+Acropora_029983,9.17121882763388,-1.906666251675466,Potassium channel subfamily K member,Potassium channel subfamily K member
+Acropora_029987,2.5758948229352296,-2.174636111831564,alcohol dehydrogenase (NADP+) activity,alcohol dehydrogenase (NADP+) activity
+Acropora_030012,1.6442683058567522,-1.738705399741721,Leucine rich repeat,Leucine rich repeat
+Acropora_030014,2.0360265714596877,-5.071319907177651,neurotrophin receptor activity,neurotrophin receptor activity
+Acropora_030025,1.2221008421231916,-1.230961983915272,NA,NA
+Acropora_030028,-4.017078082269845,6.437311525938632,regulation of protein ADP-ribosylation,regulation of protein ADP-ribosylation
+Acropora_030088,1.202750702458309,-2.1290478428375685,N-acetylglucosamine 6-O-sulfotransferase activity,N-acetylglucosamine 6-O-sulfotransferase activity
+Acropora_030105,-1.2913829203954408,7.454296888112561,acute-phase response,acute-phase response
+Acropora_030107,-1.603201562685916,3.5826939414741754,regulation of secretory granule organization,regulation of secretory granule organization
+Acropora_030109,-1.0054328294813082,7.766175334767813,elongation factor 1 homolog,elongation factor 1 homolog
+Acropora_030114,-1.5825993770416047,6.861849924429677,-,-
+Acropora_030120,-1.0507915239005226,1.628395235913321,galactosyltransferase activity,galactosyltransferase activity
+Acropora_030125,-1.6925121197057889,2.3049522595828784,NA,NA
+Acropora_030142,-3.724486750627487,2.982818675414423,NA,NA
+Acropora_030145,2.9813855929505944,-4.752386067242489,NA,NA
+Acropora_030154,2.77880756347862,-3.999448678514867,NA,NA
+Acropora_030231,-1.1135460628263998,3.7491585329938264,NA,NA
+Acropora_030307,-2.111763069604614,3.2875000299556287,NA,NA
+Acropora_030352,-1.8931690332690945,11.213330774031427,NA,NA
+Acropora_030403,1.006834308964972,-3.0827242301764692,NA,NA
+Acropora_030571,-1.44761240979853,1.456868347956592,ubiquitin-like protein ligase activity,ubiquitin-like protein ligase activity
+Acropora_030631,3.1779030326464706,-7.458658844339088,NA,NA
+Acropora_030645,-1.2477538823382197,13.725165292298053,NA,NA
+Acropora_030680,-2.187234803753723,1.9693790302194816,"Protein tyrosine phosphatase, receptor type","Protein tyrosine phosphatase, receptor type"
+Acropora_030826,-1.700331754432854,6.449252671325103,NA,NA
+Acropora_030849,1.1713969602319931,-1.5818905848110651,NA,NA
+Acropora_030913,-1.0196460438592894,3.4764628748857413,NA,NA
+Acropora_030919,-6.636820849212288,5.5694004717175885,NA,NA
+Acropora_030931,-1.3356233223060083,6.853127531156474,GIPC PDZ domain containing family member,GIPC PDZ domain containing family member
+Acropora_030959,1.0987603933661563,-1.5821008443587097,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family,Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Kinesin family
+Acropora_030966,-4.810256790290545,2.6930680968210727,NA,NA
+Acropora_030967,-2.720724157997548,3.053126372348205,NA,NA
+Acropora_030986,-1.368260915234397,5.062979658640592,NA,NA
+Acropora_030996,2.043957297078426,-3.506311721212593,NA,NA
+Acropora_031009,-1.0908225661254958,2.302704696578096,Coiled-coil domain containing 17,Coiled-coil domain containing 17
+Acropora_031035,-1.3922315032475843,2.6194704374066764,NA,NA
+Acropora_031044,-1.5702336967077573,-1.1293491583799788,NA,NA
+Acropora_031096,-1.2018105159998826,3.260383790251205,WD repeat domain 63,WD repeat domain 63
+Acropora_031113,-1.9875423708754902,1.6357229404975457,NA,NA
+Acropora_031118,-3.0763337756805287,7.260734130757516,Peroxiredoxin,Peroxiredoxin
+Acropora_031139,1.2280826425999891,-1.9980544160681617,NA,NA
+Acropora_031144,1.1262485224491696,-5.304031508605364,NA,NA
+Acropora_031161,-1.5385496380000643,1.4915168283486382,NA,NA
+Acropora_031219,1.4001942694737026,-1.8542278746094365,regulation of transcription by RNA polymerase III,regulation of transcription by RNA polymerase III
+Acropora_031233,2.4766187870113656,-3.890962951808287,Centromere protein C,Centromere protein C
+Acropora_031248,1.0104800860680643,-2.300258644266572,"DNA-directed RNA polymerases I, II, and III subunit","DNA-directed RNA polymerases I, II, and III subunit"
+Acropora_031251,1.2970864836167881,-2.4201904091525424,NA,NA
+Acropora_031252,-2.507668309918793,3.7632061409851936,Belongs to the thioredoxin family,Belongs to the thioredoxin family
+Acropora_031254,2.164935080937142,-7.400604665577861,acidic dipeptidase,acidic dipeptidase
+Acropora_031256,2.0184229440422436,-3.2473415592425994,Structural maintenance of chromosomes,Structural maintenance of chromosomes
+Acropora_031257,2.028188224735292,-1.419934944372331,Structural maintenance of chromosomes,Structural maintenance of chromosomes
+Acropora_031270,1.7798741830549931,-16.348609138430053,NA,NA
+Acropora_031272,2.9049178557089106,-29.2173857548649,NA,NA
+Acropora_031294,-1.5110509384736948,10.899232082629752,common myeloid progenitor cell proliferation,common myeloid progenitor cell proliferation
+Acropora_031296,-1.206843133639544,8.760635755826387,Binds to the 23S rRNA,Binds to the 23S rRNA
+Acropora_031303,1.5702336967077573,-4.043134031143597,NA,NA
+Acropora_031305,1.0355707725931496,-1.181646277503296,EP4 subtype prostaglandin E2 receptor binding,EP4 subtype prostaglandin E2 receptor binding
+Acropora_031315,2.011056793063284,-4.032947543794103,centriole-centriole cohesion,centriole-centriole cohesion
+Acropora_031318,1.0049161048644775,-2.8079569121686254,NA,NA
+Acropora_031356,1.7798741830549931,-3.0116491197287707,Chromosome 19 open reading frame 44,Chromosome 19 open reading frame 44
+Acropora_031426,1.2054178780165958,-1.713789351497427,May play a role in anchoring the cytoskeleton to the plasma membrane,May play a role in anchoring the cytoskeleton to the plasma membrane
+Acropora_031449,-16.64635517323702,4.462788122667766,peptide antigen assembly with MHC class I protein complex,peptide antigen assembly with MHC class I protein complex
+Acropora_031453,1.4064656182037096,-7.9715062726713155,positive regulation of aldosterone biosynthetic process,positive regulation of aldosterone biosynthetic process
+Acropora_031491,3.0443323019549466,-6.15910610703905,NA,NA
+Acropora_031563,1.7675546986440371,-1.916551149589113,NA,NA
+Acropora_031596,-2.201677015005094,8.342766351570825,isomerase B,isomerase B
+Acropora_031687,1.309086983841329,-2.053946644975034,NA,NA
+Acropora_031693,-1.0210265434432646,6.60907431339179,Cephalosporin hydroxylase,Cephalosporin hydroxylase
+Acropora_031749,-1.1003878074523346,3.6096426840405975,tRNA 5'-leader removal,tRNA 5'-leader removal
+Acropora_031776,1.0038866045245134,-3.6979400067338757,NA,NA
+Acropora_031828,1.173210837851342,-6.040824577824258,NA,NA
+Acropora_031831,1.0338355280498044,-1.9460780856775766,NA,NA
+Acropora_031832,1.234400959269592,-6.089332122898167,NA,NA
+Acropora_031857,-1.6758134348286087,5.690136986777766,aminopeptidase activity,aminopeptidase activity
+Acropora_031859,1.5110509384736948,-9.117946668699542,NA,NA
+Acropora_031861,1.5826632971905366,-4.440984742652027,NA,NA
+Acropora_031863,1.7223335686312147,-1.3092800292718214,NA,NA
+Acropora_031913,-2.3001061450400364,14.385135735222542,Belongs to the AAA ATPase family,Belongs to the AAA ATPase family
+Acropora_032094,-1.3004986420439129,4.354154403091163,NA,NA
+Acropora_032133,-1.74271624432816,4.567631696471328,NA,NA
+Acropora_032187,1.365574328602039,-1.5573830655616037,NA,NA
+Acropora_032206,-1.4182567430565107,4.657711474550822,protein localization to pericentriolar material,protein localization to pericentriolar material
+Acropora_032221,2.019788269707982,-2.2404469647309977,NA,NA
+Acropora_032280,-1.0432424706466243,2.1543115807334154,regulation of apoptotic process,regulation of apoptotic process
+Acropora_032293,1.427916354105347,-2.9832792918144073,NA,NA
+Acropora_032304,-1.600124804177735,4.316825880012854,Tetraspanin-7,Tetraspanin-7
+Acropora_032367,-1.729680262384319,9.117946668699542,progesterone receptor signaling pathway,progesterone receptor signaling pathway
+Acropora_032402,-1.054386367091461,4.804079259748069,heme binding,heme binding
+Acropora_032673,3.4077358515880767,-4.574929333537859,NA,NA
+Acropora_032679,-1.294448252943241,5.653166245563318,negative regulation of Notch signaling pathway,negative regulation of Notch signaling pathway
+Acropora_032683,-1.6335113626765196,6.711094743230148,NA,NA
+Acropora_032698,-1.2289348823214317,7.516188782069156,NA,NA
+Acropora_032706,-1.0170576484163285,7.665715855372475,NA,NA
+Acropora_032727,1.1763107264779167,-2.600075557261551,NA,NA
+Acropora_032818,-1.6110584031426851,2.991862002014578,NA,NA
+Acropora_032823,1.3181673577485093,-1.6657058238644495,NA,NA
+Acropora_032828,-1.0507915239005226,8.557432789404006,NA,NA
+Acropora_032845,-1.4524087796736604,12.381036452487903,regulation of sodium ion transport,regulation of sodium ion transport
+Acropora_032976,1.4027826851484633,-1.2435580388801024,NA,NA
+Acropora_032990,1.0954589171602753,-4.693670945918756,Glycosyl transferases group 1,Glycosyl transferases group 1
+Acropora_033008,-1.5591580856691767,2.871489026338635,family member 26,family member 26
+Acropora_033063,-1.148182120599871,1.361612002113154,NA,NA
+Acropora_033099,9.284905617001098,-10.64368376214315,BTB/POZ domain,BTB/POZ domain
+Acropora_033111,2.0267534430631597,-6.6397269007413495,NA,NA
+Acropora_033113,3.4575922360762594,-9.920308945404875,NA,NA
+Acropora_033162,-1.5320851000118163,2.5425766761327235,NA,NA
+Acropora_033211,-1.9195904855915178,6.654930788149481,NA,NA
+Acropora_033220,1.0507277596647793,-1.8814606427726719,NA,NA
+Acropora_033253,-2.208458031246555,-1.3949260893895663,regulation of mitotic cell cycle,regulation of mitotic cell cycle
+Acropora_033256,-1.8821418643704475,2.9665554429876413,NA,NA
+Acropora_033324,1.2729582596277123,-1.8901582208247063,NA,NA
+Acropora_033385,1.5110509384736948,-7.19458874624656,NA,NA
+Acropora_033540,1.4040582455106616,-2.7604949072374656,NA,NA
+Acropora_033541,1.3142305146434465,-4.244517971837881,NA,NA
+Acropora_033626,1.2256670783813217,-5.8254895216962685,NA,NA
+Acropora_033639,1.5934953969207506,-2.5701643641199494,NA,NA
+Acropora_033660,-1.6596112575214081,8.600578998634072,NA,NA
+Acropora_033692,1.433781899533908,-6.016014399476213,neuronal growth regulator 1,neuronal growth regulator 1
+Acropora_033759,1.2335790143901366,-5.565906915950775,NA,NA
+Acropora_033768,-1.911289782549545,4.771653074729572,carbohydrate binding,carbohydrate binding
+Acropora_033798,1.1671876395304142,-1.963341132196976,NA,NA
+Acropora_033821,-1.4312155825865507,3.965523695655652,NA,NA
+Acropora_033872,-1.1995179118920016,3.7610482954951183,NA,NA
+Acropora_34080,2.2101717001604237,-4.903721927179217,NA,NA
+Acropora_34118,-2.267706483869063,2.5118392186150755,NA,NA
+Acropora_34120,-1.0564505835032265,1.2564898747341473,NA,NA
+Acropora_34132,-1.1916912529364585,7.256339927000901,NA,NA
+Acropora_34161,-1.04009161861615,12.37920228161531,nucleosome assembly,nucleosome assembly
+Acropora_34197,-1.5684859839331566,13.642177279083594,protein kinase activator activity,protein kinase activator activity
+Acropora_34221,1.1552733680891731,-1.7210396651070219,NA,NA
+Acropora_34237,-1.9296089750526642,-5.802993876026583,ribonuclease III activity,ribonuclease III activity
+Acropora_34240,5.109290435428772,-3.078460009172212,negative regulation of DNA helicase activity,negative regulation of DNA helicase activity
+Acropora_34253,1.5945833032711592,-1.3987026920696481,Protein SSUH2 homolog,Protein SSUH2 homolog
+Acropora_34285,1.41680050291045,-2.1893608185059388,NA,NA
+Acropora_34299,2.627362722136225,-3.126637372579996,replication fork processing,replication fork processing
+Acropora_34308,-1.5647604017111474,18.99970594651088,sphinganine-1-phosphate aldolase activity,sphinganine-1-phosphate aldolase activity
+Acropora_34311,1.5587090982357559,-11.155977532632702,NA,NA
+Acropora_34336,-1.5333062979195078,9.448061500385636,NA,NA
+Acropora_34389,1.2864604155712072,-4.1158011382000685,NA,NA
+Acropora_34413,1.1431251583302686,-1.3479944135783473,NA,NA
+Acropora_34433,-1.0507915239005226,3.6597441629719247,NA,NA
+Acropora_34448,-2.0287917219204226,4.057483962340748,NA,NA
+Acropora_34467,1.9790190971209318,-2.851065769606503,NA,NA
+Acropora_34469,-4.253105458541047,4.157614208317295,metalloendopeptidase activity,metalloendopeptidase activity
+Acropora_34506,-1.3201000512305894,4.4859787212082765,NA,NA
+Acropora_34521,-1.2330929365043766,8.358964692946977,nuclease HARBI1-like,nuclease HARBI1-like
+Acropora_34553,1.39010425888062,-2.09427662371836,Nuclear RNA-splicing-associated protein,Nuclear RNA-splicing-associated protein
+Acropora_34605,-1.3199083365059012,1.4432584242414939,NA,NA
