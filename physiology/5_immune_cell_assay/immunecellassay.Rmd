@@ -4,7 +4,7 @@ author: "allyson_demerlis"
 date: "2023-02-28"
 output: html_document
 ---
-Load libraries and datasets
+# Load libraries and datasets
 ```{r}
 library(tidyverse)
 library(plotrix)
@@ -870,7 +870,8 @@ summary(aov(Percent ~ Treatment*Replicate, data = FollowUp_Pcli_C_df)) #replicat
 None of the technical replicates are significantly different than one another within a given species:genotype:treatment. So I feel confident taking the mean percent across the three technical replicates and using that moving forward.
 
 
-# Percent comparison beginning and end of treatment
+
+# percent comparison beginning and end of treatment (unnormalized)
 (average of all technical replicates)
 
 sample sizes
@@ -885,6 +886,18 @@ percent_cells_df %>%
   distinct() %>% 
   dplyr::group_by(num_days, Species, Genotype, Treatment) %>% 
   dplyr::summarise(count = n())
+```
+create data frame for WGCNA
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  dplyr::filter(TimePoint == "T0" | TimePoint == "T2") %>% 
+  dplyr::group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  select(TimePoint:ID, Treatment:mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  write_csv("phagocytosis_alltimepoints.csv")
 ```
 
 
@@ -1104,7 +1117,9 @@ summary(aov(mean_replicate_percent_perID ~ Treatment*Genotype*num_days, data = P
 ```
 
 
-# Percent change over treatment 
+
+
+# Percent change over treatment (unnormalized) 
 
 ## By species x treatment
 
@@ -1127,7 +1142,57 @@ cell_means <- summarySE(percent_cells_speciestreatments, measurevar="mean_replic
 ```
 
 
-# Percent change end of treatment vs recovery time point 
 
+# Normalized percent comparison all time points
+```{r}
+#calculate mean control for a given species, genotype, time point. Then, subtract that mean from the mean percent for the corresponding treated coral. Now, the "control" percent phagocytosis should be zero, and then treated group will be based on that zeroing.
 
+p1<- percent_cells_df %>% 
+  drop_na(Percent) %>% 
+  dplyr::group_by(Species, num_days, Treatment) %>% 
+  dplyr::summarise(average_percent = mean(Percent)) %>% 
+  pivot_wider(names_from="Treatment", values_from="average_percent") %>% 
+  mutate(corrected_treated = Treated - Untreated, Control = Untreated - Untreated) %>%
+  select(Species:num_days, corrected_treated, Control) %>% 
+  pivot_longer(corrected_treated:Control, names_to = "Treatment", values_to = "average_percent") %>% 
+  ggplot(., aes(x=num_days, y= average_percent, color = Treatment)) +
+  geom_segment(aes(x = num_days, xend = num_days, y = 0, yend = average_percent), color = "#F54A34") + # Sticks
+  geom_point(aes(color = Treatment), size = 3) +
+  facet_wrap(~Species) +
+  theme_classic() +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c("#60DBDB","#F54A34")) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "#60DBDB", size = 1, alpha = 0.4) +
+  geom_vline(xintercept = 0.8, linetype = "solid", color = "black", size = 1, alpha = 0.1) +
+  geom_vline(xintercept = 3.2, linetype = "solid", color = "black", size = 1, alpha = 0.1) +
+  labs(x="Day", y="% Immune Activity (Corrected)")+
+  theme(text = element_text(size = 14)) +
+  theme(legend.position="none")
+```
+
+```{r}
+p2<- percent_cells_df %>% 
+  drop_na(Percent) %>% 
+  dplyr::group_by(Species, Genotype, num_days, Treatment) %>% 
+  dplyr::summarise(average_percent = mean(Percent)) %>% 
+  pivot_wider(names_from="Treatment", values_from="average_percent") %>% 
+  mutate(corrected_treated = Treated - Untreated, Control = Untreated - Untreated) %>%
+  select(Species:num_days, corrected_treated, Control) %>% 
+  pivot_longer(corrected_treated:Control, names_to = "Treatment", values_to = "average_percent") %>% 
+  ggplot(., aes(x=num_days, y= average_percent, color = Treatment)) +
+  geom_segment(aes(x = num_days, xend = num_days, y = 0, yend = average_percent), color = "#F54A34") + # Sticks
+  geom_point(aes(color = Treatment), size = 3) +
+  facet_wrap(~Species+Genotype) +
+  theme_classic() +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c("#60DBDB","#F54A34")) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "#60DBDB", size = 1, alpha = 0.4) +
+  geom_vline(xintercept = 0.8, linetype = "solid", color = "black", size = 1, alpha = 0.1) +
+  geom_vline(xintercept = 3.2, linetype = "solid", color = "black", size = 1, alpha = 0.1) +
+  labs(x="Day", y="% Immune Activity (Corrected)")+
+  theme(text = element_text(size = 14))
+```
+
+```{r}
+plot_grid(p1, p2, rel_widths = c(1.5,2))
+#ggsave("immunecells_corrected_lollipop.pdf", width = 12, height = 5)
+```
 

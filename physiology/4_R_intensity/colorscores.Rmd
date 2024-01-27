@@ -114,6 +114,10 @@ Rintensity_withmetadata %>%
 percentchange %>% 
   drop_na() -> percentchange #7 corals were not measured in the second time point 
 
+percentchange %>% 
+  select(ID:Treatment, percent_change) %>% 
+  write_csv("treatment_Rscore.csv")
+
 #sample sizes
 percentchange %>% 
   group_by(Species, Colony, Treatment) %>% 

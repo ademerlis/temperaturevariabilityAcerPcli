@@ -119,14 +119,52 @@ save(datt,traits,file="wgcnaData.RData")
 
 #### ADD PHYSIOLOGICAL TRAITS ####
 
-traits #this has the binary encoded categorical traits
-# first need to get list of samples for rownames for traits so I append things in the right order
+# need to run first few code sections before you run this 
 
-rownames(design)
-str(design) #44 samples, need to remove the one outlier
 design=design[!remove.samples,]
 str(design) #43 samples
 
+rownames(design)
+
+traits #traits is in the same order as design, but without rownames
+
+rownames(traits) <- rownames(design)
+
+traits %>% 
+  rownames_to_column() %>% 
+  mutate(rowname = str_extract(rowname, "^[^_]*")) %>% 
+  separate(rowname, into = c("Species", "ID"), sep = "\\.") %>% 
+  mutate(Species = "Acropora cervicornis") %>% 
+  mutate(ID = as.double(ID)) -> traits
+
+
+days_to_removed <- read_csv("physiotraits_for_WGCNA/days_to_removed.csv")
+days_to_removed %>% 
+  select(!c("Colony", "Treatment")) %>% 
+  filter(Species == "Acropora cervicornis") -> days_to_removed
+
+phagocytosis <- read_csv("physiotraits_for_WGCNA/phagocytosis_alltimepoints.csv")
+phagocytosis %>% 
+  pivot_wider(names_from="TimePoint", values_from="mean_replicate_percent_perID") %>% 
+  dplyr::rename(cells_initial = T0) %>% 
+  dplyr::rename(cells_endoftreatment = T2) %>% 
+  select(!c("Genotype", "Treatment", "num_days")) %>% 
+  filter(Species == "Acer") %>% 
+  mutate(Species = "Acropora cervicornis") %>% 
+  mutate(ID = gsub("[AP]", "", ID)) %>% 
+  mutate(ID = as.double(ID)) -> phagocytosis
+
+Rscore <- read_csv("physiotraits_for_WGCNA/treatment_Rscore.csv")
+Rscore %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  select(!c("Colony", "Treatment")) %>% 
+  mutate(ID = as.double(ID)) -> Rscore
+
+full_join(traits, days_to_removed, by = c("Species", "ID")) %>% 
+  full_join(., phagocytosis) %>% 
+  full_join(., Rscore) %>% 
+  drop_na(Initial) %>% 
+  select(!c("Species", "ID")) -> traits_withphysio
 
 
 #### SOFT THRESHOLDS ####
@@ -284,7 +322,7 @@ MEs = orderMEs(MEs0)
 moduleGeneCor=cor(MEs,datt)
 moduleGenePvalue = corPvalueStudent(moduleGeneCor, nSamples);
 
-moduleTraitCor = cor(MEs, traits, use = "p");
+moduleTraitCor = cor(MEs, traits_withphysio, use = "p");
 moduleTraitPvalue = corPvalueStudent(moduleTraitCor, nSamples);
 
 # module-trait correlations
@@ -296,7 +334,7 @@ par(mar = c(6, 8.5, 3, 3));
 # Display the correlation values within a heatmap plot
 labeledHeatmap(
   Matrix = moduleTraitCor,
-  xLabels = names(traits),
+  xLabels = names(traits_withphysio),
   yLabels = names(MEs),
   ySymbols = names(MEs),
   colorLabels = FALSE,
@@ -324,7 +362,7 @@ dim(textMatrix) = dim(moduleTraitCor)
 par(mar = c(6, 8.5, 3, 3));
 # Display the correlation values within a heatmap plot
 labeledHeatmap(Matrix = moduleTraitCor,
-               xLabels = names(traits),
+               xLabels = names(traits_withphysio),
                ySymbols = modLabels,
                yLabels = modLabels,
                colorLabels = FALSE,

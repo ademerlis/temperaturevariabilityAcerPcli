@@ -371,6 +371,19 @@ slowburn_metadata %>%
   dplyr::summarise(mean=mean(days_to_removed), sd = sd(days_to_removed), n = n()) %>% 
   as.data.frame()
 ```
+### create data frame for WGCNA import
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25") %>% 
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>% 
+  mutate(days_to_removed = Removed_Date - start_date) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) %>% 
+  select(Species, ID, Colony, Treatment, days_to_removed) %>% 
+  write_csv("days_to_removed.csv")
+```
 
 
 

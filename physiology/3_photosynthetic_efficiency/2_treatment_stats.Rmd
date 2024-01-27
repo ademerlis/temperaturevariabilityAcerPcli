@@ -52,6 +52,12 @@ treatment_normalized_bothspecies <- ipam_tidy_data %>%
                                Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
   mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ (fvfm_loss/`2022-03-16`)*100,
                                Species == "Pclivosa" ~ (fvfm_loss/`2022-03-21`)*100))
+
+#save data for WGCNA
+treatment_normalized_bothspecies %>% 
+  select(Colony, Puck, Treatment, Species, fvfm_loss, fvfm_loss_norm) %>% 
+  write_csv("treatment_fvfm.csv")
+
 ```
 
 sample sizes for corals measured during 28-d treatment
