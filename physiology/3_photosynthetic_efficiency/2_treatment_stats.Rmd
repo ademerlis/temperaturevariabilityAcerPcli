@@ -48,8 +48,8 @@ treatment_normalized_bothspecies <- ipam_tidy_data %>%
   mutate(Date = mdy(Date)) %>% 
   dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
   pivot_wider(names_from = Date, values_from = fvfm) %>% 
-  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
-                               Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
+  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-04-20` - `2022-03-16`,
+                               Species == "Pclivosa" ~ `2022-04-20` - `2022-03-21`)) %>% 
   mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ (fvfm_loss/`2022-03-16`)*100,
                                Species == "Pclivosa" ~ (fvfm_loss/`2022-03-21`)*100))
 
@@ -85,7 +85,7 @@ treatment_time_bothspecies %>%
   labs(y = "Fv/Fm", x = "Days in Treatment") +
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 14)) 
+  theme(text = element_text(size = 15)) 
 #ggsave("treatment_bothspecies_overtimeboxplots.pdf")
 ```
 
@@ -109,13 +109,12 @@ treatment_time_bothspecies%>%
 ## 2a. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
 ```{r, warning = F}
 treatment_normalized_bothspecies%>% 
-  ggplot(., aes(x=Treatment, y= fvfm_loss_norm, fill= Treatment)) +
+  ggplot(., aes(x=Species, y= fvfm_loss_norm, fill= Treatment)) +
   geom_boxplot() + 
   theme_classic() + 
   labs(y = "% Decline in Fv/Fm", x="Treatment") +
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   theme(text = element_text(size = 15)) + 
-  facet_wrap(~Species) +
   theme(legend.position="none")
   
 #ggsave("treatment_normalized_bothspecies_boxplot.pdf")

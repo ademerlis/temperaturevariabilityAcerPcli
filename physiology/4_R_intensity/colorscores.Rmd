@@ -109,7 +109,7 @@ Rintensity_withmetadata %>%
   dplyr::select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
   distinct() %>% 
   pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
-  mutate(percent_change = ((`04`-`03`)/`03`)*100) -> percentchange
+  mutate(percent_change = ((`03`-`04`)/`03`)*100) -> percentchange
 
 percentchange %>% 
   drop_na() -> percentchange #7 corals were not measured in the second time point 
@@ -126,14 +126,13 @@ percentchange %>%
 
 
 ```{r}
-ggplot(percentchange,aes(x = Treatment, y= percent_change, fill = Treatment)) + 
+ggplot(percentchange,aes(x = Species, y= percent_change, fill = Treatment)) + 
   geom_boxplot() + 
   theme_classic() +
-  facet_wrap(~Species, scales = "free") +
-  labs(y = "Percent Change in R-Intensity") +
-  theme(text = element_text(size = 15)) + 
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(legend.position="none")
+  labs(y = "Percent Decline in Color Score") +
+  theme(text = element_text(size = 15)) +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+ggsave("percentdeclinecolorscore_species.pdf")
 ```
 
 ```{r}

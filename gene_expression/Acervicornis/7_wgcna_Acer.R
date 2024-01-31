@@ -119,7 +119,8 @@ save(datt,traits,file="wgcnaData.RData")
 
 #### ADD PHYSIOLOGICAL TRAITS ####
 
-# need to run first few code sections before you run this 
+load("RData_files/wgcnaData.RData")
+lnames=load("RData_files/data4wgcna.RData")
 
 design=design[!remove.samples,]
 str(design) #43 samples

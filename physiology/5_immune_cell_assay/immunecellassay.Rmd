@@ -932,6 +932,46 @@ plot1 <- percent_cells_df %>%
 #ggsave("percentcells_speciestreatments_overtime.pdf", width = 8, height = 5)
 ```
 
+boxplot
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  dplyr::filter(TimePoint == "T0" | TimePoint == "T2") %>% 
+  dplyr::group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x = num_days, y = mean_replicate_percent_perID, fill = Treatment))+
+  geom_boxplot() +
+  facet_wrap(~Species) +
+  theme_classic()+
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Day")+
+  ylab("% Phagocytic Activity")+
+  theme(text = element_text(size = 15))
+#ggsave("percentcells_species_boxplots.pdf")
+```
+
+boxplot normalized to control
+```{r}
+percent_cells_df %>% 
+  drop_na(Percent) %>% 
+  dplyr::group_by(Species, Genotype, num_days, Treatment) %>% 
+  dplyr::summarise(average_percent = mean(Percent)) %>% 
+  pivot_wider(names_from="Treatment", values_from="average_percent") %>% 
+  mutate(corrected_treated = Treated - Untreated, Control = Untreated - Untreated) %>%
+  select(Species:num_days, corrected_treated, Control) %>% 
+  pivot_longer(corrected_treated:Control, names_to = "Treatment", values_to = "average_percent") %>% 
+  ggplot(., aes(x=num_days, y= average_percent, fill = Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species) +
+  theme_classic() +
+  scale_fill_manual(labels=c("Untreated", "Treated"), values = c("#60DBDB","#F54A34")) +
+  labs(x="Day", y="% Immune Activity (Corrected)")+
+  theme(text = element_text(size = 14))
+```
+
+
 ### Statistics
 
 Change to factors
@@ -1127,11 +1167,20 @@ summary(aov(mean_replicate_percent_perID ~ Treatment*Genotype*num_days, data = P
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, ID, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
   ungroup() %>% 
-  select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
   distinct() %>% 
-  filter(num_days == "0" | num_days == "28") -> percent_cells_speciestreatments 
+  filter(num_days == "0" | num_days == "28") 
+  
+  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_pertank") %>% 
+  mutate(percent_change = ((`28`-`0`)/`0`) *100) %>% 
+  ggplot(., aes(x=Species, y=percent_change, fill= Treatment)) +
+  geom_point() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Phagocytic Activity")+
+  theme_classic() +
+  theme(text = element_text(size = 15))
   
 #average all technical replicates together before running stats
 cell_means <- summarySE(percent_cells_speciestreatments, measurevar="mean_replicate_percent_perID", groupvars=c("Species","Treatment", "num_days"))

@@ -211,6 +211,43 @@ ggplot(meanmaxminrange_summarytable, aes(x=Treatment, y=mean_daily_range, color=
   theme_classic()
 ```
 
+
+Calculate the mean min, max, and variance for each treatment over the 28-d period.
+```{r}
+temptreatment %>% 
+  filter(Time >= "2022-03-24 09:00:00") %>% 
+  filter(Time <= "2022-04-20 09:00:00") %>% 
+    #remove tissue sampling time points because during those times, you modified the tank temps to all hold at  28 C
+  filter(!Time >= "2022-03-30 09:00:00" | !Time <= "2022-03-31 09:00:00") %>% 
+  dplyr::select(Time:T8) %>% 
+  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
+  tidyr::separate(Time, c("Date", "Time"), sep = "\\ ") %>% 
+  mutate(Treatment = case_when(Tank == "T1" ~ "Untreated",
+                               Tank == "T2" ~ "Treated",
+                               Tank == "T3" ~ "Treated",
+                               Tank == "T4" ~ "Untreated",
+                               Tank == "T5" ~ "Treated", 
+                               Tank == "T6" ~ "Untreated",
+                               Tank == "T7" ~ "Untreated",
+                               Tank == "T8" ~ "Treated")) %>% 
+  mutate(Species = case_when(Tank == "T1" ~ "Pclivosa",
+                             Tank == "T2" ~ "Pclivosa",
+                               Tank == "T3" ~ "Pclivosa",
+                               Tank == "T4" ~ "Pclivosa",
+                               Tank == "T5" ~ "Acervicornis", 
+                               Tank == "T6" ~ "Acervicornis",
+                               Tank == "T7" ~ "Acervicornis",
+                               Tank == "T8" ~ "Acervicornis")) %>% 
+  group_by(Date, Treatment, Species) %>% 
+  summarise(max = max(Temp), min = min(Temp), range = (max(Temp)-min(Temp))) %>% 
+  group_by(Treatment) %>% 
+  summarise(count=n(), mean_daily_max=mean(max),sd_daily_max=sd(max), mean_daily_min=mean(min),sd_daily_min=sd(min),mean_daily_range=mean(max - min), sd_daily_range=sd(max - min)) 
+```
+
+
+
+
+
 Combined plot 
 ```{r}
 p1=temptreatment %>% 
@@ -470,7 +507,7 @@ CBASS %>%
   mutate(Time = hms(Time)) %>% 
   filter(Time > "14 H 30 M 0 S" & Time < "17 H 30 M 0 S") %>% 
   group_by(Tank) %>% 
-  summarise(mean_temp = mean(Temp), sd = sd(Temp))
+  summarise(count = n(), mean_temp = mean(Temp), sd = sd(Temp))
 ```
 
 
@@ -599,6 +636,7 @@ heatstressassay %>%
                                Tank == "T8" ~ "heatstress")) %>% 
   group_by(Time, Treatment) %>% 
   summarise(mean_temp = mean(Temp), se = std.error(Temp)) %>% 
+  filter(!Treatment == "ambient") %>% 
   ggplot(data = .,
        aes(x = Time, y = mean_temp, color = Treatment)) +
   geom_point() + 
@@ -608,8 +646,8 @@ heatstressassay %>%
   theme(text = element_text(size = 15)) +
   geom_point() + 
   geom_errorbar(aes(fill=Treatment, group = Treatment, ymin = mean_temp - se, ymax = mean_temp + se), alpha = 0.2) +
-  scale_color_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))+
-  scale_fill_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))
+  scale_color_manual(labels=c( "Heat stress"), values = c( "#F54A34"))
+  #scale_fill_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))
 #ggsave("slowburnheatstress.pdf", width = 9, height = 6)
 ```
 
@@ -625,7 +663,7 @@ heatstressassay %>%
                                Tank == "T8" ~ "heatstress")) %>% 
   drop_na() %>% 
   group_by(Treatment) %>% 
-  summarise(mean_temp = mean(Temp), sd = sd(Temp)) 
+  summarise(count=n(), mean_temp = mean(Temp), sd = sd(Temp)) 
 ```
 
 

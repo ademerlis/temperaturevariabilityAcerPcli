@@ -49,8 +49,16 @@ metadata %>%
 
 metadata %>% 
   select(Species, ID, Colony, Treatment, CBASS_tank) %>% 
+   mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
+                               CBASS_tank == "2" ~ "37",
+                               CBASS_tank == "3" ~ "32",
+                               CBASS_tank == "4" ~ "33",
+                               CBASS_tank == "5" ~ "35",
+                               CBASS_tank == "6" ~ "30",
+                               CBASS_tank == "7" ~ "34",
+                               CBASS_tank == "8" ~ "28")) %>% 
   drop_na(Treatment) %>% 
-  group_by(CBASS_tank) %>% 
+  group_by(Species, Colony, Treatment, CBASS_temp) %>% 
   summarise(count = n())
 ```
 
@@ -82,9 +90,20 @@ metadata %>%
   summarise(count = n()) #sample size total = 163 corals going into slow burn (lost 20 more corals due to CBASS stress)
 
 metadata %>% 
-  select(Species, ID, Colony, Treatment, slowburn_heatstress_tank) %>% 
-  drop_na(Treatment, slowburn_heatstress_tank) %>% 
-  group_by( slowburn_heatstress_tank) %>% 
+  select(Species, ID, Colony, Treatment, CBASS_tank, slowburn_heatstress_tank) %>% 
+  mutate(slowburn= case_when(slowburn_heatstress_tank == "7" ~ "ambient",
+                             TRUE ~ "heatstress_32")) %>%  
+  mutate(CBASS_temp = case_when(CBASS_tank == "1" ~ "36",
+                               CBASS_tank == "2" ~ "37",
+                               CBASS_tank == "3" ~ "32",
+                               CBASS_tank == "4" ~ "33",
+                               CBASS_tank == "5" ~ "35",
+                               CBASS_tank == "6" ~ "30",
+                               CBASS_tank == "7" ~ "34",
+                               CBASS_tank == "8" ~ "28")) %>% 
+  drop_na(Treatment, slowburn_heatstress_tank, CBASS_tank) %>% 
+  group_by(Species, Colony, Treatment, CBASS_temp, slowburn) %>% 
+  filter(!slowburn=="ambient") %>% 
   summarise(count = n())
 ```
 # sample size post-slow burn heat-stress

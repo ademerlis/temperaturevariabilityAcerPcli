@@ -17,16 +17,16 @@ library(dunn.test)
 
 Import data
 ```{r}
-coral_metadata <- readxl::read_xlsx("metadata.xlsx")
+coral_metadata <- readxl::read_xlsx("../metadata.xlsx")
 
-fvfm <- read.csv("photosynthetic_efficiency/ipam_tidy_data.csv")
+fvfm <- read.csv("../3_photosynthetic_efficiency/ipam_tidy_data.csv")
 
-Rscoredata <- read_xlsx("R_intensity/data_rscores.xlsx")
+Rscoredata <- read_xlsx("../4_R_intensity//data_rscores.xlsx")
 
-april18 <- read_xlsx("R_intensity/photo_metadata.xlsx", sheet = "april 18")
-june21 <- read_xlsx("R_intensity/photo_metadata.xlsx", sheet = "june 21")
+april18 <- read_xlsx("../4_R_intensity/photo_metadata.xlsx", sheet = "april 18")
+june21 <- read_xlsx("../4_R_intensity/photo_metadata.xlsx", sheet = "june 21")
 
-percent_cells_df <- read_csv("immune_cell_assay/Grace_percentcells_alldata.csv") 
+percent_cells_df <- read_csv("../5_immune_cell_assay/Grace_percentcells_alldata.csv") 
 ```
 
 Tidy fvfm data
@@ -35,9 +35,6 @@ treatment_metadata<-fvfm %>%
   select(Puck, Treatment) %>% 
   distinct() %>% 
   drop_na() #282 corals
-
-treatment_time_bothspecies
-  
   
 fvfm %>% 
   drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
@@ -47,13 +44,25 @@ fvfm %>%
   pivot_wider(names_from = Date, values_from = fvfm) %>% 
   select(!"NA") %>% 
   drop_na() %>% 
-  mutate(change=(`4/22/22`-`5/25/22`)/`4/22/22`*100) -> fvfm_recovery_change
+  mutate(change=(`5/25/22`-`4/22/22`)/`4/22/22`*100) -> fvfm_recovery_change
 
 fvfm_recovery_change %>% 
   arrange(change) #there is one outlier
 
 fvfm_recovery_change %>% 
   filter(change > -39) -> fvfm_recovery_change
+```
+
+boxplot
+```{r}
+fvfm_recovery_change %>% 
+  ggplot(., aes(x = Species, y = change, fill = Treatment)) +
+  theme_classic()+
+  geom_boxplot() +  
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Decline in Fv/Fm")+
+  theme(text = element_text(size = 15))
+  
 ```
 
 
@@ -286,5 +295,28 @@ create combined plot
 plot_grid(a1, a2, rel_widths = c(1,2))
 #ggsave("recovery_phagocytosis_dotplot.pdf", width = 12, height = 5)
 ```
+
+
+immune cell boxplots
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  dplyr::filter(TimePoint == "T2" | TimePoint == "FollowUp") %>% 
+  mutate(num_days = as.factor(num_days)) %>% 
+  dplyr::group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  ggplot(., aes(x = num_days, y = mean_replicate_percent_perID, fill = Treatment))+
+  geom_boxplot() +
+  facet_wrap(~Species) +
+  theme_classic()+
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  xlab("Day")+
+  ylab("% Phagocytic Activity")+
+  theme(text = element_text(size = 15))
+#ggsave("immunecell_postCBASS_boxplot.pdf")
+```
+
 
 
