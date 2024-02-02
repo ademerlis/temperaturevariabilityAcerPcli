@@ -18,16 +18,14 @@ library(ape)
 options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
 
-#setwd("OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/")
-
 #### DATA IMPORT and TRAITS ####
 
 # importing data generated from DESeq2 script
 lnames=load("RData_files/data4wgcna.RData")
 lnames # "vsd.wg"  "design" # log-transformed variance-stabilized gene expression, and table or experimental conditions
 datt=t(vsd.wg)
-ncol(datt) #27829
-nrow(datt) #45
+ncol(datt) #13867
+nrow(datt) #44
 
 head(design)
 str(design)
@@ -45,32 +43,70 @@ all.equal(colnames(vsd.wg), rownames(design)) #TRUE
 
 rownames(datt)
 
-#change treatment to be binary (control = 0, variable = 1)
-variable = as.numeric(design$Treatment=="variable")
-control = as.numeric(design$Treatment == "control")
+#change treatment to be binary (0 = FALSE, 1 = TRUE)
+Initial = as.numeric(design$Treatment=="Initial")
+Untreated = as.numeric(design$Treatment == "Untreated")
+Treated = as.numeric(design$Treatment == "Treated")
 
 # assembling table of traits
 
-# coding genotype as binary (0/1, yes/no)
-design$Genotype
-SI_C = as.numeric(design$Genotype == "SI_C")
-BC_8b = as.numeric(design$Genotype == "BC_8b")
-MB_B = as.numeric(design$Genotype == "MB_B")
+# # coding genotype as binary (0 = FALSE, 1 = TRUE)
+# design$Genotype
+# A = as.numeric(design$Genotype == "A")
+# B = as.numeric(design$Genotype == "B")
+# C = as.numeric(design$Genotype == "C")
 
-#change time point to be binary (for day0, when time_point = Day_0 it encodes it as "1". for day_29 same thing)
-Day0 = as.numeric(design$time_point=="Day_0")
-Day29 =as.numeric(design$time_point=="Day_29")
 
-#change group to be binary
-design$group
-control_Day0 = as.numeric(design$group=="control_Day_0")
-control_Day29 = as.numeric(design$group=="control_Day_29")
-variable_Day0 = as.numeric(design$group=="variable_Day_0")
-variable_Day29 = as.numeric(design$group=="variable_Day_29")
+traits <- data.frame(cbind(Initial, Untreated, Treated))
 
-traits <- data.frame(cbind(variable, control, SI_C,BC_8b, MB_B, Day0, Day29, control_Day0, control_Day29, variable_Day0, variable_Day29))
+rownames(traits) <- rownames(design)
 
-head(traits)
+traits %>% 
+  rownames_to_column() %>% 
+  mutate(rowname = str_extract(rowname, "^[^_.]*")) %>% 
+  separate(rowname, into = c("Species", "ID"), sep = "\\-") %>% 
+  mutate(Species = "Pseudodiploria clivosa") %>% 
+  mutate(ID = as.double(ID)) -> traits
+
+traits
+
+days_to_removed <- read_csv("physiotraits_for_WGCNA/days_to_removed.csv")
+days_to_removed %>% 
+  select(!c("Colony", "Treatment")) %>% 
+  filter(Species == "Pseudodiploria clivosa") -> days_to_removed
+
+phagocytosis <- read_csv("physiotraits_for_WGCNA/phagocytosis_alltimepoints.csv")
+phagocytosis %>% 
+  pivot_wider(names_from="TimePoint", values_from="mean_replicate_percent_perID") %>% 
+  dplyr::rename(cells_initial = T0) %>% 
+  dplyr::rename(cells_endoftreatment = T2) %>% 
+  select(!c("Genotype", "Treatment", "num_days")) %>% 
+  filter(Species == "Pcli") %>% 
+  mutate(Species = "Pseudodiploria clivosa") %>% 
+  mutate(ID = gsub("[AP]", "", ID)) %>% 
+  mutate(ID = as.double(ID)) -> phagocytosis
+
+Rscore <- read_csv("physiotraits_for_WGCNA/treatment_Rscore.csv")
+Rscore %>% 
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  select(!c("Colony", "Treatment")) %>% 
+  mutate(ID = as.double(ID)) -> Rscore
+
+CBASS_fvfm <- read_csv("physiotraits_for_WGCNA/cbass_fvfm_forwgcna.csv")
+CBASS_fvfm %>% 
+  filter(Species == "Pclivosa") %>% 
+  mutate(Species = "Pseudodiploria clivosa") %>% 
+  dplyr::rename(ID = Puck) %>% 
+  mutate(ID = gsub("[AP]", "", ID)) %>% 
+  mutate(ID = as.double(ID)) %>% 
+  dplyr::select(!c("Colony", "Treatment")) -> CBASS_fvfm
+
+full_join(traits, days_to_removed, by = c("Species", "ID")) %>% 
+  full_join(., phagocytosis) %>% 
+  full_join(., Rscore) %>% 
+  full_join(., CBASS_fvfm) %>% 
+  drop_na(Initial) %>% 
+  dplyr::select(!c("Species", "ID")) -> traits_withphysio
 
 #### OUTLIER DETECTION ####
 
@@ -87,11 +123,11 @@ NumberMissingByArray
 # in this case, all samples OK
 
 # plots mean expression across all samples
-pdf("~/OneDrive - University of Miami/GitHub/Ch2_temperaturevariability2023/gene_expression/MS_bioinformatics/Acer_Rmd/WGCNA/sample_mean_expression.pdf",height=4, width=8)
+pdf("sample_mean_expression.pdf",height=4, width=8)
 barplot(meanExpressionByArray,
         xlab = "Sample", ylab = "Mean expression",
         main ="Mean expression across samples",
-        names.arg = c(1:45), cex.names = 0.7)
+        names.arg = c(1:44), cex.names = 0.7)
 dev.off()
 # look for any obvious deviations in expression across samples
 
@@ -109,8 +145,8 @@ thresholdZ.k=-2.5 # often -2.5
 outlierColor=ifelse(Z.k<thresholdZ.k,"red","black")
 sampleTree = flashClust(as.dist(1-A), method = "average")
 # Convert traits to a color representation where red indicates high values
-traitColors=data.frame(numbers2colors(traits,signed=FALSE))
-dimnames(traitColors)[[2]]=paste(names(traits))
+traitColors=data.frame(numbers2colors(traits_withphysio,signed=TRUE))
+dimnames(traitColors)[[2]]=paste(names(traits_withphysio))
 datColors=data.frame(outlierC=outlierColor,traitColors)
 # Plot the sample dendrogram and the colors underneath.
 quartz()
@@ -177,10 +213,8 @@ dev.off()
 # take a look at the threshold plots produced above, and the output table from the pickSoftThreshold command
 # pick the power that corresponds with a SFT.R.sq value above 0.90
 
-#none of them are above 0.90....the closest is 0.895 and that corresponds to sft power of 21
-
 # run from the line below to the save command
-s.th=21 # re-specify according to previous section
+s.th=19 # re-specify according to previous section
 adjacency = adjacency(datt, power = s.th,type="signed");
 TOM = TOMsimilarity(adjacency,TOMType="signed");
 rm(adjacency) #for memory space
@@ -220,7 +254,7 @@ head(datt)
 
 quartz()
 
-MEDissThres = 0.4 # in the first pass, set this to 0 - no merging (we want to see the module-traits heatmap first, then decide which modules are telling us the same story and better be merged)
+MEDissThres = 0.5 # in the first pass, set this to 0 - no merging (we want to see the module-traits heatmap first, then decide which modules are telling us the same story and better be merged)
 sizeGrWindow(7, 6)
 plot(METree, main = "Clustering of module eigengenes",
 xlab = "", sub = "")
@@ -271,7 +305,7 @@ load(file = "RData_files/networkdata_signed.RData")
 load(file = "RData_files/wgcnaData.RData");
 
 # Define numbers of genes and samples
-nGenes = ncol(datt); #27829
+nGenes = ncol(datt); #13867
 nSamples = nrow(datt); #44
 # Recalculate MEs with color labels
 MEs0 = moduleEigengenes(datt, moduleColors)$eigengenes
@@ -281,7 +315,7 @@ MEs = orderMEs(MEs0)
 moduleGeneCor=cor(MEs,datt)
 moduleGenePvalue = corPvalueStudent(moduleGeneCor, nSamples);
 
-moduleTraitCor = cor(MEs, traits, use = "p");
+moduleTraitCor = cor(MEs, traits_withphysio, use = "p");
 moduleTraitPvalue = corPvalueStudent(moduleTraitCor, nSamples);
 
 # module-trait correlations
@@ -293,7 +327,7 @@ par(mar = c(6, 8.5, 3, 3));
 # Display the correlation values within a heatmap plot
 labeledHeatmap(
   Matrix = moduleTraitCor,
-  xLabels = names(traits),
+  xLabels = names(traits_withphysio),
   yLabels = names(MEs),
   ySymbols = names(MEs),
   colorLabels = FALSE,
@@ -321,7 +355,7 @@ dim(textMatrix) = dim(moduleTraitCor)
 par(mar = c(6, 8.5, 3, 3));
 # Display the correlation values within a heatmap plot
 labeledHeatmap(Matrix = moduleTraitCor,
-               xLabels = names(traits),
+               xLabels = names(traits_withphysio),
                ySymbols = modLabels,
                yLabels = modLabels,
                colorLabels = FALSE,
@@ -330,7 +364,7 @@ labeledHeatmap(Matrix = moduleTraitCor,
                setStdMargins = FALSE,
                cex.text = 0.7,
                zlim = c(-0.7,0.7),
-               main = paste("A.cervicornis Module-Trait correlations"))
+               main = paste("P.clivosa Module-Trait correlations"))
 
 # module size barplot
 quartz()
@@ -358,14 +392,13 @@ traits
 table(moduleColors)
 
 # run for each of these statements individually
-#whichTrait="control_Day0"
-#whichTrait="control_Day29"
-#whichTrait="variable_Day0"
-whichTrait="variable_Day29"
+#whichTrait="Initial"
+#whichTrait="Treated"
+whichTrait="Untreated"
 
 nGenes = ncol(datt);
 nSamples = nrow(datt);
-selTrait = as.data.frame(traits[,whichTrait]);
+selTrait = as.data.frame(traits_withphysio[,whichTrait]);
 names(selTrait) = whichTrait
 # names (colors) of the modules
 modNames = substring(names(MEs), 3)
@@ -379,18 +412,14 @@ names(geneTraitSignificance) = paste("GS.", names(selTrait), sep="");
 names(GSPvalue) = paste("p.GS.", names(selTrait), sep="");
 
 # selecting specific modules to plot (change depending on which trait you're looking at)
-#moduleCols=c("turquoise","brown", "blue", "darkorange", "darkturquoise") # for control_Day0
-#moduleCols=c("pink","turquoise", "cyan", "blue","brown", "grey") # for control_Day29
-#moduleCols=c("blue", "brown","turquoise","pink") # for variable_Day0
-moduleCols=c("grey", "turquoise", "cyan", "darkturquoise", "darkorange", "brown", "royalblue") # for variable_Day29
+#moduleCols=c("lightgreen", "blue","salmon", "royalblue") # for Initial
+#moduleCols=c("lightgreen", "royalblue") # for Treated
+moduleCols=c("blue","salmon", "royalblue") # for Untreated
+
 
 quartz()
 # set par to be big enough for all significant module correlations, 
 #then run the next whichTrait and moduleCols statements above and repeat from the 'for' loop
-#par(mfrow=c(1,5)) # for control_Day0
-par(mfrow=c(3,3)) # for control_Day29
-#par(mfrow=c(1,4)) # for variable_Day0
-#par(mfrow=c(3,3)) # for variable_Day29
 
 counter=0
 # shows correlations for all modules
@@ -423,15 +452,11 @@ load(file = "RData_files/networkdata_signed.RData")
 load(file = "RData_files/wgcnaData.RData");
 
 # run for each of these statements individually
-#which.module="turquoise"
-#which.module="darkturquoise"
-#which.module="brown"
+#which.module="lightgreen"
 #which.module="blue"
-#which.module="darkorange"
-#which.module="pink"
-#which.module="cyan"
-#which.module="grey"
-which.module="royalblue"
+#which.module="salmon"
+#which.module="royalblue"
+
 
 datME=MEs
 datExpr=datt
@@ -447,10 +472,10 @@ ylab="eigengene expression",xlab="sample")
 
 length(datExpr[1,moduleColors==which.module ]) # number of genes in chosen module
 
-#turquoise = 6226
-#darkturquoise = 154
-#brown = 2451
-#blue = 8003
+#lightgreen = 144
+#blue= 2606 
+#salmon = 381
+#royalblue = 91
 #dark orange = 504
 #pink = 890
 #cyan = 550
@@ -458,16 +483,6 @@ length(datExpr[1,moduleColors==which.module ]) # number of genes in chosen modul
 #royalblue = 187
 
 # If individual samples appear to be driving expression of significant modules, they are likely outliers
-
-#turquoise looks fine
-#darkturquoise looks fine
-#brown looks fine
-#blue looks fine
-#dark orange looks fine
-#pink has two samples that are very high, but the other samples also have representation so maybe its fine
-#cyan looks fine
-#grey looks fine
-#royalblue looks fine
 
 #### GO/KOG EXPORT ####
 
@@ -483,18 +498,10 @@ names(allkME)=gsub("kME","",names(allkME))
 
 # run for each of these statements individually
 
-#which.module="turquoise"
-#which.module="darkturquoise"
-#which.module="brown"
+#which.module="lightgreen"
 #which.module="blue"
-#which.module="darkorange"
-#which.module="pink"
-#which.module="cyan"
-#which.module="grey"
+#which.module="salmon"
 which.module="royalblue"
-
-
-table(moduleColors==which.module) # how many genes are in it?
 
 # Saving data for Fisher-MWU combo test (GO_MWU)
 inModuleBinary=as.numeric(moduleColors==which.module)
@@ -513,16 +520,11 @@ load(file = "RData_files/data4wgcna.RData")
 load(file = "RData_files/wgcnaData.RData");
 
 allkME =signedKME(datt, MEs)
-gg=read.delim(file="~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",sep="\t")
+gg=read.delim(file="bioinformatics/Pclivosa_iso2geneName.tab",sep="\t")
 
-#which.module="turquoise"
-#which.module="darkturquoise"
-#which.module="brown"
+#which.module="lightgreen"
 #which.module="blue"
-#which.module="darkorange"
-#which.module="pink"
-#which.module="cyan"
-#which.module="grey"
+#which.module="salmon"
 which.module="royalblue"
 
 top=30 # number of named top-kME genes to plot
@@ -550,9 +552,7 @@ row.names(hubs)=gnames
 
 colnames(hubs) 
 
-categories <- c("SI_C.control_Day_0", "MB_B.control_Day_0", "BC_8b.control_Day_0", "SI_C.variable_Day_0", "MB_B.variable_Day_0",
-                "BC_8b.variable_Day_0", "SI_C.control_Day_29", "MB_B.control_Day_29", "BC_8b.control_Day_29", "SI_C.variable_Day_29", 
-                "MB_B.variable_Day_29", "BC_8b.variable_Day_29")
+categories <- c("Initial", "Treated", "Untreated")
 
 # Extract and sort columns for each category
 category_columns <- lapply(categories, function(cat) {
@@ -567,7 +567,7 @@ contrasting = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","c
 #contrasting2 = colorRampPalette(rev(c("chocolate1","chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
 #contrasting3 = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan","cyan")))(100)
 
-pdf(file="heatmap_top30_royalblue.pdf")
+#pdf(file="heatmap_top30_royalblue.pdf")
 pheatmap(as.matrix(reordered_df),scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows = F, cluster_cols = F) 
 dev.off()
 
@@ -591,7 +591,7 @@ hubgenes
 hubgenes %>%
   rename("gene" = 
            hubgenes) %>%
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,

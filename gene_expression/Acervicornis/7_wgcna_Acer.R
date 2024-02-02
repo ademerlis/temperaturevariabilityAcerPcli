@@ -150,7 +150,7 @@ thresholdZ.k=-2.5 # often -2.5
 outlierColor=ifelse(Z.k<thresholdZ.k,"red","black")
 sampleTree = flashClust(as.dist(1-A), method = "average")
 # Convert traits to a color representation where red indicates high values
-traitColors=data.frame(numbers2colors(traits_withphysio,signed=FALSE))
+traitColors=data.frame(numbers2colors(traits_withphysio,signed=TRUE))
 dimnames(traitColors)[[2]]=paste(names(traits_withphysio))
 datColors=data.frame(outlierC=outlierColor,traitColors)
 # Plot the sample dendrogram and the colors underneath.
@@ -316,6 +316,7 @@ save(MEs, geneTree, moduleLabels, moduleColors, file = "networkdata_signed.RData
 # plotting correlations with traits:
 load(file = "RData_files/networkdata_signed.RData")
 load(file = "RData_files/wgcnaData.RData");
+traits_withphysio <- read_csv("WGCNA/traits_withphysio.csv")
 
 # Define numbers of genes and samples
 nGenes = ncol(datt); #15526
@@ -553,11 +554,11 @@ gg=read.delim(file="bioinformatics/Acervicornis_iso2geneName.tab",sep="\t")
 #which.module="royalblue"
 #which.module="lightgreen"
 #which.module="darkgreen"
-which.module="greenyellow"
+#which.module="greenyellow"
 #which.module="midnightblue"
 #which.module="blue"
 #which.module="grey"
-#which.module="grey60"
+which.module="grey60"
 
 vsd.wg = t(datt)
 
@@ -625,7 +626,7 @@ hubgenes
 hubgenes %>%
   rename("gene" = 
            hubgenes) %>%
-  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
