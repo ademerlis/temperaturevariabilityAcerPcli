@@ -62,8 +62,58 @@ fvfm_recovery_change %>%
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   ylab("% Decline in Fv/Fm")+
   theme(text = element_text(size = 15))
-  
+#ggsave("fvfmdecline_recovery_boxplot_species.pdf")
 ```
+
+stats
+```{r}
+fvfm_recovery_change %>% 
+  select(Puck:Treatment, change) %>% 
+  mutate_at(vars(Colony, Puck, Treatment, Species), factor) -> fvfm_recovery_stats
+
+fvfm_recovery_stats
+
+recovery_model_1 <- lm(change ~ Treatment*Species + Colony, data = fvfm_recovery_stats)
+recovery_model_metrics_1 <- augment(recovery_model_1)
+plot(recovery_model_1)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_metrics_1$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = recovery_model_metrics_1) #not significant
+
+# identifying outliers
+recovery_model_metrics_1 %>% 
+  filter(abs(.std.resid) > 3) 
+# 1 outlier
+
+fvfm_recovery_stats %>% 
+  filter(change < 39) -> fvfm_recovery_stats
+
+recovery_model_1 <- lm(change ~ Treatment*Species + Colony, data = fvfm_recovery_stats)
+recovery_model_metrics_1 <- augment(recovery_model_1)
+plot(recovery_model_1)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_metrics_1$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = recovery_model_metrics_1) #not significant
+```
+two-way ANOVA
+```{r}
+aov(change ~ Treatment*Species, data = fvfm_recovery_stats)
+
+summary(aov(change ~ Treatment*Species, data = fvfm_recovery_stats))
+
+#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_table.csv")
+
+TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova))
+         
+#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
+```
+
 
 
 ```{r}
@@ -316,6 +366,65 @@ percent_cells_df %>%
   ylab("% Phagocytic Activity")+
   theme(text = element_text(size = 15))
 #ggsave("immunecell_postCBASS_boxplot.pdf")
+```
+
+stats
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  dplyr::filter(TimePoint == "T2" | TimePoint == "FollowUp") %>% 
+  mutate(num_days = as.factor(num_days)) %>% 
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() -> percent_cells_speciestreatments
+
+percent_cells_speciestreatments %>% 
+  dplyr::mutate_at(vars(Species, Treatment, num_days), factor) -> percent_cells_speciestreatments
+
+treat_model <- lm(mean_replicate_percent_perID ~ Treatment*Species*num_days + Genotype + Tank, data = percent_cells_speciestreatments)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species*num_days, data = treat_model_metrics) #significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 1 outlier
+
+percent_cells_speciestreatments %>% 
+  filter(mean_replicate_percent_perID < 26) -> percent_cells_speciestreatments
+
+treat_model <- lm(mean_replicate_percent_perID ~ Treatment*Species*num_days + Genotype + Tank, data = percent_cells_speciestreatments)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species*num_days, data = treat_model_metrics) #significant
+
+
+#make interaction term
+percent_cells_speciestreatments$Treatment_Species_numdays <- interaction(percent_cells_speciestreatments$Treatment, percent_cells_speciestreatments$Species, percent_cells_speciestreatments$num_days)
+
+# kruskal wallis test
+kruskal_test(mean_replicate_percent_perID ~ Treatment_Species_numdays, data = percent_cells_speciestreatments)#significant
+
+#posthoc test
+
+dunn.test(percent_cells_speciestreatments$mean_replicate_percent_perID, percent_cells_speciestreatments$Treatment_Species_numdays, method = "bonferroni")
+
+
+as.data.frame(dunn.test(percent_cells_speciestreatments$mean_replicate_percent_perID, percent_cells_speciestreatments$Treatment_Species_numdays, method = "bonferroni")) %>% write_csv("species_recovery_immunecells_posthoc.csv")
+
 ```
 
 

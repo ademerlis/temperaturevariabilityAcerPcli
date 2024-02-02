@@ -11,10 +11,18 @@ library(janitor)
 library(rstatix)
 library(cowplot)
 library(plotrix)
+library(survival)
+library(ggpubr)
+library(survminer)
+library(coxme)
+library(ggsurvfit)
+library(gtsummary)
 
 metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
 
 str(metadata) #295 corals
+
+survivorship <- readxl::read_xlsx("../metadata.xlsx", sheet ="kaplanmeiercurve")
 ```
 
 Tidy data 
@@ -535,6 +543,7 @@ slowburn_metadata %>%
   facet_wrap(~Species, scales = "free_x") +
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   labs(x="CBASS Temperature", y="Number of Days at 32ºC")
+#ggsave("daysat32_byCBASS.pdf")
 ``` 
 
 ```{r}
@@ -762,5 +771,18 @@ slowburn_metadata %>%
   #write_csv("pairwise_prop_test_RTLvsbleaching_slowburn.csv")
 ```
 
+# kaplan meier curve for slow burn survivorship
+```{r}
+survivorship$Species_Treatment <- interaction(survivorship$Species, survivorship$Treatment)
+survfit2(Surv(daysToDeath, status) ~ Species_Treatment, data = survivorship) %>% 
+  ggsurvfit() +
+  labs(x = "Days", y = "Overall survival probability") +
+  scale_ggsurvfit() +
+  add_pvalue(caption = "Log-rank {p.value}") +
+  add_pvalue(location  = "annotation") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "right") 
+#ggsave("kmcurve_slowburn.pdf")
+```
 
 

@@ -38,8 +38,8 @@ counts %>%
   select(!X.1) -> counts
 
 #two of the sample IDs are in all caps, need to change it to be "Acer"
-counts <- counts %>% rename(Acer.112 = ACER.112)
-counts <- counts %>% rename(Acer.124 = ACER.124)
+counts <- counts %>% dplyr::rename(Acer.112 = ACER.112)
+counts <- counts %>% dplyr::rename(Acer.124 = ACER.124)
  
 # how many genes we have total?
 nrow(counts) #30122

@@ -51,14 +51,68 @@ Treated = as.numeric(design$Treatment == "Treated")
 # assembling table of traits
 
 # coding genotype as binary (0 = FALSE, 1 = TRUE)
-design$Genotype
-SI_C = as.numeric(design$Genotype == "SI_C")
-BC_8b = as.numeric(design$Genotype == "BC_8b")
-MB_B = as.numeric(design$Genotype == "MB_B")
+# design$Genotype
+# SI_C = as.numeric(design$Genotype == "SI_C")
+# BC_8b = as.numeric(design$Genotype == "BC_8b")
+# MB_B = as.numeric(design$Genotype == "MB_B")
 
-traits <- data.frame(cbind(Initial, Untreated, Treated, SI_C,BC_8b, MB_B))
+#traits <- data.frame(cbind(Initial, Untreated, Treated, SI_C,BC_8b, MB_B))
 
-head(traits)
+traits <- data.frame(cbind(Initial, Untreated, Treated))
+
+rownames(traits) <- rownames(design)
+
+traits
+
+traits %>% 
+  rownames_to_column() %>% 
+  mutate(rowname = str_extract(rowname, "^[^_]*")) %>% 
+  separate(rowname, into = c("Species", "ID"), sep = "\\.") %>% 
+  mutate(Species = "Acropora cervicornis") %>% 
+  mutate(ID = as.double(ID)) -> traits
+
+traits
+
+days_to_removed <- read_csv("physiotraits_for_WGCNA/days_to_removed.csv")
+days_to_removed %>% 
+  select(!c("Colony", "Treatment")) %>% 
+  filter(Species == "Acropora cervicornis") -> days_to_removed
+
+phagocytosis <- read_csv("physiotraits_for_WGCNA/phagocytosis_alltimepoints.csv")
+phagocytosis %>% 
+  pivot_wider(names_from="TimePoint", values_from="mean_replicate_percent_perID") %>% 
+  dplyr::rename(cells_initial = T0) %>% 
+  dplyr::rename(cells_endoftreatment = T2) %>% 
+  select(!c("Genotype", "Treatment", "num_days")) %>% 
+  filter(Species == "Acer") %>% 
+  mutate(Species = "Acropora cervicornis") %>% 
+  mutate(ID = gsub("[AP]", "", ID)) %>% 
+  mutate(ID = as.double(ID)) -> phagocytosis
+
+Rscore <- read_csv("physiotraits_for_WGCNA/treatment_Rscore.csv")
+Rscore %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  select(!c("Colony", "Treatment")) %>% 
+  mutate(ID = as.double(ID)) -> Rscore
+
+CBASS_fvfm <- read_csv("physiotraits_for_WGCNA/cbass_fvfm_forwgcna.csv")
+CBASS_fvfm %>% 
+  filter(Species == "Acervicornis") %>% 
+  mutate(Species = "Acropora cervicornis") %>% 
+  dplyr::rename(ID = Puck) %>% 
+  mutate(ID = gsub("[AP]", "", ID)) %>% 
+  mutate(ID = as.double(ID)) %>% 
+  dplyr::select(!c("Colony", "Treatment")) -> CBASS_fvfm
+
+full_join(traits, days_to_removed, by = c("Species", "ID")) %>% 
+  full_join(., phagocytosis) %>% 
+  full_join(., Rscore) %>% 
+  full_join(., CBASS_fvfm) %>% 
+  drop_na(Initial) %>% 
+  dplyr::select(!c("Species", "ID")) -> traits_withphysio
+
+traits_withphysio %>% 
+  select(!c(1)) -> traits_withphysio
 
 #### OUTLIER DETECTION ####
 
@@ -96,8 +150,8 @@ thresholdZ.k=-2.5 # often -2.5
 outlierColor=ifelse(Z.k<thresholdZ.k,"red","black")
 sampleTree = flashClust(as.dist(1-A), method = "average")
 # Convert traits to a color representation where red indicates high values
-traitColors=data.frame(numbers2colors(traits,signed=FALSE))
-dimnames(traitColors)[[2]]=paste(names(traits))
+traitColors=data.frame(numbers2colors(traits_withphysio,signed=FALSE))
+dimnames(traitColors)[[2]]=paste(names(traits_withphysio))
 datColors=data.frame(outlierC=outlierColor,traitColors)
 # Plot the sample dendrogram and the colors underneath.
 quartz()
@@ -108,64 +162,16 @@ plotDendroAndColors(sampleTree,groupLabels=names(datColors), colors=datColors,ma
 # Remove outlying samples from expression and trait data
 remove.samples= Z.k<thresholdZ.k | is.na(Z.k)
 datt=datt[!remove.samples,]
-traits=traits[!remove.samples,] #1 sample removed
+traits_withphysio=traits_withphysio[!remove.samples,] #1 sample removed
 
 str(datt) #43 
-str(traits) #43
+str(traits_withphysio) #43
   
 write.csv(traits, file="traits.csv")
 
+write.csv(traits_withphysio, file="traits_withphysio.csv")
+
 save(datt,traits,file="wgcnaData.RData")
-
-#### ADD PHYSIOLOGICAL TRAITS ####
-
-load("RData_files/wgcnaData.RData")
-lnames=load("RData_files/data4wgcna.RData")
-
-design=design[!remove.samples,]
-str(design) #43 samples
-
-rownames(design)
-
-traits #traits is in the same order as design, but without rownames
-
-rownames(traits) <- rownames(design)
-
-traits %>% 
-  rownames_to_column() %>% 
-  mutate(rowname = str_extract(rowname, "^[^_]*")) %>% 
-  separate(rowname, into = c("Species", "ID"), sep = "\\.") %>% 
-  mutate(Species = "Acropora cervicornis") %>% 
-  mutate(ID = as.double(ID)) -> traits
-
-
-days_to_removed <- read_csv("physiotraits_for_WGCNA/days_to_removed.csv")
-days_to_removed %>% 
-  select(!c("Colony", "Treatment")) %>% 
-  filter(Species == "Acropora cervicornis") -> days_to_removed
-
-phagocytosis <- read_csv("physiotraits_for_WGCNA/phagocytosis_alltimepoints.csv")
-phagocytosis %>% 
-  pivot_wider(names_from="TimePoint", values_from="mean_replicate_percent_perID") %>% 
-  dplyr::rename(cells_initial = T0) %>% 
-  dplyr::rename(cells_endoftreatment = T2) %>% 
-  select(!c("Genotype", "Treatment", "num_days")) %>% 
-  filter(Species == "Acer") %>% 
-  mutate(Species = "Acropora cervicornis") %>% 
-  mutate(ID = gsub("[AP]", "", ID)) %>% 
-  mutate(ID = as.double(ID)) -> phagocytosis
-
-Rscore <- read_csv("physiotraits_for_WGCNA/treatment_Rscore.csv")
-Rscore %>% 
-  filter(Species == "Acropora cervicornis") %>% 
-  select(!c("Colony", "Treatment")) %>% 
-  mutate(ID = as.double(ID)) -> Rscore
-
-full_join(traits, days_to_removed, by = c("Species", "ID")) %>% 
-  full_join(., phagocytosis) %>% 
-  full_join(., Rscore) %>% 
-  drop_na(Initial) %>% 
-  select(!c("Species", "ID")) -> traits_withphysio
 
 
 #### SOFT THRESHOLDS ####
@@ -178,11 +184,10 @@ options(stringsAsFactors=FALSE)
 allowWGCNAThreads()
 
 load("RData_files/wgcnaData.RData")
+traits_withphysio <- read_csv("traits_withphysio.csv")
 
 #datt=t(vsd.wg)
 str(datt) #43
-
-#datt=t(vsd.wg) this resets the number of samples back to 44 - outlier from above section not removed
 
 # Try different betas ("soft threshold") - power factor for calling connections between genes
 powers = c(seq(from = 2, to=26, by=1))
@@ -400,14 +405,13 @@ traits
 table(moduleColors)
 
 # run for each of these statements individually
-whichTrait="Initial"
-#whichTrait="control_Day29"
-#whichTrait="variable_Day0"
-whichTrait="variable_Day29"
+#whichTrait="Initial"
+#whichTrait="Treated"
+whichTrait="Untreated"
 
 nGenes = ncol(datt);
 nSamples = nrow(datt);
-selTrait = as.data.frame(traits[,whichTrait]);
+selTrait = as.data.frame(traits_withphysio[,whichTrait]);
 names(selTrait) = whichTrait
 # names (colors) of the modules
 modNames = substring(names(MEs), 3)
@@ -421,18 +425,14 @@ names(geneTraitSignificance) = paste("GS.", names(selTrait), sep="");
 names(GSPvalue) = paste("p.GS.", names(selTrait), sep="");
 
 # selecting specific modules to plot (change depending on which trait you're looking at)
-#moduleCols=c("turquoise","brown", "blue", "darkorange", "darkturquoise") # for control_Day0
-#moduleCols=c("pink","turquoise", "cyan", "blue","brown", "grey") # for control_Day29
-#moduleCols=c("blue", "brown","turquoise","pink") # for variable_Day0
-moduleCols=c("grey", "turquoise", "cyan", "darkturquoise", "darkorange", "brown", "royalblue") # for variable_Day29
+#moduleCols=c("blue","royalblue", "lightgreen", "grey60", "turquoise", "grey") # for Initial
+#moduleCols=c("blue","royalblue", "darkgreen", "darkturquoise","grey60", "grey") # for Treated
+moduleCols=c("blue","greenyellow","midnightblue", "darkturquoise") # for Untreated
 
 quartz()
 # set par to be big enough for all significant module correlations, 
 #then run the next whichTrait and moduleCols statements above and repeat from the 'for' loop
-#par(mfrow=c(1,5)) # for control_Day0
-par(mfrow=c(3,3)) # for control_Day29
-#par(mfrow=c(1,4)) # for variable_Day0
-#par(mfrow=c(3,3)) # for variable_Day29
+par(mfrow=c(1,6)) 
 
 counter=0
 # shows correlations for all modules
@@ -448,7 +448,6 @@ for (module in moduleCols) {
   moduleGenes = moduleColors==module;
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
-#trr="heat resistance"
 verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
 abs(geneTraitSignificance[moduleGenes, 1]),
 xlab = paste(module,"module membership"),
@@ -467,13 +466,15 @@ load(file = "RData_files/wgcnaData.RData");
 # run for each of these statements individually
 #which.module="turquoise"
 #which.module="darkturquoise"
-#which.module="brown"
+#which.module="royalblue"
+#which.module="lightgreen"
+#which.module="darkgreen"
+#which.module="greenyellow"
+#which.module="midnightblue"
 #which.module="blue"
-#which.module="darkorange"
-#which.module="pink"
-#which.module="cyan"
 #which.module="grey"
-which.module="royalblue"
+which.module="grey60"
+
 
 datME=MEs
 datExpr=datt
@@ -489,27 +490,19 @@ ylab="eigengene expression",xlab="sample")
 
 length(datExpr[1,moduleColors==which.module ]) # number of genes in chosen module
 
-#turquoise = 6226
-#darkturquoise = 154
-#brown = 2451
-#blue = 8003
-#dark orange = 504
-#pink = 890
-#cyan = 550
-#grey = 2354
-#royalblue = 187
+#turquoise = 4829
+#darkturquoise = 115
+#royalblue = 148
+#lightgreen = 199
+#darkgreen = 118
+#greenyellow = 624
+#midnightblue = 626
+#blue = 4557
+#grey = 602
+#grey60 = 220
+
 
 # If individual samples appear to be driving expression of significant modules, they are likely outliers
-
-#turquoise looks fine
-#darkturquoise looks fine
-#brown looks fine
-#blue looks fine
-#dark orange looks fine
-#pink has two samples that are very high, but the other samples also have representation so maybe its fine
-#cyan looks fine
-#grey looks fine
-#royalblue looks fine
 
 #### GO/KOG EXPORT ####
 
@@ -527,20 +520,18 @@ names(allkME)=gsub("kME","",names(allkME))
 
 #which.module="turquoise"
 #which.module="darkturquoise"
-#which.module="brown"
+#which.module="royalblue"
+#which.module="lightgreen"
+#which.module="darkgreen"
+#which.module="greenyellow"
+#which.module="midnightblue"
 #which.module="blue"
-#which.module="darkorange"
-#which.module="pink"
-#which.module="cyan"
 #which.module="grey"
-which.module="royalblue"
-
-
-table(moduleColors==which.module) # how many genes are in it?
+which.module="grey60"
 
 # Saving data for Fisher-MWU combo test (GO_MWU)
 inModuleBinary=as.numeric(moduleColors==which.module)
-combo=data.frame("gene"=row.names(vsd.wg),"Fish_kME"=allkME[,which.module]*inModuleBinary)
+combo=data.frame("gene"=row.names(t(datt)),"Fish_kME"=allkME[,which.module]*inModuleBinary)
 write.csv(combo,file=paste(which.module,".csv",sep=""),row.names=F,quote=F)
 
 
@@ -555,17 +546,20 @@ load(file = "RData_files/data4wgcna.RData")
 load(file = "RData_files/wgcnaData.RData");
 
 allkME =signedKME(datt, MEs)
-gg=read.delim(file="~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",sep="\t")
+gg=read.delim(file="bioinformatics/Acervicornis_iso2geneName.tab",sep="\t")
 
 #which.module="turquoise"
 #which.module="darkturquoise"
-#which.module="brown"
+#which.module="royalblue"
+#which.module="lightgreen"
+#which.module="darkgreen"
+which.module="greenyellow"
+#which.module="midnightblue"
 #which.module="blue"
-#which.module="darkorange"
-#which.module="pink"
-#which.module="cyan"
 #which.module="grey"
-which.module="royalblue"
+#which.module="grey60"
+
+vsd.wg = t(datt)
 
 top=30 # number of named top-kME genes to plot
 
@@ -592,9 +586,7 @@ row.names(hubs)=gnames
 
 colnames(hubs) 
 
-categories <- c("SI_C.control_Day_0", "MB_B.control_Day_0", "BC_8b.control_Day_0", "SI_C.variable_Day_0", "MB_B.variable_Day_0",
-                "BC_8b.variable_Day_0", "SI_C.control_Day_29", "MB_B.control_Day_29", "BC_8b.control_Day_29", "SI_C.variable_Day_29", 
-                "MB_B.variable_Day_29", "BC_8b.variable_Day_29")
+categories <- c("Initial", "Treated", "Untreated")
 
 # Extract and sort columns for each category
 category_columns <- lapply(categories, function(cat) {
@@ -609,7 +601,7 @@ contrasting = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","c
 #contrasting2 = colorRampPalette(rev(c("chocolate1","chocolate1","#FEE090","grey10", "cyan3","cyan")))(100)
 #contrasting3 = colorRampPalette(rev(c("chocolate1","#FEE090","grey10", "cyan3","cyan","cyan")))(100)
 
-pdf(file="heatmap_top30_royalblue.pdf")
+#pdf(file="heatmap_top30_turquoise.pdf")
 pheatmap(as.matrix(reordered_df),scale="row",col=contrasting,border_color=NA,treeheight_col=0,cex=0.9,cluster_rows = F, cluster_cols = F) 
 dev.off()
 

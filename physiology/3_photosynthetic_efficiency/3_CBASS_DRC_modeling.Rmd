@@ -44,11 +44,18 @@ ipam_tidy_data %>%
                                Tank == "8" ~ "Treated")) %>% 
   full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
   drop_na() %>% 
-  rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
   dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) -> ipam_tidy_CBASS_treatments
 
 ipam_tidy_CBASS_treatments %>% 
   mutate_at(vars(Colony, Puck, Treatment, Species), factor) -> ipam_tidy_CBASS_treatments
+```
+
+make table for WGCNA
+```{r}
+ipam_tidy_CBASS_treatments %>% 
+  select(Puck:fvfm, CBASS_temp) %>% 
+  write_csv("cbass_fvfm_forwgcna.csv")
 ```
 
 
@@ -475,8 +482,10 @@ Acer_coeff <- as.data.frame(DRC_Acer_colony_treatment$coefficients)
 Acer_coeff %>% 
   rownames_to_column(var = "coeff_colony_treatment") %>% 
   filter(grepl("ed50", coeff_colony_treatment)) %>% 
-  rename(ED50 = `DRC_Acer_colony_treatment$coefficients`) %>% 
+  dplyr::rename(ED50 = `DRC_Acer_colony_treatment$coefficients`) %>% 
   separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Acer_ED50s
+
+#write_csv(Acer_ED50s, "Acer_ED50s.csv")
 
 #statistics
 Acer_model <- lm(ED50 ~ Treatment, data = Acer_ED50s)
@@ -516,8 +525,10 @@ Pcli_coeff <- as.data.frame(DRC_Pcli_colony_treatment$coefficients)
 Pcli_coeff %>% 
   rownames_to_column(var = "coeff_colony_treatment") %>% 
   filter(grepl("ed50", coeff_colony_treatment)) %>% 
-  rename(ED50 = `DRC_Pcli_colony_treatment$coefficients`) %>% 
+  dplyr::rename(ED50 = `DRC_Pcli_colony_treatment$coefficients`) %>% 
   separate(coeff_colony_treatment, into=c("ed50", "Colony", "Treatment"), sep = "[:.]") -> Pcli_ED50s
+
+#write_csv(Pcli_ED50s, "Pcli_ED50s.csv")
 
 #statistics
 Pcli_model <- lm(ED50 ~ Treatment, data = Pcli_ED50s)
