@@ -36,12 +36,20 @@ goAnnotations="Acervicornis_iso2go.tab" # two-column, tab-delimited, one line pe
 
 input="control0_control29_lpv.csv" # two columns of comma-separated values: gene id, continuous measure of significance. 
 #input="variable0_variable29_lpv.csv" 
-#input="variable0_control0_lpv.csv" 
+input="variable0_control0_lpv.csv" 
 #input="variable29_control29_lpv.csv" 
 
+input="Treated_vs_Initial_lpv.csv"
+#0 GO terms for CC
+#0 GO terms for MF
+
+input="Treated_vs_Untreated_lpv.csv"
+#0 GO terms for MF
+#0 GO terms for CC
+
 goDivision="MF" # either MF, or BP, or CC
-#goDivision="BP" # either MF, or BP, or CC
-#goDivision="CC" # either MF, or BP, or CC
+goDivision="BP" # either MF, or BP, or CC
+goDivision="CC" # either MF, or BP, or CC
 
 # Calculating stats. It might take ~3 min for MF and BP. Do not rerun it if you just want to replot the data with different cutoffs, 
 #go straight to gomwuPlot. If you change any of the numeric values below, delete the files that were generated in previos runs first.
