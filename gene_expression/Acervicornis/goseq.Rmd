@@ -1,0 +1,37 @@
+---
+title: "goseq"
+author: "allyson_demerlis"
+date: "2024-02-05"
+output: html_document
+---
+
+load packages
+```{r}
+#BiocManager::install("goseq")
+library(tidyverse)
+library(plotrix) 
+library(ggplot2)
+library(tidyr)
+library(goseq)
+```
+
+Code from https://github.com/kevinhwong1/Thermal_Transplant_Molecular/blob/main/scripts/WGBS_GM.Rmd
+
+import data
+```{r}
+#generate list of all genes identified and background list for GO enrichment analysis
+
+TreatedvUntreated_DGEs <- read.csv("results_csv/TreatedvsUntreated_annotatedDGEs.csv")
+TreatedvUntreated_DGEs %>% 
+  dplyr::select(gene, annot) -> TreatedvUntreated_DGEs
+
+TreatedvInitial_DGEs <- read.csv("results_csv/TreatedvsInitial_annotatedDGEs.csv")
+TreatedvInitial_DGEs %>% 
+  dplyr::select(gene, annot) -> TreatedvInitial_DGEs
+
+
+
+goslim <- read.csv("GO-GOslim.csv")
+goslim <- goslim %>% dplyr::select(-term)
+```
+
