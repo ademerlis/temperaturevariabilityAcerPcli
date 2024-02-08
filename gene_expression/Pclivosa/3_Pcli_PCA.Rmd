@@ -9,10 +9,14 @@ output: html_document
 library(DESeq2)
 library(tidyverse)
 library(factoextra)
+library(cowplot)
+library(limma)
+library(ggforce)
 
 load("RData_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
 ```
 
+# all data
 
 ```{r}
 pca <- prcomp(t(assay(Vsd)))
@@ -34,7 +38,7 @@ g1 <- ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("P. clivosa") +
-   theme_bw() + #Set background color
+   theme_classic() + #Set background color
    theme(panel.border = element_blank(), # Set border
          axis.line = element_line(colour = "black"), #Set axes color
          plot.background=element_blank()) +
@@ -152,5 +156,82 @@ ggplot(pca23, aes(PC2, PC3, color=Treatment)) +
    #stat_ellipse(aes(PC2, PC3, group=time_point, lty=time_point), type = "norm") +
    #facet_wrap(~time_point) +
    scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
-
 ```
+
+
+
+# remove batch effect of genotype
+
+```{r}
+vsd2 <- removeBatchEffect(assay(Vsd), batch = Vsd$Genotype)
+
+pca_result <- prcomp(t(vsd2))  # Transpose matrix because prcomp expects observations in rows
+
+pca_summary<-summary(pca_result)
+
+# Extract the proportion of variance explained by PC1 and PC2
+percentVar_PC1 <- pca_summary$importance[2, "PC1"] * 100  # Proportion of variance for PC1
+percentVar_PC2 <- pca_summary$importance[2, "PC2"] * 100  # Proportion of variance for PC2
+
+# Round the percentages for better readability
+percentVar_PC1_rounded <- round(percentVar_PC1)
+percentVar_PC2_rounded <- round(percentVar_PC2)
+
+# Create a data frame for ggplot
+pca_data <- data.frame(PC1 = pca_result$x[,1], PC2 = pca_result$x[,2], Sample = rownames(pca_result$x))
+
+design %>% 
+  rownames_to_column("Sample") %>% 
+full_join(pca_data, design, by = "Sample") -> pca_data
+
+# Basic PCA plot
+g2<-ggplot(pca_data, aes(x = PC1, y = PC2, label=NA, color = Treatment)) + 
+   geom_point(size=3) +
+   xlab(paste0("PC1: ",percentVar_PC1_rounded[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar_PC2_rounded[1],"% variance")) +
+   ggtitle("Pclivosa") +
+   theme_classic() + 
+   scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
+#ggsave("PCA_Pclivosa_removebatcheffect.pdf",  width = 10, height = 7)
+
+#setting up data to add polygons
+find_hull <- function(pca_data) pca_data[chull(pca_data$PC1, pca_data$PC2), ]
+hulls <- ddply(pca_data, "Treatment", find_hull)
+
+# Calculate group centroids for polygons
+centroids <- pca_data %>%
+  group_by(Treatment) %>%
+  dplyr::summarise(PC1.mean = mean(PC1), PC2.mean = mean(PC2))
+
+# Create the PCA plot
+ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
+  geom_point() +
+  geom_polygon(data = hulls, alpha = 0.2, aes(color=Treatment, fill=Treatment)) +
+  geom_point(aes(x=PC1.mean, y=PC2.mean,color=Treatment), data=centroids, show.legend=FALSE) +
+  scale_fill_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
+  scale_color_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
+  xlab(paste0("PC1: ",percentVar_PC1_rounded[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar_PC2_rounded[1],"% variance")) +
+   ggtitle("Pclivosa") +
+  theme_classic()
+
+
+ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
+  geom_point() +
+  stat_ellipse(aes(PC1, PC2, group=Treatment, lty = Treatment), type = "norm") +
+  scale_fill_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
+  scale_color_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
+  xlab(paste0("PC1: ",percentVar_PC1_rounded[1],"% variance")) +
+   ylab(paste0("PC2: ",percentVar_PC2_rounded[1],"% variance")) +
+   ggtitle("Pclivosa") +
+  theme_classic()
+#ggsave("PCA_Pclivosa_removebatcheffect_withellipses.pdf", width = 10, height = 7)
+```
+
+#combined plot of pre- and post- removing genotype as batch effect
+```{r}
+combined_plot <- plot_grid(g1, g2)
+print(combined_plot)
+ggsave("combined_PCA_plot_batcheffect.pdf", combined_plot, width = 10, height = 7)
+```
+

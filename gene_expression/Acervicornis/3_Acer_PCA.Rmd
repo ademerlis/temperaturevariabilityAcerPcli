@@ -38,7 +38,7 @@ g1 <- ggplot(vst_PCAdata, aes(PC1, PC2, color=Treatment, shape=Genotype)) +
    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
    ggtitle("A.cervicornis") +
-   theme_bw() + #Set background color
+   theme_classic() + #Set background color
    theme(panel.border = element_blank(), # Set border
          axis.line = element_line(colour = "black"), #Set axes color
          plot.background=element_blank()) +
@@ -157,7 +157,7 @@ ggplot(pca23, aes(PC2, PC3, color=Treatment)) +
    ggtitle("Acervicornis") +
    theme_bw() + 
    scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
-ggsave("PCA_allgenets_axes23.pdf")
+#ggsave("PCA_allgenets_axes23.pdf")
 ```
 
 
@@ -186,14 +186,14 @@ design %>%
 full_join(pca_data, design, by = "Sample") -> pca_data
 
 # Basic PCA plot
-ggplot(pca_data, aes(x = PC1, y = PC2, label=NA, color = Treatment)) + 
+g2<- ggplot(pca_data, aes(x = PC1, y = PC2, label=NA, color = Treatment)) + 
    geom_point(size=3) +
    xlab(paste0("PC1: ",percentVar_PC1_rounded[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar_PC2_rounded[1],"% variance")) +
    ggtitle("Acervicornis") +
    theme_classic() + 
    scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
-ggsave("PCA_Acer_removebatcheffect.pdf",  width = 10, height = 7)
+#ggsave("PCA_Acer_removebatcheffect.pdf",  width = 10, height = 7)
 
 #setting up data to add polygons
 find_hull <- function(pca_data) pca_data[chull(pca_data$PC1, pca_data$PC2), ]
@@ -227,5 +227,12 @@ ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
    ggtitle("Acervicornis") +
   theme_classic()
 ggsave("PCA_Acer_removebatcheffect_withellipses.pdf", width = 10, height = 7)
+```
+
+#combined plot of pre- and post- removing genotype as batch effect
+```{r}
+combined_plot <- plot_grid(g1, g2)
+print(combined_plot)
+#ggsave("combined_PCA_plot_batcheffect.pdf", combined_plot, width = 10, height = 7)
 ```
 
