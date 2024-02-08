@@ -1159,40 +1159,8 @@ summary(aov(mean_replicate_percent_perID ~ Treatment*Genotype*num_days, data = P
 
 
 
-# Percent change over treatment (unnormalized) 
-
-## By species x treatment
-
-```{r}
-percent_cells_df %>% 
-  drop_na() %>% #one technical replicate is NA for one coral ID
-  group_by(num_days, Species, ID, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
-  ungroup() %>% 
-  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
-  distinct() %>% 
-  filter(num_days == "0" | num_days == "28") 
-  
-  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_pertank") %>% 
-  mutate(percent_change = ((`28`-`0`)/`0`) *100) %>% 
-  ggplot(., aes(x=Species, y=percent_change, fill= Treatment)) +
-  geom_point() +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  ylab("% Phagocytic Activity")+
-  theme_classic() +
-  theme(text = element_text(size = 15))
-  
-#average all technical replicates together before running stats
-cell_means <- summarySE(percent_cells_speciestreatments, measurevar="mean_replicate_percent_perID", groupvars=c("Species","Treatment", "num_days"))
-```
-
-```{r}
-
-```
-
-
-
 # Normalized percent comparison all time points
+
 ```{r}
 #calculate mean control for a given species, genotype, time point. Then, subtract that mean from the mean percent for the corresponding treated coral. Now, the "control" percent phagocytosis should be zero, and then treated group will be based on that zeroing.
 
@@ -1244,4 +1212,115 @@ p2<- percent_cells_df %>%
 plot_grid(p1, p2, rel_widths = c(1.5,2))
 #ggsave("immunecells_corrected_lollipop.pdf", width = 12, height = 5)
 ```
+
+# Normalization to untreated day 0 genotype percentage cells
+
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" & Treatment == "Untreated") %>% 
+  group_by(Species, Genotype) %>% 
+  dplyr::summarise(mean_untreated_day0_genet = mean(mean_replicate_percent_perID)) -> untreated_day0_immunecells
+
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "28") %>% 
+  right_join(., untreated_day0_immunecells, by = c("Species", "Genotype")) %>% 
+  mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) %>% #T1-T0/T0*100
+  ggplot(., aes(x=Species, y=relative_activity, fill= Treatment)) +
+  geom_boxplot() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Decline Immune Cell Activity")+
+  theme_classic() +
+  theme(text = element_text(size = 15))
+#ggsave("normalized_percentchangeimmuneactivity_boxplot_species.pdf")
+```
+
+
+### Statistics
+
+Change to factors
+```{r}
+#average all technical replicates together before running stats
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") -> percent_cells_speciestreatments
+
+str(percent_cells_speciestreatments)
+
+percent_cells_speciestreatments %>% 
+  dplyr::mutate_at(vars(Species, Treatment, num_days), factor) -> percent_cells_speciestreatments
+
+percent_cells_speciestreatments %>% 
+  filter(num_days == "0" & Treatment == "Untreated") %>% 
+  group_by(Species, Genotype) %>% 
+  dplyr::summarise(mean_untreated_day0_genet = mean(mean_replicate_percent_perID)) -> untreated_day0_immunecells
+
+percent_cells_speciestreatments %>% 
+  filter(num_days == "28") %>% 
+  right_join(., untreated_day0_immunecells, by = c("Species", "Genotype")) %>% 
+  mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) -> relative_activity_df
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(relative_activity ~ Treatment*Species + Genotype + Tank, data = relative_activity_df)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 1 outlier
+
+relative_activity_df %>% filter(relative_activity < 43) -> relative_activity_df
+
+#rerun tests
+
+treat_model <- lm(relative_activity ~ Treatment*Species + Genotype + Tank, data = relative_activity_df)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
+
+#make interaction term
+relative_activity_df$Treatment_Species <- interaction(relative_activity_df$Treatment, relative_activity_df$Species)
+
+# kruskal wallis test
+kruskal_test(relative_activity ~ Treatment_Species, data = relative_activity_df) #not significant
+
+#posthoc test
+as.data.frame(dunn.test(relative_activity_df$relative_activity, relative_activity_df$Treatment_Species, method = "bonferroni"))
+
+
+
+  write_csv("Acer_percent_cells_genet_posthoc.csv")
+```
+
 

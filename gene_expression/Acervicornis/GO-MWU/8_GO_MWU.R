@@ -24,74 +24,23 @@
 
 source("gomwu.functions.R")
 goDatabase="go.obo" # download from http://www.geneontology.org/GO.downloads.ontology.shtml 
-goAnnotations="Acervicornis_iso2go.tab" # two-column, tab-delimited, one line per gene, 
+goAnnotations="Acropora_iso2go.tab" # two-column, tab-delimited, one line per gene, 
 #multiple GO terms separated by semicolon. If you have multiple lines per gene, use nrify_GOtable.pl prior to running this script.
-
-#### update gene names so they match the GO Annotations file (Acropora000001 -> Acropora1) ####
-library(tidyverse)
-
-# Treated_vs_Initial_lpv <- read_csv("../../results_csv/Treated_vs_Initial_lpv.csv")
-# Treated_vs_Initial_lpv %>%
-#   mutate(
-#     text_part = str_extract(gene, "[A-Za-z]+"),
-#     numeric_part = str_extract(gene, "[0-9]+")) %>% 
-#   mutate(text_part = "Acervicornis") %>% 
-#   mutate(gene= str_c(text_part, numeric_part, sep ="")) %>% 
-#   select(!text_part:numeric_part) %>%
-#   write_csv("Treated_vs_Initial_lpv.csv")
-# 
-# 
-# Treated_vs_Untreated_lpv <- read_csv("../../results_csv/Treated_vs_Untreated_lpv.csv")
-# Treated_vs_Untreated_lpv %>%
-#   mutate(
-#     text_part = str_extract(gene, "[A-Za-z]+"),
-#     numeric_part = str_extract(gene, "[0-9]+")) %>% 
-#   mutate(text_part = "Acervicornis") %>% 
-#   mutate(gene= str_c(text_part, numeric_part, sep ="")) %>% 
-#   select(!text_part:numeric_part) %>%
-#   write_csv("Treated_vs_Untreated_lpv.csv")
-# 
-# Untreated_vs_Initial_lpv <- read_csv("../../results_csv/Untreated_vs_Initial_lpv.csv")
-# Untreated_vs_Initial_lpv %>%
-#   mutate(
-#     text_part = str_extract(gene, "[A-Za-z]+"),
-#     numeric_part = str_extract(gene, "[0-9]+")) %>% 
-#   mutate(text_part = "Acervicornis") %>% 
-#   mutate(gene= str_c(text_part, numeric_part, sep ="")) %>% 
-#   select(!text_part:numeric_part) %>%
-#   write_csv("Untreated_vs_Initial_lpv.csv")
-
-blue <- read_csv("../GO-MWU/blue.csv")
-blue %>%
-  mutate(
-    text_part = str_extract(gene, "[A-Za-z]+"),
-    numeric_part = str_extract(gene, "[0-9]+")) %>%
-  mutate(numeric_part = as.numeric(numeric_part)) %>%
-  mutate(gene= str_c(text_part, numeric_part, sep ="")) %>%
-  select(!text_part:numeric_part) %>% 
-  write_csv("blue.csv")
-
-darkgreen <- read_csv("../GO-MWU/darkgreen.csv")
-darkgreen %>%
-  mutate(
-    text_part = str_extract(gene, "[A-Za-z]+"),
-    numeric_part = str_extract(gene, "[0-9]+")) %>%
-  mutate(numeric_part = as.numeric(numeric_part)) %>%
-  mutate(gene= str_c(text_part, numeric_part, sep ="")) %>%
-  select(!text_part:numeric_part) %>% 
-  write_csv("darkgreen.csv")
 
 #### log-padj value files ####
 
 # Edit these to match your data file names: 
 input="Treated_vs_Initial_lpv.csv" # two columns of comma-separated values: gene id, continuous measure of significance. 
+# MF 151 GO terms at 10% FDR 
+
+
 #input="variable0_variable29_lpv.csv" 
-input="variable0_control0_lpv.csv" 
+#input="variable0_control0_lpv.csv" 
 #input="variable29_control29_lpv.csv" 
 
 goDivision="MF" # either MF, or BP, or CC
-#goDivision="BP" # either MF, or BP, or CC
-goDivision="CC" # either MF, or BP, or CC
+goDivision="BP" # either MF, or BP, or CC
+#goDivision="CC" # either MF, or BP, or CC
 
 # Calculating stats. It might take ~3 min for MF and BP. Do not rerun it if you just want to replot the data with different cutoffs, 
 #go straight to gomwuPlot. If you change any of the numeric values below, delete the files that were generated in previos runs first.
@@ -134,7 +83,7 @@ results=gomwuPlot(input,goAnnotations,goDivision,
 
 # text representation of results, with actual adjusted p-values
 results
-write.csv(results, file = "variable0_variable29_CC_p0.05.csv")
+write.csv(results, file = "Treated_vs_Initial_lpv_MF_05.csv")
 
 
 
