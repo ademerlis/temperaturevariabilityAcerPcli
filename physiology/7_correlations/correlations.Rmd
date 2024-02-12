@@ -17,7 +17,10 @@ library(drc)
 # load data
 ```{r}
 metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
+```
 
+Days at 32ºC
+```{r}
 #number of days til bleaching/RTL
 metadata %>% 
   filter(!is.na(slowburn_heatstress_tank)) %>% 
@@ -41,9 +44,13 @@ slowburn_metadata %>%
   mutate(start_date = ymd(start_date)) %>% 
   mutate(days_to_removed = Removed_Date - start_date) %>% 
   dplyr::select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
+```
 
+
+Fv/Fm measured at hour 21 of CBASS
+```{r}
 #fvfm data
-ipam_tidy_data <- read.csv("../photosynthetic_efficiency/ipam_tidy_data.csv")
+ipam_tidy_data <- read.csv("../3_photosynthetic_efficiency/ipam_tidy_data.csv")
 
 ipam_tidy_data %>% 
   dplyr::filter(Treatment_period == "CBASS") %>% 
@@ -73,9 +80,14 @@ ipam_tidy_CBASS_treatments %>%
   mutate(Species = case_when(Species == "Pclivosa" ~ "Pseudodiploria clivosa",
                              Species == "Acervicornis" ~ "Acropora cervicornis")) %>% 
   mutate(ID = gsub("[AP]", "", Puck)) -> ipam_tidy_CBASS_treatments
+```
 
+
+
+Percent change in immune cell activity over 28-d treatment
+```{r}
 #immune cell data
-percent_cells_df <- read_csv("../immune_cell_assay/Grace_percentcells_alldata.csv") 
+percent_cells_df <- read_csv("../5_immune_cell_assay/Grace_percentcells_alldata.csv") 
 
 percent_cells_df%>% 
     mutate(Treatment = case_when(Treatment == "Control" ~ "Untreated",
@@ -100,11 +112,23 @@ percent_cells_df %>%
   ungroup() %>% 
   dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
   distinct() %>% 
-  filter(num_days == "0" | num_days == "28" | num_days == "71") %>% 
+  filter(num_days == "0" | num_days == "28") %>% 
   mutate(Species = case_when(Species == "Pcli" ~ "Pseudodiploria clivosa",
                              Species == "Acer" ~ "Acropora cervicornis")) %>% 
   mutate(ID = gsub("[AP]", "", ID)) %>% 
   dplyr::rename(Colony = Genotype) -> percent_cells_speciestreatments
+
+#average all technical replicates together before running stats
+
+percent_cells_speciestreatments %>% 
+  filter(num_days == "0" & Treatment == "Untreated") %>% 
+  group_by(Species, Colony) %>% 
+  dplyr::summarise(mean_untreated_day0_genet = mean(mean_replicate_percent_perID)) -> untreated_day0_immunecells
+
+percent_cells_speciestreatments %>% 
+  filter(num_days == "28") %>% 
+  right_join(., untreated_day0_immunecells, by = c("Species", "Colony")) %>% 
+  mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) -> relative_activity_df
 ```
 
 
@@ -119,6 +143,9 @@ full_join(slowburn_summary_data, ipam_tidy_CBASS_treatments, by = c("Species", "
 days_fvfm_data %>% 
   group_by(Species) %>% 
   summarise(count = n()) #45 Acer, 29 Pcli
+
+str(days_fvfm_data)
+days_fvfm_data$CBASS_temp <- as.numeric(days_fvfm_data$CBASS_temp)
 
 p1<- ggplot(days_fvfm_data, aes(x=days_to_removed, y=fvfm, color = Treatment)) +
   geom_point() +
@@ -153,6 +180,46 @@ days_fvfm_data %>%
   lm(fvfm ~ days_to_removed, data = .) %>% 
   summary()
 ```
+
+
+# days to removed vs CBASS temp
+```{r}
+ggplot(days_fvfm_data, aes(x=CBASS_temp, y=days_to_removed, color = Treatment)) +
+  geom_point() +
+  facet_wrap(~Species, scales = "free_x") +
+  geom_smooth(method="lm", se = FALSE) +
+  theme_classic() +
+  labs(x="CBASS Temp", y = "Days at 32ºC") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15))
+#ggsave("CBASStemp_daysat32_correlationplot.pdf")
+```
+
+
+## stats for each linear regression
+```{r}
+days_fvfm_data %>% 
+  filter(Species == "Acropora cervicornis" & Treatment == "Untreated") %>% 
+  lm(CBASS_temp ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_fvfm_data %>% 
+  filter(Species == "Acropora cervicornis" & Treatment == "Treated") %>% 
+  lm(CBASS_temp ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_fvfm_data %>% 
+  filter(Species == "Pseudodiploria clivosa" & Treatment == "Untreated") %>% 
+  lm(CBASS_temp ~ days_to_removed, data = .) %>% 
+  summary()
+
+days_fvfm_data %>% 
+  filter(Species == "Pseudodiploria clivosa" & Treatment == "Treated") %>% 
+  lm(CBASS_temp ~ days_to_removed, data = .) %>% 
+  summary()
+```
+
+
 
 # Correlation plot: ED50 vs days to removed
 
@@ -250,14 +317,16 @@ plot_grid(p1,p2, ncol = 2, rel_widths = c(1.5, 2))
 
 # Correlation plot: immune cells vs. days to removed
 ```{r}
-full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
+full_join(slowburn_summary_data, relative_activity_df, by = c("Species", "ID", "Colony", "Treatment")) %>% 
   drop_na() #35 corals that were tested for immune cells AND made it to the slowburn 
 
 #sample sizes:
-full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
+full_join(slowburn_summary_data, relative_activity_df, by = c("Species", "ID", "Colony", "Treatment")) %>% 
   drop_na() %>% 
-  group_by(Species, Treatment, num_days) %>% 
+  group_by(Species, Treatment) %>% 
   dplyr::summarise(count = n())
+
+#the sample sizes are way too small now for any correlations to run
 
 full_join(slowburn_summary_data, percent_cells_speciestreatments, by = c("Species", "ID", "Colony", "Treatment")) %>% 
   drop_na() %>% 
