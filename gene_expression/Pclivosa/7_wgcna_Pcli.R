@@ -72,15 +72,12 @@ traits
 
 days_to_removed <- read_csv("physiotraits_for_WGCNA/days_to_removed.csv")
 days_to_removed %>% 
-  select(!c("Colony", "Treatment")) %>% 
+  dplyr::select(!c("Colony", "Treatment")) %>% 
   filter(Species == "Pseudodiploria clivosa") -> days_to_removed
 
-phagocytosis <- read_csv("physiotraits_for_WGCNA/phagocytosis_alltimepoints.csv")
+phagocytosis <- read_csv("physiotraits_for_WGCNA/relative_immune_activity.csv")
 phagocytosis %>% 
-  pivot_wider(names_from="TimePoint", values_from="mean_replicate_percent_perID") %>% 
-  dplyr::rename(cells_initial = T0) %>% 
-  dplyr::rename(cells_endoftreatment = T2) %>% 
-  select(!c("Genotype", "Treatment", "num_days")) %>% 
+  dplyr::select(!c("Tank", "Genotype", "Treatment", "num_days", "mean_replicate_percent_perID", "mean_untreated_day0_genet")) %>% 
   filter(Species == "Pcli") %>% 
   mutate(Species = "Pseudodiploria clivosa") %>% 
   mutate(ID = gsub("[AP]", "", ID)) %>% 
@@ -89,7 +86,7 @@ phagocytosis %>%
 Rscore <- read_csv("physiotraits_for_WGCNA/treatment_Rscore.csv")
 Rscore %>% 
   filter(Species == "Pseudodiploria clivosa") %>% 
-  select(!c("Colony", "Treatment")) %>% 
+  dplyr::select(!c("Colony", "Treatment")) %>% 
   mutate(ID = as.double(ID)) -> Rscore
 
 CBASS_fvfm <- read_csv("physiotraits_for_WGCNA/cbass_fvfm_forwgcna.csv")
@@ -157,11 +154,16 @@ plotDendroAndColors(sampleTree,groupLabels=names(datColors), colors=datColors,ma
 # Remove outlying samples from expression and trait data
 remove.samples= Z.k<thresholdZ.k | is.na(Z.k)
 datt=datt[!remove.samples,]
-traits=traits[!remove.samples,] #1 sample removed
-  
+traits=traits[!remove.samples,] #no samples removed
+
+str(datt) #44 
+str(traits) #44
+
 write.csv(traits, file="traits.csv")
 
-save(datt,traits,file="wgcnaData.RData")
+write.csv(traits_withphysio, file="traits_withphysio.csv")
+
+save(datt,traits, traits_withphysio, file="wgcnaData.RData")
 
 
 #### SOFT THRESHOLDS ####
@@ -175,7 +177,7 @@ allowWGCNAThreads()
 
 load("RData_files/data4wgcna.RData")
 
-datt=t(vsd.wg)
+#datt=t(vsd.wg)
 
 # Try different betas ("soft threshold") - power factor for calling connections between genes
 powers = c(seq(from = 2, to=26, by=1))
