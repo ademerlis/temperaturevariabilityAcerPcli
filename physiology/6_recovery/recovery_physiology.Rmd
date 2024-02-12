@@ -109,7 +109,7 @@ summary(aov(change ~ Treatment*Species, data = fvfm_recovery_stats))
 
 #capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_table.csv")
 
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova))
+TukeyHSD(aov(change ~ Treatment*Species, data = fvfm_recovery_stats))
          
 #capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
 ```
@@ -427,5 +427,98 @@ as.data.frame(dunn.test(percent_cells_speciestreatments$mean_replicate_percent_p
 
 ```
 
+
+ Normalization to untreated day 0 genotype percentage cells
+
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" & Treatment == "Untreated") %>% 
+  group_by(Species, Genotype) %>% 
+  dplyr::summarise(mean_untreated_day0_genet = mean(mean_replicate_percent_perID)) -> untreated_day0_immunecells
+
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "43") %>% 
+  right_join(., untreated_day0_immunecells, by = c("Species", "Genotype")) %>% 
+  mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) %>% #T1-T0/T0*100
+  ggplot(., aes(x=Species, y=relative_activity, fill= Treatment)) +
+  geom_boxplot() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Change Immune Cell Activity")+
+  theme_classic() +
+  theme(text = element_text(size = 15))
+ggsave("normalized_percentchangeimmuneactivity_boxplot_species.pdf")
+```
+
+
+### Statistics
+
+Change to factors
+```{r}
+#average all technical replicates together before running stats
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::select(Species, Genotype, ID, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "43") -> percent_cells_speciestreatments
+
+str(percent_cells_speciestreatments)
+
+percent_cells_speciestreatments %>% 
+  dplyr::mutate_at(vars(Species, Treatment, num_days), factor) -> percent_cells_speciestreatments
+
+percent_cells_speciestreatments %>% 
+  filter(num_days == "0" & Treatment == "Untreated") %>% 
+  group_by(Species, Genotype) %>% 
+  dplyr::summarise(mean_untreated_day0_genet = mean(mean_replicate_percent_perID)) -> untreated_day0_immunecells
+
+percent_cells_speciestreatments %>% 
+  filter(num_days == "43") %>% 
+  right_join(., untreated_day0_immunecells, by = c("Species", "Genotype")) %>% 
+  mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) -> relative_activity_df
+
+#save data frame for WGCNA
+#write_csv(relative_activity_df, "relative_immune_activity.csv")
+```
+
+
+Create linear model to test normality of residuals and homogeneity of variance. 
+```{r}
+treat_model <- lm(relative_activity ~ Treatment*Species + Genotype + Tank, data = relative_activity_df)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 0 outliers
+```
+
+two-way ANOVA
+```{r}
+summary(aov(relative_activity ~ Treatment*Species, data = relative_activity_df)) #not significant
+
+TukeyHSD(aov(relative_activity ~ Treatment*Species, data = relative_activity_df)) #no significant pairwise
+```
 
 
