@@ -60,13 +60,13 @@ A <- Vsd[, A]
 
 vst_PCA_A <- plotPCA(A, intgroup = c("Treatment"), returnData = TRUE)
 percentVar <- round(100*attr(vst_PCA_A, "percentVar")) 
-g2 <- ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment)) + 
-   geom_point(size=3) +
-   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
-   ylab(paste0("PC2: ",percentVar[2],"% variance")) +
-   ggtitle("P.clivosa colony A") +
-   theme_bw() + 
-   scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
+# g2 <- ggplot(vst_PCA_A, aes(PC1, PC2, color=Treatment)) + 
+#    geom_point(size=3) +
+#    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+#    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+#    ggtitle("P.clivosa colony A") +
+#    theme_bw() + 
+#    scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
 
 B <- metadata$Genotype == "B"
 B <- Vsd[, B]
@@ -96,9 +96,9 @@ g4 <- ggplot(vst_PCA_C, aes(PC1, PC2, color=Treatment)) +
     scale_color_manual(values = c("grey", "#00CCCC", "#FF3333"))
 
 
-combined_plot <- plot_grid(g1, g2, g3, g4, nrow = 2, ncol = 2)
-print(combined_plot)
-ggsave("combined_PCA_plot.pdf", combined_plot, width = 10, height = 7)
+# combined_plot <- plot_grid(g1, g2, g3, g4, nrow = 2, ncol = 2)
+# print(combined_plot)
+# ggsave("combined_PCA_plot.pdf", combined_plot, width = 10, height = 7)
 ```
 
 
@@ -217,20 +217,22 @@ ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
 
 
 ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
-  geom_point() +
+  geom_point(size=3) +
   stat_ellipse(aes(PC1, PC2, group=Treatment, lty = Treatment), type = "norm") +
   scale_fill_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
   scale_color_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
   xlab(paste0("PC1: ",percentVar_PC1_rounded[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar_PC2_rounded[1],"% variance")) +
    ggtitle("Pclivosa") +
-  theme_classic()
-#ggsave("PCA_Pclivosa_removebatcheffect_withellipses.pdf", width = 10, height = 7)
+  theme_classic() +
+  theme(text = element_text(size = 15))
+  
+ggsave("PCA_Pclivosa_removebatcheffect_withellipses.pdf", width = 10, height = 7)
 ```
 
 #combined plot of pre- and post- removing genotype as batch effect
 ```{r}
-combined_plot <- plot_grid(g1, g2)
+combined_plot <- plot_grid(g1, g2, g3, g4, nrow = 2, ncol = 2)
 print(combined_plot)
 ggsave("combined_PCA_plot_batcheffect.pdf", combined_plot, width = 10, height = 7)
 ```

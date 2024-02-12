@@ -257,30 +257,31 @@ library(DESeq2)
 
 # treatment
 Treatment=results(dds) 
-summary(Treatment) 
+summary(Treatment, alpha = 0.05) 
 
 resultsNames(dds)
 #primary ones of interest: "Treatment_Treated_vs_Initial",  "Treatment_Untreated_vs_Initial",  "Treatment_Treated_vs_Untreated"
 
-degs_treatment=row.names(Treatment)[Treatment$padj<0.1 & !(is.na(Treatment$padj))]
-#list of gene names that are significant at p < 0.1
-length(degs_treatment) #8643 genes
+degs_treatment=row.names(Treatment)[Treatment$padj<0.05 & !(is.na(Treatment$padj))]
+length(degs_treatment) #7272 genes
 
 # Treated vs. Untreated
 Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Untreated"))
-summary(Treatment_Treated_vs_Untreated)
-degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.1 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
-length(degs_Treatment_Treated_vs_Untreated)
+summary(Treatment_Treated_vs_Untreated, alpha = 0.05)
+degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
+length(degs_Treatment_Treated_vs_Untreated) #1587
 
 # Treated vs. Initial
 Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"))
-summary(Treatment_Treated_vs_Initial)
-degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatment_Treated_vs_Initial$padj<0.1 & !(is.na(Treatment_Treated_vs_Initial$padj))]
+summary(Treatment_Treated_vs_Initial, alpha = 0.05)
+degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatment_Treated_vs_Initial$padj<0.05 & !(is.na(Treatment_Treated_vs_Initial$padj))]
+length(degs_Treatment_Treated_vs_Initial) #5733
 
 # Untreated vs. Initial
 Treatment_Untreated_vs_Initial=results(dds,contrast=c("Treatment","Untreated","Initial"))
-summary(Treatment_Untreated_vs_Initial)
-degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.1 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
+summary(Treatment_Untreated_vs_Initial, alpha = 0.05)
+degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.05 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
+length(degs_Treatment_Untreated_vs_Initial) #7272
 
 save(Treatment,Treatment_Untreated_vs_Initial,Treatment_Treated_vs_Initial,Treatment_Treated_vs_Untreated, degs_Treatment_Untreated_vs_Initial,degs_Treatment_Treated_vs_Initial, degs_Treatment_Treated_vs_Untreated, file="Rdata_files/pvals.RData")
 
@@ -411,39 +412,39 @@ load("RData_files/pvals.RData")
 #Untreated vs. Initial
 as.data.frame(Treatment_Untreated_vs_Initial) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
+  filter(padj < 0.05) %>% 
   left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("UntreatedvsInitial_annotatedDGEs.csv")
-#8,643 genes 
+#7272 genes 
 
 #Treated vs. Initial
 as.data.frame(Treatment_Treated_vs_Initial) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
+  filter(padj < 0.05) %>% 
   left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("TreatedvsInitial_annotatedDGEs.csv")
-#7,004 genes
+#5733 genes
 
 
 #Treated vs. Untreated
 as.data.frame(Treatment_Treated_vs_Untreated) %>%
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.1) %>% 
+  filter(padj < 0.05) %>% 
   left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("TreatedvsUntreated_annotatedDGEs.csv")
-#2,295 genes
+#1587 genes
 
 
 #### CHERRY PICKING ####

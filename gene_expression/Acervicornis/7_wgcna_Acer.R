@@ -75,15 +75,12 @@ traits
 
 days_to_removed <- read_csv("physiotraits_for_WGCNA/days_to_removed.csv")
 days_to_removed %>% 
-  select(!c("Colony", "Treatment")) %>% 
+  dplyr::select(!c("Colony", "Treatment")) %>% 
   filter(Species == "Acropora cervicornis") -> days_to_removed
 
-phagocytosis <- read_csv("physiotraits_for_WGCNA/phagocytosis_alltimepoints.csv")
+phagocytosis <- read_csv("physiotraits_for_WGCNA/relative_immune_activity.csv")
 phagocytosis %>% 
-  pivot_wider(names_from="TimePoint", values_from="mean_replicate_percent_perID") %>% 
-  dplyr::rename(cells_initial = T0) %>% 
-  dplyr::rename(cells_endoftreatment = T2) %>% 
-  select(!c("Genotype", "Treatment", "num_days")) %>% 
+  dplyr::select(!c("Tank", "Genotype", "Treatment", "num_days", "mean_replicate_percent_perID", "mean_untreated_day0_genet")) %>% 
   filter(Species == "Acer") %>% 
   mutate(Species = "Acropora cervicornis") %>% 
   mutate(ID = gsub("[AP]", "", ID)) %>% 
@@ -92,7 +89,7 @@ phagocytosis %>%
 Rscore <- read_csv("physiotraits_for_WGCNA/treatment_Rscore.csv")
 Rscore %>% 
   filter(Species == "Acropora cervicornis") %>% 
-  select(!c("Colony", "Treatment")) %>% 
+  dplyr::select(!c("Colony", "Treatment")) %>% 
   mutate(ID = as.double(ID)) -> Rscore
 
 CBASS_fvfm <- read_csv("physiotraits_for_WGCNA/cbass_fvfm_forwgcna.csv")
@@ -111,8 +108,8 @@ full_join(traits, days_to_removed, by = c("Species", "ID")) %>%
   drop_na(Initial) %>% 
   dplyr::select(!c("Species", "ID")) -> traits_withphysio
 
-traits_withphysio %>% 
-  select(!c(1)) -> traits_withphysio
+# traits_withphysio %>% 
+#   select(!c(1)) -> traits_withphysio
 
 #### OUTLIER DETECTION ####
 
@@ -406,7 +403,7 @@ traits
 table(moduleColors)
 
 # run for each of these statements individually
-#whichTrait="Initial"
+whichTrait="Initial"
 #whichTrait="Treated"
 whichTrait="Untreated"
 
@@ -426,7 +423,7 @@ names(geneTraitSignificance) = paste("GS.", names(selTrait), sep="");
 names(GSPvalue) = paste("p.GS.", names(selTrait), sep="");
 
 # selecting specific modules to plot (change depending on which trait you're looking at)
-#moduleCols=c("blue","royalblue", "lightgreen", "grey60", "turquoise", "grey") # for Initial
+moduleCols=c("blue","royalblue", "lightgreen", "grey60", "turquoise", "grey") # for Initial
 #moduleCols=c("blue","royalblue", "darkgreen", "darkturquoise","grey60", "grey") # for Treated
 moduleCols=c("blue","greenyellow","midnightblue", "darkturquoise") # for Untreated
 

@@ -1275,6 +1275,9 @@ percent_cells_speciestreatments %>%
   filter(num_days == "28") %>% 
   right_join(., untreated_day0_immunecells, by = c("Species", "Genotype")) %>% 
   mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) -> relative_activity_df
+
+#save data frame for WGCNA
+#write_csv(relative_activity_df, "relative_immune_activity.csv")
 ```
 
 
@@ -1322,5 +1325,4 @@ as.data.frame(dunn.test(relative_activity_df$relative_activity, relative_activit
 
   write_csv("Acer_percent_cells_genet_posthoc.csv")
 ```
-
 
