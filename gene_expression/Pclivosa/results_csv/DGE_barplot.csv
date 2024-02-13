@@ -1,7 +1,7 @@
 ﻿Group,genes,Regulation
-Treated_vs_Untreated,10,Up
-Treated_vs_Untreated,-16,Down
+Treated_vs_Untreated,7,Up
+Treated_vs_Untreated,-14,Down
 Treated_vs_Initial,73,Up
-Treated_vs_Initial,-72,Down
-Untreated_vs_Initial,83,Up
-Untreated_vs_Initial,-52,Down
+Treated_vs_Initial,-68,Down
+Untreated_vs_Initial,81,Up
+Untreated_vs_Initial,-51,Down

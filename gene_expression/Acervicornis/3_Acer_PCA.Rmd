@@ -220,8 +220,8 @@ ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
 ggplot(pca_data, aes(x = PC1, y = PC2, color = Treatment)) +
   geom_point(size=3) +
   stat_ellipse(aes(PC1, PC2, group=Treatment, lty = Treatment), type = "norm") +
-  scale_fill_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
-  scale_color_manual(values = c("grey", "#00CCCC", "#FF3333")) + 
+  scale_fill_manual(values = c("grey", "#FF3333",  "#00CCCC")) + 
+  scale_color_manual(values = c("grey", "#FF3333",  "#00CCCC")) + 
   xlab(paste0("PC1: ",percentVar_PC1_rounded[1],"% variance")) +
    ylab(paste0("PC2: ",percentVar_PC2_rounded[1],"% variance")) +
    ggtitle("Acervicornis") +

@@ -15,7 +15,7 @@ library(tidyverse)
 
 Treated vs. Untreated
 ```{r}
-Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Untreated"), lfcThreshold = 0.0, alpha=0.05)
+Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Untreated"))
 summary(Treatment_Treated_vs_Untreated, alpha=0.05)
 results1 <- as.data.frame(subset(Treatment_Treated_vs_Untreated, Treatment_Treated_vs_Untreated$padj<0.05))
 DE_up=subset(results1, results1$log2FoldChange > 0) 
@@ -24,7 +24,7 @@ DE_down=subset(results1, results1$log2FoldChange < 0)
 
 Treated vs. Initial
 ```{r}
-Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"), lfcThreshold = 0.0, alpha=0.05)
+Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"))
 summary(Treatment_Treated_vs_Initial, alpha=0.05)
 results2 <- as.data.frame(subset(Treatment_Treated_vs_Initial, Treatment_Treated_vs_Initial$padj<0.05))
 DE_up=subset(results2, results2$log2FoldChange > 0) 
