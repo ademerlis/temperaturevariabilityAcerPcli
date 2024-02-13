@@ -233,12 +233,21 @@ save(dds,file="Rdata_files/realModels_Pcli.RData")
 
 load("Rdata_files/realModels_Pcli.RData")
 library(DESeq2)
+library(tidyverse)
 
 # treatment
 Treatment=results(dds) 
 summary(Treatment, alpha = 0.05) 
 degs_Treatment=row.names(Treatment)[Treatment$padj<0.05 & !(is.na(Treatment$padj))]
 length(degs_Treatment) #141
+
+# export for GO analysis
+Treatment %>% 
+  as.data.frame() %>% 
+  filter(padj < 0.05) %>% 
+  rownames_to_column(var = "gene") %>% 
+  dplyr::select(gene, padj) %>% 
+  write_csv("degs_Treatment.csv")
 
 resultsNames(dds)
 #"Intercept"                      "Genotype_B_vs_A"                "Genotype_C_vs_A"               
@@ -250,15 +259,40 @@ summary(Treatment_Untreated_vs_Initial, alpha = 0.05)
 degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.05 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
 length(degs_Treatment_Untreated_vs_Initial) #132 genes
 
+# export for GO analysis
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj < 0.05) %>% 
+  rownames_to_column(var = "gene") %>% 
+  dplyr::select(gene, padj) %>% 
+  write_csv("degs_Treatment_Untreated_vs_Initial.csv")
+
 Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"))
 summary(Treatment_Treated_vs_Initial, alpha = 0.05)
 degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatment_Treated_vs_Initial$padj<0.05 & !(is.na(Treatment_Treated_vs_Initial$padj))]
 length(degs_Treatment_Treated_vs_Initial) #141 genes
 
+# export for GO analysis
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj < 0.05) %>% 
+  rownames_to_column(var = "gene") %>% 
+  dplyr::select(gene, padj) %>% 
+  write_csv("degs_Treatment_Treated_vs_Initial.csv")
+
 Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Untreated"))
 summary(Treatment_Treated_vs_Untreated, alpha = 0.05)
 degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
 length(degs_Treatment_Treated_vs_Untreated) #21 genes
+
+# export for GO analysis
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  filter(padj < 0.05) %>% 
+  rownames_to_column(var = "gene") %>% 
+  dplyr::select(gene, padj) %>% 
+  write_csv("degs_Treatment_Treated_vs_Untreated.csv")
+
 
 save(Treatment,Treatment_Untreated_vs_Initial,Treatment_Treated_vs_Initial,Treatment_Treated_vs_Untreated, degs_Treatment_Untreated_vs_Initial,degs_Treatment_Treated_vs_Initial, degs_Treatment_Treated_vs_Untreated, file="Rdata_files/pvals.RData")
 
@@ -332,7 +366,7 @@ grid.draw(venn)
 dev.off()
 
 
-#### GO/KOG EXPORT ####
+#### KOG EXPORT ####
 
 load("Rdata_files/realModels_Pcli.RData")
 load("Rdata_files/pvals.RData")
