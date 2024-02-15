@@ -66,7 +66,7 @@ treatment_time_bothspecies %>%
   select(Colony:Species, fvfm_timepoint, fvfm) %>% 
   filter(fvfm_timepoint == "fvfm_t2") %>% #282 corals
   group_by(Species, Colony, Treatment) %>% 
-  summarise(count = n())
+  dplyr::summarise(count = n())
 ```
 
 

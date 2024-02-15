@@ -171,25 +171,25 @@ Rscoredata %>%
   distinct() #Dates with scores: 3/8-3/18 (Initial), 4/18, 6/21, 7/8 
 
 Rscoredata %>% 
-  rename(`Photo ID` = `Image #`) %>% 
-  rename(Date = `Date (Folder Name)`) -> Rscoredata
+  dplyr::rename(`Photo ID` = `Image #`) %>% 
+  dplyr::rename(Date = `Date (Folder Name)`) -> Rscoredata
 
 april18 %>% 
-  select(`Photo ID`:`Coral Position`) -> april18
+  dplyr::select(`Photo ID`:`Coral Position`) -> april18
 
 june21%>% 
-  select(`Photo ID`:`Coral Position`) -> june21
+  dplyr::select(`Photo ID`:`Coral Position`) -> june21
 
 full_join(april18, june21) %>% 
-  mutate(Species = case_when(Species == "Acer" ~ "Acropora cervicornis",
+  dplyr::mutate(Species = case_when(Species == "Acer" ~ "Acropora cervicornis",
                              Species == "Pcli" ~ "Pseudodiploria clivosa")) %>% 
- rename(ID = `Puck ID`) -> allRscores
+ dplyr::rename(ID = `Puck ID`) -> allRscores
 
 full_join(allRscores, coral_metadata, by = c("Species", "ID")) %>% 
   drop_na(`Photo ID`)  -> R_metadata #821 rows 
 
 full_join(R_metadata, Rscoredata, by = c("Date", "Photo ID", "Coral Position")) %>% 
- select(!Genotype) -> Rintensity_withmetadata
+ dplyr::select(!Genotype) -> Rintensity_withmetadata
 
 Rintensity_withmetadata$month <- format(Rintensity_withmetadata$Date, "%m")
 
@@ -198,17 +198,17 @@ Rintensity_withmetadata$Date <- as.factor(Rintensity_withmetadata$Date)
 Rintensity_withmetadata$month <- as.factor(Rintensity_withmetadata$month)
 
 Rintensity_withmetadata %>% 
-  group_by(ID, Species, Colony, Treatment, month) %>% 
-  mutate(mean_Rintensity_percoral = mean(Mean)) %>% 
+  dplyr::group_by(ID, Species, Colony, Treatment, month) %>% 
+  dplyr::mutate(mean_Rintensity_percoral = mean(Mean)) %>% 
   drop_na(ID) -> Rintensity_withmetadata
 
 Rintensity_withmetadata %>% 
   ungroup() %>% 
   filter(month == "04" | month == "06") %>% 
-  select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
+  dplyr::select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
   distinct() %>% 
   pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
-  mutate(percent_change = ((`06`-`04`)/`04`)*100) %>% 
+  dplyr::mutate(percent_change = ((`06`-`04`)/`04`)*100) %>% 
   drop_na() -> percentchange
 ```
 
@@ -458,7 +458,7 @@ percent_cells_df %>%
   ylab("% Change Immune Cell Activity")+
   theme_classic() +
   theme(text = element_text(size = 15))
-ggsave("normalized_percentchangeimmuneactivity_boxplot_species.pdf")
+#ggsave("normalized_percentchangeimmuneactivity_boxplot_species.pdf")
 ```
 
 

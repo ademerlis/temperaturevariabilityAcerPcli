@@ -1,0 +1,99 @@
+---
+title: "goseq"
+author: "allyson_demerlis"
+date: "2024-02-05"
+output: html_document
+---
+
+load packages
+```{r}
+#BiocManager::install("goseq")
+library(tidyverse)
+library(plotrix) 
+library(ggplot2)
+library(tidyr)
+library(goseq)
+```
+
+Code from https://github.com/kevinhwong1/Thermal_Transplant_Molecular/blob/main/scripts/WGBS_GM.Rmd
+
+import data
+```{r}
+#generate list of all genes identified and background list for GO enrichment analysis
+
+all_genes <- read_delim("GO-MWU/Acropora_iso2go.tab")
+new_row <- as.data.frame(t(colnames(all_genes)), stringsAsFactors = FALSE)
+colnames(all_genes)=c("gene", "GO_IDs")
+colnames(new_row)=c("gene", "GO_IDs")
+all_genes_new <- rbind(new_row, all_genes)
+
+# Vector with all genes after filtering
+ALL.vector <-c(t(all_genes_new$gene))
+ID.vector <- all_genes_new$gene
+LENGTH.vector <-length(t(all_genes_new))
+
+
+goslim <- read.csv("GO-GOslim.csv")
+goslim <- goslim %>% dplyr::select(-term)
+```
+
+```{r}
+##### Writing goenrich function #####
+goenrich <- function(filename, 
+                     identifier){
+  
+                DMG <- as.character(filename$gene) #set the enrichment test list
+                DMG.vector <-c(t(DMG)) #change to vectors
+                
+                gene.vector=as.integer(ALL.vector%in%DMG.vector) #Construct new vector with 1 for DEG and 0 for others
+                names(gene.vector)=ALL.vector #set names
+                DEG.pwf<-nullp(gene.vector, ID.vector, bias.data=LENGTH.vector) #weight vector by length of gene
+                
+                #Find enriched GO terms
+                GO.wall<-goseq(DEG.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+                
+                GO <- GO.wall[order(GO.wall$over_represented_pvalue),]
+                colnames(GO)[1] <- "GO_ID"
+                
+                #GOslim 
+                GO.slim <- merge(GO, goslim, by = "GO_ID")
+                GO.slim <- GO.slim[!duplicated(GO.slim$GO_ID), ]
+                
+                #Filtering for p > 0.05
+                filename_sig.GO <- GO.slim %>%
+                  dplyr::filter(over_represented_pvalue <0.05) %>%
+                  arrange(., ontology, term, over_represented_pvalue)
+                #write.csv(sig.GO , file = "output/WGBS/DMG/sig.GO.OxTxL.csv")
+                
+                #Formatting sig gene file with a goterm per row
+                split <- strsplit(as.character(filename$GO_IDs), "; ") 
+                split2 <- data.frame(v1 = rep.int(filename$gene, sapply(split, length)), v2 = unlist(split)) 
+                colnames(split2) <- c("gene", "GO_IDs")
+                
+                filename2 <- filename %>% dplyr::select(-GO_IDs, -GO_Name, -Length)
+                filename_GO <- merge(split2, filename2, by = "gene")
+                
+                colnames(filename_GO)[2] <- "GO_ID"
+                
+                # Merge sig meth genes with goslim
+                filename_GOslim <- merge(filename_GO, filename_sig.GO, by = "GO_ID", all = TRUE)
+                write.csv(filename_GOslim)
+                
+                return(filename_GOslim)
+                }
+```
+
+
+```{r}
+
+TreatedvUntreated_DGEs <- read.csv("results_csv/TreatedvsUntreated_annotatedDGEs.csv")
+
+TreatedvUntreated_DGEs
+
+TreatedvInitial_DGEs <- read.csv("results_csv/TreatedvsInitial_annotatedDGEs.csv")
+TreatedvInitial_DGEs %>% 
+  dplyr::select(gene, annot) -> TreatedvInitial_DGEs
+
+goenrich(TreatedvUntreated_DGEs, TreatedvUntreated)
+```
+
