@@ -235,6 +235,12 @@ load("Rdata_files/realModels_Pcli.RData")
 library(DESeq2)
 library(tidyverse)
 
+read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
+           sep = "\t",
+           quote="", fill=FALSE) %>%
+  rename(gene = V1,
+         annot = V2) -> iso2geneName
+
 # treatment
 Treatment=results(dds) 
 summary(Treatment, alpha = 0.05) 
@@ -259,6 +265,16 @@ summary(Treatment_Untreated_vs_Initial, alpha = 0.05)
 degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.05 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
 length(degs_Treatment_Untreated_vs_Initial) #132 genes
 
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("UntreatedvInitial_annotDGEs.csv")
+
 # export for GO analysis
 Treatment_Untreated_vs_Initial %>% 
   as.data.frame() %>% 
@@ -272,6 +288,16 @@ summary(Treatment_Treated_vs_Initial, alpha = 0.05)
 degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatment_Treated_vs_Initial$padj<0.05 & !(is.na(Treatment_Treated_vs_Initial$padj))]
 length(degs_Treatment_Treated_vs_Initial) #141 genes
 
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("TreatedvInitial_annotDGEs.csv")
+
 # export for GO analysis
 Treatment_Treated_vs_Initial %>% 
   as.data.frame() %>% 
@@ -284,6 +310,16 @@ Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Unt
 summary(Treatment_Treated_vs_Untreated, alpha = 0.05)
 degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
 length(degs_Treatment_Treated_vs_Untreated) #21 genes
+
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("TreatedvUntreated_annotDGEs.csv")
 
 # export for GO analysis
 Treatment_Treated_vs_Untreated %>% 
