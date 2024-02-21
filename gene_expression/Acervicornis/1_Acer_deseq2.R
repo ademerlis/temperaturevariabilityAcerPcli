@@ -254,6 +254,13 @@ save(dds,file="Rdata_files/realModels_Acer.RData")
 
 load("Rdata_files/realModels_Acer.RData")
 library(DESeq2)
+library(tidyverse)
+
+read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
+                          sep = "\t",
+                          quote="", fill=FALSE) %>%
+  rename(gene = V1,
+         annot = V2) -> iso2geneName
 
 # treatment
 Treatment=results(dds) 
@@ -271,17 +278,49 @@ summary(Treatment_Treated_vs_Untreated, alpha = 0.05)
 degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
 length(degs_Treatment_Treated_vs_Untreated) #1587
 
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("TreatedvUntreated_annotDGEs.csv")
+
 # Treated vs. Initial
 Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"))
 summary(Treatment_Treated_vs_Initial, alpha = 0.05)
 degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatment_Treated_vs_Initial$padj<0.05 & !(is.na(Treatment_Treated_vs_Initial$padj))]
 length(degs_Treatment_Treated_vs_Initial) #5733
 
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("TreatedvInitial_annotDGEs.csv")
+
+
 # Untreated vs. Initial
 Treatment_Untreated_vs_Initial=results(dds,contrast=c("Treatment","Untreated","Initial"))
 summary(Treatment_Untreated_vs_Initial, alpha = 0.05)
 degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.05 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
 length(degs_Treatment_Untreated_vs_Initial) #7272
+
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>%
+  write_csv("UntreatedvInitial_annotDGEs.csv")
+
 
 save(Treatment,Treatment_Untreated_vs_Initial,Treatment_Treated_vs_Initial,Treatment_Treated_vs_Untreated, degs_Treatment_Untreated_vs_Initial,degs_Treatment_Treated_vs_Initial, degs_Treatment_Treated_vs_Untreated, file="Rdata_files/pvals.RData")
 
@@ -409,42 +448,55 @@ save(Treated_vs_Untreated.p,file="Rdata_files/Treated_vs_Untreated_lpv.RData")
 load("RData_files/realModels_Acer.RData")
 load("RData_files/pvals.RData")
 
+library(tidyverse)
+
+#using the log-10 transformed p-adj value because that's what's used in the 6_commongenes.R script and I want to make sure all the numbers match
+
 #Untreated vs. Initial
-as.data.frame(Treatment_Untreated_vs_Initial) %>%
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05) %>% 
+  mutate(lpv = -log(padj, base = 10)) %>%
+  mutate(lpv = if_else(stat < 0, lpv * -1, lpv)) %>% 
+  filter(abs(lpv) >= 1.3) %>% 
   left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("UntreatedvsInitial_annotatedDGEs.csv")
-#7272 genes 
+#7274 genes 
 
 #Treated vs. Initial
-as.data.frame(Treatment_Treated_vs_Initial) %>%
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05) %>% 
+  mutate(lpv = -log(padj, base = 10)) %>%
+  mutate(lpv = if_else(stat < 0, lpv * -1, lpv)) %>% 
+  filter(abs(lpv) >= 1.3) %>% 
   left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("TreatedvsInitial_annotatedDGEs.csv")
-#5733 genes
+#5736 genes
 
 
 #Treated vs. Untreated
-as.data.frame(Treatment_Treated_vs_Untreated) %>%
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05) %>% 
+  mutate(lpv = -log(padj, base = 10)) %>%
+  mutate(lpv = if_else(stat < 0, lpv * -1, lpv)) %>% 
+  filter(abs(lpv) >= 1.3) %>% 
   left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("TreatedvsUntreated_annotatedDGEs.csv")
-#1587 genes
+#1588 genes
 
 
 #### CHERRY PICKING ####

@@ -223,6 +223,20 @@ as.data.frame(compParm(DRC_species_treatment, 'hill', "-")) %>%
   write.csv("DRC_species_treatment_hill_stats.csv")
 ```
 
+### compParm() for ED25
+```{r}
+DRC_species_treatment_Ed25 = drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treatments, curveid = Species_Treatment,
+             fct = LL.3())
+summary(DRC_species_treatment_Ed25)
+plot(DRC_species_treatment_Ed25)
+
+DRC_species_treatment_Ed25_coeff <- data.frame(ED(DRC_species_treatment_Ed25, c(25)))
+
+EDcomp(DRC_species_treatment_Ed25, c(25,25))
+
+# ED25s are not significantly different
+```
+
 
 ### ED50s
 ```{r}
@@ -256,7 +270,7 @@ treated_Acer_pred = as.data.frame(predict(treated_Acer, newdata = treated_Acer_p
 treated_Acer_preddata = data.frame(treated_Acer_preddata, fvfm = treated_Acer_pred$Prediction, Lower = treated_Acer_pred$Lower, Upper = treated_Acer_pred$Upper)
 ```
 
-### plot
+### plot for ED50
 ```{r}
 g1 <- ggplot() +
   geom_jitter(data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis",], aes(x = CBASS_temp, y = fvfm, color =   Treatment), size = 1, width = 0.25) +
@@ -280,6 +294,30 @@ g1 <- ggplot() +
   theme(text = element_text(size = 15)) 
 ```
 
+
+### plot for ED25
+```{r}
+g1 <- ggplot() +
+  geom_jitter(data = ipam_tidy_CBASS_treatments[ipam_tidy_CBASS_treatments$Species == "Acervicornis",], aes(x = CBASS_temp, y = fvfm, color =   Treatment), size = 1, width = 0.25) +
+  scale_x_continuous(limits=c(28,40), breaks=c(28,30,32,34,36,38)) +
+  scale_y_continuous(limits=c(-0.05, 0.7), breaks=c(0, 0.2, 0.4, 0.6)) +
+  geom_line(data = untreated_Acer_preddata, aes(x = temp, y = fvfm), color = "#60DBDB", show.legend = FALSE) +
+  geom_ribbon(data = untreated_Acer_preddata, aes(x = temp, ymin=Lower, ymax=Upper), fill = "#60DBDB", linetype=2, alpha = 0.2) +
+  geom_vline(data = DRC_species_treatment_Ed25_coeff, aes(xintercept = 35.522914), color = "#60DBDB", show.legend = FALSE) +
+  geom_text(data = DRC_species_treatment_Ed25_coeff, aes(label = "ED25 = 35.52"), x = 38, y = 0.65, show.legend = FALSE, color = "#60DBDB") +
+  geom_line(data = treated_Acer_preddata, aes(x = temp, y = fvfm), color = '#F54A34', show.legend = FALSE) +
+  geom_ribbon(data = treated_Acer_preddata, aes(x = temp, ymin=Lower, ymax=Upper), fill = '#F54A34', linetype=2, alpha = 0.2) +
+  geom_vline(data = DRC_species_treatment_Ed25_coeff, aes(xintercept = 35.656305), color = '#F54A34', show.legend = FALSE) +
+  geom_text(data = DRC_species_treatment_Ed25_coeff, aes(label = "ED25 = 35.66"), x = 38, y = 0.6, show.legend = FALSE, color = '#F54A34') +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("Fv/Fm") +
+  xlab("Temperature (°C)") +
+  theme_bw() +
+  labs(title = "A.cervicornis") +
+  theme(legend.position="none") +
+  theme(text = element_text(size = 15)) 
+```
 
 #### Pcli
 ```{r}
@@ -1283,4 +1321,66 @@ create combined plot
 ```{r}
 plot_grid(p1, p2, rel_widths = c(1,1.25))
 #ggsave("ED50_Hill_boxplots.pdf", width = 10, height = 5)
+```
+
+
+
+# Converting temperature to Degree Heating Minutes
+
+```{r}
+#let's calculate hours above 32ºC because that's the high-temp setpoint in the slow-burn
+
+CBASS_temp_logs <- readxl::read_xlsx("../../tank parameters/Data from LabVIEW/CBASS_labview.xlsx")
+
+CBASS_temp_logs %>% 
+  dplyr::select(Time:`8`) %>% 
+  pivot_longer(`1`:`8`, names_to="Tank", values_to ="Temp") %>% 
+  ggplot(data = .,
+       aes(x = Time, y = Temp, color = Tank)) +
+  geom_point() + 
+  theme_classic() +
+  facet_wrap(~Tank) +
+  labs(title = "Tank Temperatures",
+       y = "Temperature (°C)",
+       x = "Date")
+
+CBASS_temp_logs %>% 
+  dplyr::select(Time:`8`) %>% 
+  pivot_longer(`1`:`8`, names_to="Tank", values_to ="Temp") -> CBASS_temp
+
+above_32 <- filter(CBASS_temp, Temp > 32)
+
+min_above_32 <- above_32 %>%
+  group_by(Tank) %>%
+  summarise(count = n()) %>% 
+  mutate(min_above_32 = count * 5) %>%  #because each data point was recorded at 5-min intervals
+  select(Tank, min_above_32) %>% 
+  rename(CBASS_Tank = Tank) %>% 
+  mutate(CBASS_Tank = as.integer(CBASS_Tank))
+```
+
+
+## adding DHM to metadata
+```{r}
+species_Treatment_DHM <- ipam_tidy_CBASS_treatments %>% 
+  select(Puck:CBASS_Tank, CBASS_temp, Species_Treatment) %>% 
+  full_join(., min_above_32) %>% 
+  drop_na() #removes control tank that was set to 28ºC
+```
+
+## compParm()
+```{r}
+
+DRC_species_treatment_DHM = drm(fvfm ~ min_above_32, data = species_Treatment_DHM, curveid = Species_Treatment,
+             fct = LL.3(names = c('hill', 'max', 'ed50')))
+summary(DRC_species_treatment_DHM)
+plot(DRC_species_treatment_DHM)
+
+#compParm compares the selected coefficient by means of a t-test
+compParm(DRC_species_treatment_DHM, 'ed50')
+
+compParm(DRC_species_treatment_DHM, 'hill')
+
+EDcomp(DRC_species_treatment_DHM, c(25,25))
+
 ```

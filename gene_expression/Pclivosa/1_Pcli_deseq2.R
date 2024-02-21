@@ -30,7 +30,7 @@ library(arrayQualityMetrics)
 library(tidyverse)
 
 #read in counts
-counts = readxl::read_xlsx("../Bioinformatics/pcli/magana/allcounts_pcli.xlsx") #alignment to Avila-Magana et al. 2021 transcriptome 
+counts = readxl::read_xlsx("../MS_Bioinformatics/MS_bioinformatics_alignmenttests/pcli/magana/allcounts_pcli.xlsx") #alignment to Avila-Magana et al. 2021 transcriptome 
 
 column_to_rownames(counts, var ="...1") -> counts
 
@@ -430,40 +430,51 @@ save(Treated_vs_Untreated.p,file="Rdata_files/Treated_vs_Untreated_lpv.RData")
 
 #### ANNOTATING DGES ####
 
-# Untreated vs. Initial
-as.data.frame(Treatment_Untreated_vs_Initial) %>%
+#using the log-10 transformed p-adj value because that's what's used in the 6_commongenes.R script and I want to make sure all the numbers match
+
+#Untreated vs. Initial
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05) %>% 
+  mutate(lpv = -log(padj, base = 10)) %>%
+  mutate(lpv = if_else(stat < 0, lpv * -1, lpv)) %>% 
+  filter(abs(lpv) >= 1.3) %>% 
   left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Untreated_vs_Initial_annotatedDGEs.csv")
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Untreated_vs_Initial_annotatedDGEs_05.csv")
 #132 genes 
 
 # Treated vs. Initial
-as.data.frame(Treatment_Treated_vs_Initial) %>%
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05) %>% 
+  mutate(lpv = -log(padj, base = 10)) %>%
+  mutate(lpv = if_else(stat < 0, lpv * -1, lpv)) %>% 
+  filter(abs(lpv) >= 1.3) %>% 
   left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Initial_annotatedDGEs.csv")
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Initial_annotatedDGEs_05.csv")
 #141 genes
 
 
 # Treated vs. Untreated
-as.data.frame(Treatment_Treated_vs_Untreated) %>%
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
   rownames_to_column(var="gene") %>% 
-  filter(padj < 0.05) %>% 
+  mutate(lpv = -log(padj, base = 10)) %>%
+  mutate(lpv = if_else(stat < 0, lpv * -1, lpv)) %>% 
+  filter(abs(lpv) >= 1.3) %>% 
   left_join(read.table(file = "bioinformatics/Pclivosa_iso2geneName.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
                      annot = V2) %>%
-              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Untreated_annotatedDGEs.csv")
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) %>% write_csv("Treated_vs_Untreated_annotatedDGEs_05.csv")
 #21 genes
 
