@@ -1,6 +1,6 @@
 #!/bin/bash
 #BSUB -J countrawreads
-#BSUB -q general
+#BSUB -q bigmem
 #BSUB -P and_transcriptomics
 #BSUB -n 8
 #BSUB -W 120:00

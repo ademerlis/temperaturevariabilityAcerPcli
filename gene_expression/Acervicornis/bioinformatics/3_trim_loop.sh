@@ -19,8 +19,6 @@ echo "
 #BSUB -J ${samp}_trim
 #BSUB -e ${projdir}/logs/${samp}_trim.err
 #BSUB -o ${projdir}/logs/${samp}_trim.out
-#BSUB -W 12:00
-#BSUB -n 8
 #BSUB -q general
 
 cd \"/scratch/projects/and_transcriptomics/Ch2_temperaturevariability2023/1_fastq_rawreads\"
