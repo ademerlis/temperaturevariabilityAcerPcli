@@ -1,0 +1,8 @@
+"","pval","term","direction","color"
+"0/67 cytoplasmic translation",0.0328986903535215,"GO:0002181",1,"firebrick1"
+"1/208 peptide biosynthetic process",0.0638786520036273,"GO:0006412;GO:0043043",1,"lightcoral"
+"0/157 epidermis development",0.0420323388002027,"GO:0008544",0,"dodgerblue2"
+"3/412 cell-cell signaling",0.0328986903535215,"GO:0007267",0,"dodgerblue2"
+"2/325 establishment of organelle localization",0.0176153342948403,"GO:0051656",0,"dodgerblue2"
+"2/446 organelle localization",0.0328986903535215,"GO:0051640",0,"dodgerblue2"
+"2/168 vesicle localization",0.0786024185101318,"GO:0051648;GO:0051650",0,"skyblue2"

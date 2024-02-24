@@ -1,0 +1,26 @@
+---
+title: "GO_terms_tidying"
+author: "allyson_demerlis"
+date: "2024-02-22"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+CC Treated vs. Initial
+```{r}
+cc_TreatedvInitial <- read.csv("CC_Treated_vs_Initial_fc.csv", sep = "")
+
+cc_TreatedvInitial %>% 
+  rename(lfc = value) %>% 
+  rename (level = lev) -> cc_TreatedvInitial
+
+MWU_result_CC_TreatedvInitial <- read.csv("MWU_CC_Treated_vs_Initial_fc.csv", sep = "")
+
+full_join(cc_TreatedvInitial, MWU_result_CC_TreatedvInitial, by = c("level", "term", "name")) %>% view()
+  filter(p.adj < 0.05) %>% 
+  distinct(seq)
+```
+

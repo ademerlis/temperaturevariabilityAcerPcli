@@ -1,345 +1,345 @@
-gene,KOG
-Acropora_000030,3-hydroxy-3-methylglutaryl-coenzyme A reductase
-Acropora_000146,NA
-Acropora_000151,Tektin family
-Acropora_000152,NA
-Acropora_000184,Cytochrome c oxidase subunit Va
-Acropora_000242,lymphoid tissue lymphoma translocation
-Acropora_000263,Stimulated by retinoic acid gene 6 protein homolog
-Acropora_000315,NA
-Acropora_000331,protein auto-ADP-ribosylation
-Acropora_000501,Homer protein homolog
-Acropora_000509,protein disulfide isomerase activity
-Acropora_000511,NA
-Acropora_000519,NA
-Acropora_000629,negative regulation of negative chemotaxis
-Acropora_000719,NA
-Acropora_000764,NA
-Acropora_000851,Myb/SANT-like DNA-binding domain
-Acropora_000962,NA
-Acropora_001182,NA
-Acropora_001254,synaptic vesicle cytoskeletal transport
-Acropora_001296,cell surface receptor signaling pathway
-Acropora_001323,phosphatidylserine metabolic process
-Acropora_001502,NA
-Acropora_001581,NA
-Acropora_001602,Belongs to the heat shock protein 70 family
-Acropora_001793,It is involved in the biological process described with
-Acropora_001853,NA
-Acropora_002034,Calcium-binding protein
-Acropora_002118,sequence-specific DNA binding
-Acropora_002137,threonine-type endopeptidase activity
-Acropora_002140,DNA polymerase epsilon subunit 3
-Acropora_002205,Heme binding protein 2
-Acropora_002470,positive regulation of presynaptic membrane organization
-Acropora_002518,Trypsin-like serine protease
-Acropora_002614,SNAP receptor activity
-Acropora_002620,Dienelactone hydrolase family
-Acropora_002679,NA
-Acropora_002712,NA
-Acropora_002796,Rho guanine nucleotide exchange factor
-Acropora_003330,NA
-Acropora_003418,adenylate cyclase-activating G-protein coupled receptor signaling pathway
-Acropora_003465,negative regulation of renal output by angiotensin
-Acropora_003492,Cystatin-like domain
-Acropora_003575,G-protein beta/gamma-subunit complex binding
-Acropora_003640,calretinin
-Acropora_003641,NA
-Acropora_003708,protein monoubiquitination
-Acropora_003727,NA
-Acropora_003774,NA
-Acropora_003940,NA
-Acropora_004221,syndrome nuclear autoantigen 1
-Acropora_004370,heat shock protein binding
-Acropora_004458,antigen processing and presentation of exogenous peptide antigen via MHC class I
-Acropora_004493,"Myosin, light"
-Acropora_004556,NA
-Acropora_004848,NA
-Acropora_004854,NA
-Acropora_005526,protein linear deubiquitination
-Acropora_005760,chromatin remodeling
-Acropora_005791,sodium-dependent glucose transporter
-Acropora_006009,alpha-catenin binding
-Acropora_006012,Golgi ribbon formation
-Acropora_006070,organic anion transmembrane transporter activity
-Acropora_006153,"Arrestin (or S-antigen), N-terminal domain"
-Acropora_006288,NFX1-type zinc finger-containing protein
-Acropora_006451,plasma membrane repair
-Acropora_006658,Leydig cell differentiation
-Acropora_006685,SRY (sex determining region Y)-box 30
-Acropora_006687,"ATP-dependent microtubule motor activity, plus-end-directed"
-Acropora_006702,folate import across plasma membrane
-Acropora_006739,smoothened signaling pathway
-Acropora_006836,NA
-Acropora_006886,tetracycline transmembrane transporter activity
-Acropora_007014,NA
-Acropora_007169,fibroblast growth factor-activated receptor activity
-Acropora_007329,mothers against decapentaplegic homolog
-Acropora_007366,NA
-Acropora_007492,ubiquitin conjugating enzyme binding
-Acropora_007577,Transient receptor potential cation channel subfamily M member
-Acropora_007652,Copper/zinc superoxide dismutase (SODC)
-Acropora_007695,Belongs to the peptidase C1 family
-Acropora_007708,demethylase
-Acropora_007734,GTPase activity
-Acropora_007811,"hydrolase activity, acting on ester bonds"
-Acropora_007875,calcium-dependent phospholipid binding
-Acropora_007963,regulation of smoothened signaling pathway
-Acropora_008068,protein-glutamine gamma-glutamyltransferase activity
-Acropora_008078,NA
-Acropora_008193,"obsolete transcriptional repressor activity, RNA polymerase II transcription factor binding"
-Acropora_008226,vesicle-mediated cholesterol transport
-Acropora_008456,Phosphoglycerate mutase family
-Acropora_008484,NA
-Acropora_008510,calcium ion homeostasis
-Acropora_008625,"solute carrier family 39 (zinc transporter), member 12"
-Acropora_008811,NA
-Acropora_008813,WD repeat domain 7
-Acropora_008931,Short calmodulin-binding motif containing conserved Ile and Gln residues.
-Acropora_008954,signal peptide processing
-Acropora_009163,positive regulation of DNA N-glycosylase activity
-Acropora_009168,NA
-Acropora_009184,Centrosomal protein
-Acropora_009243,"Family with sequence similarity 160, member"
-Acropora_009363,NA
-Acropora_009522,NA
-Acropora_009527,G1 to G0 transition involved in cell differentiation
-Acropora_009578,NA
-Acropora_009588,NACHT and WD repeat
-Acropora_009633,NA
-Acropora_009763,positive regulation of histone H3-K79 methylation
-Acropora_009948,frizzled binding
-Acropora_009970,pyrroline-5-carboxylate reductase activity
-Acropora_009972,NA
-Acropora_009985,"dolichyl pyrophosphate Man9GlcNAc2 alpha-1,3-glucosyltransferase activity"
-Acropora_010229,Arachidonate 5-lipoxygenase
-Acropora_010290,Belongs to the peptidase S1 family
-Acropora_010416,Transmembrane protein 131-like
-Acropora_010441,NA
-Acropora_010519,NA
-Acropora_010521,NA
-Acropora_010538,NA
-Acropora_010549,microtubule motor activity
-Acropora_010587,NA
-Acropora_010627,NA
-Acropora_010628,NA
-Acropora_010696,intracellular cholesterol transport
-Acropora_010718,extracellular ligand-gated ion channel activity
-Acropora_010747,dolichyl-diphosphooligosaccharide-protein glycotransferase activity
-Acropora_010815,DIS3 exosome endoribonuclease and 3'-5' exoribonuclease
-Acropora_010816,NA
-Acropora_010917,NA
-Acropora_010931,NA
-Acropora_010972,Belongs to the MCM family
-Acropora_010973,Nuclear factor erythroid
-Acropora_010981,Ubiquitin-2 like Rad60 SUMO-like
-Acropora_011132,NA
-Acropora_011173,NA
-Acropora_011200,phagocytosis
-Acropora_011965,NA
-Acropora_011992,[heparan sulfate]-glucosamine 3-sulfotransferase 1 activity
-Acropora_012149,NA
-Acropora_012525,NA
-Acropora_012878,positive regulation of epithelial to mesenchymal transition
-Acropora_012938,non-membrane spanning protein tyrosine phosphatase activity
-Acropora_012973,ribosomal protein
-Acropora_012982,Protein transport protein SEC61 subunit
-Acropora_013078,endoplasmic reticulum-plasma membrane tethering
-Acropora_013082,NA
-Acropora_013107,WD40 repeats
-Acropora_013170,NA
-Acropora_013196,NADH dehydrogenase ubiquinone 1 alpha subcomplex
-Acropora_013199,regulation of cellular macromolecule biosynthetic process
-Acropora_013317,NA
-Acropora_013326,protein ubiquitination
-Acropora_013327,protein ubiquitination
-Acropora_013590,forkhead box
-Acropora_013591,intracellular protein transport
-Acropora_013599,signal peptide processing
-Acropora_013659,Cytosolic acyl coenzyme A thioester
-Acropora_013672,"3-kinase, catalytic subunit"
-Acropora_013707,homophilic cell adhesion via plasma membrane adhesion molecules
-Acropora_013789,phosphopyruvate hydratase activity
-Acropora_013880,NA
-Acropora_013887,NA
-Acropora_013936,NA
-Acropora_014701,translocon-associated protein
-Acropora_014875,Monoamine oxidase
-Acropora_014986,sequestering of actin monomers
-Acropora_015007,3-hydroxyacyl-[acyl-carrier-protein] dehydratase activity
-Acropora_015024,Destroys radicals which are normally produced within the cells and which are toxic to biological systems
-Acropora_015051,NA
-Acropora_015165,"negative regulation of retrograde protein transport, ER to cytosol"
-Acropora_015187,activating signal cointegrator 1 complex subunit
-Acropora_015243,"SH3-binding, glutamic acid-rich protein"
-Acropora_015375,"negative regulation of mRNA splicing, via spliceosome"
-Acropora_015541,NA
-Acropora_015582,NA
-Acropora_015598,Belongs to the MCM family
-Acropora_015678,von Willebrand factor (vWF) type A domain
-Acropora_015703,phosphatidylinositol-3-phosphate binding
-Acropora_015708,"Phosphorylase is an important allosteric enzyme in carbohydrate metabolism. Enzymes from different sources differ in their regulatory mechanisms and in their natural substrates. However, all known phosphorylases share catalytic and structural properties"
-Acropora_015875,glycine N-methyltransferase activity
-Acropora_015941,NA
-Acropora_016183,NA
-Acropora_016205,negative regulation of inclusion body assembly
-Acropora_016605,Papain family cysteine protease
-Acropora_016696,NA
-Acropora_017072,Ubiquitin homologues
-Acropora_017124,"Leucine-rich repeats, outliers"
-Acropora_017276,threonine-type endopeptidase activity
-Acropora_017508,NA
-Acropora_017524,NA
-Acropora_017652,catalytic activity. It is involved in the biological process described with metabolic process
-Acropora_017735,unfolded protein binding
-Acropora_017740,NA
-Acropora_017898,"aspartic endopeptidase activity, intramembrane cleaving"
-Acropora_017995,NA
-Acropora_018272,structural constituent of ribosome
-Acropora_018281,NA
-Acropora_018323,NA
-Acropora_018387,NADH ubiquinone oxidoreductase 11.5kD subunit
-Acropora_018491,Transcription factor
-Acropora_018504,NA
-Acropora_018536,positive regulation of protein glycosylation in Golgi
-Acropora_018568,peroxidase activity
-Acropora_018636,"Taurine catabolism dioxygenase TauD, TfdA family"
-Acropora_018667,Arf GTPase-activating protein
-Acropora_018778,hydrolase activity
-Acropora_018932,NA
-Acropora_019379,NA
-Acropora_019518,cytosine C-5 DNA demethylase activity
-Acropora_019776,carbonic anhydrase
-Acropora_019866,Trypsin-like serine protease
-Acropora_019933,Ligand-gated ion channel
-Acropora_019935,NA
-Acropora_019936,Tissue factor pathway inhibitor
-Acropora_020031,regulation of cellular response to hypoxia
-Acropora_020056,Ankyrin repeats (many copies)
-Acropora_020078,Glycosyltransferase 1 domain-containing protein 1
-Acropora_020114,Cytochrome c oxidase subunit
-Acropora_020127,Functions as component of the Arp2 3 complex which is involved in regulation of actin polymerization and together with an activating nucleation-promoting factor (NPF) mediates the formation of branched actin networks
-Acropora_020145,snRNA import into nucleus
-Acropora_020149,calcium-transporting ATPase activity
-Acropora_020193,Belongs to the eukaryotic ribosomal protein eS21 family
-Acropora_020250,fibroblast growth factor-activated receptor activity
-Acropora_020397,Pbx knotted 1 homeobox
-Acropora_020449,NA
-Acropora_020528,NA
-Acropora_020559,NA
-Acropora_020615,NA
-Acropora_020619,regulation of nitric oxide metabolic process
-Acropora_020840,L-glutamate import across plasma membrane
-Acropora_021455,NA
-Acropora_021462,NA
-Acropora_021510,NA
-Acropora_021694,NA
-Acropora_021721,NA
-Acropora_021763,Rho guanyl-nucleotide exchange factor activity
-Acropora_021844,NA
-Acropora_021893,NA
-Acropora_021915,Major Facilitator Superfamily
-Acropora_022003,NA
-Acropora_022027,WASH complex subunit
-Acropora_022046,Restriction endonuclease
-Acropora_022060,Protein tyrosine kinase
-Acropora_022491,NA
-Acropora_022555,Helicase with zinc finger
-Acropora_022562,nuclear receptor transcription coactivator activity
-Acropora_022633,NA
-Acropora_022681,retrograde trans-synaptic signaling by lipid
-Acropora_022727,Okazaki fragment processing involved in mitotic DNA replication
-Acropora_022983,low voltage-gated calcium channel activity
-Acropora_023233,"oxidoreductase activity, acting on a heme group of donors, oxygen as acceptor"
-Acropora_023546,Calcium ion binding
-Acropora_023597,Belongs to the protein-tyrosine phosphatase family. Non-receptor class myotubularin subfamily
-Acropora_023771,chromatin binding
-Acropora_023882,G-protein coupled receptor activity
-Acropora_023922,sequence-specific DNA binding
-Acropora_023989,1-phosphatidylinositol-4-phosphate 5-kinase activity
-Acropora_023998,cAMP-dependent protein kinase regulator activity
-Acropora_024077,ammonium transmembrane transporter activity
-Acropora_024139,regulation of vesicle fusion
-Acropora_024234,Transmembrane protein 87A
-Acropora_024236,NA
-Acropora_024312,Cellulase (glycosyl hydrolase family 5)
-Acropora_024326,negative regulation of motor neuron migration
-Acropora_024417,actin filament severing
-Acropora_024489,endoribonuclease activity
-Acropora_024577,NA
-Acropora_024933,"Solute carrier family 35, member G1"
-Acropora_026034,intra-Golgi vesicle-mediated transport
-Acropora_026074,NA
-Acropora_026079,Protein kinase C conserved region 2 (CalB)
-Acropora_026140,phosphatidylinositol phospholipase C activity
-Acropora_026248,"Filamin C, gamma"
-Acropora_026255,calcium ion export across plasma membrane
-Acropora_026260,unfolded protein binding
-Acropora_026310,protein disulfide isomerase activity
-Acropora_026329,trypsinogen activation
-Acropora_026340,Dolichyl-diphosphooligosaccharide--protein glycosyltransferase subunit
-Acropora_026342,NA
-Acropora_026353,glucuronosyl-N-acetylglucosaminyl-proteoglycan 4-alpha-N-acetylglucosaminyltransferase activity
-Acropora_026368,Guanylate kinase
-Acropora_026400,protein transport
-Acropora_026402,transcription elongation from RNA polymerase II promoter
-Acropora_026407,protein homodimerization activity
-Acropora_026415,Belongs to the universal ribosomal protein uL5 family
-Acropora_026464,ATPase inhibitor activity
-Acropora_026628,NA
-Acropora_026636,NA
-Acropora_026811,Belongs to the SKP1 family
-Acropora_026851,NA
-Acropora_026935,translation elongation factor activity
-Acropora_027152,Pentafunctional AROM polypeptide-like
-Acropora_027374,ribosome biogenesis
-Acropora_027515,ubiquitin-protein transferase activity
-Acropora_027597,NA
-Acropora_027708,NA
-Acropora_027748,NA
-Acropora_027789,embryonic brain development
-Acropora_027872,Neural cell adhesion molecule
-Acropora_028098,NA
-Acropora_028139,calcium ion transport
-Acropora_028271,NA
-Acropora_028286,"Translocon-associated protein, delta subunit precursor (TRAP-delta)"
-Acropora_028337,regulation of mitotic cell cycle
-Acropora_028406,regulation of mitotic cell cycle
-Acropora_028488,helix loop helix domain
-Acropora_028504,fibroblast growth factor-activated receptor activity
-Acropora_028514,regulation of chemokine (C-C motif) ligand 2 secretion
-Acropora_028516,kinetochore assembly
-Acropora_028517,DNA repair protein complementing XP-C cells
-Acropora_028543,NA
-Acropora_028567,NA
-Acropora_028893,NA
-Acropora_028994,NA
-Acropora_029565,26s proteasome non-ATPase regulatory subunit
-Acropora_029599,positive regulation of cysteine-type endopeptidase activity involved in apoptotic process
-Acropora_029718,NA
-Acropora_029735,"Filamin C, gamma"
-Acropora_029756,Belongs to the eukaryotic ribosomal protein eL20 family
-Acropora_029849,intraflagellar transport
-Acropora_029897,Belongs to the AB hydrolase superfamily. Lipase family
-Acropora_029983,Potassium channel subfamily K member
-Acropora_030352,NA
-Acropora_030931,GIPC PDZ domain containing family member
-Acropora_030966,NA
-Acropora_031270,NA
-Acropora_031272,NA
-Acropora_031294,common myeloid progenitor cell proliferation
-Acropora_031449,peptide antigen assembly with MHC class I protein complex
-Acropora_031453,positive regulation of aldosterone biosynthetic process
-Acropora_031859,NA
-Acropora_031913,Belongs to the AAA ATPase family
-Acropora_032367,progesterone receptor signaling pathway
-Acropora_032845,regulation of sodium ion transport
-Acropora_033253,regulation of mitotic cell cycle
-Acropora_033385,NA
-Acropora_033660,NA
-Acropora_34197,protein kinase activator activity
-Acropora_34237,ribonuclease III activity
-Acropora_34240,negative regulation of DNA helicase activity
-Acropora_34308,sphinganine-1-phosphate aldolase activity
-Acropora_34311,NA
-Acropora_34336,NA
+gene,annot,KOG
+Acropora_000030,3-hydroxy-3-methylglutaryl-coenzyme A reductase,Lipid transport and metabolism
+Acropora_000146,NA,NA
+Acropora_000151,Tektin family,Function Unknown
+Acropora_000152,NA,NA
+Acropora_000184,Cytochrome c oxidase subunit Va,Energy production and conversion
+Acropora_000242,lymphoid tissue lymphoma translocation,Signal transduction mechanisms
+Acropora_000263,Stimulated by retinoic acid gene 6 protein homolog,Transcription
+Acropora_000315,NA,NA
+Acropora_000331,protein auto-ADP-ribosylation,Carbohydrate transport and metabolism
+Acropora_000501,Homer protein homolog,Function Unknown
+Acropora_000509,protein disulfide isomerase activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_000511,NA,NA
+Acropora_000519,NA,NA
+Acropora_000629,negative regulation of negative chemotaxis,Amino acid transport and metabolism
+Acropora_000719,NA,NA
+Acropora_000764,NA,NA
+Acropora_000851,Myb/SANT-like DNA-binding domain,"Posttranslational modification, protein turnover, chaperones"
+Acropora_000962,NA,NA
+Acropora_001182,NA,NA
+Acropora_001254,synaptic vesicle cytoskeletal transport,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_001296,cell surface receptor signaling pathway,Function Unknown
+Acropora_001323,phosphatidylserine metabolic process,Function Unknown
+Acropora_001502,NA,NA
+Acropora_001581,NA,NA
+Acropora_001602,Belongs to the heat shock protein 70 family,"Posttranslational modification, protein turnover, chaperones"
+Acropora_001793,It is involved in the biological process described with,"Posttranslational modification, protein turnover, chaperones"
+Acropora_001853,NA,NA
+Acropora_002034,Calcium-binding protein,Signal transduction mechanisms
+Acropora_002118,sequence-specific DNA binding,Transcription
+Acropora_002137,threonine-type endopeptidase activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_002140,DNA polymerase epsilon subunit 3,Transcription
+Acropora_002205,Heme binding protein 2,Function Unknown
+Acropora_002470,positive regulation of presynaptic membrane organization,Signal transduction mechanisms
+Acropora_002518,Trypsin-like serine protease,"Posttranslational modification, protein turnover, chaperones"
+Acropora_002614,SNAP receptor activity,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_002620,Dienelactone hydrolase family,"Secondary metabolites biosynthesis, transport and catabolism"
+Acropora_002679,NA,NA
+Acropora_002712,NA,NA
+Acropora_002796,Rho guanine nucleotide exchange factor,Signal transduction mechanisms
+Acropora_003330,NA,NA
+Acropora_003418,adenylate cyclase-activating G-protein coupled receptor signaling pathway,Signal transduction mechanisms
+Acropora_003465,negative regulation of renal output by angiotensin,Inorganic ion transport and metabolism
+Acropora_003492,Cystatin-like domain,Function Unknown
+Acropora_003575,G-protein beta/gamma-subunit complex binding,Signal transduction mechanisms
+Acropora_003640,calretinin,Signal transduction mechanisms
+Acropora_003641,NA,NA
+Acropora_003708,protein monoubiquitination,"Posttranslational modification, protein turnover, chaperones"
+Acropora_003727,NA,NA
+Acropora_003774,NA,NA
+Acropora_003940,NA,NA
+Acropora_004221,syndrome nuclear autoantigen 1,Function Unknown
+Acropora_004370,heat shock protein binding,"Posttranslational modification, protein turnover, chaperones"
+Acropora_004458,antigen processing and presentation of exogenous peptide antigen via MHC class I,"Posttranslational modification, protein turnover, chaperones"
+Acropora_004493,"Myosin, light",Cytoskeleton
+Acropora_004556,NA,NA
+Acropora_004848,NA,NA
+Acropora_004854,NA,NA
+Acropora_005526,protein linear deubiquitination,Function Unknown
+Acropora_005760,chromatin remodeling,Cytoskeleton
+Acropora_005791,sodium-dependent glucose transporter,Function Unknown
+Acropora_006009,alpha-catenin binding,Extracellular structures
+Acropora_006012,Golgi ribbon formation,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_006070,organic anion transmembrane transporter activity,Transcription
+Acropora_006153,"Arrestin (or S-antigen), N-terminal domain",Function Unknown
+Acropora_006288,NFX1-type zinc finger-containing protein,"Replication, recombination and repair"
+Acropora_006451,plasma membrane repair,Cell wall/membrane/envelope biogenesis
+Acropora_006658,Leydig cell differentiation,Signal transduction mechanisms
+Acropora_006685,SRY (sex determining region Y)-box 30,Transcription
+Acropora_006687,"ATP-dependent microtubule motor activity, plus-end-directed",Cytoskeleton
+Acropora_006702,folate import across plasma membrane,"Posttranslational modification, protein turnover, chaperones"
+Acropora_006739,smoothened signaling pathway,Function Unknown
+Acropora_006836,NA,NA
+Acropora_006886,tetracycline transmembrane transporter activity,Function Unknown
+Acropora_007014,NA,NA
+Acropora_007169,fibroblast growth factor-activated receptor activity,Signal transduction mechanisms
+Acropora_007329,mothers against decapentaplegic homolog,Transcription
+Acropora_007366,NA,NA
+Acropora_007492,ubiquitin conjugating enzyme binding,Function Unknown
+Acropora_007577,Transient receptor potential cation channel subfamily M member,
+Acropora_007652,Copper/zinc superoxide dismutase (SODC),Function Unknown
+Acropora_007695,Belongs to the peptidase C1 family,"Posttranslational modification, protein turnover, chaperones"
+Acropora_007708,demethylase,Transcription
+Acropora_007734,GTPase activity,Function Unknown
+Acropora_007811,"hydrolase activity, acting on ester bonds",Lipid transport and metabolism
+Acropora_007875,calcium-dependent phospholipid binding,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_007963,regulation of smoothened signaling pathway,Function Unknown
+Acropora_008068,protein-glutamine gamma-glutamyltransferase activity,Function Unknown
+Acropora_008078,NA,NA
+Acropora_008193,"obsolete transcriptional repressor activity, RNA polymerase II transcription factor binding",Transcription
+Acropora_008226,vesicle-mediated cholesterol transport,
+Acropora_008456,Phosphoglycerate mutase family,Carbohydrate transport and metabolism
+Acropora_008484,NA,NA
+Acropora_008510,calcium ion homeostasis,Function Unknown
+Acropora_008625,"solute carrier family 39 (zinc transporter), member 12",Inorganic ion transport and metabolism
+Acropora_008811,NA,NA
+Acropora_008813,WD repeat domain 7,Function Unknown
+Acropora_008931,Short calmodulin-binding motif containing conserved Ile and Gln residues.,Function Unknown
+Acropora_008954,signal peptide processing,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_009163,positive regulation of DNA N-glycosylase activity,"Translation, ribosomal structure and biogenesis"
+Acropora_009168,NA,NA
+Acropora_009184,Centrosomal protein,Function Unknown
+Acropora_009243,"Family with sequence similarity 160, member",Function Unknown
+Acropora_009363,NA,NA
+Acropora_009522,NA,NA
+Acropora_009527,G1 to G0 transition involved in cell differentiation,Function Unknown
+Acropora_009578,NA,NA
+Acropora_009588,NACHT and WD repeat,Chromatin structure and dynamics
+Acropora_009633,NA,NA
+Acropora_009763,positive regulation of histone H3-K79 methylation,"Posttranslational modification, protein turnover, chaperones"
+Acropora_009948,frizzled binding,Signal transduction mechanisms
+Acropora_009970,pyrroline-5-carboxylate reductase activity,Amino acid transport and metabolism
+Acropora_009972,NA,NA
+Acropora_009985,"dolichyl pyrophosphate Man9GlcNAc2 alpha-1,3-glucosyltransferase activity",Carbohydrate transport and metabolism
+Acropora_010229,Arachidonate 5-lipoxygenase,Amino acid transport and metabolism
+Acropora_010290,Belongs to the peptidase S1 family,"Posttranslational modification, protein turnover, chaperones"
+Acropora_010416,Transmembrane protein 131-like,Function Unknown
+Acropora_010441,NA,NA
+Acropora_010519,NA,NA
+Acropora_010521,NA,NA
+Acropora_010538,NA,NA
+Acropora_010549,microtubule motor activity,Cytoskeleton
+Acropora_010587,NA,NA
+Acropora_010627,NA,NA
+Acropora_010628,NA,NA
+Acropora_010696,intracellular cholesterol transport,Inorganic ion transport and metabolism
+Acropora_010718,extracellular ligand-gated ion channel activity,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_010747,dolichyl-diphosphooligosaccharide-protein glycotransferase activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_010815,DIS3 exosome endoribonuclease and 3'-5' exoribonuclease,"Translation, ribosomal structure and biogenesis"
+Acropora_010816,NA,NA
+Acropora_010917,NA,NA
+Acropora_010931,NA,NA
+Acropora_010972,Belongs to the MCM family,"Replication, recombination and repair"
+Acropora_010973,Nuclear factor erythroid,Transcription
+Acropora_010981,Ubiquitin-2 like Rad60 SUMO-like,"Posttranslational modification, protein turnover, chaperones"
+Acropora_011132,NA,NA
+Acropora_011173,NA,NA
+Acropora_011200,phagocytosis,Function Unknown
+Acropora_011965,NA,NA
+Acropora_011992,[heparan sulfate]-glucosamine 3-sulfotransferase 1 activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_012149,NA,NA
+Acropora_012525,NA,NA
+Acropora_012878,positive regulation of epithelial to mesenchymal transition,Function Unknown
+Acropora_012938,non-membrane spanning protein tyrosine phosphatase activity,Signal transduction mechanisms
+Acropora_012973,ribosomal protein,"Translation, ribosomal structure and biogenesis"
+Acropora_012982,Protein transport protein SEC61 subunit,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_013078,endoplasmic reticulum-plasma membrane tethering,Function Unknown
+Acropora_013082,NA,NA
+Acropora_013107,WD40 repeats,Function Unknown
+Acropora_013170,NA,NA
+Acropora_013196,NADH dehydrogenase ubiquinone 1 alpha subcomplex,Function Unknown
+Acropora_013199,regulation of cellular macromolecule biosynthetic process,"Translation, ribosomal structure and biogenesis"
+Acropora_013317,NA,NA
+Acropora_013326,protein ubiquitination,"Posttranslational modification, protein turnover, chaperones"
+Acropora_013327,protein ubiquitination,"Posttranslational modification, protein turnover, chaperones"
+Acropora_013590,forkhead box,Transcription
+Acropora_013591,intracellular protein transport,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_013599,signal peptide processing,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_013659,Cytosolic acyl coenzyme A thioester,Lipid transport and metabolism
+Acropora_013672,"3-kinase, catalytic subunit",Signal transduction mechanisms
+Acropora_013707,homophilic cell adhesion via plasma membrane adhesion molecules,Carbohydrate transport and metabolism
+Acropora_013789,phosphopyruvate hydratase activity,Carbohydrate transport and metabolism
+Acropora_013880,NA,NA
+Acropora_013887,NA,NA
+Acropora_013936,NA,NA
+Acropora_014701,translocon-associated protein,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_014875,Monoamine oxidase,Amino acid transport and metabolism
+Acropora_014986,sequestering of actin monomers,Cytoskeleton
+Acropora_015007,3-hydroxyacyl-[acyl-carrier-protein] dehydratase activity,Lipid transport and metabolism
+Acropora_015024,Destroys radicals which are normally produced within the cells and which are toxic to biological systems,Inorganic ion transport and metabolism
+Acropora_015051,NA,NA
+Acropora_015165,"negative regulation of retrograde protein transport, ER to cytosol","Posttranslational modification, protein turnover, chaperones"
+Acropora_015187,activating signal cointegrator 1 complex subunit,RNA processing and modification
+Acropora_015243,"SH3-binding, glutamic acid-rich protein",Function Unknown
+Acropora_015375,"negative regulation of mRNA splicing, via spliceosome",Transcription
+Acropora_015541,NA,NA
+Acropora_015582,NA,NA
+Acropora_015598,Belongs to the MCM family,"Replication, recombination and repair"
+Acropora_015678,von Willebrand factor (vWF) type A domain,Function Unknown
+Acropora_015703,phosphatidylinositol-3-phosphate binding,Function Unknown
+Acropora_015708,"Phosphorylase is an important allosteric enzyme in carbohydrate metabolism. Enzymes from different sources differ in their regulatory mechanisms and in their natural substrates. However, all known phosphorylases share catalytic and structural properties",Carbohydrate transport and metabolism
+Acropora_015875,glycine N-methyltransferase activity,Function Unknown
+Acropora_015941,NA,NA
+Acropora_016183,NA,NA
+Acropora_016205,negative regulation of inclusion body assembly,Function Unknown
+Acropora_016605,Papain family cysteine protease,"Posttranslational modification, protein turnover, chaperones"
+Acropora_016696,NA,NA
+Acropora_017072,Ubiquitin homologues,"Posttranslational modification, protein turnover, chaperones"
+Acropora_017124,"Leucine-rich repeats, outliers",Function Unknown
+Acropora_017276,threonine-type endopeptidase activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_017508,NA,NA
+Acropora_017524,NA,NA
+Acropora_017652,catalytic activity. It is involved in the biological process described with metabolic process,Lipid transport and metabolism
+Acropora_017735,unfolded protein binding,"Posttranslational modification, protein turnover, chaperones"
+Acropora_017740,NA,NA
+Acropora_017898,"aspartic endopeptidase activity, intramembrane cleaving",Signal transduction mechanisms
+Acropora_017995,NA,NA
+Acropora_018272,structural constituent of ribosome,"Translation, ribosomal structure and biogenesis"
+Acropora_018281,NA,NA
+Acropora_018323,NA,NA
+Acropora_018387,NADH ubiquinone oxidoreductase 11.5kD subunit,Function Unknown
+Acropora_018491,Transcription factor,Transcription
+Acropora_018504,NA,NA
+Acropora_018536,positive regulation of protein glycosylation in Golgi,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_018568,peroxidase activity,Signal transduction mechanisms
+Acropora_018636,"Taurine catabolism dioxygenase TauD, TfdA family",Function Unknown
+Acropora_018667,Arf GTPase-activating protein,Signal transduction mechanisms
+Acropora_018778,hydrolase activity,Signal transduction mechanisms
+Acropora_018932,NA,NA
+Acropora_019379,NA,NA
+Acropora_019518,cytosine C-5 DNA demethylase activity,"Replication, recombination and repair"
+Acropora_019776,carbonic anhydrase,Inorganic ion transport and metabolism
+Acropora_019866,Trypsin-like serine protease,"Posttranslational modification, protein turnover, chaperones"
+Acropora_019933,Ligand-gated ion channel,Inorganic ion transport and metabolism
+Acropora_019935,NA,NA
+Acropora_019936,Tissue factor pathway inhibitor,"Posttranslational modification, protein turnover, chaperones"
+Acropora_020031,regulation of cellular response to hypoxia,Function Unknown
+Acropora_020056,Ankyrin repeats (many copies),Function Unknown
+Acropora_020078,Glycosyltransferase 1 domain-containing protein 1,Function Unknown
+Acropora_020114,Cytochrome c oxidase subunit,Energy production and conversion
+Acropora_020127,Functions as component of the Arp2 3 complex which is involved in regulation of actin polymerization and together with an activating nucleation-promoting factor (NPF) mediates the formation of branched actin networks,Cytoskeleton
+Acropora_020145,snRNA import into nucleus,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_020149,calcium-transporting ATPase activity,Inorganic ion transport and metabolism
+Acropora_020193,Belongs to the eukaryotic ribosomal protein eS21 family,"Translation, ribosomal structure and biogenesis"
+Acropora_020250,fibroblast growth factor-activated receptor activity,Signal transduction mechanisms
+Acropora_020397,Pbx knotted 1 homeobox,Transcription
+Acropora_020449,NA,NA
+Acropora_020528,NA,NA
+Acropora_020559,NA,NA
+Acropora_020615,NA,NA
+Acropora_020619,regulation of nitric oxide metabolic process,Function Unknown
+Acropora_020840,L-glutamate import across plasma membrane,Amino acid transport and metabolism
+Acropora_021455,NA,NA
+Acropora_021462,NA,NA
+Acropora_021510,NA,NA
+Acropora_021694,NA,NA
+Acropora_021721,NA,NA
+Acropora_021763,Rho guanyl-nucleotide exchange factor activity,Signal transduction mechanisms
+Acropora_021844,NA,NA
+Acropora_021893,NA,NA
+Acropora_021915,Major Facilitator Superfamily,Carbohydrate transport and metabolism
+Acropora_022003,NA,NA
+Acropora_022027,WASH complex subunit,Function Unknown
+Acropora_022046,Restriction endonuclease,Function Unknown
+Acropora_022060,Protein tyrosine kinase,Signal transduction mechanisms
+Acropora_022491,NA,NA
+Acropora_022555,Helicase with zinc finger,RNA processing and modification
+Acropora_022562,nuclear receptor transcription coactivator activity,"Replication, recombination and repair"
+Acropora_022633,NA,NA
+Acropora_022681,retrograde trans-synaptic signaling by lipid,
+Acropora_022727,Okazaki fragment processing involved in mitotic DNA replication,"Replication, recombination and repair"
+Acropora_022983,low voltage-gated calcium channel activity,
+Acropora_023233,"oxidoreductase activity, acting on a heme group of donors, oxygen as acceptor",Energy production and conversion
+Acropora_023546,Calcium ion binding,
+Acropora_023597,Belongs to the protein-tyrosine phosphatase family. Non-receptor class myotubularin subfamily,Signal transduction mechanisms
+Acropora_023771,chromatin binding,Function Unknown
+Acropora_023882,G-protein coupled receptor activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_023922,sequence-specific DNA binding,Transcription
+Acropora_023989,1-phosphatidylinositol-4-phosphate 5-kinase activity,Signal transduction mechanisms
+Acropora_023998,cAMP-dependent protein kinase regulator activity,Signal transduction mechanisms
+Acropora_024077,ammonium transmembrane transporter activity,Inorganic ion transport and metabolism
+Acropora_024139,regulation of vesicle fusion,Signal transduction mechanisms
+Acropora_024234,Transmembrane protein 87A,Function Unknown
+Acropora_024236,NA,NA
+Acropora_024312,Cellulase (glycosyl hydrolase family 5),Carbohydrate transport and metabolism
+Acropora_024326,negative regulation of motor neuron migration,Cytoskeleton
+Acropora_024417,actin filament severing,Cytoskeleton
+Acropora_024489,endoribonuclease activity,Function Unknown
+Acropora_024577,NA,NA
+Acropora_024933,"Solute carrier family 35, member G1",
+Acropora_026034,intra-Golgi vesicle-mediated transport,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_026074,NA,NA
+Acropora_026079,Protein kinase C conserved region 2 (CalB),Function Unknown
+Acropora_026140,phosphatidylinositol phospholipase C activity,Lipid transport and metabolism
+Acropora_026248,"Filamin C, gamma",Cytoskeleton
+Acropora_026255,calcium ion export across plasma membrane,
+Acropora_026260,unfolded protein binding,"Posttranslational modification, protein turnover, chaperones"
+Acropora_026310,protein disulfide isomerase activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_026329,trypsinogen activation,Function Unknown
+Acropora_026340,Dolichyl-diphosphooligosaccharide--protein glycosyltransferase subunit,"Posttranslational modification, protein turnover, chaperones"
+Acropora_026342,NA,NA
+Acropora_026353,glucuronosyl-N-acetylglucosaminyl-proteoglycan 4-alpha-N-acetylglucosaminyltransferase activity,
+Acropora_026368,Guanylate kinase,Nucleotide transport and metabolism
+Acropora_026400,protein transport,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_026402,transcription elongation from RNA polymerase II promoter,Transcription
+Acropora_026407,protein homodimerization activity,Signal transduction mechanisms
+Acropora_026415,Belongs to the universal ribosomal protein uL5 family,"Translation, ribosomal structure and biogenesis"
+Acropora_026464,ATPase inhibitor activity,Function Unknown
+Acropora_026628,NA,NA
+Acropora_026636,NA,NA
+Acropora_026811,Belongs to the SKP1 family,"Posttranslational modification, protein turnover, chaperones"
+Acropora_026851,NA,NA
+Acropora_026935,translation elongation factor activity,"Translation, ribosomal structure and biogenesis"
+Acropora_027152,Pentafunctional AROM polypeptide-like,Amino acid transport and metabolism
+Acropora_027374,ribosome biogenesis,"Translation, ribosomal structure and biogenesis"
+Acropora_027515,ubiquitin-protein transferase activity,"Posttranslational modification, protein turnover, chaperones"
+Acropora_027597,NA,NA
+Acropora_027708,NA,NA
+Acropora_027748,NA,NA
+Acropora_027789,embryonic brain development,"Translation, ribosomal structure and biogenesis"
+Acropora_027872,Neural cell adhesion molecule,Signal transduction mechanisms
+Acropora_028098,NA,NA
+Acropora_028139,calcium ion transport,
+Acropora_028271,NA,NA
+Acropora_028286,"Translocon-associated protein, delta subunit precursor (TRAP-delta)","Intracellular trafficking, secretion, and vesicular transport"
+Acropora_028337,regulation of mitotic cell cycle,"Posttranslational modification, protein turnover, chaperones"
+Acropora_028406,regulation of mitotic cell cycle,"Posttranslational modification, protein turnover, chaperones"
+Acropora_028488,helix loop helix domain,Transcription
+Acropora_028504,fibroblast growth factor-activated receptor activity,Signal transduction mechanisms
+Acropora_028514,regulation of chemokine (C-C motif) ligand 2 secretion,Cell wall/membrane/envelope biogenesis
+Acropora_028516,kinetochore assembly,Function Unknown
+Acropora_028517,DNA repair protein complementing XP-C cells,"Replication, recombination and repair"
+Acropora_028543,NA,NA
+Acropora_028567,NA,NA
+Acropora_028893,NA,NA
+Acropora_028994,NA,NA
+Acropora_029565,26s proteasome non-ATPase regulatory subunit,"Posttranslational modification, protein turnover, chaperones"
+Acropora_029599,positive regulation of cysteine-type endopeptidase activity involved in apoptotic process,Function Unknown
+Acropora_029718,NA,NA
+Acropora_029735,"Filamin C, gamma",Cytoskeleton
+Acropora_029756,Belongs to the eukaryotic ribosomal protein eL20 family,"Translation, ribosomal structure and biogenesis"
+Acropora_029849,intraflagellar transport,Transcription
+Acropora_029897,Belongs to the AB hydrolase superfamily. Lipase family,"Posttranslational modification, protein turnover, chaperones"
+Acropora_029983,Potassium channel subfamily K member,"Intracellular trafficking, secretion, and vesicular transport"
+Acropora_030352,NA,NA
+Acropora_030931,GIPC PDZ domain containing family member,
+Acropora_030966,NA,NA
+Acropora_031270,NA,NA
+Acropora_031272,NA,NA
+Acropora_031294,common myeloid progenitor cell proliferation,Function Unknown
+Acropora_031449,peptide antigen assembly with MHC class I protein complex,"Posttranslational modification, protein turnover, chaperones"
+Acropora_031453,positive regulation of aldosterone biosynthetic process,Signal transduction mechanisms
+Acropora_031859,NA,NA
+Acropora_031913,Belongs to the AAA ATPase family,"Posttranslational modification, protein turnover, chaperones"
+Acropora_032367,progesterone receptor signaling pathway,Signal transduction mechanisms
+Acropora_032845,regulation of sodium ion transport,Function Unknown
+Acropora_033253,regulation of mitotic cell cycle,"Posttranslational modification, protein turnover, chaperones"
+Acropora_033385,NA,NA
+Acropora_033660,NA,NA
+Acropora_34197,protein kinase activator activity,"Translation, ribosomal structure and biogenesis"
+Acropora_34237,ribonuclease III activity,Transcription
+Acropora_34240,negative regulation of DNA helicase activity,"Replication, recombination and repair"
+Acropora_34308,sphinganine-1-phosphate aldolase activity,Amino acid transport and metabolism
+Acropora_34311,NA,NA
+Acropora_34336,NA,NA

@@ -1,0 +1,154 @@
+---
+title: "GO_term_venndiagram"
+author: "allyson_demerlis"
+date: "2024-02-23"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggvenn)
+```
+
+Common BP terms
+```{r}
+MWU_result_BP_TreatedvInitial=read.csv("MWU_BP_Treated_vs_Initial_fc.csv", sep = "")
+MWU_result_BP_TreatedvInitial %>% 
+  filter(p.adj < 0.05) -> MWU_result_BP_TreatedvInitial_05
+
+MWU_result_BP_TreatedvInitial_05$name -> MWU_result_BP_TreatedvInitial_names
+
+MWU_result_BP_TreatedvUntreated=read.csv("MWU_BP_Treated_vs_Untreated_fc.csv", sep = "")
+MWU_result_BP_TreatedvUntreated %>% 
+  filter(p.adj < 0.05) -> MWU_result_BP_TreatedvUntreated_05
+
+MWU_result_BP_TreatedvUntreated_05$name -> MWU_result_BP_TreatedvUntreated_names
+
+MWU_result_BP_UntreatedvInitial=read.csv("MWU_BP_Untreated_vs_Initial_fc.csv", sep = "")
+MWU_result_BP_UntreatedvInitial %>% 
+  filter(p.adj < 0.05) -> MWU_result_BP_UntreatedvInitial_05
+
+MWU_result_BP_UntreatedvInitial_05$name -> MWU_result_BP_UntreatedvInitial_names
+
+
+pairwise=list("Untreated_vs_Initial"=MWU_result_BP_UntreatedvInitial_05, "Treated_vs_Initial"=MWU_result_BP_TreatedvInitial_05,"Treated_vs_Untreated"=MWU_result_BP_TreatedvUntreated_05)
+
+find_common_elements_df <- function(lst, column_index = c(5,6)) {
+  # Initialize common_elements with the column of interest from the first data frame
+  common_elements <- lst[[1]][, column_index]
+  
+  # Loop through the rest of the list
+  for (df in lst[-1]) {
+    # Extract the column of interest from the current data frame
+    vec <- df[, column_index]
+    
+    # Find the intersection with the current common_elements
+    common_elements <- intersect(common_elements, vec)
+  }
+  
+  return(common_elements)
+}
+
+# Find common elements
+common_elements <- find_common_elements_df(pairwise)
+
+str(common_elements) #18 GO categories shared between all
+```
+
+Unique BP terms
+```{r}
+unique_Untreated_vs_Initial <- anti_join(MWU_result_BP_UntreatedvInitial_05, MWU_result_BP_TreatedvInitial_05, by = "name") 
+unique_Untreated_vs_Initial <- anti_join(unique_Untreated_vs_Initial, MWU_result_BP_TreatedvUntreated_05, by = "name") #108 unique
+
+unique_Treated_vs_Initial <- anti_join(MWU_result_BP_TreatedvInitial_05, MWU_result_BP_UntreatedvInitial_05, by = "name")
+unique_Treated_vs_Initial <- anti_join(unique_Treated_vs_Initial, MWU_result_BP_TreatedvUntreated_05, by = "name") #237 unique
+
+unique_Treated_vs_Untreated <- anti_join(MWU_result_BP_TreatedvUntreated_05, MWU_result_BP_UntreatedvInitial_05, by = "name")
+unique_Treated_vs_Untreated <- anti_join(unique_Treated_vs_Untreated, MWU_result_BP_TreatedvInitial_05,  by = "name") # 60 unique
+```
+
+add genes to sig GO term lists
+```{r}
+allgenes_BP_UntreatedvTreated=read.csv("BP_Treated_vs_Untreated_fc.csv", sep="")
+MWU_result_BP_TreatedvUntreated_05 %>% 
+  left_join(., allgenes_BP_UntreatedvTreated, by = c("name", "term")) %>% 
+  filter(name == "phagocytosis") %>% 
+  arrange(value) 
+#look at the expression patterns of the top 3 most down-regulated genes in this interaction: Acropora_018571, Acropora_017640, Acropora_010131
+#down-regulated because the delta.rank is negative, so overall it means this GO term was "downregulated" in Treated vs Untreated
+```
+
+
+venn diagram for BP
+```{r}
+pairwise_names=list("Untreated_vs_Initial"=MWU_result_BP_UntreatedvInitial_names, "Treated_vs_Initial"=MWU_result_BP_TreatedvInitial_names,"Treated_vs_Untreated"=MWU_result_BP_TreatedvUntreated_names)
+ggvenn(pairwise_names) + 
+  scale_fill_manual(values = c("#ca0020", "#0571b0", "#f4a582"))
+ggsave("GOterms_BP_Acer_venndiagram.pdf")
+```
+
+Common MF terms
+```{r}
+MWU_result_MF_TreatedvInitial=read.csv("MWU_MF_Treated_vs_Initial_fc.csv", sep = "")
+MWU_result_MF_TreatedvInitial %>% 
+  filter(p.adj < 0.05) -> MWU_result_MF_TreatedvInitial_05
+
+MWU_result_MF_TreatedvInitial_05$name -> MWU_result_MF_TreatedvInitial_names
+
+MWU_result_MF_TreatedvUntreated=read.csv("MWU_MF_Treated_vs_Untreated_fc.csv", sep = "")
+MWU_result_MF_TreatedvUntreated %>% 
+  filter(p.adj < 0.05) -> MWU_result_MF_TreatedvUntreated_05
+
+MWU_result_MF_TreatedvUntreated_05$name -> MWU_result_MF_TreatedvUntreated_names
+
+MWU_result_MF_UntreatedvInitial=read.csv("MWU_MF_Untreated_vs_Initial_fc.csv", sep = "")
+MWU_result_MF_UntreatedvInitial %>% 
+  filter(p.adj < 0.05) -> MWU_result_MF_UntreatedvInitial_05
+
+MWU_result_MF_UntreatedvInitial_05$name -> MWU_result_MF_UntreatedvInitial_names
+
+
+pairwise=list("Untreated_vs_Initial"=MWU_result_MF_UntreatedvInitial_05, "Treated_vs_Initial"=MWU_result_MF_TreatedvInitial_05,"Treated_vs_Untreated"=MWU_result_MF_TreatedvUntreated_05)
+
+find_common_elements_df <- function(lst, column_index = c(5,6)) {
+  # Initialize common_elements with the column of interest from the first data frame
+  common_elements <- lst[[1]][, column_index]
+  
+  # Loop through the rest of the list
+  for (df in lst[-1]) {
+    # Extract the column of interest from the current data frame
+    vec <- df[, column_index]
+    
+    # Find the intersection with the current common_elements
+    common_elements <- intersect(common_elements, vec)
+  }
+  
+  return(common_elements)
+}
+
+# Find common elements
+common_elements <- find_common_elements_df(pairwise)
+
+str(common_elements) #4 GO categories shared between all
+```
+
+Unique MF terms
+```{r}
+unique_Untreated_vs_Initial <- anti_join(MWU_result_MF_UntreatedvInitial_05, MWU_result_MF_TreatedvInitial_05, by = "name") 
+unique_Untreated_vs_Initial <- anti_join(unique_Untreated_vs_Initial, MWU_result_MF_TreatedvUntreated_05, by = "name") #14 unique
+
+unique_Treated_vs_Initial <- anti_join(MWU_result_MF_TreatedvInitial_05, MWU_result_MF_UntreatedvInitial_05, by = "name")
+unique_Treated_vs_Initial <- anti_join(unique_Treated_vs_Initial, MWU_result_MF_TreatedvUntreated_05, by = "name") #38 unique
+
+unique_Treated_vs_Untreated <- anti_join(MWU_result_MF_TreatedvUntreated_05, MWU_result_MF_UntreatedvInitial_05, by = "name")
+unique_Treated_vs_Untreated <- anti_join(unique_Treated_vs_Untreated, MWU_result_MF_TreatedvInitial_05) # 5 unique
+```
+
+
+venn diagram for MF
+```{r}
+pairwise_names=list("Untreated_vs_Initial"=MWU_result_MF_UntreatedvInitial_names, "Treated_vs_Initial"=MWU_result_MF_TreatedvInitial_names,"Treated_vs_Untreated"=MWU_result_MF_TreatedvUntreated_names)
+ggvenn(pairwise_names) + 
+  scale_fill_manual(values = c("#ca0020", "#0571b0", "#f4a582"))
+ggsave("GOterms_MF_Acer_venndiagram.pdf")
+```

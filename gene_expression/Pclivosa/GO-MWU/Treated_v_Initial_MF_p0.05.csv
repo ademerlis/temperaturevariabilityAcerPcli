@@ -1,8 +1,0 @@
-"","pval","term","direction","color"
-"2/393 protein domain specific binding",0.0592125463223641,"GO:0019904",0,"skyblue2"
-"6/478 RNA binding",0.0592125463223641,"GO:0003723",1,"lightcoral"
-"0/85 structural constituent of ribosome",0.0142411316996117,"GO:0003735",1,"firebrick1"
-"0/38 carbon-oxygen lyase activity",0.0592125463223641,"GO:0016836;GO:0016835",1,"lightcoral"
-"0/18 oxidoreductase activity, acting on the CH-CH group of donors, NAD or NADP as acceptor",0.0598600027388091,"GO:0016628",1,"lightcoral"
-"7/354 oxidoreductase activity",0.0592125463223641,"GO:0016491",1,"lightcoral"
-"0/38 oxidoreductase activity, acting on the CH-CH group of donors",0.0592125463223641,"GO:0016627",1,"lightcoral"

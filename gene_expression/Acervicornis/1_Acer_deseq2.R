@@ -450,8 +450,6 @@ load("RData_files/pvals.RData")
 
 library(tidyverse)
 
-#using the log-10 transformed p-adj value because that's what's used in the 6_commongenes.R script and I want to make sure all the numbers match
-
 #Untreated vs. Initial
 Treatment_Untreated_vs_Initial %>% 
   as.data.frame() %>% 

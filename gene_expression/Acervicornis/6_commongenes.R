@@ -69,7 +69,7 @@ Treated_vs_Untreated.p %>%
               mutate(gene = V1,
                      annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene") %>%
-  left_join(read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2kogClass.tab",
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
@@ -124,8 +124,14 @@ common_elements %>%
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") %>%
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2kogClass.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
                      KOG = V2) %>%
-              dplyr::select(-V1, -V2), by = "gene") -> common_genes_KOG_annotations
+              dplyr::select(-V1, -V2), by = "gene")  -> common_genes_KOG_annotations
 write_csv(common_genes_KOG_annotations, "common_genes_KOG_annotations.csv")
 
 
@@ -139,8 +145,29 @@ unique_Untreated_vs_Initial %>%
                      sep = "\t",
                      quote="", fill=FALSE) %>%
             mutate(gene = V1,
-                   KOG = V2) %>%
+                   annot = V2) %>%
             dplyr::select(-V1, -V2), by = "gene") -> unique_Untreated_vs_Initial_annotated
+
+str(unique_Untreated_vs_Initial_annotated) #2435
+
+load("RData_files/realModels_Acer.RData")
+
+Treatment_Untreated_vs_Initial=results(dds,contrast=c("Treatment","Untreated","Initial"))
+
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  dplyr::filter(padj<0.05) %>% 
+  right_join(., unique_Untreated_vs_Initial_annotated, by = "gene") %>%
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2kogClass.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") %>% view()
+  write_csv("unique_Untreated_vs_Initial_annotated_KOG.csv")
+
 write_csv(unique_Untreated_vs_Initial_annotated, "unique_Untreated_vs_Initial_annotated.csv")
 
 unique_Treated_vs_Initial <- anti_join(Treated_vs_Initial_sig, Untreated_vs_Initial_sig)
@@ -151,8 +178,27 @@ unique_Treated_vs_Initial %>%
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     KOG = V2) %>%
+                     annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene") -> unique_Treated_vs_Initial_annotated
+
+str(unique_Treated_vs_Initial_annotated) #1429
+
+Treatment_Treated_vs_Initial=results(dds,contrast=c("Treatment","Treated","Initial"))
+
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  dplyr::filter(padj<0.05) %>% 
+  right_join(., unique_Treated_vs_Initial_annotated, by = "gene") %>%
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2kogClass.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") %>% view()
+  write_csv("unique_Treated_vs_Initial_annotated_KOG.csv")
+
 write_csv(unique_Treated_vs_Initial_annotated, "unique_Treated_vs_Initial_annotated.csv")
 
 unique_Treated_vs_Untreated <- anti_join(Treated_vs_Untreated_sig, Untreated_vs_Initial_sig)
@@ -163,6 +209,25 @@ unique_Treated_vs_Untreated %>%
                        sep = "\t",
                        quote="", fill=FALSE) %>%
               mutate(gene = V1,
-                     KOG = V2) %>%
+                     annot = V2) %>%
               dplyr::select(-V1, -V2), by = "gene") -> unique_Treated_vs_Untreated_annotated
+
+str(unique_Treated_vs_Untreated_annotated) #116 
+
 write_csv(unique_Treated_vs_Untreated_annotated, "unique_Treated_vs_Untreated_annotated.csv")
+
+Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Untreated"))
+
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  dplyr::filter(padj<0.05) %>% 
+  right_join(., unique_Treated_vs_Untreated_annotated, by = "gene") %>%
+  left_join(read.table(file = "bioinformatics/Acervicornis_iso2kogClass.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     KOG = V2) %>%
+              dplyr::select(-V1, -V2), by = "gene") %>% 
+  write_csv("unique_Treated_vs_Untreated_annotated_KOG.csv")

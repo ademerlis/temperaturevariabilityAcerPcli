@@ -33,6 +33,7 @@ full_join(Treated_vs_Initial.fc, gene2kog_table, by="gene") %>%
   full_join(., iso2geneName, by = "gene") %>% 
   select(gene, annot, lfc, term, nseqs:padj) %>% 
   rename(KOG = term) %>% 
+  drop_na() %>% 
   write_csv("KOGterms_allgenes_pvalues_fc_TreatedvInitial.csv")
 
 fc.Treated_vs_Initial %>% 
@@ -51,10 +52,11 @@ full_join(Treated_vs_Untreated.fc, gene2kog_table, by="gene") %>%
   drop_na() %>% 
   filter(!KOG == "" & !KOG == "Function Unknown") %>% 
   rename(term = KOG) %>% 
-  full_join(., fc.Treated_vs_Initial, by = "term") %>% 
+  full_join(., fc.Treated_vs_Untreated, by = "term") %>% 
   full_join(., iso2geneName, by = "gene") %>% 
   select(gene, annot, lfc, term, nseqs:padj) %>% 
   rename(KOG = term) %>% 
+  drop_na() %>% 
   write_csv("KOGterms_allgenes_pvalues_fc_TreatedvUntreated.csv")
 
 fc.Treated_vs_Untreated %>% 
@@ -74,10 +76,11 @@ full_join(Untreated_vs_Initial.fc, gene2kog_table, by="gene") %>%
   drop_na() %>% 
   filter(!KOG == "" & !KOG == "Function Unknown") %>% 
   rename(term = KOG) %>% 
-  full_join(., fc.Treated_vs_Initial, by = "term") %>% 
+  full_join(., fc.Untreated_vs_Initial, by = "term") %>% 
   full_join(., iso2geneName, by = "gene") %>% 
   select(gene, annot, lfc, term, nseqs:padj) %>% 
   rename(KOG = term) %>% 
+  drop_na() %>% 
   write_csv("KOGterms_allgenes_pvalues_fc_UntreatedvInitial.csv")
 
 fc.Untreated_vs_Initial %>% 
