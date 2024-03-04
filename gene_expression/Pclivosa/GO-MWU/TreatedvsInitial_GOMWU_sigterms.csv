@@ -1,0 +1,4 @@
+delta.rank,pval,level,nseqs,term,name,p.adj,GO_category
+-402,1.55810881031532e-4,2,152,GO:0019898,extrinsic component of membrane,0.0368752418441292,CC
+-255,1.15911979585249e-4,1,419,GO:0045202;GO:0044456,synapse,0.0368752418441292,CC
+-384,8.3008727510304e-5,2,182,GO:0098552,side of membrane,0.0368752418441292,CC

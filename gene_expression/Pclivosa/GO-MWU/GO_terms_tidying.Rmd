@@ -23,7 +23,7 @@ full_join(cc_TreatedvInitial, MWU_result_CC_TreatedvInitial, by = c("level", "te
   filter(p.adj < 0.05) %>% 
   distinct(seq)
   
-# these tables are going to be way to big -- CC for Treated v Initial alone is like 44,000 rows...
+# these tables are going to be way to big -- CC for Treated v Initial alone is like 30,000 rows...
 ```
 
 Instead lets just make a table for each dds contrast with significant (p.adj < 0.05) BP, MF, and CC terms in one table
@@ -32,22 +32,20 @@ Treated vs Initial
 ```{r}
 MWU_result_CC_TreatedvInitial <- read.csv("MWU_CC_Treated_vs_Initial_fc.csv", sep = "")
 MWU_result_CC_TreatedvInitial %>% 
-  filter(p.adj <0.05) %>%  #111 GO terms
+  filter(p.adj <0.05) %>%  #3 GO terms
   mutate(GO_category = "CC") -> MWU_result_CC_TreatedvInitial_sig
+
+MWU_result_CC_TreatedvInitial_sig %>% 
+  write_csv("TreatedvsInitial_GOMWU_sigterms.csv")
 
 MWU_result_MF_TreatedvInitial <- read.csv("MWU_MF_Treated_vs_Initial_fc.csv", sep = "")
 MWU_result_MF_TreatedvInitial %>% 
-  filter(p.adj <0.05) %>%  #94 GO terms
-  mutate(GO_category = "MF") -> MWU_result_MF_TreatedvInitial_sig
+  filter(p.adj <0.05)  #0 GO terms
 
 MWU_result_BP_TreatedvInitial <- read.csv("MWU_BP_Treated_vs_Initial_fc.csv", sep = "")
 MWU_result_BP_TreatedvInitial %>%
-  filter(p.adj <0.05) %>%  #543 GO terms
-  mutate(GO_category = "BP") -> MWU_result_BP_TreatedvInitial_sig
+  filter(p.adj <0.05)   #0 GO terms
 
-full_join(MWU_result_CC_TreatedvInitial_sig, MWU_result_MF_TreatedvInitial_sig) %>% 
-  full_join(., MWU_result_BP_TreatedvInitial_sig) %>% 
-  write_csv("TreatedvsInitial_GOMWU_sigterms.csv")
 ```
 
 
@@ -55,22 +53,15 @@ Treated vs Untreated
 ```{r}
 MWU_result_CC_TreatedvUntreated <- read.csv("MWU_CC_Treated_vs_Untreated_fc.csv", sep = "")
 MWU_result_CC_TreatedvUntreated %>% 
-  filter(p.adj <0.05) %>%  #74 GO terms
-  mutate(GO_category = "CC") -> MWU_result_CC_TreatedvUntreated_sig
+  filter(p.adj <0.05)  #0 GO terms
 
 MWU_result_MF_TreatedvUntreated <- read.csv("MWU_MF_Treated_vs_Untreated_fc.csv", sep = "")
 MWU_result_MF_TreatedvUntreated %>% 
-  filter(p.adj <0.05) %>%  #10 GO terms
-  mutate(GO_category = "MF") -> MWU_result_MF_TreatedvUntreated_sig
+  filter(p.adj <0.05)  #0 GO terms
 
 MWU_result_BP_TreatedvUntreated <- read.csv("MWU_BP_Treated_vs_Untreated_fc.csv", sep = "")
 MWU_result_BP_TreatedvUntreated %>%
-  filter(p.adj <0.05) %>%  #114 GO terms
-  mutate(GO_category = "BP") -> MWU_result_BP_TreatedvUntreated_sig
-
-full_join(MWU_result_CC_TreatedvUntreated_sig, MWU_result_MF_TreatedvUntreated_sig) %>% 
-  full_join(., MWU_result_BP_TreatedvUntreated_sig) %>% 
-  write_csv("TreatedvsUntreated_GOMWU_sigterms.csv")
+  filter(p.adj <0.05) %>%  #0 GO terms
 ```
 
 Untreated vs Initial
@@ -78,21 +69,15 @@ Untreated vs Initial
 ```{r}
 MWU_result_CC_UntreatedvInitial <- read.csv("MWU_CC_Untreated_vs_Initial_fc.csv", sep = "")
 MWU_result_CC_UntreatedvInitial %>% 
-  filter(p.adj <0.05) %>%  #104 GO terms
+  filter(p.adj <0.05)  #0 GO terms
   mutate(GO_category = "CC") -> MWU_result_CC_UntreatedvInitial_sig
 
 MWU_result_MF_UntreatedvInitial <- read.csv("MWU_MF_Untreated_vs_Initial_fc.csv", sep = "")
 MWU_result_MF_UntreatedvInitial %>% 
-  filter(p.adj <0.05) %>%  #70 GO terms
-  mutate(GO_category = "MF") -> MWU_result_MF_UntreatedvInitial_sig
+  filter(p.adj <0.05) #0 GO terms
 
 MWU_result_BP_UntreatedvInitial <- read.csv("MWU_BP_Untreated_vs_Initial_fc.csv", sep = "")
 MWU_result_BP_UntreatedvInitial %>%
-  filter(p.adj <0.05) %>%  #432 GO terms
-  mutate(GO_category = "BP") -> MWU_result_BP_UntreatedvInitial_sig
-
-full_join(MWU_result_CC_UntreatedvInitial_sig, MWU_result_MF_UntreatedvInitial_sig) %>% 
-  full_join(., MWU_result_BP_UntreatedvInitial_sig) %>% 
-  write_csv("UntreatedvsInitial_GOMWU_sigterms.csv")
+  filter(p.adj <0.05) #0 GO terms
 ```
 

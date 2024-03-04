@@ -1229,7 +1229,7 @@ percent_cells_df %>%
 
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
-  group_by(num_days, Species, ID, Treatment) %>% 
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
   ungroup() %>% 
   select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
@@ -1242,8 +1242,29 @@ percent_cells_df %>%
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   ylab("% Decline Immune Cell Activity")+
   theme_classic() +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 15)) 
 #ggsave("normalized_percentchangeimmuneactivity_boxplot_species.pdf")
+```
+
+separating genotype
+```{r}
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perID) %>% 
+  distinct() %>% 
+  filter(num_days == "28") %>% 
+  right_join(., untreated_day0_immunecells, by = c("Species", "Genotype")) %>% 
+  mutate(relative_activity = ((mean_replicate_percent_perID-mean_untreated_day0_genet)/mean_untreated_day0_genet)*100) %>% #T1-T0/T0*100
+  ggplot(., aes(x=Genotype, y=relative_activity, fill= Treatment)) +
+  geom_boxplot() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Decline Immune Cell Activity")+
+  theme_classic() +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Species, scales = "free_x")
 ```
 
 
