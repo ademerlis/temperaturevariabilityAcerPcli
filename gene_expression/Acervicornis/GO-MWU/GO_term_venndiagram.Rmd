@@ -65,6 +65,34 @@ unique_Treated_vs_Initial <- anti_join(unique_Treated_vs_Initial, MWU_result_BP_
 
 unique_Treated_vs_Untreated <- anti_join(MWU_result_BP_TreatedvUntreated_05, MWU_result_BP_UntreatedvInitial_05, by = "name")
 unique_Treated_vs_Untreated <- anti_join(unique_Treated_vs_Untreated, MWU_result_BP_TreatedvInitial_05,  by = "name") # 60 unique
+
+#there's 60 GO terms here so that's a big figure
+ ggplot(unique_Treated_vs_Untreated, aes(x = reorder(name, delta.rank), y = delta.rank)) +
+  geom_point(aes(size = nseqs, color = p.adj)) +
+  theme_classic() +
+  labs(x = "GO Term Description", y = "MWU Delta Rank", title = "Treated vs. Untreated") +
+  coord_flip() +
+  scale_colour_gradient(low="blue", high="red")
+ 
+#filter for top 10 based on delta-rank = top 5 negative and top 5 positive
+unique_Treated_vs_Untreated %>% 
+  top_n(5, wt = delta.rank) %>%
+  bind_rows(
+    unique_Treated_vs_Untreated %>% 
+      # Get top 5 negative by sorting on absolute values
+      filter(delta.rank < 0) %>% 
+      top_n(5, wt = abs(delta.rank))
+  ) %>% 
+  mutate(direction = case_when(delta.rank > 0 ~ "Up-Regulated",
+                      delta.rank < 0 ~ "Down-Regulated")) %>% 
+  ggplot(., aes(x = reorder(name, delta.rank), y = delta.rank)) +
+  geom_point(aes(size = p.adj, color = direction)) +
+  theme_bw() +
+  labs(x = "BP GO Term Description", y = "MWU Delta Rank", title = "Acer Unqiue Treated vs. Untreated BP GO Terms") +
+  coord_flip() +
+  scale_size_continuous(range = c(6, 1)) +
+  scale_color_manual(values = c("Up-Regulated" = "red", "Down-Regulated" = "blue")) 
+ #ggsave("unique_top10_GO_BP_TreatedvUntreated_dotplot.pdf", width=8, height = 5)
 ```
 
 add genes to sig GO term lists
