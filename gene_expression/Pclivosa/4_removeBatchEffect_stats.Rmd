@@ -32,6 +32,6 @@ as.data.frame(ad) %>%
 ```
 posthoc of PERMANOVA for pairwise comparisons
 ```{r}
-pairwise.adonis(vsd2, factor = design$Treatment)
+pairwise.adonis(t(vsd2), factor = design$Treatment)
 ```
 

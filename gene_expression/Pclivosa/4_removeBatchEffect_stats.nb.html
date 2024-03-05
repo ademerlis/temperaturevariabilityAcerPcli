@@ -1754,6 +1754,129 @@ display: none;
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShERVNlcTIpXG5gYGAifQ== -->
+<pre class="r"><code>library(DESeq2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBTNFZlY3RvcnNcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogc3RhdHM0XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IEJpb2NHZW5lcmljc1xuXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYQmlvY0dlbmVyaWNz4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpzdGF0c+KAmTpcblxuICAgIElRUiwgbWFkLCBzZCwgdmFyLCB4dGFic1xuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6YmFzZeKAmTpcblxuICAgIGFueUR1cGxpY2F0ZWQsIGFwcGVuZCwgYXMuZGF0YS5mcmFtZSwgYmFzZW5hbWUsIGNiaW5kLCBjb2xuYW1lcywgZGlybmFtZSwgZG8uY2FsbCwgZHVwbGljYXRlZCwgZXZhbCwgZXZhbHEsIEZpbHRlciwgRmluZCwgZ2V0LFxuICAgIGdyZXAsIGdyZXBsLCBpbnRlcnNlY3QsIGlzLnVuc29ydGVkLCBsYXBwbHksIE1hcCwgbWFwcGx5LCBtYXRjaCwgbWdldCwgb3JkZXIsIHBhc3RlLCBwbWF4LCBwbWF4LmludCwgcG1pbiwgcG1pbi5pbnQsIFBvc2l0aW9uLFxuICAgIHJhbmssIHJiaW5kLCBSZWR1Y2UsIHJvd25hbWVzLCBzYXBwbHksIHNldGRpZmYsIHNvcnQsIHRhYmxlLCB0YXBwbHksIHVuaW9uLCB1bmlxdWUsIHVuc3BsaXQsIHdoaWNoLm1heCwgd2hpY2gubWluXG5cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmFM0VmVjdG9yc+KAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6YmFzZeKAmTpcblxuICAgIGV4cGFuZC5ncmlkLCBJLCB1bm5hbWVcblxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBJUmFuZ2VzXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IEdlbm9taWNSYW5nZXNcbkxvYWRpbmcgcmVxdWlyZWQgcGFja2FnZTogR2Vub21lSW5mb0RiXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IFN1bW1hcml6ZWRFeHBlcmltZW50XG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IE1hdHJpeEdlbmVyaWNzXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IG1hdHJpeFN0YXRzXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhNYXRyaXhHZW5lcmljc+KAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6bWF0cml4U3RhdHPigJk6XG5cbiAgICBjb2xBbGxzLCBjb2xBbnlOQXMsIGNvbEFueXMsIGNvbEF2Z3NQZXJSb3dTZXQsIGNvbENvbGxhcHNlLCBjb2xDb3VudHMsIGNvbEN1bW1heHMsIGNvbEN1bW1pbnMsIGNvbEN1bXByb2RzLCBjb2xDdW1zdW1zLFxuICAgIGNvbERpZmZzLCBjb2xJUVJEaWZmcywgY29sSVFScywgY29sTG9nU3VtRXhwcywgY29sTWFkRGlmZnMsIGNvbE1hZHMsIGNvbE1heHMsIGNvbE1lYW5zMiwgY29sTWVkaWFucywgY29sTWlucywgY29sT3JkZXJTdGF0cyxcbiAgICBjb2xQcm9kcywgY29sUXVhbnRpbGVzLCBjb2xSYW5nZXMsIGNvbFJhbmtzLCBjb2xTZERpZmZzLCBjb2xTZHMsIGNvbFN1bXMyLCBjb2xUYWJ1bGF0ZXMsIGNvbFZhckRpZmZzLCBjb2xWYXJzLCBjb2xXZWlnaHRlZE1hZHMsXG4gICAgY29sV2VpZ2h0ZWRNZWFucywgY29sV2VpZ2h0ZWRNZWRpYW5zLCBjb2xXZWlnaHRlZFNkcywgY29sV2VpZ2h0ZWRWYXJzLCByb3dBbGxzLCByb3dBbnlOQXMsIHJvd0FueXMsIHJvd0F2Z3NQZXJDb2xTZXQsXG4gICAgcm93Q29sbGFwc2UsIHJvd0NvdW50cywgcm93Q3VtbWF4cywgcm93Q3VtbWlucywgcm93Q3VtcHJvZHMsIHJvd0N1bXN1bXMsIHJvd0RpZmZzLCByb3dJUVJEaWZmcywgcm93SVFScywgcm93TG9nU3VtRXhwcyxcbiAgICByb3dNYWREaWZmcywgcm93TWFkcywgcm93TWF4cywgcm93TWVhbnMyLCByb3dNZWRpYW5zLCByb3dNaW5zLCByb3dPcmRlclN0YXRzLCByb3dQcm9kcywgcm93UXVhbnRpbGVzLCByb3dSYW5nZXMsIHJvd1JhbmtzLFxuICAgIHJvd1NkRGlmZnMsIHJvd1Nkcywgcm93U3VtczIsIHJvd1RhYnVsYXRlcywgcm93VmFyRGlmZnMsIHJvd1ZhcnMsIHJvd1dlaWdodGVkTWFkcywgcm93V2VpZ2h0ZWRNZWFucywgcm93V2VpZ2h0ZWRNZWRpYW5zLFxuICAgIHJvd1dlaWdodGVkU2RzLCByb3dXZWlnaHRlZFZhcnNcblxuTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBCaW9iYXNlXG5XZWxjb21lIHRvIEJpb2NvbmR1Y3RvclxuXG4gICAgVmlnbmV0dGVzIGNvbnRhaW4gaW50cm9kdWN0b3J5IG1hdGVyaWFsOyB2aWV3IHdpdGggJ2Jyb3dzZVZpZ25ldHRlcygpJy4gVG8gY2l0ZSBCaW9jb25kdWN0b3IsIHNlZSAnY2l0YXRpb24oXCJCaW9iYXNlXCIpJywgYW5kXG4gICAgZm9yIHBhY2thZ2VzICdjaXRhdGlvbihcInBrZ25hbWVcIiknLlxuXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJhCaW9iYXNl4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6TWF0cml4R2VuZXJpY3PigJk6XG5cbiAgICByb3dNZWRpYW5zXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTptYXRyaXhTdGF0c+KAmTpcblxuICAgIGFueU1pc3NpbmcsIHJvd01lZGlhbnNcbiJ9 -->
+<pre><code>Loading required package: S4Vectors
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find, get,
+    grep, grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int, Position,
+    rank, rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply, union, unique, unsplit, which.max, which.min
+
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomicRanges
+Loading required package: GenomeInfoDb
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse, colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs, colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds, colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds, colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods, rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins, rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars, rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with &#39;browseVignettes()&#39;. To cite Bioconductor, see &#39;citation(&quot;Biobase&quot;)&#39;, and
+    for packages &#39;citation(&quot;pkgname&quot;)&#39;.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGAifQ== -->
+<pre class="r"><code>library(tidyverse)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIEF0dGFjaGluZyBjb3JlIHRpZHl2ZXJzZSBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDIuMC4wIOKUgOKUgFxu4pyUIGRwbHlyICAgICAxLjEuNCAgICAg4pyUIHJlYWRyICAgICAyLjEuNVxu4pyUIGZvcmNhdHMgICAxLjAuMCAgICAg4pyUIHN0cmluZ3IgICAxLjUuMVxu4pyUIGdncGxvdDIgICAzLjUuMCAgICAg4pyUIHRpYmJsZSAgICAzLjIuMVxu4pyUIGx1YnJpZGF0ZSAxLjkuMyAgICAg4pyUIHRpZHlyICAgICAxLjMuMVxu4pyUIHB1cnJyICAgICAxLjAuMiAgICAg4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIGx1YnJpZGF0ZTo6JXdpdGhpbiUoKSBtYXNrcyBJUmFuZ2VzOjold2l0aGluJSgpXG7inJYgZHBseXI6OmNvbGxhcHNlKCkgICAgIG1hc2tzIElSYW5nZXM6OmNvbGxhcHNlKClcbuKcliBkcGx5cjo6Y29tYmluZSgpICAgICAgbWFza3MgQmlvYmFzZTo6Y29tYmluZSgpLCBCaW9jR2VuZXJpY3M6OmNvbWJpbmUoKVxu4pyWIGRwbHlyOjpjb3VudCgpICAgICAgICBtYXNrcyBtYXRyaXhTdGF0czo6Y291bnQoKVxu4pyWIGRwbHlyOjpkZXNjKCkgICAgICAgICBtYXNrcyBJUmFuZ2VzOjpkZXNjKClcbuKcliB0aWR5cjo6ZXhwYW5kKCkgICAgICAgbWFza3MgUzRWZWN0b3JzOjpleHBhbmQoKVxu4pyWIGRwbHlyOjpmaWx0ZXIoKSAgICAgICBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliBkcGx5cjo6Zmlyc3QoKSAgICAgICAgbWFza3MgUzRWZWN0b3JzOjpmaXJzdCgpXG7inJYgZHBseXI6OmxhZygpICAgICAgICAgIG1hc2tzIHN0YXRzOjpsYWcoKVxu4pyWIGdncGxvdDI6OlBvc2l0aW9uKCkgICBtYXNrcyBCaW9jR2VuZXJpY3M6OlBvc2l0aW9uKCksIGJhc2U6OlBvc2l0aW9uKClcbuKcliBwdXJycjo6cmVkdWNlKCkgICAgICAgbWFza3MgR2Vub21pY1Jhbmdlczo6cmVkdWNlKCksIElSYW5nZXM6OnJlZHVjZSgpXG7inJYgZHBseXI6OnJlbmFtZSgpICAgICAgIG1hc2tzIFM0VmVjdG9yczo6cmVuYW1lKClcbuKcliBsdWJyaWRhdGU6OnNlY29uZCgpICAgbWFza3MgUzRWZWN0b3JzOjpzZWNvbmQoKVxu4pyWIGx1YnJpZGF0ZTo6c2Vjb25kPC0oKSBtYXNrcyBTNFZlY3RvcnM6OnNlY29uZDwtKClcbuKcliBkcGx5cjo6c2xpY2UoKSAgICAgICAgbWFza3MgSVJhbmdlczo6c2xpY2UoKVxu4oS5IFVzZSB0aGUgXHUwMDFiXTg7O2h0dHA6Ly9jb25mbGljdGVkLnItbGliLm9yZy9cdTAwMDdjb25mbGljdGVkIHBhY2thZ2VcdTAwMWJdODs7XHUwMDA3IHRvIGZvcmNlIGFsbCBjb25mbGljdHMgdG8gYmVjb21lIGVycm9yc1xuIn0= -->
+<pre><code>── Attaching core tidyverse packages ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ lubridate::%within%() masks IRanges::%within%()
+✖ dplyr::collapse()     masks IRanges::collapse()
+✖ dplyr::combine()      masks Biobase::combine(), BiocGenerics::combine()
+✖ dplyr::count()        masks matrixStats::count()
+✖ dplyr::desc()         masks IRanges::desc()
+✖ tidyr::expand()       masks S4Vectors::expand()
+✖ dplyr::filter()       masks stats::filter()
+✖ dplyr::first()        masks S4Vectors::first()
+✖ dplyr::lag()          masks stats::lag()
+✖ ggplot2::Position()   masks BiocGenerics::Position(), base::Position()
+✖ purrr::reduce()       masks GenomicRanges::reduce(), IRanges::reduce()
+✖ dplyr::rename()       masks S4Vectors::rename()
+✖ lubridate::second()   masks S4Vectors::second()
+✖ lubridate::second&lt;-() masks S4Vectors::second&lt;-()
+✖ dplyr::slice()        masks IRanges::slice()
+ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShsaW1tYSlcbmBgYCJ9 -->
+<pre class="r"><code>library(limma)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYbGltbWHigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpERVNlcTLigJk6XG5cbiAgICBwbG90TUFcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g4oCYcGFja2FnZTpCaW9jR2VuZXJpY3PigJk6XG5cbiAgICBwbG90TUFcbiJ9 -->
+<pre><code>
+Attaching package: ‘limma’
+
+The following object is masked from ‘package:DESeq2’:
+
+    plotMA
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    plotMA</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh2ZWdhbilcbmBgYCJ9 -->
+<pre class="r"><code>library(vegan)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBwZXJtdXRlXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGxhdHRpY2VcblRoaXMgaXMgdmVnYW4gMi42LTRcbiJ9 -->
+<pre><code>Loading required package: permute
+Loading required package: lattice
+This is vegan 2.6-4</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubG9hZChcIlJEYXRhX2ZpbGVzL2luaXRpYWxfZnVsbGRkc2Rlc2lnbmNvdW50c1ZzZGNvdW50c1dHQ05BLlJEYXRhXCIpXG5cbiNkZXZ0b29sczo6aW5zdGFsbF9naXRodWIoXCJwbWFydGluZXphcmJpenUvcGFpcndpc2VBZG9uaXMvcGFpcndpc2VBZG9uaXNcIilcbmxpYnJhcnkocGFpcndpc2VBZG9uaXMpXG5gYGAifQ== -->
+<pre class="r"><code>load(&quot;RData_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData&quot;)
+
+#devtools::install_github(&quot;pmartinezarbizu/pairwiseAdonis/pairwiseAdonis&quot;)
+library(pairwiseAdonis)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBjbHVzdGVyXG4ifQ== -->
+<pre><code>Loading required package: cluster</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="remove-batch-effect-of-genotype" class="section level1">
@@ -1783,10 +1906,22 @@ display: none;
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>posthoc of PERMANOVA for pairwise comparisons</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInB3YWRvbmlzIiwiZGF0YS5mcmFtZSJdLCJucm93IjozLCJuY29sIjo4LCJzdW1tYXJ5Ijp7IkRlc2NyaXB0aW9uIjpbInB3YWRvbmlzIFszIMOXIDhdIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQXd0eWlURG1pdUJpWUdCZ1ptQmhZbVJnWmdVeUdWaERROXgwTFJpQUlrQU9Jd01MQXllSXJnQXFFZ1l5T0lCWUFLSURMQ0VTbWxkU2xKcFlrcHFpVUZhc0VBSmhZcFh6ek1zc3lVek1nY29KaFdES01ERHdnVXkyLzhBQUJ1ZzBYTjdSTGxqSytZeXp2YTlZeFZHeCs0WDJMbE5YUGc2OVp3cVhmM2Q4eDZNdno2ODRNS3hXdi9wYjlMdjl6NmZ6eGJtZTNZTExMNjlyL3M5L3U5ZCtnM3lxNGVSL0R2WXIwNSt0THJyZEFaZS9uOVB0UExXUnpUNWpjc21lckxwZjlnMUp2cGMrcnZ5RDRiNm12T205L3ZkdDdHZEExS0dGREFNczZMUmdERDIwUUdYTlM4eE5MWVpxNDRBSkZpUm1GaFZET1V3dWFWQVdaM0JwYnJGL1duQWhUSXJkVGM4M1B5VVZGcDVNUVVZd2lRSzlzc1NjMGxRb2w2dEFMekVscTdRWUVTM014Wm5wYUM3aExNb3YxNE81aGhka1hBUEVqOHpvVGs3T1NTeUdPUmtteUpXU1dKS29sMVlFMUEvay9VUFR3cDVmVUpLWm53ZlV4QVJLUUt4b21obUwwQVQ0Uy9OQUxrblJUYzRvemN2V05RWlpBSmFHQUY0b214bUp6UUd4a3VrLzFDaFdxRkZzcVhucG1YbXdrR0ROU1V5Q2h4Y2YwTWRnRCtzVkZHWG1sY0I4QWhRdDFpdkpMNEduVTY3ay9CeVlDTmh2RFA4QUJINGlQVGNEQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["pairs"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SumsOfSqs"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["F.Model"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["R2"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["p.adjusted"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["sig"],"name":[8],"type":["chr"],"align":["left"]}],"data":[{"1":"Untreated vs Treated","2":"1","3":"0.0005262285","4":"0.9618802","5":"0.04588711","6":"0.491","7":"1.000","8":""},{"1":"Untreated vs Initial","2":"1","3":"0.0008876886","4":"2.0835721","5":"0.06297905","6":"0.003","7":"0.009","8":"*"},{"1":"Treated vs Initial","2":"1","3":"0.0006281929","4":"1.6185599","5":"0.04962083","6":"0.008","7":"0.024","8":"."}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoREVTZXEyKQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShsaW1tYSkKbGlicmFyeSh2ZWdhbikKCmxvYWQoIlJEYXRhX2ZpbGVzL2luaXRpYWxfZnVsbGRkc2Rlc2lnbmNvdW50c1ZzZGNvdW50c1dHQ05BLlJEYXRhIikKYGBgCgojIHJlbW92ZSBiYXRjaCBlZmZlY3Qgb2YgZ2Vub3R5cGUKCmBgYHtyfQp2c2QyIDwtIHJlbW92ZUJhdGNoRWZmZWN0KGFzc2F5KFZzZCksIGJhdGNoID0gVnNkJEdlbm90eXBlKQpgYGAKCgojIGZvcm1hbCBhbmFseXNpcyBvZiB2YXJpYW5jZSBpbiBkaXN0YW5jZSBtYXRyaXggKFBFUk1BTk9WQSkKYGBge3J9CmFkPWFkb25pczIodCh2c2QyKX5UcmVhdG1lbnQsZGF0YT1kZXNpZ24sbWV0aG9kPSJtYW5oYXR0YW4iLHBlcm11dGF0aW9ucz0xZTYpCmFkCnN1bW1hcnkoYWQpCmFzLmRhdGEuZnJhbWUoYWQpICU+JSAKICB3cml0ZV9jc3YoIlBFUk1BTk9WQV9iYXRjaGVmZmVjdHJlbW92ZWQuY3N2IikKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoREVTZXEyKQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShsaW1tYSkKbGlicmFyeSh2ZWdhbikKCmxvYWQoIlJEYXRhX2ZpbGVzL2luaXRpYWxfZnVsbGRkc2Rlc2lnbmNvdW50c1ZzZGNvdW50c1dHQ05BLlJEYXRhIikKCiNkZXZ0b29sczo6aW5zdGFsbF9naXRodWIoInBtYXJ0aW5lemFyYml6dS9wYWlyd2lzZUFkb25pcy9wYWlyd2lzZUFkb25pcyIpCmxpYnJhcnkocGFpcndpc2VBZG9uaXMpCmBgYAoKIyByZW1vdmUgYmF0Y2ggZWZmZWN0IG9mIGdlbm90eXBlCgpgYGB7cn0KdnNkMiA8LSByZW1vdmVCYXRjaEVmZmVjdChhc3NheShWc2QpLCBiYXRjaCA9IFZzZCRHZW5vdHlwZSkKYGBgCgoKIyBmb3JtYWwgYW5hbHlzaXMgb2YgdmFyaWFuY2UgaW4gZGlzdGFuY2UgbWF0cml4IChQRVJNQU5PVkEpCmBgYHtyfQphZD1hZG9uaXMyKHQodnNkMil+VHJlYXRtZW50LGRhdGE9ZGVzaWduLG1ldGhvZD0ibWFuaGF0dGFuIixwZXJtdXRhdGlvbnM9MWU2KQphZApzdW1tYXJ5KGFkKQphcy5kYXRhLmZyYW1lKGFkKSAlPiUgCiAgd3JpdGVfY3N2KCJQRVJNQU5PVkFfYmF0Y2hlZmZlY3RyZW1vdmVkLmNzdiIpCmBgYApwb3N0aG9jIG9mIFBFUk1BTk9WQSBmb3IgcGFpcndpc2UgY29tcGFyaXNvbnMKYGBge3J9CnBhaXJ3aXNlLmFkb25pcyh0KHZzZDIpLCBmYWN0b3IgPSBkZXNpZ24kVHJlYXRtZW50KQpgYGAKCg==</div>
 
 
 
