@@ -1,0 +1,68 @@
+---
+title: "specific_gene_expression"
+author: "allyson_demerlis"
+date: "2024-03-06"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(DESeq2)
+
+TreatedvUntreated <- read_csv("results_csv/unique_Treated_vs_Untreated_annotated_KOG.csv")
+
+load("Rdata_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
+```
+
+
+```{r}
+TreatedvUntreated %>% 
+  arrange(desc(log2FoldChange)) #Acropora_023112 = histone H2A l2fc 1.48 
+
+TreatedvUntreated %>% 
+  arrange(log2FoldChange) #Acropora_019471 = 	nitric-oxide synthase activity l2fc -2.052
+``` 
+
+```{r}
+dds <- estimateSizeFactors(dds)
+normalized_counts <- counts(dds, normalized=TRUE)
+Acropora_023112_counts <- normalized_counts["Acropora_023112",]
+
+df_Acropora_023112 <- data.frame(expression_level = Acropora_023112_counts)
+
+df_Acropora_023112 %>% 
+  rownames_to_column(var="Sample") -> df_Acropora_023112
+
+design %>% 
+  rownames_to_column(var="Sample") -> design
+  
+full_join(design, df_Acropora_023112) %>% 
+  filter(!Treatment == "Initial") %>% 
+  ggplot(., aes(x=Treatment, y=expression_level, fill=Treatment)) +
+  geom_boxplot() +
+  theme_classic() +
+  scale_fill_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Normalized Expression Level") +
+  theme(text = element_text(size = 15))
+
+```
+
+
+```{r}
+Acropora_019471_counts <- normalized_counts["Acropora_019471",]
+
+df_Acropora_019471 <- data.frame(expression_level = Acropora_019471_counts)
+
+df_Acropora_019471 %>% 
+  rownames_to_column(var="Sample") -> df_Acropora_019471
+ 
+full_join(design, df_Acropora_019471) %>% 
+  filter(!Treatment == "Initial") %>% 
+  ggplot(., aes(x=Treatment, y=expression_level, fill=Treatment)) +
+  geom_boxplot() +
+  theme_classic() +
+  scale_fill_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Normalized Expression Level") +
+  theme(text = element_text(size = 15))
+
+```

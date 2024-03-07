@@ -342,6 +342,14 @@ Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>%
   na.omit() %>% #987 genes
   distinct(KO, .keep_all = TRUE) %>% #832 distinct KEGG terms
   column_to_rownames(var = "KO") -> TreatedvUntreated_KEGG_DGEs
+
+Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvUntreated_DGEs, by = "gene") %>% 
+  filter(gene == "Acropora_023112")
+
+Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvUntreated_DGEs, by = "gene") %>% 
+  filter(gene == "Acropora_019471")
 ```
 
 
