@@ -8,10 +8,13 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(DESeq2)
+library(cowplot)
 
 TreatedvUntreated <- read_csv("results_csv/unique_Treated_vs_Untreated_annotated_KOG.csv")
 
 load("Rdata_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
+
+Acer_slowburn_survival <- read_csv("../../physiology/1_survivorship/csv_files/survival_percent_acer.csv")
 ```
 
 
@@ -22,10 +25,14 @@ TreatedvUntreated %>%
 TreatedvUntreated %>% 
   arrange(log2FoldChange) #Acropora_019471 = 	nitric-oxide synthase activity l2fc -2.052
 ``` 
-
+# normalize gene counts
 ```{r}
 dds <- estimateSizeFactors(dds)
 normalized_counts <- counts(dds, normalized=TRUE)
+```
+
+# boxplot of Acropora_023112 = histone H2A 
+```{r}
 Acropora_023112_counts <- normalized_counts["Acropora_023112",]
 
 df_Acropora_023112 <- data.frame(expression_level = Acropora_023112_counts)
@@ -47,7 +54,7 @@ full_join(design, df_Acropora_023112) %>%
 
 ```
 
-
+# boxplot of Acropora_019471 = 	nitric-oxide synthase activity
 ```{r}
 Acropora_019471_counts <- normalized_counts["Acropora_019471",]
 
@@ -66,3 +73,295 @@ full_join(design, df_Acropora_019471) %>%
   theme(text = element_text(size = 15))
 
 ```
+
+# gene expression / slowburn survival correlations
+
+```{r}
+design %>% 
+  filter(!Treatment == "Initial") -> design_TreatedvUntreated # 20 samples 
+
+Acer_slowburn_survival$Genotype <- gsub("-", "_", Acer_slowburn_survival$Colony)
+```
+
+
+## Acropora_023112 = histone H2A
+```{r}
+as.data.frame(normalized_counts) %>% 
+  rownames_to_column(var="gene_ID") %>% 
+  filter(gene_ID == "Acropora_023112") %>% 
+  pivot_longer(Acer.005:Acer.150, names_to = "Sample") %>% 
+  right_join(., design_TreatedvUntreated) %>% 
+  select(!c("gene_ID", "Sample", "Sample.ID", "Date.Sampled")) -> normalized_counts_Acropora_023112
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_023112) %>% 
+  group_by(Treatment) %>% 
+  do(tidy(lm(Percent_Survival_Day5 ~ value, data = .))) # for p-values (neither correlation is significant)
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_023112) %>% 
+  group_by(Treatment) %>%
+  summarize(correlation = cor(Percent_Survival_Day5, value)) #for R2 values
+
+p1<-Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_023112) %>% 
+  group_by(Treatment,Genotype) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = value, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(title = "Acropora_023112 = histone H2A", x = "% Survival at 32ºC by Day 5", y = "Normalized Expression Level") +
+  facet_wrap(~Treatment, scales="free_x")+
+  theme(legend.position = "none")
+
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_023112) %>% 
+  group_by(Treatment,Genotype) %>% 
+  mutate(mean_expression = mean(value)) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = mean_expression, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Mean Expression Level") +
+  theme(text = element_text(size = 15))+
+  facet_wrap(~Treatment, scales="free_x")
+```
+
+## Acropora_019471 = 	nitric-oxide synthase activity
+```{r}
+as.data.frame(normalized_counts) %>% 
+  rownames_to_column(var="gene_ID") %>% 
+  filter(gene_ID == "Acropora_019471") %>% 
+  pivot_longer(Acer.005:Acer.150, names_to = "Sample") %>% 
+  right_join(., design_TreatedvUntreated) %>% 
+  select(!c("gene_ID", "Sample", "Sample.ID", "Date.Sampled")) -> normalized_counts_Acropora_019471
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_019471) %>% 
+  group_by(Treatment) %>% 
+  do(tidy(lm(Percent_Survival_Day5 ~ value, data = .))) # for p-values (neither correlation is significant)
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_019471) %>% 
+  group_by(Treatment) %>%
+  summarize(correlation = cor(Percent_Survival_Day5, value)) #for R2 values
+
+p2<-Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_019471) %>% 
+  group_by(Treatment,Genotype) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = value, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(title = "Acropora_019471 = nitric-oxide synthase activity", x = "% Survival at 32ºC by Day 5", y = "Normalized Expression Level") +
+  facet_wrap(~Treatment, scales="free_x")+
+  theme(legend.position = "none")
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_019471) %>% 
+  group_by(Treatment,Genotype) %>% 
+  mutate(mean_expression = mean(value)) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = mean_expression, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Mean Expression Level") +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Treatment, scales="free_x")
+```
+
+# Acropora_010783 (green fluorescent protein)
+```{r}
+as.data.frame(normalized_counts) %>% 
+  rownames_to_column(var="gene_ID") %>% 
+  filter(gene_ID == "Acropora_010783") %>% 
+  pivot_longer(Acer.005:Acer.150, names_to = "Sample") %>% 
+  right_join(., design_TreatedvUntreated) %>% 
+  select(!c("gene_ID", "Sample", "Sample.ID", "Date.Sampled")) -> normalized_counts_Acropora_010783
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_010783) %>% 
+  group_by(Treatment) %>% 
+  do(tidy(lm(Percent_Survival_Day5 ~ value, data = .))) # for p-values (neither correlation is significant)
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_010783) %>% 
+  group_by(Treatment) %>%
+  summarize(correlation = cor(Percent_Survival_Day5, value)) #for R2 values
+
+p3<-Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_010783) %>% 
+  group_by(Treatment,Genotype) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = value, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+   labs(title = "Acropora_010783 = green fluorescent protein", x = "% Survival at 32ºC by Day 5", y = "Normalized Expression Level") +
+  facet_wrap(~Treatment, scales="free_x")+
+  theme(legend.position = "none")
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_010783) %>% 
+  group_by(Treatment,Genotype) %>% 
+  mutate(mean_expression = mean(value)) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = mean_expression, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Mean Expression Level") +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Treatment, scales="free_x")
+```
+
+
+# Acropora_000238 = nucleosome (Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template)
+```{r}
+as.data.frame(normalized_counts) %>% 
+  rownames_to_column(var="gene_ID") %>% 
+  filter(gene_ID == "Acropora_000238") %>% 
+  pivot_longer(Acer.005:Acer.150, names_to = "Sample") %>% 
+  right_join(., design_TreatedvUntreated) %>% 
+  select(!c("gene_ID", "Sample", "Sample.ID", "Date.Sampled")) -> normalized_counts_Acropora_000238
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_000238) %>% 
+  group_by(Treatment) %>% 
+  do(tidy(lm(Percent_Survival_Day5 ~ value, data = .))) # for p-values (neither correlation is significant)
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_000238) %>% 
+  group_by(Treatment) %>%
+  summarize(correlation = cor(Percent_Survival_Day5, value)) #for R2 values
+
+p4<-Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_000238) %>% 
+  group_by(Treatment,Genotype) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = value, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(title = "Acropora_000238 = nucleosome", x = "% Survival at 32ºC by Day 5", y = "Normalized Expression Level") +
+  facet_wrap(~Treatment, scales="free_x")+
+  theme(legend.position = "none")
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_000238) %>% 
+  group_by(Treatment,Genotype) %>% 
+  mutate(mean_expression = mean(value)) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = mean_expression, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Mean Expression Level") +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Treatment, scales="free_x")
+```
+
+# Acropora_015765 = transmembrane receptor protein tyrosine kinase activity
+```{r}
+as.data.frame(normalized_counts) %>% 
+  rownames_to_column(var="gene_ID") %>% 
+  filter(gene_ID == "Acropora_015765") %>% 
+  pivot_longer(Acer.005:Acer.150, names_to = "Sample") %>% 
+  right_join(., design_TreatedvUntreated) %>% 
+  select(!c("gene_ID", "Sample", "Sample.ID", "Date.Sampled")) -> normalized_counts_Acropora_015765
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_015765) %>% 
+  group_by(Treatment) %>% 
+  do(tidy(lm(Percent_Survival_Day5 ~ value, data = .))) # for p-values (neither correlation is significant)
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_015765) %>% 
+  group_by(Treatment) %>%
+  summarize(correlation = cor(Percent_Survival_Day5, value)) #for R2 values
+
+p5<-Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_015765) %>% 
+  group_by(Treatment,Genotype) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = value, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(title = "Acropora_015765 = transmembrane receptor protein tyrosine kinase activity", x = "% Survival at 32ºC by Day 5", y = "Normalized Expression Level") +
+  facet_wrap(~Treatment, scales="free_x")+
+  theme(legend.position = "none")
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_015765) %>% 
+  group_by(Treatment,Genotype) %>% 
+  mutate(mean_expression = mean(value)) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = mean_expression, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Mean Expression Level") +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Treatment, scales="free_x")
+
+```
+
+# Acropora_017542 = 	Belongs to the small heat shock protein (HSP20) family
+```{r}
+as.data.frame(normalized_counts) %>% 
+  rownames_to_column(var="gene_ID") %>% 
+  filter(gene_ID == "Acropora_017542") %>% 
+  pivot_longer(Acer.005:Acer.150, names_to = "Sample") %>% 
+  right_join(., design_TreatedvUntreated) %>% 
+  select(!c("gene_ID", "Sample", "Sample.ID", "Date.Sampled")) -> normalized_counts_Acropora_017542
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_017542) %>% 
+  group_by(Treatment) %>% 
+  do(tidy(lm(Percent_Survival_Day5 ~ value, data = .))) # for p-values (neither correlation is significant)
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_017542) %>% 
+  group_by(Treatment) %>%
+  summarize(correlation = cor(Percent_Survival_Day5, value)) #for R2 values
+
+p6<-Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_017542) %>% 
+  group_by(Treatment,Genotype) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = value, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(title = "Acropora_017542 = Belongs to the small heat shock protein (HSP20) family", x = "% Survival at 32ºC by Day 5", y = "Normalized Expression Level") +
+  facet_wrap(~Treatment, scales="free_x") +
+  theme(legend.position = "none")
+
+
+Acer_slowburn_survival %>% 
+  right_join(., normalized_counts_Acropora_017542) %>% 
+  group_by(Treatment,Genotype) %>% 
+  mutate(mean_expression = mean(value)) %>% 
+  ggplot(., aes(x=Percent_Survival_Day5, y = mean_expression, color= Treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = Treatment)) + # Add linear model lines without confidence interval
+  theme_classic() +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Mean Expression Level") +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~Treatment, scales="free_x")
+```
+
+
+# plot all correlation plots together
+```{r}
+plot_grid(p1, p2, p3, p4, p5, p6, ncol = 3)
+ggsave("specificgenes_correlationsurvivorship.pdf", width = 10, height = 6)
+```
+

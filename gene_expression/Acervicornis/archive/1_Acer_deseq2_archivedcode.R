@@ -141,7 +141,7 @@ plot(tre,cex=0.8)
 dev.off()
 
 # formal analysis of variance in distance matricies: 
-ad=adonis2(t(vsd)~Genotype + Treatment,data=conditions,method="manhattan",permutations=1e6)
+ad=adonis2(t(vsd2)~Genotype + Treatment,data=design,method="manhattan",permutations=1e6)
 ad
 summary(ad)
 as.data.frame(ad)

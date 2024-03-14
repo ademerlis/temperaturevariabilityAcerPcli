@@ -785,4 +785,76 @@ survfit2(Surv(daysToDeath, status) ~ Species_Treatment, data = survivorship) %>%
 #ggsave("kmcurve_slowburn.pdf")
 ```
 
+## Acer survivorship curves
+```{r}
+p1 <- survivorship %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+survfit2(Surv(daysToDeath, status) ~ Treatment, data = .) %>% 
+  ggsurvfit() +
+  labs(x = "Days", y = "Overall survival probability") +
+  scale_ggsurvfit() +
+  add_pvalue(caption = "Log-rank {p.value}") +
+  add_pvalue(location  = "annotation") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "right") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+#significant!!
+```
+
+## Pcli survivorship curves
+```{r}
+p2<- survivorship %>% 
+  filter(Species == "Pseudodiploria clivosa") %>% 
+survfit2(Surv(daysToDeath, status) ~ Treatment, data = .) %>% 
+  ggsurvfit() +
+  labs(x = "Days", y = "Overall survival probability") +
+  scale_ggsurvfit() +
+  add_pvalue(caption = "Log-rank {p.value}") +
+  add_pvalue(location  = "annotation") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "right") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+# not significant
+
+```
+
+```{r}
+plot_grid(p1,p2)
+#ggsave("species_survivorship_slowburn.pdf", width = 10, height = 4)
+```
+
+
+## Acer survivorship by colony
+```{r}
+survivorship %>% 
+  filter(Species == "Acropora cervicornis") -> survivorship_Acer
+
+survivorship_Acer$Colony_Treatment <- interaction(survivorship_Acer$Colony, survivorship_Acer$Treatment)
+
+summary(survfit2(Surv(daysToDeath, status) ~ Colony_Treatment, data = survivorship_Acer))
+
+#all of them are 
+```
+
+# Cox 
+```{r}
+survivorship %>% 
+  filter(Species == "Acropora cervicornis") -> survivorship_Acer
+
+surv_Acer <- Surv(time = survivorship_Acer$daysToDeath, event = survivorship_Acer$status)
+
+coxph(surv_Acer ~ Treatment, data = survivorship_Acer)
+summary(coxph(surv_Acer ~ Treatment, data = survivorship_Acer))
+```
+
+```{r}
+survivorship %>% 
+  filter(Species == "Pseudodiploria clivosa") -> survivorship_Pcli
+
+surv_Pcli <- Surv(time = survivorship_Pcli$daysToDeath, event = survivorship_Pcli$status)
+
+coxph(surv_Pcli ~ Treatment, data = survivorship_Pcli)
+summary(coxph(surv_Pcli ~ Treatment, data = survivorship_Pcli))
+```
+```
 

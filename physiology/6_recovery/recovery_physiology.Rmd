@@ -107,11 +107,8 @@ aov(change ~ Treatment*Species, data = fvfm_recovery_stats)
 
 summary(aov(change ~ Treatment*Species, data = fvfm_recovery_stats))
 
-#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_table.csv")
-
 TukeyHSD(aov(change ~ Treatment*Species, data = fvfm_recovery_stats))
          
-#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
 ```
 
 

@@ -26,6 +26,7 @@ library(tidyverse)
 library(pathview)
 library(clusterProfiler)
 library(enrichplot)
+library(cowplot)
 ```
 
 1) You will need a list of Kegg IDs that match your gene IDs.
@@ -80,9 +81,6 @@ dotplot(KEGG_enrich_TvI)
 ```{r}
 length(unique(KEGG_enrich_TvI@result$Description)) #333 unique KEGG terms
 
-unique(KEGG_enrich@result$category)
-#I don't have category in my results table
-
 KEGG_enrich_TvI@result$geneID
 pathway_ids <- rownames(KEGG_enrich_TvI@result)
 
@@ -124,7 +122,7 @@ filtered_KEGG_enrich_TvI$GeneRatio <- sapply(filtered_KEGG_enrich_TvI$GeneRatio,
   eval(parse(text=x))
 })
 
-filtered_KEGG_enrich_TvI %>% 
+p1<- filtered_KEGG_enrich_TvI %>% 
   drop_na(Category) %>% 
   filter(p.adjust < 0.05) %>% 
 ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
@@ -132,7 +130,11 @@ ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
   theme_minimal() +
 labs(x = "MAP Description", y = "Gene Ratio", title = "Treated vs. Initial") +
   coord_flip() +
-  scale_colour_gradient(low="blue", high="red")
+  scale_colour_gradient(low="blue", high="red") +
+  theme(plot.title = element_text(size=15),  # Increase plot title text size
+          axis.title = element_text(size=13),  # Increase axis titles text size
+          axis.text = element_text(size=12), 
+        legend.text = element_text(size=12)) 
 #ggsave("TreatedvsInitial_KEGGenrichment_p0.05.pdf")
 
 ```
@@ -410,7 +412,7 @@ filtered_KEGG_enrich_TvU$GeneRatio <- sapply(filtered_KEGG_enrich_TvU$GeneRatio,
   eval(parse(text=x))
 })
 
-filtered_KEGG_enrich_TvU %>% 
+p2<-filtered_KEGG_enrich_TvU %>% 
   drop_na(Category) %>% 
   filter(p.adjust < 0.05) %>% 
 ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
@@ -423,7 +425,7 @@ labs(x = "MAP Description", y = "Gene Ratio", title = "Treated vs. Untreated") +
           axis.title = element_text(size=13),  # Increase axis titles text size
           axis.text = element_text(size=12), 
         legend.text = element_text(size=12)) 
-ggsave("TreatedvsUntreated_KEGGenrichment_p0.05.pdf")
+#ggsave("TreatedvsUntreated_KEGGenrichment_p0.05.pdf")
 
 ```
 
@@ -607,7 +609,7 @@ filtered_KEGG_enrich_UvI$GeneRatio <- sapply(filtered_KEGG_enrich_UvI$GeneRatio,
   eval(parse(text=x))
 })
 
-filtered_KEGG_enrich_UvI %>% 
+p3<-filtered_KEGG_enrich_UvI %>% 
   drop_na(Category) %>% 
   filter(p.adjust < 0.05) %>% 
 ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
@@ -615,7 +617,11 @@ ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
   theme_minimal() +
 labs(x = "MAP Description", y = "Gene Ratio", title = "Untreated vs. Initial") +
   coord_flip() +
-  scale_colour_gradient(low="blue", high="red")
+  scale_colour_gradient(low="blue", high="red") +
+  theme(plot.title = element_text(size=15),  # Increase plot title text size
+          axis.title = element_text(size=13),  # Increase axis titles text size
+          axis.text = element_text(size=12), 
+        legend.text = element_text(size=12)) 
 #ggsave("UntreatedvsInitial_KEGGenrichment_p0.05.pdf")
 
 ```
@@ -742,5 +748,13 @@ pv_path <- pathview(
 ```{r}
 # Save KO terms to file so they can be used in the search for a pathway
 write.csv(UntreatedvInitial_KEGG_DGEs, "UntreatedvInitial_KEGG_DGEs.csv")
+```
+
+
+# combine plots into 1
+
+```{r}
+plot_grid(p1, p2, p3, ncol = 1)
+ggsave("all_KEGG_plots.pdf", width = 7, height = 10)
 ```
 

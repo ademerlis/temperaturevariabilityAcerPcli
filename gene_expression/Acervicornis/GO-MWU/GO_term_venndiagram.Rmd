@@ -8,6 +8,7 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(ggvenn)
+library(cowplot)
 ```
 
 Common BP terms
@@ -53,6 +54,8 @@ find_common_elements_df <- function(lst, column_index = c(5,6)) {
 common_elements <- find_common_elements_df(pairwise)
 
 str(common_elements) #18 GO categories shared between all
+
+#write_csv(common_elements, "common_GO_BP_terms.csv")
 ```
 
 Unique BP terms
@@ -75,7 +78,7 @@ unique_Treated_vs_Untreated <- anti_join(unique_Treated_vs_Untreated, MWU_result
   scale_colour_gradient(low="blue", high="red")
  
 #filter for top 10 based on delta-rank = top 5 negative and top 5 positive
-unique_Treated_vs_Untreated %>% 
+p1 <- unique_Treated_vs_Untreated %>% 
   top_n(5, wt = delta.rank) %>%
   bind_rows(
     unique_Treated_vs_Untreated %>% 
@@ -93,6 +96,47 @@ unique_Treated_vs_Untreated %>%
   scale_size_continuous(range = c(6, 1)) +
   scale_color_manual(values = c("Up-Regulated" = "red", "Down-Regulated" = "blue")) 
  #ggsave("unique_top10_GO_BP_TreatedvUntreated_dotplot.pdf", width=8, height = 5)
+
+#filter for top 10 based on delta-rank = top 5 negative and top 5 positive
+p2<-unique_Treated_vs_Initial %>% 
+  top_n(5, wt = delta.rank) %>%
+  bind_rows(
+    unique_Treated_vs_Initial %>% 
+      # Get top 5 negative by sorting on absolute values
+      filter(delta.rank < 0) %>% 
+      top_n(5, wt = abs(delta.rank))
+  ) %>% 
+  mutate(direction = case_when(delta.rank > 0 ~ "Up-Regulated",
+                      delta.rank < 0 ~ "Down-Regulated")) %>% 
+  ggplot(., aes(x = reorder(name, delta.rank), y = delta.rank)) +
+  geom_point(aes(size = p.adj, color = direction)) +
+  theme_bw() +
+  labs(x = "BP GO Term Description", y = "MWU Delta Rank", title = "Acer Unqiue Treated vs. Initial BP GO Terms") +
+  coord_flip() +
+  scale_size_continuous(range = c(6, 1)) +
+  scale_color_manual(values = c("Up-Regulated" = "red", "Down-Regulated" = "blue")) 
+
+#filter for top 10 based on delta-rank = top 5 negative and top 5 positive
+p3<- unique_Untreated_vs_Initial %>% 
+  top_n(5, wt = delta.rank) %>%
+  bind_rows(
+    unique_Untreated_vs_Initial %>% 
+      # Get top 5 negative by sorting on absolute values
+      filter(delta.rank < 0) %>% 
+      top_n(5, wt = abs(delta.rank))
+  ) %>% 
+  mutate(direction = case_when(delta.rank > 0 ~ "Up-Regulated",
+                      delta.rank < 0 ~ "Down-Regulated")) %>% 
+  ggplot(., aes(x = reorder(name, delta.rank), y = delta.rank)) +
+  geom_point(aes(size = p.adj, color = direction)) +
+  theme_bw() +
+  labs(x = "BP GO Term Description", y = "MWU Delta Rank", title = "Acer Unqiue Untreated vs. Initial BP GO Terms") +
+  coord_flip() +
+  scale_size_continuous(range = c(6, 1)) +
+  scale_color_manual(values = c("Up-Regulated" = "red", "Down-Regulated" = "blue")) 
+
+plot_grid(p1, p2, p3, nrow = 1, ncol = 3)
+ggsave("unique_GO_BP_terms_allcontrasts.pdf", width = 22, height = 5)
 ```
 
 add genes to sig GO term lists

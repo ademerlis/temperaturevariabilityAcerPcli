@@ -1,0 +1,19 @@
+term,name
+GO:0000184,"nuclear-transcribed mRNA catabolic process, nonsense-mediated decay"
+GO:0000226,microtubule cytoskeleton organization
+GO:0001654;GO:0007423,sensory organ development
+GO:0002181,cytoplasmic translation
+GO:0006119,oxidative phosphorylation
+GO:0006413,translational initiation
+GO:0006497;GO:0042157;GO:0042158,lipoprotein metabolic process
+GO:0006605,protein targeting
+GO:0006612,protein targeting to membrane
+GO:0006613;GO:0006614;GO:0045047;GO:0072599,establishment of protein localization to endoplasmic reticulum
+GO:0007005,mitochondrion organization
+GO:0015980,energy derivation by oxidation of organic compounds
+GO:0021675,nerve development
+GO:0035239;GO:0060562,tube morphogenesis
+GO:0045165,cell fate commitment
+GO:0048589;GO:0040007,growth
+GO:0070972,protein localization to endoplasmic reticulum
+GO:0090150,establishment of protein localization to membrane
