@@ -12,6 +12,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(ggspatial)
 library(raster)
+library(maps)
 
 #oceanbottom <- raster("~/Downloads/OB_LR/OB_LR.tif")
 # bathymetry_df <- as.data.frame(oceanbottom, xy = TRUE)
@@ -26,6 +27,17 @@ world <- ne_countries(scale = 110, returnclass = "sf") #this requires the high-r
 sites <- st_as_sf(data.frame(longitude = c(-80.0987, -80.15235), latitude = c(25.6763, 
     25.77044)), coords = c("longitude", "latitude"), crs = 4326, 
 agr = "constant")
+
+# Load the necessary libraries
+library(ggplot2)
+library(maps)
+
+# Define boundaries for Florida
+florida_bounds <- c(-87.6349, -80.0314, 24.3963, 31.0007)
+
+map("usa", xlim = florida_bounds[1:2], ylim = florida_bounds[3:4], fill = TRUE, col = "lightblue")
+
+
 
 ggplot(data = world) +
      geom_sf(fill = "grey") +
