@@ -1,0 +1,33 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = fvfm_loss_norm ~ Treatment * Colony, data = treatment_percent_Pcli)
+
+$Treatment
+                      diff      lwr      upr    p adj
+Untreated-Treated 4.916674 2.746771 7.086577 1.56e-05
+
+$Colony
+        diff        lwr      upr     p adj
+B-A 1.743048 -1.4364613 4.922557 0.3981994
+C-A 4.500725  1.2584144 7.743035 0.0036355
+C-B 2.757677 -0.3856888 5.901042 0.0980410
+
+$`Treatment:Colony`
+                              diff         lwr        upr     p adj
+Untreated:A-Treated:A    7.5407481   1.8853182 13.1961781 0.0024112
+Treated:B-Treated:A      2.7470302  -2.6814977  8.1755581 0.6884612
+Untreated:B-Treated:A    8.2326572   2.7534046 13.7119098 0.0003847
+Treated:C-Treated:A      7.4873842   1.8951454 13.0796230 0.0022775
+Untreated:C-Treated:A    9.0674911   3.5338114 14.6011709 0.0000778
+Treated:B-Untreated:A   -4.7937179 -10.2873204  0.6998846 0.1248638
+Untreated:B-Untreated:A  0.6919091  -4.8518227  6.2356409 0.9991840
+Treated:C-Untreated:A   -0.0533639  -5.7087938  5.6020660 1.0000000
+Untreated:C-Untreated:A  1.5267430  -4.0707890  7.1242750 0.9690896
+Untreated:B-Treated:B    5.4856270   0.1735662 10.7976878 0.0386211
+Treated:C-Treated:B      4.7403540  -0.6881739 10.1688820 0.1243466
+Untreated:C-Treated:B    6.3204609   0.9522777 11.6886442 0.0110674
+Treated:C-Untreated:B   -0.7452730  -6.2245256  4.7339797 0.9987630
+Untreated:C-Untreated:B  0.8348339  -4.5846389  6.2543068 0.9977517
+Untreated:C-Treated:C    1.5801069  -3.9535728  7.1137866 0.9623751
+

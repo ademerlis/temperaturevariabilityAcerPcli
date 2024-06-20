@@ -402,37 +402,37 @@ KEGG_enrich_TvU_categories <- left_join(KEGG_enrich_TvU@result, pathway_categori
 length(unique(KEGG_enrich_TvU_categories$Category)) #45 unique categories
 ```
 
-### Dotplot (no Human disease)
+### Dotplot
 ```{r}
-filtered_KEGG_enrich_TvU <- KEGG_enrich_TvU_categories %>% filter(!grepl("Human Diseases", Category, ignore.case = TRUE))
-str(filtered_KEGG_enrich_TvU) #242 KEGG terms
-length(unique(filtered_KEGG_enrich_TvU$Category)) #34 categories
+str(KEGG_enrich_TvU_categories) #330 KEGG terms
+length(unique(KEGG_enrich_TvU_categories$Category)) #45 categories
 
-filtered_KEGG_enrich_TvU$GeneRatio <- sapply(filtered_KEGG_enrich_TvU$GeneRatio, function(x) {
+KEGG_enrich_TvU_categories$GeneRatio <- sapply(KEGG_enrich_TvU_categories$GeneRatio, function(x) {
   eval(parse(text=x))
 })
 
-p2<-filtered_KEGG_enrich_TvU %>% 
+KEGG_enrich_TvU_categories %>% 
   drop_na(Category) %>% 
   filter(p.adjust < 0.05) %>% 
-ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
-  geom_point(aes(size = Count, color = p.adjust)) +
+ggplot(., aes(x = reorder(Description, p.adjust), y = p.adjust)) +
+  geom_point(aes(size = Count)) +
   theme_minimal() +
-labs(x = "MAP Description", y = "Gene Ratio", title = "Treated vs. Untreated") +
+labs(x = "MAP Description", y = "Adjusted p-value", title = "Treated vs. Untreated", color = "Significant KEGG terms / Total terms", size = "# KEGG Terms") +
   coord_flip() +
-  scale_colour_gradient(low="blue", high="red") +
   theme(plot.title = element_text(size=15),  # Increase plot title text size
           axis.title = element_text(size=13),  # Increase axis titles text size
           axis.text = element_text(size=12), 
         legend.text = element_text(size=12)) 
-#ggsave("TreatedvsUntreated_KEGGenrichment_p0.05.pdf")
+#ggsave("TreatedvsUntreated_KEGGenrichment_p0.05.png")
 
 ```
 
 ### Separating categories
 ```{r}
-filtered_KEGG_enrich_TvU %>% 
-  filter(p.adjust<0.05) # only 3 categories and they all have different descriptions
+KEGG_enrich_TvU_categories %>% 
+  filter(p.adjust<0.05) # 4 categories and they all have different descriptions
+
+# map05200	Pathways in cancer 	Human Diseases; Cancer: overview
 
 #Genetic Information Processing; Folding, sorting and degradation
 #Environmental Information Processing; Signal transduction
@@ -456,22 +456,23 @@ blue_to_red <- colorRampPalette(c("blue", "red"))
 n_colors <- blue_to_red(2) 
 
 # Set pathway of interest from above 
-filtered_KEGG_enrich_TvU %>% 
+KEGG_enrich_TvU_categories %>% 
   drop_na(Category) %>% 
   filter(p.adjust < 0.05)
 
+#map05200	Pathways in cancer
 #map04141	Protein processing in endoplasmic reticulum	
 #map04020	Calcium signaling pathway	
 #map04612	Antigen processing and presentation
 
-map_id <- "04141" 
+map_id <- "05200" 
 
 # run pathview on a specific path
 pv_path <- pathview(
   gene.data = TreatedvUntreated_KEGG_DGEs,
   pathway.id = map_id,
   species = "ko",
-  out.suffix = "Protein processing in endoplasmic reticulum_TreatedvUntreated",
+  out.suffix = "Pathwaysincancer_TreatedvUntreated",
   limit = list(
     gene = c(-1, 1), # upper and lower range of log2foldchange values
     cpd = c(-4, 4)),

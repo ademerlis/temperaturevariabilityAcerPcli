@@ -1,0 +1,33 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = fvfm_loss_norm ~ Treatment * Colony, data = treatment_percent_Acer)
+
+$Treatment
+                       diff       lwr       upr p adj
+Untreated-Treated -8.682581 -10.29146 -7.073698     0
+
+$Colony
+                 diff       lwr        upr     p adj
+MB-B-BC-8b -1.9766454 -4.245470  0.2921795 0.1010576
+SI-C-BC-8b -2.9437517 -5.362534 -0.5249698 0.0126550
+SI-C-MB-B  -0.9671063 -3.397063  1.4628507 0.6135955
+
+$`Treatment:Colony`
+                                      diff         lwr        upr     p adj
+Untreated:BC-8b-Treated:BC-8b   -7.0284471 -10.9264072 -3.1304870 0.0000106
+Treated:MB-B-Treated:BC-8b       0.5379795  -3.4853138  4.5612727 0.9988515
+Untreated:MB-B-Treated:BC-8b   -11.2524235 -15.1503836 -7.3544635 0.0000000
+Treated:SI-C-Treated:BC-8b      -3.1303284  -7.4454428  1.1847859 0.2943023
+Untreated:SI-C-Treated:BC-8b    -9.8739155 -13.9987450 -5.7490860 0.0000000
+Treated:MB-B-Untreated:BC-8b     7.5664266   3.6225958 11.5102574 0.0000024
+Untreated:MB-B-Untreated:BC-8b  -4.2239764  -8.0398650 -0.4080879 0.0208328
+Treated:SI-C-Untreated:BC-8b     3.8981187  -0.3430043  8.1392417 0.0908248
+Untreated:SI-C-Untreated:BC-8b  -2.8454684  -6.8928294  1.2018926 0.3288529
+Untreated:MB-B-Treated:MB-B    -11.7904030 -15.7342338 -7.8465722 0.0000000
+Treated:SI-C-Treated:MB-B       -3.6683079  -8.0249030  0.6882871 0.1516730
+Untreated:SI-C-Treated:MB-B    -10.4118950 -14.5800993 -6.2436907 0.0000000
+Treated:SI-C-Untreated:MB-B      8.1220951   3.8809721 12.3632181 0.0000025
+Untreated:SI-C-Untreated:MB-B    1.3785080  -2.6688530  5.4258691 0.9217381
+Untreated:SI-C-Treated:SI-C     -6.7435871 -11.1941208 -2.2930534 0.0003431
+
