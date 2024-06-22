@@ -180,6 +180,7 @@ tidy_metadata %>%
 
 ## stats test on counts (not standardized)
 
+### species x treatment
 ```{r}
 #chi squared test for comparing mortality numbers
 tidy_metadata %>% 
@@ -193,23 +194,9 @@ tidy_metadata %>%
   column_to_rownames(var="Species.Treatment") %>% 
   as.data.frame() %>% 
   chisq_test() #not significant
-
-tidy_metadata %>% 
-  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
-  group_by(Species, Treatment,CBASS_temp) %>% 
-  summarize(count_total = n()) %>%
-  drop_na(CBASS_temp) %>% 
-  full_join(., RTL_species_treatment_CBASStemps) %>% 
-  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
-  mutate(count_survived = count_total-count_RTL) %>% 
-  select(!count_total) %>% 
-  unite("Species.Treatment.CBASS_temp", Species,Treatment,CBASS_temp, sep = ".") %>% 
-  column_to_rownames(var="Species.Treatment.CBASS_temp") %>%  
-  as.data.frame() %>% 
-  chisq_test() #very significant 
 ```
 
-## post-hoc test for pairwise comparisons
+post-hoc test for pairwise comparisons
 ```{r}
 tidy_metadata %>% 
   dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
@@ -225,6 +212,22 @@ tidy_metadata %>%
   pairwise_prop_test() 
 ```
 
+### species x treatment x CBASS temp
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  group_by(Species, Treatment,CBASS_temp) %>% 
+  summarize(count_total = n()) %>%
+  drop_na(CBASS_temp) %>% 
+  full_join(., RTL_species_treatment_CBASStemps) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  select(!count_total) %>% 
+  unite("Species.Treatment.CBASS_temp", Species,Treatment,CBASS_temp, sep = ".") %>% 
+  column_to_rownames(var="Species.Treatment.CBASS_temp") %>%  
+  as.data.frame() %>% 
+  chisq_test() #very significant 
+```
 
 ```{r}
 tidy_metadata %>% 
@@ -243,7 +246,122 @@ tidy_metadata %>%
   # write_csv("pairwise_prop_test_RTLvsSurvivedCounts.csv")
 ```
 
-## Proportions 
+
+### species separate
+
+#### Acer
+```{r}
+RTL_species_treatment_count %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_treatment_RTL
+
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  filter(Species == "Acropora cervicornis") %>% 
+  group_by(Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., Acer_treatment_RTL) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  dplyr::select(!c(count_total,Species)) %>% 
+  column_to_rownames(var="Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() #not significant
+```
+
+#### Acer x CBASS temps
+```{r}
+RTL_species_treatment_CBASStemps %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_treatment_CBASS_RTL
+
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  filter(Species == "Acropora cervicornis") %>% 
+  group_by(CBASS_temp, Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., Acer_treatment_CBASS_RTL) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  dplyr::select(!c(count_total,Species)) %>% 
+  unite("Treatment.CBASS_temp", Treatment,CBASS_temp, sep = ".") %>%
+  column_to_rownames(var="Treatment.CBASS_temp") %>% 
+  as.data.frame() %>% 
+  chisq_test() #not significant
+```
+
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  filter(Species == "Acropora cervicornis") %>% 
+  group_by(CBASS_temp, Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., Acer_treatment_CBASS_RTL) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  dplyr::select(!c(count_total,Species)) %>% 
+  unite("Treatment.CBASS_temp", Treatment,CBASS_temp, sep = ".") %>%
+  column_to_rownames(var="Treatment.CBASS_temp") %>% 
+  as.data.frame()  %>% 
+  pairwise_prop_test() #%>% 
+  # write_csv("pairwise_prop_test_RTLvsSurvivedCounts.csv")
+```
+
+#### Pcli
+```{r}
+RTL_species_treatment_count %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_treatment_RTL
+
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  group_by(Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., Pcli_treatment_RTL) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  dplyr::select(!c(count_total,Species)) %>% 
+  column_to_rownames(var="Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() #not significant
+```
+
+#### Pcli x CBASS temps
+```{r}
+RTL_species_treatment_CBASStemps %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_treatment_CBASS_RTL
+
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  group_by(CBASS_temp, Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., Pcli_treatment_CBASS_RTL) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  dplyr::select(!c(count_total,Species)) %>% 
+  unite("Treatment.CBASS_temp", Treatment,CBASS_temp, sep = ".") %>%
+  column_to_rownames(var="Treatment.CBASS_temp") %>% 
+  as.data.frame() %>% 
+  chisq_test() #not significant
+```
+
+```{r}
+tidy_metadata %>% 
+  dplyr::filter(!Removed_Date <= "2022-04-20" | is.na(Removed_Date)) %>% #remove everything that was removed before CBASS so you only account for RTL due to CBASS
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  group_by(CBASS_temp, Treatment) %>% 
+  summarize(count_total = n()) %>%
+  full_join(., Pcli_treatment_CBASS_RTL) %>% 
+  mutate(count_RTL = if_else(is.na(count_RTL),0,count_RTL)) %>%
+  mutate(count_survived = count_total-count_RTL) %>% 
+  dplyr::select(!c(count_total,Species)) %>% 
+  unite("Treatment.CBASS_temp", Treatment,CBASS_temp, sep = ".") %>%
+  column_to_rownames(var="Treatment.CBASS_temp") %>% 
+  as.data.frame()  %>% 
+  pairwise_prop_test() %>% 
+  write_csv("pairwise_prop_test_RTLvsSurvivedCounts_Pcli_treatmentCBASStemp.csv")
+```
+
+## for figure bar plots of proportions 
 
 ```{r}
 p1<- tidy_metadata %>% 
@@ -290,6 +408,8 @@ p2<-tidy_metadata %>%
   labs(y="Proportion", fill = "Category", x = "CBASS Temperature")
 #ggsave("coralmortalityduetoCBASS_bytemp.pdf", width = 10, height =6)
 ```
+
+
 combine plots
 ```{r}
 plot_grid(p1, p2, ncol=2, rel_widths = c(1.5, 2))

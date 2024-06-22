@@ -4,7 +4,7 @@ author: "allyson_demerlis"
 date: "2024-01-12"
 output: html_document
 ---
-Load libraries
+# Load libraries
 ```{r}
 library(tidyverse)
 library(readxl)
@@ -15,21 +15,21 @@ library(cowplot)
 library(dunn.test)
 ```
 
-Import data
+# Import data
 ```{r}
 coral_metadata <- readxl::read_xlsx("../metadata.xlsx")
 
-fvfm <- read.csv("../3_photosynthetic_efficiency/ipam_tidy_data.csv")
+fvfm <- read.csv("../Photosynthetic_efficiency/ipam_tidy_data.csv")
 
-Rscoredata <- read_xlsx("../4_R_intensity//data_rscores.xlsx")
+Rscoredata <- read_xlsx("../R_intensity//data_rscores.xlsx")
 
-april18 <- read_xlsx("../4_R_intensity/photo_metadata.xlsx", sheet = "april 18")
-june21 <- read_xlsx("../4_R_intensity/photo_metadata.xlsx", sheet = "june 21")
+april18 <- read_xlsx("../R_intensity/photo_metadata.xlsx", sheet = "april 18")
+june21 <- read_xlsx("../R_intensity/photo_metadata.xlsx", sheet = "june 21")
 
-percent_cells_df <- read_csv("../5_immune_cell_assay/Grace_percentcells_alldata.csv") 
+percent_cells_df <- read_csv("../Immune_cell_assay/Grace_percentcells_alldata.csv") 
 ```
 
-#Tidy fvfm data
+# Tidy fvfm data
 ```{r}
 treatment_metadata<-fvfm %>% 
   select(Puck, Treatment) %>% 
@@ -53,7 +53,7 @@ fvfm_recovery_change %>%
   filter(change > -39) -> fvfm_recovery_change
 ```
 
-boxplot
+## fvfm species treatment boxplot
 ```{r}
 fvfm_recovery_change %>% 
   ggplot(., aes(x = Species, y = change, fill = Treatment)) +
@@ -65,7 +65,7 @@ fvfm_recovery_change %>%
 #ggsave("fvfmdecline_recovery_boxplot_species.pdf")
 ```
 
-stats
+## stats species x treatments
 ```{r}
 fvfm_recovery_change %>% 
   select(Puck:Treatment, change) %>% 
@@ -101,7 +101,8 @@ shapiro_test(recovery_model_metrics_1$.resid) # not significant
 # assess homogeneity of variances using Levene's Test
 levene_test(.resid ~ Treatment*Species, data = recovery_model_metrics_1) #not significant
 ```
-two-way ANOVA
+
+### two-way ANOVA
 ```{r}
 aov(change ~ Treatment*Species, data = fvfm_recovery_stats)
 
@@ -112,7 +113,43 @@ TukeyHSD(aov(change ~ Treatment*Species, data = fvfm_recovery_stats))
 ```
 
 
+## stats species separate
 
+### Acer
+```{r}
+fvfm_recovery_change %>% 
+  select(Puck:Treatment, change) %>% 
+  mutate_at(vars(Colony, Puck, Treatment, Species), factor) -> fvfm_recovery_stats
+
+fvfm_recovery_stats
+
+fvfm_recovery_stats %>% 
+  filter(Species == "Acervicornis") -> Acer_fvfm
+
+recovery_model_Acer <- lm(change ~ Treatment + Colony, data = Acer_fvfm)
+recovery_model_Acer_metrics <- augment(recovery_model_Acer)
+plot(recovery_model_Acer)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_Acer_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = recovery_model_Acer_metrics) #not significant
+```
+
+### one-way ANOVA
+```{r}
+aov(change ~ Treatment, data = Acer_fvfm)
+
+summary(aov(change ~ Treatment, data = Acer_fvfm)) #p<0.001
+```
+### Acer colonies
+```{r}
+
+```
+
+
+## for figure combined plot
 ```{r}
 p1<-fvfm_recovery_change %>% 
   group_by(Species, Treatment) %>% 
