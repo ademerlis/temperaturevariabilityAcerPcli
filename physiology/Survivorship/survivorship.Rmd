@@ -17,6 +17,7 @@ library(survminer)
 library(coxme)
 library(ggsurvfit)
 library(gtsummary)
+library(dunn.test)
 
 metadata <- readxl::read_xlsx("../metadata.xlsx", sheet = "tidy_data")
 
@@ -567,8 +568,77 @@ plot_grid(b1, b2, rel_widths = c(1,2))
 #ggsave("daysat32_barplot_speciesgenet.pdf", width = 12, height = 5)
 ```
 
+## 1-way anova for species separately
 
-## 2-way anova for species and treatment
+### Acer
+
+Change to factors
+```{r}
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Removed_Date = ymd(Removed_Date)) %>%
+  mutate(start_date="2022-06-25") %>% 
+  mutate(start_date = ymd(start_date)) %>% 
+  mutate(days_to_removed = Removed_Date - start_date) %>% 
+  filter(!days_to_removed == "NA days") %>% 
+  select(Species, ID, Colony, Treatment, CBASS_temp, slowburn, days_to_removed) -> slowburn_summary_data
+
+slowburn_summary_data %>% 
+  mutate_at(vars(Species, ID, Colony, Treatment, CBASS_temp), factor) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) -> slowburn_summary_data
+
+slowburn_summary_data %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_slowburn
+```
+
+```{r}
+Acer_slowburn_model <- lm(days_to_removed ~ Treatment + Colony, data = Acer_slowburn)
+Acer_slowburn_model_metrics <- augment(Acer_slowburn_model)
+plot(Acer_slowburn_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_slowburn_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Acer_slowburn_model_metrics) #not significant
+
+#data visually does not look normal so i'm going to use the kruskal-wallis test
+```
+
+```{r}
+kruskal_test(days_to_removed ~ Treatment, data = Acer_slowburn)# Significant!!!!!!!!!!!! 
+```
+
+### Pcli
+```{r}
+slowburn_summary_data %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_slowburn
+
+Pcli_slowburn_model <- lm(days_to_removed ~ Treatment + Colony, data = Pcli_slowburn)
+Pcli_slowburn_model_metrics <- augment(Pcli_slowburn_model)
+plot(Pcli_slowburn_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_slowburn_model_metrics$.resid) # very significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Pcli_slowburn_model_metrics) #not significant
+
+# identifying outliers
+Pcli_slowburn_model_metrics %>% 
+  filter(abs(.std.resid) > 3)  # no outliers
+
+#data visually does not look normal so i'm going to use the kruskal-wallis test
+```
+
+```{r}
+kruskal_test(days_to_removed ~ Treatment, data = Pcli_slowburn)# not significant
+```
+
+
+
+## (not used) 2-way anova for species and treatment
 
 Change to factors
 ```{r}
@@ -644,7 +714,8 @@ slowburn_summary_data %>%
 ```
 
 
-##separated by max CBASS temp
+## separated by max CBASS temp
+
 ```{r}
 slowburn_metadata %>% 
   filter(slowburn == "heatstress_32") %>% 
@@ -688,7 +759,115 @@ slowburn_metadata %>%
   labs(x="CBASS Temperature", y="Number of Days at 32ºC")
 ```
 
-## 3-way anova for species, treatment, and CBASS temp
+ranges to test: 
+low = 28-32
+high = 33-37
+
+```{r}
+slowburn_summary_data %>% 
+  mutate(CBASS_range = case_when(CBASS_temp == "28" ~ "Low",
+                                 CBASS_temp == "30" ~ "Low",
+                                 CBASS_temp == "32" ~ "Low",
+                                 CBASS_temp == "33" ~ "High",
+                                 CBASS_temp == "34" ~ "High",
+                                 CBASS_temp == "35" ~ "High")) %>% 
+  group_by(Species, Treatment, CBASS_range) %>% 
+  summarise(averagedays = mean(days_to_removed), se = std.error(days_to_removed)) %>%
+  ggplot(., aes(x = CBASS_range, y = averagedays, fill = Treatment)) + 
+  geom_bar(stat="identity", position = position_dodge()) + 
+  geom_errorbar(aes(ymin = averagedays - se, ymax = averagedays + se), width =
+                  .2, position=position_dodge(.9)) +
+  theme_classic() +
+  facet_wrap(~Species, scales = "free_x") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  labs(x="CBASS Temperature", y="Number of Days at 32ºC")
+#ggsave("CBASS_ranges_slowburn_speciestreatments.png", width = 8, height = 5)
+```
+
+Acer
+```{r}
+slowburn_summary_data %>% 
+  mutate(CBASS_range = case_when(CBASS_temp == "28" ~ "Low",
+                                 CBASS_temp == "30" ~ "Low",
+                                 CBASS_temp == "32" ~ "Low",
+                                 CBASS_temp == "33" ~ "High",
+                                 CBASS_temp == "34" ~ "High",
+                                 CBASS_temp == "35" ~ "High")) %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_CBASSrange
+
+Acer_CBASSrange %>% 
+  mutate_at(vars(Species, ID, Colony, Treatment, CBASS_temp), factor) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) -> Acer_CBASSrange
+
+treat_model <- lm(days_to_removed ~ Treatment*CBASS_range + Colony, data = Acer_CBASSrange)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*CBASS_range, data = treat_model_metrics) #not significant
+```
+two-way anova
+```{r}
+aov(days_to_removed ~ Treatment*CBASS_range, data = Acer_CBASSrange)
+
+summary(aov(days_to_removed ~ Treatment*CBASS_range, data = Acer_CBASSrange))
+ 
+#capture.output(summary(aov(days_to_removed ~ Treatment*CBASS_range, data = Acer_CBASSrange)), file = "daysuntilremoved_slowburn_anova_table_AcerCBASSrange.csv")
+
+TukeyHSD(aov(days_to_removed ~ Treatment*CBASS_range, data = Acer_CBASSrange))
+         
+capture.output(TukeyHSD(aov(days_to_removed ~ Treatment*CBASS_range, data = Acer_CBASSrange)), file = "daysuntilremoved_slowburn_anova_tukey_AcerCBASSrange.csv")
+```
+
+
+Pcli
+```{r}
+slowburn_summary_data %>% 
+  mutate(CBASS_range = case_when(CBASS_temp == "28" ~ "Low",
+                                 CBASS_temp == "30" ~ "Low",
+                                 CBASS_temp == "32" ~ "Low",
+                                 CBASS_temp == "33" ~ "High",
+                                 CBASS_temp == "34" ~ "High",
+                                 CBASS_temp == "35" ~ "High")) %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_CBASSrange
+
+Pcli_CBASSrange %>% 
+  mutate_at(vars(Species, ID, Colony, Treatment, CBASS_temp), factor) %>% 
+  mutate(days_to_removed = as.numeric(days_to_removed)) -> Pcli_CBASSrange
+
+treat_model <- lm(days_to_removed ~ Treatment*CBASS_range + Colony, data = Pcli_CBASSrange)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3) 
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) #significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*CBASS_range, data = treat_model_metrics) #not significant
+```
+
+non-parametric kruskal wallis test
+```{r}
+Pcli_CBASSrange$Treatment_CBASSrange <- interaction(Pcli_CBASSrange$Treatment, Pcli_CBASSrange$CBASS_range)
+
+kruskal_test(days_to_removed ~ Treatment_CBASSrange, data = Pcli_CBASSrange) #not significant
+
+#posthoc test
+
+dunn.test(Pcli_CBASSrange$days_to_removed, Pcli_CBASSrange$Treatment_CBASSrange, method = "bonferroni")
+
+
+as.data.frame(dunn.test(Pcli_CBASSrange$days_to_removed, Pcli_CBASSrange$Treatment_CBASSrange, method = "bonferroni")) %>% 
+  write_csv("pcli_CBASSrange_posthocdunntest.csv")
+```
+
+## (not used) 3-way anova for species, treatment, and CBASS temp
 
 Change to factors
 ```{r}
@@ -744,8 +923,10 @@ slowburn_metadata %>%
   mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
                              Reason_removed == "RTL" ~ "RTL",
                              Reason_removed == "paling" ~ "bleached", 
-                             Reason_removed == "bleaching" ~ "bleached"))
-  
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  drop_na(Reason_removed) %>% 
+  group_by(Species,Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
   ggplot(., aes(x=Reason_removed, y=count, fill = Treatment)) +
   geom_col(position = position_dodge()) +
   theme_classic() +
@@ -807,7 +988,52 @@ slowburn_metadata %>%
   geom_bar(stat = "identity") +
   facet_wrap(~Species+Treatment)
 ```
-## chi squared test for counts of RTL vs bleaching (Species*Treatment)
+## RTL vs bleaching species separate
+
+### Acer
+```{r}
+#chi squared test for comparing mortality numbers
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  drop_na(Reason_removed) %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  group_by(Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from="Reason_removed", values_from = "count") %>% 
+  column_to_rownames(var="Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() # significant
+```
+
+### Pcli
+```{r}
+#chi squared test for comparing mortality numbers
+slowburn_metadata %>% 
+  filter(slowburn == "heatstress_32") %>% 
+  filter(Removed_Date >= "2022-06-25" | is.na(Removed_Date)) %>% 
+  mutate(Reason_removed = case_when(Reason_removed == "dead" ~ "RTL",
+                             Reason_removed == "RTL" ~ "RTL",
+                             Reason_removed == "paling" ~ "bleached", 
+                             Reason_removed == "bleaching" ~ "bleached")) %>% 
+  drop_na(Reason_removed) %>% 
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  group_by(Treatment, Reason_removed) %>% 
+  summarise(count = n()) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from="Reason_removed", values_from = "count") %>% 
+  column_to_rownames(var="Treatment") %>% 
+  as.data.frame() %>% 
+  chisq_test() # significant
+```
+
+
+(not used) RTL vs bleaching (Species*Treatment)
 ```{r}
 #chi squared test for comparing mortality numbers
 slowburn_metadata %>% 
@@ -828,7 +1054,7 @@ slowburn_metadata %>%
   chisq_test() # significant
 ```
 
-## post-hoc test for pairwise comparisons (Species*Treatment)
+ post-hoc test for pairwise comparisons (Species*Treatment)
 ```{r}
 slowburn_metadata %>% 
   filter(slowburn == "heatstress_32") %>% 
@@ -849,7 +1075,7 @@ slowburn_metadata %>%
 ```
 
 
-## chi squared test for counts of RTL vs bleaching (Species*Colony*Treatment)
+(not used) chi squared test for counts of RTL vs bleaching (Species*Colony*Treatment)
 ```{r}
 #chi squared test for comparing mortality numbers
 slowburn_metadata %>% 
@@ -870,7 +1096,8 @@ slowburn_metadata %>%
   as.data.frame() %>% 
   chisq_test() # significant
 ```
-## post-hoc test for pairwise comparisons (Species*Colony*Treatment)
+
+ post-hoc test for pairwise comparisons (Species*Colony*Treatment)
 ```{r}
 slowburn_metadata %>% 
   filter(slowburn == "heatstress_32") %>% 
@@ -893,6 +1120,8 @@ slowburn_metadata %>%
 ```
 
 # kaplan meier curve for slow burn survivorship
+
+## species tested together
 ```{r}
 survivorship$Species_Treatment <- interaction(survivorship$Species, survivorship$Treatment)
 survfit2(Surv(daysToDeath, status) ~ Species_Treatment, data = survivorship) %>% 
@@ -906,7 +1135,7 @@ survfit2(Surv(daysToDeath, status) ~ Species_Treatment, data = survivorship) %>%
 #ggsave("kmcurve_slowburn.pdf")
 ```
 
-## Acer survivorship curves
+### Acer survivorship curves
 ```{r}
 p1 <- survivorship %>% 
   filter(Species == "Acropora cervicornis") %>% 
@@ -922,7 +1151,7 @@ survfit2(Surv(daysToDeath, status) ~ Treatment, data = .) %>%
 #significant!!
 ```
 
-## Pcli survivorship curves
+### Pcli survivorship curves
 ```{r}
 p2<- survivorship %>% 
   filter(Species == "Pseudodiploria clivosa") %>% 
@@ -945,7 +1174,11 @@ plot_grid(p1,p2)
 ```
 
 
-## Acer survivorship by colony
+# Species tested separately
+
+## Acer
+
+survivorship by colony
 ```{r}
 survivorship %>% 
   filter(Species == "Acropora cervicornis") -> survivorship_Acer
@@ -953,11 +1186,39 @@ survivorship %>%
 survivorship_Acer$Colony_Treatment <- interaction(survivorship_Acer$Colony, survivorship_Acer$Treatment)
 
 summary(survfit2(Surv(daysToDeath, status) ~ Colony_Treatment, data = survivorship_Acer))
-
-#all of them are 
 ```
 
-# Cox 
+```{r}
+survfit2(Surv(daysToDeath, status) ~ Treatment, data = survivorship_Acer) %>% 
+  ggsurvfit() +
+  labs(x = "Days", y = "Overall survival probability") +
+  scale_ggsurvfit() +
+  add_pvalue(caption = "Log-rank {p.value}") +
+  add_pvalue(location  = "annotation") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "right") +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
+```
+
+```{r}
+survivorship_Acer %>% 
+  group_by(Colony, Treatment) %>% 
+  summarise(count = n())
+```
+
+```{r}
+survfit2(Surv(daysToDeath, status) ~ Colony_Treatment, data = survivorship_Acer) %>% 
+  ggsurvfit() +
+  labs(x = "Days", y = "Overall survival probability") +
+  scale_ggsurvfit() +
+  add_pvalue(caption = "Log-rank {p.value}") +
+  add_pvalue(location  = "annotation") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "right")
+```
+
+
+Cox Proportional Hazards Ratio
 ```{r}
 survivorship %>% 
   filter(Species == "Acropora cervicornis") -> survivorship_Acer
@@ -968,6 +1229,9 @@ coxph(surv_Acer ~ Treatment, data = survivorship_Acer)
 summary(coxph(surv_Acer ~ Treatment, data = survivorship_Acer))
 ```
 
+## Pcli
+
+Cox Proportional Hazards Ratio
 ```{r}
 survivorship %>% 
   filter(Species == "Pseudodiploria clivosa") -> survivorship_Pcli
@@ -976,6 +1240,5 @@ surv_Pcli <- Surv(time = survivorship_Pcli$daysToDeath, event = survivorship_Pcl
 
 coxph(surv_Pcli ~ Treatment, data = survivorship_Pcli)
 summary(coxph(surv_Pcli ~ Treatment, data = survivorship_Pcli))
-```
 ```
 

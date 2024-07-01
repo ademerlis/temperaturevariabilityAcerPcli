@@ -333,7 +333,6 @@ keggFind(database = "pathway", query = "Spliceosome")
 
 
 # Treated vs. Untreated DGEs with log-2-fold change list
-
 ```{r}
 load("RData_files/Treated_vs_Untreated_fc.RData") 
 TreatedvUntreated_DGEs <- read_csv("results_csv/TreatedvUntreated_annotDGEs.csv") #1587 genes
@@ -352,6 +351,10 @@ Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>%
 Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
   right_join(., TreatedvUntreated_DGEs, by = "gene") %>% 
   filter(gene == "Acropora_019471")
+
+Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvUntreated_DGEs, by = "gene") %>% 
+  arrange(desc(KO))
 ```
 
 
@@ -402,6 +405,12 @@ KEGG_enrich_TvU_categories <- left_join(KEGG_enrich_TvU@result, pathway_categori
 length(unique(KEGG_enrich_TvU_categories$Category)) #45 unique categories
 ```
 
+save all files so you don't have to keep rerunning enrichment
+```{r}
+save(KEGG_enrich_TvU,kegg.list,pathway_details,pathway_info, file = "KEGGenrichmentanalysisfiles.RDate")
+```
+
+
 ### Dotplot
 ```{r}
 str(KEGG_enrich_TvU_categories) #330 KEGG terms
@@ -430,7 +439,9 @@ labs(x = "MAP Description", y = "Adjusted p-value", title = "Treated vs. Untreat
 ### Separating categories
 ```{r}
 KEGG_enrich_TvU_categories %>% 
-  filter(p.adjust<0.05) # 4 categories and they all have different descriptions
+  filter(p.adjust<0.05) 
+  # write_csv("TvU_sigKEGGpathways.csv")
+  #4 categories and they all have different descriptions
 
 # map05200	Pathways in cancer 	Human Diseases; Cancer: overview
 
@@ -438,13 +449,15 @@ KEGG_enrich_TvU_categories %>%
 #Environmental Information Processing; Signal transduction
 #Organismal Systems; Immune system
 
-filtered_KEGG_enrich_CP <- filtered_KEGG_enrich_TvU %>% filter(grepl("Cellular Processes", Category, ignore.case = TRUE))
+filtered_KEGG_enrich_CP <- KEGG_enrich_TvU_categories %>% filter(grepl("Cellular Processes", Category, ignore.case = TRUE))
+#no significant terms
 
-filtered_KEGG_enrich_CP_cgd <- filtered_KEGG_enrich_TvU %>% filter(grepl("Cell growth and death", Category, ignore.case = TRUE))
+filtered_KEGG_enrich_CP_cgd <- KEGG_enrich_TvU_categories %>% filter(grepl("Cell growth and death", Category, ignore.case = TRUE))
 
 filtered_KEGG_enrich_CP_cgd %>% 
   filter(p.adjust < 0.05) # no significant KEGG terms
 ```
+
 ## Visualizations
 6) Run pathview to show the up and down regulated genes on the chosen pathway.
 The output file will be written to your working directory.
@@ -533,6 +546,29 @@ pv_path <- pathview(
 # Save KO terms to file so they can be used in the search for a pathway
 write.csv(TreatedvUntreated_KEGG_DGEs, "TreatedvUntreated_KEGG_DGEs.csv")
 ```
+
+what are the genes specifically involved in each significant KEGG pathway?
+```{r}
+Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvUntreated_DGEs, by = "gene") -> gene_KEGG_list
+
+#map05200	Pathways in cancer
+#map04141	Protein processing in endoplasmic reticulum	
+#map04020	Calcium signaling pathway	
+#map04612	Antigen processing and presentation
+
+KEGG_enrich_TvU_categories %>% 
+  filter(Description == "Pathways in cancer" | Description == "Protein processing in endoplasmic reticulum" | Description == "Calcium signaling pathway" | Description == "Antigen processing and presentation") %>% 
+  select(Description, geneID) %>% 
+  separate_rows(geneID, sep = "/") %>%
+  rename(KO = geneID) %>% 
+  left_join(., gene_KEGG_list, by = "KO") %>% 
+  write_csv("TvU_KEGGterms_genes_sigpathways.csv")
+
+  
+```
+
+
 
 # Untreated vs. Initial DGEs with log-2-fold change list
 

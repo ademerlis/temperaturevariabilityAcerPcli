@@ -1,0 +1,22 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = days_to_removed ~ Treatment * CBASS_range, data = Acer_CBASSrange)
+
+$Treatment
+                       diff       lwr        upr     p adj
+Untreated-Treated -1.916667 -3.470071 -0.3632625 0.0168458
+
+$CBASS_range
+              diff       lwr     upr     p adj
+Low-High 0.3542627 -1.319735 2.02826 0.6713325
+
+$`Treatment:CBASS_range`
+                                   diff       lwr       upr     p adj
+Untreated:High-Treated:High  -1.1428571 -4.827163 2.5414486 0.8396288
+Treated:Low-Treated:High      0.8907563 -2.204680 3.9861923 0.8672606
+Untreated:Low-Treated:High   -1.3571429 -4.547845 1.8335595 0.6679389
+Treated:Low-Untreated:High    2.0336134 -1.061823 5.1290494 0.3073962
+Untreated:Low-Untreated:High -0.2142857 -3.404988 2.9764167 0.9979008
+Untreated:Low-Treated:Low    -2.2478992 -4.735508 0.2397095 0.0891841
+

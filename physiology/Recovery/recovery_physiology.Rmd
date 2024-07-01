@@ -55,14 +55,32 @@ fvfm_recovery_change %>%
 
 ## fvfm species treatment boxplot
 ```{r}
-fvfm_recovery_change %>% 
+p1<-fvfm_recovery_change %>% 
   ggplot(., aes(x = Species, y = change, fill = Treatment)) +
   theme_classic()+
   geom_boxplot() +  
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   ylab("% Decline in Fv/Fm")+
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 15))+
+  theme(legend.position="none")
 #ggsave("fvfmdecline_recovery_boxplot_species.pdf")
+```
+
+```{r}
+p2<-fvfm_recovery_change %>% 
+  ggplot(., aes(x = Colony, y = change, fill = Treatment)) +
+  theme_classic()+
+  geom_boxplot() +  
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Change in Fv/Fm")+
+  facet_wrap(~Species, scales = "free_x") +
+  theme(text = element_text(size = 15))
+```
+
+create combined plot
+```{r}
+plot_grid(p1, p2, rel_widths = c(1.5,2))
+ggsave("recoveryperiod_percentfvfmloss_boxplot.pdf", width = 12, height = 5)
 ```
 
 ## stats species x treatments
@@ -137,7 +155,7 @@ shapiro_test(recovery_model_Acer_metrics$.resid) # not significant
 levene_test(.resid ~ Treatment, data = recovery_model_Acer_metrics) #not significant
 ```
 
-### one-way ANOVA
+#### one-way ANOVA
 ```{r}
 aov(change ~ Treatment, data = Acer_fvfm)
 
@@ -145,13 +163,94 @@ summary(aov(change ~ Treatment, data = Acer_fvfm)) #p<0.001
 ```
 ### Acer colonies
 ```{r}
+recovery_model_Acer <- lm(change ~ Treatment*Colony, data = Acer_fvfm)
+recovery_model_Acer_metrics <- augment(recovery_model_Acer)
+plot(recovery_model_Acer)
 
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_Acer_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Colony, data = recovery_model_Acer_metrics) #not significant
+```
+#### two-way ANOVA
+```{r}
+aov(change ~ Treatment*Colony, data = Acer_fvfm)
+
+summary(aov(change ~ Treatment*Colony, data = Acer_fvfm))
+
+capture.output(summary(aov(change ~ Treatment*Colony, data = Acer_fvfm)), file = "fvfm_recovery_Acer_anova.csv")
+```
+
+### Pcli
+
+```{r}
+fvfm_recovery_stats %>% 
+  filter(Species == "Pclivosa") -> Pcli_fvfm
+
+recovery_model_Pcli <- lm(change ~ Treatment + Colony, data = Pcli_fvfm)
+recovery_model_Pcli_metrics <- augment(recovery_model_Pcli)
+plot(recovery_model_Pcli)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_Pcli_metrics$.resid) # very significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = recovery_model_Pcli_metrics) #not significant
+
+# identifying outliers
+recovery_model_Pcli_metrics %>% 
+  filter(abs(.std.resid) > 3) 
+
+Pcli_fvfm %>% 
+  filter(!(change > 39)) -> Pcli_fvfm
+
+recovery_model_Pcli <- lm(change ~ Treatment + Colony, data = Pcli_fvfm)
+recovery_model_Pcli_metrics <- augment(recovery_model_Pcli)
+plot(recovery_model_Pcli)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_Pcli_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = recovery_model_Pcli_metrics) #not significant
+```
+
+#### one-way ANOVA
+```{r}
+aov(change ~ Treatment, data = Pcli_fvfm)
+
+summary(aov(change ~ Treatment, data = Pcli_fvfm)) #not significant
+```
+
+### Pcli colonies
+```{r}
+recovery_model_Pcli <- lm(change ~ Treatment*Colony, data = Pcli_fvfm)
+recovery_model_Pcli_metrics <- augment(recovery_model_Pcli)
+plot(recovery_model_Pcli)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(recovery_model_Pcli_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Colony, data = recovery_model_Pcli_metrics) #not significant
+```
+
+#### two-way ANOVA
+```{r}
+aov(change ~ Treatment*Colony, data = Pcli_fvfm)
+
+summary(aov(change ~ Treatment*Colony, data = Pcli_fvfm))
+
+capture.output(summary(aov(change ~ Treatment*Colony, data = Pcli_fvfm)), file = "fvfm_recovery_Pcli_anova.csv")
+
+TukeyHSD(aov(change ~ Treatment*Colony, data = Pcli_fvfm))
 ```
 
 
-## for figure combined plot
+combined dot plot
 ```{r}
-p1<-fvfm_recovery_change %>% 
+fvfm_recovery_change %>% 
   group_by(Species, Treatment) %>% 
   mutate(mean_fvfmlossnorm = mean(change), se_fvfmlossnorm = std.error(change)) %>% 
   ggplot(., aes(x = Treatment, y = mean_fvfmlossnorm)) +
@@ -172,7 +271,7 @@ p1<-fvfm_recovery_change %>%
 ```
 
 ```{r}
-p2<-fvfm_recovery_change %>% 
+fvfm_recovery_change %>% 
   group_by(Species, Treatment, Colony) %>% 
   mutate(mean_fvfmlossnorm = mean(change), se_fvfmlossnorm = std.error(change)) %>% 
   ggplot(., aes(x = Colony, y = mean_fvfmlossnorm)) +
@@ -321,8 +420,9 @@ percent_cells_df %>%
   mutate(num_days = fct_relevel(num_days, "0", "43")) -> percent_cells_df
 ```
 
+
 ```{r}
-a1<- percent_cells_df %>% 
+percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   dplyr::group_by(num_days, Species, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
@@ -350,7 +450,7 @@ a1<- percent_cells_df %>%
 
 
 ```{r}
-a2<- percent_cells_df %>% 
+percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent), se_replicate_percent_perID = std.error(Percent)) %>% 
@@ -402,15 +502,15 @@ new boxplot
 ggplot(percent_cells_speciestreatments, aes(x=Species, y=relative_activity, fill= Treatment)) +
   geom_boxplot() +
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  ylab("% Decline Immune Cell Activity")+
+  ylab("% Change Immune Cell Activity")+
   theme_classic() +
   theme(text = element_text(size = 15)) 
-ggsave("percentchange_immunecellactivity_treatment.pdf")
+#ggsave("percentchange_immunecellactivity_treatment.pdf", width = 8, height = 5)
 ```
 
 
 
-### Statistics
+### stats species x treatment
 
 Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
 ```{r}
@@ -438,6 +538,57 @@ kruskal_test(relative_activity ~ Treatment_Species, data = percent_cells_species
 
 #posthoc test
 as.data.frame(dunn.test(percent_cells_speciestreatments$relative_activity, percent_cells_speciestreatments$Treatment_Species, method = "bonferroni"))
+```
+
+### stats species separate
+
+#### Acer
+```{r}
+percent_cells_speciestreatments %>% 
+  filter(Species == "Acer") -> Acer_immunecells
+
+Acer_model <- lm(relative_activity ~ Treatment + Genotype + Tank, data = Acer_immunecells)
+Acer_model_metrics <- augment(Acer_model)
+plot(Acer_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_model_metrics$.resid) #significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Acer_model_metrics) #not significant
+
+# identifying outliers
+Acer_model_metrics %>% 
+  filter(abs(.std.resid) > 3)  # no outliers, sample size too small and variable
+
+# do kruskal wallis test
+# kruskal wallis test
+kruskal_test(relative_activity ~ Treatment, data = Acer_immunecells)# not significant
+```
+
+
+#### Pcli
+```{r}
+percent_cells_speciestreatments %>% 
+  filter(Species == "Pcli") -> Pcli_immunecells
+
+Pcli_model <- lm(relative_activity ~ Treatment + Genotype + Tank, data = Pcli_immunecells)
+Pcli_model_metrics <- augment(Pcli_model)
+plot(Pcli_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_model_metrics$.resid) #not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = Pcli_model_metrics) # significant
+
+# identifying outliers
+Pcli_model_metrics %>% 
+  filter(abs(.std.resid) > 3)  # no outliers, sample size too small and variable
+
+# do kruskal wallis test
+# kruskal wallis test
+kruskal_test(relative_activity ~ Treatment, data = Pcli_immunecells)# not significant
 ```
 
 # ARCHIVE
