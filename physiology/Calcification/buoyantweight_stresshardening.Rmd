@@ -14,7 +14,7 @@ library(dunn.test)
 library(cowplot)
 library(plotrix)
 
-metadata <- readxl::read_xlsx("../metadata.xlsx")
+metadata <- read_csv("../metadata.csv")
 
 buoyantweights<- metadata %>% 
     dplyr::select(Species, ID, Colony, Treatment, Treatment_Tank, Bw_initial_raw_mass:bw_final_temp) %>% 
@@ -54,6 +54,20 @@ buoyantweights %>%
   drop_na() -> calc_bw_bothspecies_bothtimepoints
 
 #write_csv(calc_bw_bothspecies_bothtimepoints, file = "calc_bw_bothspecies_bothtimepoints.csv")
+```
+
+## initial vs final masses for corals
+```{r}
+calc_bw_bothspecies_bothtimepoints %>% 
+  dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
+  pivot_longer(CalcMAir_initial:CalcMAir_final, names_to = "timepoint", values_to = "mass") %>% 
+  mutate(timepoint = case_when(timepoint == "CalcMAir_initial" ~ "0",
+                               timepoint == "CalcMAir_final" ~ "28")) %>% 
+  ggplot(., aes(x=timepoint, y = mass, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() + 
+   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  facet_wrap(~Species+Colony+Treatment)
 ```
 
 
@@ -150,6 +164,7 @@ kruskal_test(Acer_bw, percent_change ~ Treatment) #not significant
 
 kruskal_test(Pcli_bw, percent_change ~ Treatment) #significant (0.0497)
 ```
+
 # Colony x Treatment
 
 ## Calculating percent change of mass in air for both species and all genotypes separated

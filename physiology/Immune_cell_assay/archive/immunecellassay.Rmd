@@ -1,7 +1,7 @@
 ---
-title: "immunecellassay"
+title: "immunecellassay_take2"
 author: "allyson_demerlis"
-date: "2024-08-16"
+date: "2024-03-21"
 output: html_document
 ---
 
@@ -17,45 +17,56 @@ library(Rmisc)
 library(plyr)
 library(dplyr)
 
-percent_cells_df <- read_csv("immunecellsdata.csv")
-```
+percent_cells_df <- read_csv("Grace_percentcells_alldata.csv") 
 
+percent_cells_df%>% 
+    mutate(Treatment = case_when(Treatment == "Control" ~ "Untreated",
+                               Treatment == "Variable" ~ "Treated")) -> percent_cells_df
 
-# percent immune activity per species, colony, and treatment over the entire experiment period (all technical replicates)
-```{r}
+#there's one outlier to remove right off the bat: T1	Pcli	B	P9	r2	Percent=111.50	T1	Untreated
 percent_cells_df %>% 
-  drop_na() %>% #one technical replicate is NA for one coral ID
-  ggplot(., aes(x=num_days, y=Percent, color = Treatment)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~Species + Genotype) +
-  ylab("% Immune Cell Activity")+
-  theme_classic() +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) 
+  filter(!(TimePoint=="T1" & Species == "Pcli" & Genotype == "B" & Treatment == "Untreated" & ID == "P9" & Replicate == "r2")) -> percent_cells_df
+
+#replicates are technical replicates of the same coral fragment
+#time points:
+#T0 = initial pre-treatment (March 22)
+#T1 = one week into treatment (March 30)
+#T2 = end of treatment (April 20)
+#follow-up = post CBASS and treatment follow-up (June 1)
+
+percent_cells_df %>% 
+  mutate(num_days = case_when(TimePoint == "T0" ~ "0",
+                              TimePoint == "T1" ~ "7",
+                              TimePoint == "T2" ~ "28",
+                              TimePoint == "FollowUp" ~ "71")) %>%
+  mutate(Date = case_when(TimePoint == "T0" ~ "2022-03-22",
+                              TimePoint == "T1" ~ "2022-03-30",
+                              TimePoint == "T2" ~ "2022-04-20",
+                              TimePoint == "FollowUp" ~ "2022-06-01")) %>% 
+  mutate(num_days = as.factor(num_days)) %>% 
+  mutate(num_days = fct_relevel(num_days, "0", "7", "28", "71")) -> percent_cells_df
+
+#write_csv(percent_cells_df, "immunecells_tidydata.csv")
 ```
 
-
-# percent immune activity per species, colony, and treatment over the entire experiment period (mean technical replicate)
+# percent immune activity per species, colony, and treatment over the entire experiment period
 ```{r}
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
   ungroup() %>% 
-  select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
-  ggplot(., aes(x=num_days, y=mean_replicate_percent_perID, color = Treatment)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
+  select(!c(Replicate,Percent)) %>% 
+  distinct() %>% 
+  ggplot(., aes(x=num_days, y=mean_replicate_percent_perID, fill=Treatment)) +
+  geom_boxplot() +
   facet_wrap(~Species + Genotype) +
+  theme_classic() +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   ylab("% Immune Cell Activity")+
   theme_classic() +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   theme(text = element_text(size = 15)) 
 ```
-  
-  
-  
 
 # calculate percent change for day 28 to day 0
 ```{r}
