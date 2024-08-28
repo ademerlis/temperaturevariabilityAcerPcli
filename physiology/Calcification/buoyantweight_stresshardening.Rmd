@@ -13,6 +13,11 @@ library(ggsignif)
 library(dunn.test)
 library(cowplot)
 library(plotrix)
+library(FSA) #for Summarize
+library(lme4)
+library(car)
+library(MASS)
+library(emmeans)
 
 metadata <- read_csv("../metadata.csv")
 
@@ -28,7 +33,10 @@ buoyantweights %>%
 
 #the final time point sample sizes are much lower because I didn't buoyant weigh any corals that got tissue sampled or FACS run (N=69 corals)
 ```
-# Species x Treatment
+
+# Treatment
+
+Test species separately because it is not part of your research question whether Acer vs. Pcli grows faster (The answer is Acer).
 
 ## Calculating percent change of mass in air for both species, all genotypes together
 ```{r}
@@ -54,9 +62,21 @@ buoyantweights %>%
   drop_na() -> calc_bw_bothspecies_bothtimepoints
 
 #write_csv(calc_bw_bothspecies_bothtimepoints, file = "calc_bw_bothspecies_bothtimepoints.csv")
+
+str(calc_bw_bothspecies_bothtimepoints)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspecies_bothtimepoints
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_calc_bw
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_calc_bw
 ```
 
-## initial vs final masses for corals
+## (raw) initial vs final masses for corals
 ```{r}
 calc_bw_bothspecies_bothtimepoints %>% 
   dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
@@ -84,118 +104,9 @@ calc_bw_bothspecies_bothtimepoints %>%
   theme(legend.position="none")
 #ggsave("percentgrowth_speciestreatments.pdf")
 ```
-## stats 
-
-Change to factors
-```{r}
-str(calc_bw_bothspecies_bothtimepoints)
-#make factors: Colony, Puck, Tank, Treatment, Species
-
-calc_bw_bothspecies_bothtimepoints %>% 
-  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspecies_bothtimepoints
-```
-
-### species tested together
-
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
-```{r}
-treat_model <- lm(percent_change ~ Treatment*Species + Colony, data = calc_bw_bothspecies_bothtimepoints)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
-```
-
-use non-parametric method
-```{r}
-#do nonparametric test with interaction term of colony and tank
-calc_bw_bothspecies_bothtimepoints$species_treatment <- interaction(calc_bw_bothspecies_bothtimepoints$Species, calc_bw_bothspecies_bothtimepoints$Treatment)
-
-kruskal_test(calc_bw_bothspecies_bothtimepoints, percent_change ~ species_treatment) #significant
-
-dunn_results <- dunn.test(calc_bw_bothspecies_bothtimepoints$percent_change, calc_bw_bothspecies_bothtimepoints$species_treatment, method = "bonferroni")
-
-bw_posthoc_results <- as.data.frame(dunn_results) 
-
-#write_csv(bw_posthoc_results, "bw_posthoc_results.csv")
-```
-
-### species separate
-
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
-```{r}
-# Acropora cervicornis
-calc_bw_bothspecies_bothtimepoints %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_bw
-
-Acer_treat_model <- lm(percent_change ~ Treatment + Colony, data = Acer_bw)
-treat_model_metrics <- augment(Acer_treat_model)
-plot(Acer_treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = treat_model_metrics) #not significant
-
-
-# Pseudodiploria clivosa
-calc_bw_bothspecies_bothtimepoints %>% 
-  filter(Species == "Pseudodiploria clivosa") -> Pcli_bw
-
-Pcli_treat_model <- lm(percent_change ~ Treatment + Colony, data = Pcli_bw)
-treat_model_metrics <- augment(Pcli_treat_model)
-plot(Pcli_treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = treat_model_metrics) #not significant
-```
-
-use non-parametric method
-```{r}
-kruskal_test(Acer_bw, percent_change ~ Treatment) #not significant
-
-kruskal_test(Pcli_bw, percent_change ~ Treatment) #significant (0.0497)
-```
-
-# Colony x Treatment
-
-## Calculating percent change of mass in air for both species and all genotypes separated
-```{r}
-#determining seawater density using temperature and salinity (from Patrick Kiel's code)
-#general equation:gsw_rho_t_exact(SA = salinity, t = temp,p = 10.1325)/1000
-
-#initial and final corrected buoyant weight calculations
-buoyantweights %>% 
-  group_by(Species, ID, Colony, Treatment, bw_initial_date) %>% 
-  mutate(SWrho_initial = gsw_rho_t_exact(SA = `bw_initial_salinity (ppt)`,
-                         t = bw_initial_temp,
-                         p = 10.1325)/1000) %>% 
-  mutate(CalcMAir_initial = Bw_initial_raw_mass/(1-SWrho_initial/2.93)) %>%  #2.93 is the density of solid aragonite
-  ungroup() %>% 
-  group_by(Species, ID, Colony, Treatment, bw_final_date) %>% 
-  mutate(SWrho_final = gsw_rho_t_exact(SA = bw_final_salinity,
-                         t = bw_final_temp,
-                         p = 10.1325)/1000) %>% 
-  mutate(CalcMAir_final = bw_final_raw_mass/(1-SWrho_final/2.93)) %>% 
-  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #drop this one sample because it was tissue sampled
-  ungroup() %>% 
-  mutate(percent_change = ((CalcMAir_final - CalcMAir_initial)/ CalcMAir_initial)*100) %>% 
-  drop_na() -> calc_bw_bothspeciesgenet_bothtimepoints
-
-#write_csv(calc_bw_bothspeciesgenet_bothtimepoints, file = "calc_bw_bothspeciesgenet_bothtimepoints.csv")
-```
-
 ## boxplot of % growth - genotypes separated
 ```{r}
-calc_bw_bothspeciesgenet_bothtimepoints %>% 
+calc_bw_bothspecies_bothtimepoints %>% 
   group_by(Colony, Treatment) %>% 
   ggplot(., aes(x=Colony, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
@@ -207,82 +118,149 @@ calc_bw_bothspeciesgenet_bothtimepoints %>%
 ```
 
 
-## stats 
-
-Change to factors
+## Mixed effects GLMM (fixed: treatment and colony, random: tank)
 ```{r}
-str(calc_bw_bothspeciesgenet_bothtimepoints)
-#make factors: Colony, Puck, Tank, Treatment, Species
+#summary
+Summarize(percent_change~Treatment*Colony, data=Acer_calc_bw, digits=3)
+Summarize(percent_change~Treatment*Colony, data=Pcli_calc_bw, digits=3)
 
-calc_bw_bothspeciesgenet_bothtimepoints %>% 
-  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspeciesgenet_bothtimepoints
+Acer_bw_model <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_calc_bw)
+summary(Acer_bw_model)
+anova(Acer_bw_model)
+
+Pcli_bw_model <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Pcli_calc_bw)
+summary(Pcli_bw_model)
+anova(Pcli_bw_model)
 ```
 
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+### Model fitting and assumptions diagnostic
+
+Acer
 ```{r}
-# Acer colonies 
+x = residuals(Acer_bw_model)
+plot(fitted(Acer_bw_model), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_calc_bw, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test  -- significant aka not normal
+car::outlierTest(Acer_bw_model) #row 27
+Acer_calc_bw[-27, ] -> Acer_calc_bw_noout
 
-calc_bw_bothspeciesgenet_bothtimepoints %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_colony_bw
+Acer_bw_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_calc_bw_noout)
+x = residuals(Acer_bw_model_2)
+plot(fitted(Acer_bw_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_calc_bw_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+# Acer data meets assumptions, yay
 
-Acer_colony_treat_model <- lm(percent_change ~ Treatment*Colony, data = Acer_colony_bw)
-treat_model_metrics <- augment(Acer_colony_treat_model)
-plot(Acer_colony_treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics) #not significant
-
-# Pcli colonies 
-
-calc_bw_bothspeciesgenet_bothtimepoints %>% 
-  filter(Species == "Pseudodiploria clivosa") -> Pcli_colony_bw
-
-Pcli_colony_treat_model <- lm(percent_change ~ Treatment*Colony, data = Pcli_colony_bw)
-treat_model_metrics <- augment(Pcli_colony_treat_model)
-plot(Pcli_colony_treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics) #not significant
-```
-use non-parametric method
-```{r}
-# Acer colonies
-
-#do nonparametric test with interaction term of colony and tank
-Acer_colony_bw$treatment_colony <- interaction(Acer_colony_bw$Treatment, Acer_colony_bw$Colony)
-
-kruskal_test(Acer_colony_bw, percent_change ~ treatment_colony) #significant
-
-dunn_results_Acer_colony <- dunn.test(Acer_colony_bw$percent_change, Acer_colony_bw$treatment_colony, method = "bonferroni")
-
-bw_posthoc_results_Acer_colony <- as.data.frame(dunn_results_Acer_colony) 
-
-#write_csv(bw_posthoc_results_Acer_colony, "Acer_colony_bw_posthoc_results_bygenet.csv")
-
-# Pcli colonies 
-Pcli_colony_bw$treatment_colony <- interaction(Pcli_colony_bw$Treatment, Pcli_colony_bw$Colony)
-
-kruskal_test(Pcli_colony_bw, percent_change ~ treatment_colony) #significant
-
-dunn_results_Pcli_colony <- dunn.test(Pcli_colony_bw$percent_change, Pcli_colony_bw$treatment_colony, method = "bonferroni")
-
-bw_posthoc_results_Pcli_colony <- as.data.frame(dunn_results_Pcli_colony) 
-
-#write_csv(bw_posthoc_results_Pcli_colony, "Pcli_colony_bw_posthoc_results_bygenet.csv")
+Anova(Acer_bw_model_2,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+capture.output(Anova(Acer_bw_model_2,  type = "II", test.statistic = "F"), file = "Acer_bw_model_ANOVA.csv")
 ```
 
-
-combined plot
+Pcli
 ```{r}
-plot_grid(p1, p2, ncol = 2, rel_widths = c(1.5, 2))
-ggsave("growthrates_species_genet.pdf", width = 10, height = 5)
+x = residuals(Pcli_bw_model)
+plot(fitted(Pcli_bw_model), x) 
+leveneTest(x ~ Treatment*Colony, data=Pcli_calc_bw, center=mean) # formal statistical test for homogeneity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test 
+# Perform Bonferroni outlier test
+bonf_outliers <- outlierTest(Pcli_bw_model, cutoff = Inf, n.max = Inf)
+
+# View all potential outliers identified with Bonferroni correction
+bonf_outliers #rows 37, 63, and 54
+
+# Indices of the rows to remove
+rows_to_remove <- c(37, 63, 54)
+
+# Remove these rows
+Pcli_calc_bw_clean <- Pcli_calc_bw[-rows_to_remove, ]
+
+Pcli_bw_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Pcli_calc_bw_clean)
+x = residuals(Pcli_bw_model_2)
+plot(fitted(Pcli_bw_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Pcli_calc_bw_clean, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test -- good enough (i tried every possible transformation and outlier filter combination and this was the best result)
+
+Anova(Pcli_bw_model_2, type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+
+capture.output(Anova(Pcli_bw_model_2, type = "II", test.statistic = "F"), file = "Pcli_bw_model_ANOVA.csv")
 ```
+
+### Statistical pairwise comparisons
+
+Acer
+```{r}
+#colony + treatment
+bw_Acer_emms <- emmeans(Acer_bw_model_2, pairwise ~ Colony*Treatment, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(bw_Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(bw_Acer_emms$contrasts), file = "Acer_bw_Tukey_colonytreatment.csv")
+
+# #Treatment
+# bw_Acer_emms <- emmeans(Acer_bw_model_2, pairwise ~ Treatment, weights = "proportional", adjust="none")
+# # P.value adjustment of the Bonferroni
+# rbind(bw_Acer_emms$contrasts, adjust="tukey")
+
+#For p-values of Acer treated vs. untreated, using the Anova table results
+```
+
+Pcli
+```{r}
+#colony + treatment
+bw_Pcli_emms <- emmeans(Pcli_bw_model_2, pairwise ~ Colony*Treatment, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(bw_Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(bw_Pcli_emms$contrasts), file = "Pcli_bw_Tukey_colonytreatment.csv")
+
+#Treatment
+# bw_Pcli_emms <- emmeans(Pcli_bw_model_2, pairwise ~ Treatment, weights = "proportional", adjust="none")
+# # P.value adjustment of the Bonferroni
+# rbind(bw_Pcli_emms$contrasts, adjust="tukey")
+
+#For p-values of Pcli treated vs. untreated, using the Anova table results
+```
+
+# replot data with outliers removed
+
+```{r}
+plot1 <- Pcli_calc_bw_clean %>% 
+  dplyr::select(!percent_change_transformed) %>% 
+  rbind(., Acer_calc_bw_noout) %>% 
+  ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() + 
+   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y= "% Growth") +
+  theme(legend.position="none")
+```
+
+
+```{r}
+plot2 <- Pcli_calc_bw_clean %>% 
+  dplyr::select(!percent_change_transformed) %>% 
+  rbind(., Acer_calc_bw_noout) %>% 
+  ggplot(., aes(x=Colony, y = percent_change, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() + 
+  facet_wrap(~Species, scales="free_x") +
+    scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y= "% Growth")
+```
+
+```{r}
+plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1, 2))
+ggsave("growthrates_species_genet_boxplot.pdf", width = 12, height = 5)
+```
+
+
 
 # Archived code
 
@@ -368,3 +346,164 @@ calc_bw_bothspecies_bothtimepoints %>%
   labs(y= "% Growth") +
   facet_wrap(~Species, scales = "free_x")
 ```
+
+
+## Kruskal-Wallis Test (Treatment) 
+
+Change to factors
+```{r}
+str(calc_bw_bothspecies_bothtimepoints)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspecies_bothtimepoints
+```
+
+### species tested together
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+treat_model <- lm(percent_change ~ Treatment*Species + Colony, data = calc_bw_bothspecies_bothtimepoints)
+treat_model_metrics <- augment(treat_model)
+plot(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+```
+
+use non-parametric method
+```{r}
+#do nonparametric test with interaction term of colony and tank
+calc_bw_bothspecies_bothtimepoints$species_treatment <- interaction(calc_bw_bothspecies_bothtimepoints$Species, calc_bw_bothspecies_bothtimepoints$Treatment)
+
+kruskal_test(calc_bw_bothspecies_bothtimepoints, percent_change ~ species_treatment) #significant
+
+dunn_results <- dunn.test(calc_bw_bothspecies_bothtimepoints$percent_change, calc_bw_bothspecies_bothtimepoints$species_treatment, method = "bonferroni")
+
+bw_posthoc_results <- as.data.frame(dunn_results) 
+
+#write_csv(bw_posthoc_results, "bw_posthoc_results.csv")
+```
+
+### species separate
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+# Acropora cervicornis
+calc_bw_bothspecies_bothtimepoints %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_bw
+
+Acer_treat_model <- lm(percent_change ~ Treatment + Colony, data = Acer_bw)
+treat_model_metrics <- augment(Acer_treat_model)
+plot(Acer_treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = treat_model_metrics) #not significant
+
+
+# Pseudodiploria clivosa
+calc_bw_bothspecies_bothtimepoints %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_bw
+
+Pcli_treat_model <- lm(percent_change ~ Treatment + Colony, data = Pcli_bw)
+treat_model_metrics <- augment(Pcli_treat_model)
+plot(Pcli_treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment, data = treat_model_metrics) #not significant
+```
+
+use non-parametric method
+```{r}
+kruskal_test(Acer_bw, percent_change ~ Treatment) #not significant
+
+kruskal_test(Pcli_bw, percent_change ~ Treatment) #significant (0.0497)
+```
+
+
+## Kruskal-Wallis Test (Treatment*Colony) 
+
+Change to factors
+```{r}
+str(calc_bw_bothspeciesgenet_bothtimepoints)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+calc_bw_bothspeciesgenet_bothtimepoints %>% 
+  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspeciesgenet_bothtimepoints
+```
+
+Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+```{r}
+# Acer colonies 
+
+calc_bw_bothspeciesgenet_bothtimepoints %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_colony_bw
+
+Acer_colony_treat_model <- lm(percent_change ~ Treatment*Colony, data = Acer_colony_bw)
+treat_model_metrics <- augment(Acer_colony_treat_model)
+plot(Acer_colony_treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics) #not significant
+
+# Pcli colonies 
+
+calc_bw_bothspeciesgenet_bothtimepoints %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_colony_bw
+
+Pcli_colony_treat_model <- lm(percent_change ~ Treatment*Colony, data = Pcli_colony_bw)
+treat_model_metrics <- augment(Pcli_colony_treat_model)
+plot(Pcli_colony_treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics) #not significant
+```
+use non-parametric method
+```{r}
+# Acer colonies
+
+#do nonparametric test with interaction term of colony and tank
+Acer_colony_bw$treatment_colony <- interaction(Acer_colony_bw$Treatment, Acer_colony_bw$Colony)
+
+kruskal_test(Acer_colony_bw, percent_change ~ treatment_colony) #significant
+
+dunn_results_Acer_colony <- dunn.test(Acer_colony_bw$percent_change, Acer_colony_bw$treatment_colony, method = "bonferroni")
+
+bw_posthoc_results_Acer_colony <- as.data.frame(dunn_results_Acer_colony) 
+
+#write_csv(bw_posthoc_results_Acer_colony, "Acer_colony_bw_posthoc_results_bygenet.csv")
+
+# Pcli colonies 
+Pcli_colony_bw$treatment_colony <- interaction(Pcli_colony_bw$Treatment, Pcli_colony_bw$Colony)
+
+kruskal_test(Pcli_colony_bw, percent_change ~ treatment_colony) #significant
+
+dunn_results_Pcli_colony <- dunn.test(Pcli_colony_bw$percent_change, Pcli_colony_bw$treatment_colony, method = "bonferroni")
+
+bw_posthoc_results_Pcli_colony <- as.data.frame(dunn_results_Pcli_colony) 
+
+#write_csv(bw_posthoc_results_Pcli_colony, "Pcli_colony_bw_posthoc_results_bygenet.csv")
+```
+
+
+combined plot
+```{r}
+plot_grid(p1, p2, ncol = 2, rel_widths = c(1.5, 2))
+ggsave("growthrates_species_genet.pdf", width = 10, height = 5)
+```
+

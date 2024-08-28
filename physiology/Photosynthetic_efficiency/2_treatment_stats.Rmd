@@ -12,6 +12,9 @@ library(plotrix)
 library(ggpubr)
 library(rstatix)
 library(cowplot)
+library(lme4)
+library(emmeans)
+library(car)
 ```
 
 
@@ -41,6 +44,7 @@ treatment_time_bothspecies <- ipam_tidy_data %>%
                              Species == "Pclivosa" & fvfm_timepoint == "fvfm_t3" ~ 65,
                              Species == "Acervicornis" & fvfm_timepoint == "fvfm_t3" ~ 70))
 
+#percent change
 treatment_normalized_bothspecies <- ipam_tidy_data %>% 
   dplyr::filter(!Treatment_period == "CBASS") %>%
   drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
@@ -55,7 +59,7 @@ treatment_normalized_bothspecies <- ipam_tidy_data %>%
 
 #save data for WGCNA
 treatment_normalized_bothspecies %>% 
-  select(Colony, Puck, Treatment, Species, fvfm_loss, fvfm_loss_norm) %>% 
+  dplyr::select(Colony, Puck, Treatment, Species, fvfm_loss, fvfm_loss_norm) %>% 
   write_csv("treatment_fvfm.csv")
 
 ipam_tidy_data %>% 
@@ -94,7 +98,7 @@ treatment_time_bothspecies %>%
 
 
 
-# 1. (for figure) Raw Fv/Fm over time during the 28-d temperature treatment period.
+# 1. Raw Fv/Fm over time during the 28-d temperature treatment period.
 ```{r, warning = F}
 treatment_time_bothspecies %>% 
   dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
@@ -129,9 +133,9 @@ treatment_time_bothspecies%>%
 ```
 
 
-# 2. (for stats) Normalized to initial measurement (day 0) - Treatment Fv/Fm
+# 2. Normalized to initial measurement (day 0) - Treatment Fv/Fm
 
-## 2a. Normalized to 1
+## 2a. (for publication) --  Normalized to 1
 ```{r, warning = FALSE}
 p1<- ipam_norm_overtime %>% 
   ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color=Treatment)) + 
@@ -164,9 +168,112 @@ plot_grid(p1, p2, rel_widths = c(1.5,2))
 #ggsave("treatment_normfvfm_smoothline.pdf", width = 12, height = 5)
 ```
 
+### Mixed effects GLMM (fixed: treatment, colony, fvfm_timepoint; random: tank and ID)
+
+Test species separately.
+
+```{r}
+ipam_norm_overtime$fvfm_timepoint <- as.factor(ipam_norm_overtime$fvfm_timepoint)
+
+ipam_norm_overtime %>% 
+  dplyr::select(Colony:Species, fvfm_timepoint, fvfm) %>% 
+  filter(Species == "Acervicornis") ->  Acer_tidydata
+
+ipam_norm_overtime %>% 
+  dplyr::select(Colony:Species, fvfm_timepoint, fvfm) %>% 
+  filter(Species == "Pclivosa") ->  Pcli_tidydata
+```
 
 
-## 2a. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
+```{r}
+#repeated measures -- include ID in the formula as a random effect
+Acer_model <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Acer_tidydata) 
+summary(Acer_model)
+Anova(Acer_model, type = "II", test.statistic = "F")
+
+Pcli_model <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Pcli_tidydata)
+summary(Pcli_model)
+Anova(Pcli_model, type = "II", test.statistic = "F")
+```
+
+#### Model fitting and assumptions diagnostic
+
+Acer
+```{r}
+x = residuals(Acer_model)
+plot(fitted(Acer_model), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+car::outlierTest(Acer_model) #row 317
+Acer_tidydata[-317, ] -> Acer_noout
+
+Acer_model_2 <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Acer_noout)
+x = residuals(Acer_model_2)
+plot(fitted(Acer_model_2), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+
+Anova(Acer_model_2, type = "II", test.statistic = "F")
+capture.output(Anova(Acer_model_2, type = "II", test.statistic = "F"), file = "Acer_fvfm_model_ANOVA.csv")
+```
+
+Pcli
+```{r}
+x = residuals(Pcli_model)
+plot(fitted(Pcli_model), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+car::outlierTest(Pcli_model) #rows 375, 200, 108
+rows_to_remove <- c(375, 200, 108)
+Pcli_tidydata[-rows_to_remove, ] -> Pcli_noout
+
+Pcli_model_2 <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Pcli_noout)
+x = residuals(Pcli_model_2)
+plot(fitted(Pcli_model_2), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+
+Anova(Pcli_model_2, type = "II", test.statistic = "F")
+capture.output(Anova(Pcli_model_2, type = "II", test.statistic = "F"), file = "Pcli_fvfm_model_ANOVA.csv")
+```
+
+### Statistical pairwise comparisons
+
+Acer
+```{r}
+#treatment + timepoint
+Acer_emms <- emmeans(Acer_model_2, pairwise ~ Treatment*fvfm_timepoint, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+#no significant difference between treatments at either time point
+capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_treatmenttimepoint.csv")
+
+
+#colony + treatment + timepoint
+Acer_emms <- emmeans(Acer_model_2, pairwise ~ Treatment*Colony*fvfm_timepoint, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
+```
+
+Pcli
+```{r}
+#treatment + timepoint
+Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Treatment*fvfm_timepoint, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+#no significant difference between treatments at either time point
+capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_treatmenttimepoint.csv")
+
+#colony + treatment + timepoint
+Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Treatment*Colony*fvfm_timepoint, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
+```
+
+
+## 2b. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
 ```{r, warning = F}
 p1<-treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Species, y= fvfm_loss_norm, fill= Treatment)) +
@@ -306,7 +413,7 @@ oneway.test(fvfm_loss_norm ~ Treatment, data = treatment_percent_Pcli, var.equal
 
 
 
-## 2b. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
+## 2c. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
 ```{r, warning = F}
 p2<- treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Colony, y= fvfm_loss_norm, fill=Treatment)) +

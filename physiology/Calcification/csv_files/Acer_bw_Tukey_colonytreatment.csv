@@ -1,0 +1,19 @@
+,contrast,,,,,Contrast,Estimate,SE,df,t.ratio,p.value
+,(BC-8b,Treated),-,(MB-B,Treated),(BC-8b Treated)-(MB-B Treated),-3.79,0.645,46.13,-5.878,<.0001
+,(BC-8b,Treated),-,(SI-C,Treated),(BC-8b Treated)-(SI-C Treated),1.317,0.82,46,1.606,0.8403
+,(BC-8b,Treated),-,(BC-8b,Untreated),(BC-8b Treated)-(BC-8b Untreated),1.674,1.712,2.31,0.978,0.9997
+,(BC-8b,Treated),-,(MB-B,Untreated),(BC-8b Treated)-(MB-B Untreated),-2.621,1.709,2.29,-1.534,0.9864
+,(BC-8b,Treated),-,(SI-C,Untreated),(BC-8b Treated)-(SI-C Untreated),1.954,1.758,2.57,1.111,0.9988
+,(MB-B,Treated),-,(SI-C,Treated),(MB-B Treated)-(SI-C Treated),5.107,0.839,46.08,6.087,<.0001
+,(MB-B,Treated),-,(BC-8b,Untreated),(MB-B Treated)-(BC-8b Untreated),5.464,1.721,2.36,3.174,0.6626
+,(MB-B,Treated),-,(MB-B,Untreated),(MB-B Treated)-(MB-B Untreated),1.169,1.718,2.34,0.681,1
+,(MB-B,Treated),-,(SI-C,Untreated),(MB-B Treated)-(SI-C Untreated),5.744,1.767,2.62,3.251,0.5894
+,(SI-C,Treated),-,(BC-8b,Untreated),(SI-C Treated)-(BC-8b Untreated),0.357,1.794,2.78,0.199,1
+,(SI-C,Treated),-,(MB-B,Untreated),(SI-C Treated)-(MB-B Untreated),-3.938,1.791,2.76,-2.199,0.8605
+,(SI-C,Treated),-,(SI-C,Untreated),(SI-C Treated)-(SI-C Untreated),0.637,1.838,3.06,0.347,1
+,(BC-8b,Untreated),-,(MB-B,Untreated),(BC-8b Untreated)-(MB-B Untreated),-4.295,0.555,46.01,-7.736,<.0001
+,(BC-8b,Untreated),-,(SI-C,Untreated),(BC-8b Untreated)-(SI-C Untreated),0.28,0.693,46,0.405,1
+,(MB-B,Untreated),-,(SI-C,Untreated),(MB-B Untreated)-(SI-C Untreated),4.575,0.684,46,6.686,<.0001
+,,,,,,,,,,,
+Degrees-of-freedom,method:,kenward-roger,,,,,,,,,
+P,value,adjustment:,sidak,method,for,,15,tests,,,

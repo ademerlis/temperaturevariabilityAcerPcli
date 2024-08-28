@@ -231,6 +231,7 @@ DRC_species_treatment_Ed25 = drm(fvfm ~ CBASS_temp, data = ipam_tidy_CBASS_treat
              fct = LL.3())
 summary(DRC_species_treatment_Ed25)
 plot(DRC_species_treatment_Ed25)
+
 DRC_species_treatment_Ed25_coeff <- data.frame(ED(DRC_species_treatment_Ed25, c(25)))
 
 EDcomp(DRC_species_treatment_Ed25, c(25,25))
@@ -1353,10 +1354,10 @@ above_32 <- filter(CBASS_temp, Temp > 32)
 
 min_above_32 <- above_32 %>%
   group_by(Tank) %>%
-  dplyr::summarise(count = n()) %>% 
+  summarise(count = n()) %>% 
   mutate(min_above_32 = count * 5) %>%  #because each data point was recorded at 5-min intervals
-  dplyr::select(Tank, min_above_32) %>% 
-  dplyr::rename(CBASS_Tank = Tank) %>% 
+  select(Tank, min_above_32) %>% 
+  rename(CBASS_Tank = Tank) %>% 
   mutate(CBASS_Tank = as.integer(CBASS_Tank))
 ```
 
@@ -1364,7 +1365,7 @@ min_above_32 <- above_32 %>%
 ## adding DHM to metadata
 ```{r}
 species_Treatment_DHM <- ipam_tidy_CBASS_treatments %>% 
-  dplyr::select(Puck:CBASS_Tank, CBASS_temp, Species_Treatment) %>% 
+  select(Puck:CBASS_Tank, CBASS_temp, Species_Treatment) %>% 
   full_join(., min_above_32) %>% 
   drop_na() #removes control tank that was set to 28ºC
 ```

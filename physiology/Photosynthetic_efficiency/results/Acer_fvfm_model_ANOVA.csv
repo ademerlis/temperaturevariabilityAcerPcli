@@ -1,0 +1,13 @@
+Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
+
+Response: fvfm
+                                        F Df  Df.res  Pr(>F)    
+Treatment                          4.7423  1   1.999 0.16137    
+Colony                             4.3372  2 124.516 0.01510 *  
+fvfm_timepoint                  1537.5537  2 250.601 < 2e-16 ***
+Treatment:Colony                   2.2866  2 124.646 0.10586    
+Treatment:fvfm_timepoint          59.7689  2 250.767 < 2e-16 ***
+Colony:fvfm_timepoint              3.1703  4 250.735 0.01449 *  
+Treatment:Colony:fvfm_timepoint    3.3226  4 250.870 0.01127 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

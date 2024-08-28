@@ -16,29 +16,41 @@ library(dunn.test)
 library(Rmisc)
 library(plyr)
 library(dplyr)
+library(lme4)
+library(emmeans)
+library(modelsummary)
+library(car)
+library(multcomp)
 
 percent_cells_df <- read_csv("immunecellsdata.csv")
 ```
 
+# percent immune activity over the entire experiment period (mean technical replicate)
 
-# percent immune activity per species, colony, and treatment over the entire experiment period (all technical replicates)
+## species x treatment
 ```{r}
-percent_cells_df %>% 
+plot1<-percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
-  ggplot(., aes(x=num_days, y=Percent, color = Treatment)) +
-  geom_point(alpha = 0.2) +
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
+  ggplot(., aes(x=num_days, y=mean_replicate_percent_perID, color = Treatment)) +
+  geom_point(alpha = 0.1) +
   geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~Species + Genotype) +
+  facet_wrap(~Species,ncol = 1, nrow = 2) +
   ylab("% Immune Cell Activity")+
   theme_classic() +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) 
+  theme(text = element_text(size = 15)) +
+  labs(x="Days in Treatment") +
+  theme(legend.position="none")
+#ggsave("immunecellactivityovertime_bothspecies.pdf", width = 10, height = 7)
 ```
 
-
-# percent immune activity per species, colony, and treatment over the entire experiment period (mean technical replicate)
+## species x colony x treatment
 ```{r}
-percent_cells_df %>% 
+plot2<-percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
@@ -55,188 +67,108 @@ percent_cells_df %>%
   labs(x="Days in Treatment")
 #ggsave("immunecellactivityovertime_bothspecies_genotypes.pdf", width = 10, height = 7)
 ```
-
-
+  
+## combined plot
 ```{r}
-percent_cells_df %>% 
-  drop_na() %>% #one technical replicate is NA for one coral ID
-  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
-  ungroup() %>% 
-  select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
-  ggplot(., aes(x=num_days, y=mean_replicate_percent_perID, color = Treatment)) +
-  geom_point(alpha = 0.1) +
-  geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~Species) +
-  ylab("% Immune Cell Activity")+
-  theme_classic() +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) +
-  labs(x="Days in Treatment")
-#ggsave("immunecellactivityovertime_bothspecies.pdf", width = 10, height = 7)
+plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1.5, 2))
+ggsave("percentimmunecellactivity_species_genet.pdf", width = 10, height = 5)
 ```
 
   
+# Mixed effects GLMM (fixed: treatment, colony, timepoint; random: tank)
 
-  
-
-# calculate percent change for day 28 to day 0
+First, make the dataset with percentages as the mean technical replicates per coral fragment (r1, r2, and r3)
 ```{r}
 percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
   ungroup() %>% 
-  group_by(num_days, Tank, Species, Genotype, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perGenet = mean(Percent)) %>% 
-  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perGenet) %>% 
-  distinct() %>% 
-  filter(num_days == "0" | num_days == "28") %>% 
-  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_perGenet") %>% 
-  mutate(relative_activity = ((`28`-`0`)/`0`)*100) %>% #T1-T0/T0*100
-  ggplot(., aes(x=Species, y=relative_activity, fill= Treatment)) +
-  geom_boxplot() +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  ylab("% Decline Immune Cell Activity")+
-  theme_classic() +
-  theme(text = element_text(size = 15)) 
-#ggsave("percentchange_immunecellactivity_treatment.pdf")
+  dplyr::select(Species:ID, Tank:num_days, mean_replicate_percent_perID) -> immmunecells_meanreps
+
+immmunecells_meanreps %>% 
+  dplyr::mutate(across(c(Species, Genotype, ID, Tank, Treatment, num_days), as.factor)) -> immmunecells_meanreps
+
+immmunecells_meanreps %>% 
+  filter(Species == "Acer") %>% 
+  distinct() -> immmunecells_meanreps_Acer
+
+immmunecells_meanreps %>% 
+  filter(Species == "Pcli") %>% 
+  distinct() -> immmunecells_meanreps_Pcli
 ```
 
-## Stats
 
-### Species x treatment
-
-Change to factors
 ```{r}
-percent_cells_df %>% 
-  drop_na() %>% #one technical replicate is NA for one coral ID
-  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
-  ungroup() %>% 
-  group_by(num_days, Tank, Species, Genotype, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perGenet = mean(Percent)) %>% 
-  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perGenet) %>% 
-  distinct() %>% 
-  filter(num_days == "0" | num_days == "28") %>% 
-  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_perGenet") %>% 
-  mutate(relative_activity = ((`28`-`0`)/`0`)*100) -> percent_cells_speciestreatments
+#although this was measured over time, it is not repeated measures because different corals were measured at each time point. so coral ID is not included in this formula
+Acer_model <- lmer(mean_replicate_percent_perID~Treatment*Genotype*num_days + (1|Tank), data = immmunecells_meanreps_Acer)
+summary(Acer_model)
+Anova(Acer_model, type = "II", test.statistic = "F")
 
-percent_cells_speciestreatments %>% 
-  dplyr::mutate_at(vars(Species, Genotype, Treatment), factor) -> percent_cells_speciestreatments
+Pcli_model <- lmer(mean_replicate_percent_perID~Treatment*Genotype*num_days + (1|Tank), data = immmunecells_meanreps_Pcli)
+summary(Pcli_model)
+Anova(Pcli_model, type = "II", test.statistic = "F")
 ```
 
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
-```{r}
-treat_model <- lm(relative_activity ~ Treatment*Species + Genotype + Tank, data = percent_cells_speciestreatments)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) #significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
-
-# identifying outliers
-treat_model_metrics %>% 
-  filter(abs(.std.resid) > 3)
-# 1 outlier
-
-percent_cells_speciestreatments %>% 
-  filter(!(Treatment=="Treated" & Species =="Pcli" & Genotype == "B" & Tank == "T3")) -> percent_cells_speciestreatments
-
-treat_model <- lm(relative_activity ~ Treatment*Species + Genotype + Tank, data = percent_cells_speciestreatments)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) #not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #significant
-
-#welch's anova
-#make interaction term
-percent_cells_speciestreatments$Species_Treatment <- interaction(percent_cells_speciestreatments$Species, percent_cells_speciestreatments$Treatment)
-
-#run Welch's anova
-oneway.test(relative_activity ~ Species_Treatment, data = percent_cells_speciestreatments, var.equal = FALSE) #not significant
-
-#posthoc test
-as.data.frame(dunn.test(percent_cells_speciestreatments$relative_activity, percent_cells_speciestreatments$Species_Treatment, method = "bonferroni"))
-```
-
-### species separate
-
-Create master tidy data 
-```{r}
-percent_cells_df %>% 
-  drop_na() %>% #one technical replicate is NA for one coral ID
-  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
-  ungroup() %>% 
-  group_by(num_days, Tank, Species, Genotype, Treatment) %>% 
-  dplyr::mutate(mean_replicate_percent_perGenet = mean(Percent)) %>% 
-  select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perGenet) %>% 
-  distinct() %>% 
-  filter(num_days == "0" | num_days == "28") %>% 
-  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_perGenet") %>% 
-  mutate(relative_activity = ((`28`-`0`)/`0`)*100) -> percent_cells_speciestreatments
-
-percent_cells_speciestreatments %>% 
-  dplyr::mutate_at(vars(Species, Genotype, Treatment), factor) -> percent_cells_speciestreatments
-```
+## Model fitting and assumptions diagnostic
 
 Acer
 ```{r}
-percent_cells_speciestreatments %>% 
-  filter(Species == "Acer") -> cells_Acer
+x = residuals(Acer_model)
+plot(fitted(Acer_model), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+
+Anova(Acer_model, type = "II", test.statistic = "F")
+capture.output(Anova(Acer_model, type = "II", test.statistic = "F"), file = "Acer_immunecells_model_ANOVA.csv")
 ```
-
-
-```{r}
-Acer_model <- lm(relative_activity ~ Treatment + Genotype + Tank, data = cells_Acer)
-Acer_model_metrics <- augment(Acer_model)
-plot(Acer_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Acer_model_metrics$.resid) #not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = Acer_model_metrics) #not significant
-```
-Acer one-way ANOVA
-```{r}
-aov(relative_activity ~ Treatment, data = cells_Acer)
-
-summary(aov(relative_activity ~ Treatment, data = cells_Acer)) #not significant
-```
-
 
 Pcli
 ```{r}
-percent_cells_speciestreatments %>% 
-  filter(Species == "Pcli") -> cells_Pcli
+x = residuals(Pcli_model)
+plot(fitted(Pcli_model), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+
+Anova(Pcli_model, type = "II", test.statistic = "F")
+capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_immunecells_model_ANOVA.csv")
 ```
 
+## Statistical pairwise comparisons
 
+Acer
 ```{r}
-Pcli_model <- lm(relative_activity ~ Treatment + Genotype + Tank, data = cells_Pcli)
-Pcli_model_metrics <- augment(Pcli_model)
-plot(Pcli_model)
+#treatment + timepoint
+Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*num_days, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+#no significant difference between treatments at either time point
+capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_treatmenttimepoint.csv")
 
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Pcli_model_metrics$.resid) #not significant
 
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = Pcli_model_metrics) #not significant
+#colony + treatment + timepoint
+Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*Genotype*num_days, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
 ```
-Pcli one-way ANOVA
+
+Pcli
 ```{r}
-aov(relative_activity ~ Treatment, data = cells_Pcli)
+#treatment + timepoint
+Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*num_days, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+#no significant difference between treatments at either time point
+capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_treatmenttimepoint.csv")
 
-summary(aov(relative_activity ~ Treatment, data = cells_Pcli)) #not significant
+#colony + treatment + timepoint
+Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Genotype*num_days, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
 ```
+
+
 
 

@@ -5,6 +5,7 @@ date: "2022-11-30"
 output: html_document
 ---
 
+# Read in data and R packages
 ```{r}
 library(tidyverse)
 library(readxl)
@@ -12,26 +13,32 @@ library(rstatix)
 library(plotrix)
 library(ggpubr)
 library(cowplot)
-library(dunn.test)
+library(FSA) #for Summarize
+library(lme4)
+library(car)
+library(MASS)
+library(emmeans)
 
-Rscoredata <- read_xlsx("data_rscores.xlsx")
+Rscoredata <- read_xlsx("data_rscores.xlsx") 
 
 Rscoredata %>% 
   rename(`Photo ID` = `Image #`) %>% 
   rename(Date = `Date (Folder Name)`) -> Rscoredata
 
+# Only use the R-score data from the treatment period dates
 initialphotos <- read_xlsx("photo_metadata.xlsx")
 april18 <- read_xlsx("photo_metadata.xlsx", sheet = "april 18")
-june21 <- read_xlsx("photo_metadata.xlsx", sheet = "june 21")
-july8 <- read_xlsx("photo_metadata.xlsx", sheet = "july 8")
 
-coral_metadata <- readxl::read_xlsx("../metadata.xlsx")
+# june21 <- read_xlsx("photo_metadata.xlsx", sheet = "june 21")
+# july8 <- read_xlsx("photo_metadata.xlsx", sheet = "july 8")
+
+coral_metadata <- read_csv("../metadata.csv")
 
 coral_metadata %>% 
   dplyr::select(Species:CBASS_tank) -> coral_metadata
 ```
 
-
+# Tidy data
 ```{r}
 str(initialphotos) 
 initialphotos %>% 
@@ -41,17 +48,15 @@ str(april18)
 april18 %>% 
   dplyr::select(`Photo ID`:`Coral Position`) -> april18
 
-str(june21) 
-june21%>% 
-  dplyr::select(`Photo ID`:`Coral Position`) -> june21
+# str(june21) 
+# june21%>% 
+#   dplyr::select(`Photo ID`:`Coral Position`) -> june21
+# 
+# str(july8)
+# july8 %>% 
+#   dplyr::select(`Photo ID`:`Coral Position`) -> july8
 
-str(july8)
-july8 %>% 
-  dplyr::select(`Photo ID`:`Coral Position`) -> july8
-
-full_join(initialphotos, april18) %>% 
-  full_join(., june21) %>% 
-  full_join(., july8) -> allRscores
+full_join(initialphotos, april18) -> allRscores
 
 allRscores
 
@@ -89,9 +94,17 @@ Rintensity_withmetadata %>%
   drop_na(ID) -> Rintensity_withmetadata
 
 #write_csv(Rintensity_withmetadata, "Rintensity_withmetadata.csv")
+
+ # Calculate days relative to start of treatment
+Rintensity_withmetadata %>% 
+  ungroup() %>% 
+  dplyr::select(Date:Species, Colony:Treatment_Tank, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  mutate(Date = as.Date(as.character(Date), format = "%Y-%m-%d")) %>% 
+  mutate(Days_Relative = as.numeric(Date - as.Date("2022-03-24"))) -> Rintensity_tidydata
 ``` 
 
-
+# Boxplot of raw values
 ```{r}
   ggplot(Rintensity_withmetadata,aes(x = month, y= mean_Rintensity_percoral, fill = Treatment)) + 
   geom_boxplot() + 
@@ -102,9 +115,151 @@ Rintensity_withmetadata %>%
   theme(text = element_text(size = 13)) + 
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
 #ggsave("Rintensityovertime_byspecies.pdf")
+
+  ggplot(Rintensity_withmetadata,aes(x = month, y= mean_Rintensity_percoral, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() +
+  facet_wrap(~Species+Colony, scales = "free") +
+  ylim(0, 255) +
+  labs(y = "R Intensity") +
+  theme(text = element_text(size = 13)) + 
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
 ```
 
-# Calculate percent change for the treatment period 
+# Line + scatterplot over time 
+
+## Species x Treatment
+```{r}
+plot1<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~Species,ncol = 1, nrow = 2) +
+  ylab("R Intensity")+
+  theme_classic() +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) +
+  labs(x="Days in Treatment") +
+  theme(legend.position="none") +
+  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 10))
+```
+
+## Colony x Treatment
+```{r}
+plot2<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~Species+Colony) +
+  ylab("R Intensity")+
+  theme_classic() +
+  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) +
+  labs(x="Days in Treatment") +
+  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 10))
+```
+
+
+```{r}
+plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1, 2.3))
+ggsave("colorscore_species_genet.pdf", width = 12, height = 5)
+```
+
+
+## Mixed effects GLMM (fixed: treatment colony, time point; random: tank, coral ID)
+
+Test species separately because it is not part of your research question whether Acer vs. Pcli has different color scores.
+
+For the time component, we really just want to compare pre-treatment vs. post-treatment to reflect the effect of time and treatment. So, all the dates in March will be encoded as "T0", and all the end measurements will be "T1". It needs to be a factor to be included as a fixed effect for the post-hoc comparisons.
+```{r}
+Rintensity_tidydata %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_tidydata
+
+Acer_tidydata %>% 
+  mutate(time_point = case_when(Date < as.Date("2022-03-30") ~ "T0",
+                                Date > as.Date("2022-04-17") ~ "T1")) -> Acer_tidydata
+
+Rintensity_tidydata %>% 
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  mutate(time_point = case_when(Date < as.Date("2022-03-30") ~ "T0",
+                                Date > as.Date("2022-04-17") ~ "T1")) -> Pcli_tidydata
+```
+
+
+```{r}
+#repeated measures -- include ID in the formula as a random effect
+Acer_model <- lmer(mean_Rintensity_percoral ~ Treatment*Colony*time_point + (1|Treatment_Tank) + (1|ID), data = Acer_tidydata) 
+summary(Acer_model)
+Anova(Acer_model, type = "II", test.statistic = "F")
+
+Pcli_model <- lmer(mean_Rintensity_percoral ~ Treatment*Colony*time_point + (1|Treatment_Tank) + (1|ID), data = Pcli_tidydata)
+summary(Pcli_model)
+Anova(Pcli_model, type = "II", test.statistic = "F")
+```
+
+### Model fitting and assumptions diagnostic
+
+Acer
+```{r}
+x = residuals(Acer_model)
+plot(fitted(Acer_model), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+# Acer data meets assumptions, yay
+
+Anova(Acer_model, type = "II", test.statistic = "F")
+capture.output(Anova(Acer_model, type = "II", test.statistic = "F"), file = "Acer_colorscore_model_ANOVA.csv")
+```
+
+Pcli
+```{r}
+x = residuals(Pcli_model)
+plot(fitted(Pcli_model), x) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+# Pcli data meets assumptions, yay
+
+Anova(Pcli_model, type = "II", test.statistic = "F")
+capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_colorscore_model_ANOVA.csv")
+```
+
+### Statistical pairwise comparisons
+
+Acer
+```{r}
+#treatment + timepoint
+Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*time_point, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+#no significant difference between treatments at either time point
+
+#colony + treatment + timepoint
+Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*Colony*time_point, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
+```
+
+Pcli
+```{r}
+#treatment + timepoint
+Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*time_point, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+#no significant difference between treatments at either time point
+
+#colony + treatment + timepoint
+Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Colony*time_point, weights = "proportional", adjust="none")
+# P.value adjustment of the Bonferroni
+rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
+capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_colonytreatmenttimepoint.csv")
+```
+
+
+
+
+
+
+# Archive
+## Calculate percent change for the treatment period 
 
 ```{r}
 Rintensity_withmetadata %>% 
@@ -405,7 +560,7 @@ percentchange %>%
 
 
 
-# Calculate percent change for the slow-burn heat stress assay
+## Calculate percent change for the slow-burn heat stress assay
 ```{r}
 Rintensity_withmetadata %>% 
   ungroup() %>% 
