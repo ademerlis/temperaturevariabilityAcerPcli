@@ -193,7 +193,8 @@ Treatment_Treated_vs_Untreated %>%
   as.data.frame() %>% 
   rownames_to_column(var = "gene") %>% 
   drop_na(padj) %>% 
-  filter(padj<0.05) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) > 1) %>% 
+  str() # 407 genes
   full_join(., iso2geneName, by = "gene") %>% 
   drop_na(baseMean) %>% 
   select(gene, annot, baseMean:padj) %>% 
