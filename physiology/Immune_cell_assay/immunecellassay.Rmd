@@ -23,18 +23,105 @@ library(car)
 library(multcomp)
 
 percent_cells_df <- read_csv("immunecellsdata.csv")
+
+percent_cells_df %>% 
+  drop_na() %>% #one technical replicate is NA for one coral ID
+  group_by(num_days, Species, Genotype, ID, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
+  ungroup() %>% 
+  dplyr::select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
+  distinct() -> comb_tech_reps
 ```
+
+# boxplot of percent change over treatment
+```{r}
+#taking the mean percent change per colony per tank, so the sample size for each colony in each treatment is only 2. because of this, stats cannot be performed at the colony level.
+plot1<-comb_tech_reps %>% 
+  group_by(num_days, Tank, Species, Genotype, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perGenet = mean(mean_replicate_percent_perID)) %>% 
+  dplyr::select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perGenet) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") %>% 
+  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_perGenet") %>% 
+  mutate(relative_activity = ((`28`-`0`)/`0`)*100) %>% #T1-T0/T0*100
+  ggplot(., aes(x=Species, y=relative_activity, fill= Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species,ncol = 1, nrow = 2, scales="free_x") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  ylab("% Change Immune Cell Activity")+
+  theme_classic() +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+## linear model stats
+```{r}
+# try including colony as a random effect since there isn't enough data for it to be a fixed effect
+comb_tech_reps %>% 
+  group_by(num_days, Tank, Species, Genotype, Treatment) %>% 
+  dplyr::mutate(mean_replicate_percent_perGenet = mean(mean_replicate_percent_perID)) %>% 
+  dplyr::select(Species, Genotype, Tank, Treatment, num_days, mean_replicate_percent_perGenet) %>% 
+  distinct() %>% 
+  filter(num_days == "0" | num_days == "28") %>% 
+  pivot_wider(names_from = "num_days", values_from = "mean_replicate_percent_perGenet") %>% 
+  mutate(relative_activity = ((`28`-`0`)/`0`)*100) -> percent_change
+
+percent_change %>% 
+  filter(Species == "Acer") -> Acer_percent_change
+
+percent_change %>% 
+  filter(Species == "Pcli") -> Pcli_percent_change
+
+Acer_model <- lmer(relative_activity ~ Treatment + (1|Genotype) + (1|Tank), data = Acer_percent_change)
+summary(Acer_model)
+anova(Acer_model)
+
+Pcli_model <- lmer(relative_activity ~ Treatment + (1|Genotype) + (1|Tank), data = Pcli_percent_change)
+summary(Pcli_model)
+anova(Pcli_model)
+```
+
+#### Model fitting and assumptions diagnostic
+
+Acer
+```{r}
+x = residuals(Acer_model)
+plot(fitted(Acer_model), x) 
+leveneTest(x ~ Treatment, data=Acer_percent_change, center=mean) # formal statistical test for homogenity of variance
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+
+Anova(Acer_model,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+capture.output(Anova(Acer_model,  type = "II", test.statistic = "F"), file = "Acer_model_ANOVA.csv")
+```
+
+
+Pcli
+```{r}
+x = residuals(Pcli_model)
+plot(fitted(Pcli_model), x) 
+leveneTest(x ~ Treatment, data=Pcli_percent_change, center=mean) # formal statistical test for homogeneity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test 
+
+Anova(Pcli_model, type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+
+capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_model_ANOVA.csv")
+```
+
 
 # percent immune activity over the entire experiment period (mean technical replicate)
 
 ## species x treatment
 ```{r}
-plot1<-percent_cells_df %>% 
+plot2<-percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
   ungroup() %>% 
-  select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
+  dplyr::select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
   ggplot(., aes(x=num_days, y=mean_replicate_percent_perID, color = Treatment)) +
   geom_point(alpha = 0.1) +
   geom_smooth(method = "lm", se = FALSE) +
@@ -50,12 +137,12 @@ plot1<-percent_cells_df %>%
 
 ## species x colony x treatment
 ```{r}
-plot2<-percent_cells_df %>% 
+plot3<-percent_cells_df %>% 
   drop_na() %>% #one technical replicate is NA for one coral ID
   group_by(num_days, Species, Genotype, ID, Treatment) %>% 
   dplyr::mutate(mean_replicate_percent_perID = mean(Percent)) %>% 
   ungroup() %>% 
-  select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
+  dplyr::select(Species:ID, Tank:num_days, mean_replicate_percent_perID) %>% 
   ggplot(., aes(x=num_days, y=mean_replicate_percent_perID, color = Treatment)) +
   geom_point(alpha = 0.1) +
   geom_smooth(method = "lm", se = FALSE) +
@@ -64,14 +151,15 @@ plot2<-percent_cells_df %>%
   theme_classic() +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   theme(text = element_text(size = 15)) +
-  labs(x="Days in Treatment")
+  labs(x="Days in Treatment")+
+  theme(legend.position="none")
 #ggsave("immunecellactivityovertime_bothspecies_genotypes.pdf", width = 10, height = 7)
 ```
   
 ## combined plot
 ```{r}
-plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1.5, 2))
-ggsave("percentimmunecellactivity_species_genet.pdf", width = 10, height = 5)
+plot_grid(plot1, plot2, plot3, nrow = 1, rel_widths = c(1, 1, 2))
+ggsave("percentimmunecellactivity_boxplot_linear.pdf", width = 12, height = 5)
 ```
 
   
@@ -116,19 +204,32 @@ Acer
 ```{r}
 x = residuals(Acer_model)
 plot(fitted(Acer_model), x) 
+leveneTest(x ~ Treatment*Genotype*num_days, data=immmunecells_meanreps_Acer, center=mean) # formal statistical test for homogeneity of variance #very significant
 qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
 hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # not significant
 
-Anova(Acer_model, type = "II", test.statistic = "F")
-capture.output(Anova(Acer_model, type = "II", test.statistic = "F"), file = "Acer_immunecells_model_ANOVA.csv")
+#log transformation helped
+Acer_model_2 <- lmer(log(mean_replicate_percent_perID)~Treatment*Genotype*num_days + (1|Tank), data = Acer_immunecells_noout)
+x = residuals(Acer_model_2)
+plot(fitted(Acer_model_2), x) 
+leveneTest(x ~ Treatment*Genotype*num_days, data=Acer_immunecells_noout, center=mean) 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+
+Anova(Acer_model_2, type = "II", test.statistic = "F")
+capture.output(Anova(Acer_model_2, type = "II", test.statistic = "F"), file = "Acer_immunecells_model_ANOVA.csv")
 ```
 
 Pcli
 ```{r}
 x = residuals(Pcli_model)
 plot(fitted(Pcli_model), x) 
+leveneTest(x ~ Treatment*Genotype*num_days, data=immmunecells_meanreps_Pcli, center=mean) 
 qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
 hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
 
 Anova(Pcli_model, type = "II", test.statistic = "F")
 capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_immunecells_model_ANOVA.csv")
@@ -138,35 +239,18 @@ capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcl
 
 Acer
 ```{r}
-#treatment + timepoint
-Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*num_days, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-#no significant difference between treatments at either time point
-capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_treatmenttimepoint.csv")
-
-
 #colony + treatment + timepoint
-Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*Genotype*num_days, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
+Acer_emms <- emmeans(Acer_model_2, pairwise ~ Treatment*Genotype*num_days)
+pairs(Acer_emms)
+capture.output(pairs(Acer_emms), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
 ```
 
 Pcli
 ```{r}
-#treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*num_days, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-#no significant difference between treatments at either time point
-capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_treatmenttimepoint.csv")
-
 #colony + treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Genotype*num_days, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
+Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Genotype*num_days)
+pairs(Pcli_emms)
+capture.output(pairs(Pcli_emms), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
 ```
 
 

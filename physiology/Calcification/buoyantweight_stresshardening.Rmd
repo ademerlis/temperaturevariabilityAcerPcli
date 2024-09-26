@@ -76,20 +76,6 @@ calc_bw_bothspecies_bothtimepoints %>%
   filter(Species == "Pseudodiploria clivosa") -> Pcli_calc_bw
 ```
 
-## (raw) initial vs final masses for corals
-```{r}
-calc_bw_bothspecies_bothtimepoints %>% 
-  dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
-  pivot_longer(CalcMAir_initial:CalcMAir_final, names_to = "timepoint", values_to = "mass") %>% 
-  mutate(timepoint = case_when(timepoint == "CalcMAir_initial" ~ "0",
-                               timepoint == "CalcMAir_final" ~ "28")) %>% 
-  ggplot(., aes(x=timepoint, y = mass, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() + 
-   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  facet_wrap(~Species+Colony+Treatment)
-```
-
 
 ## boxplot of % growth - all genotypes together
 ```{r}
@@ -118,7 +104,7 @@ calc_bw_bothspecies_bothtimepoints %>%
 ```
 
 
-## Mixed effects GLMM (fixed: treatment and colony, random: tank)
+## Percent Change Mixed effects GLMM (fixed: treatment and colony, random: tank)
 ```{r}
 #summary
 Summarize(percent_change~Treatment*Colony, data=Acer_calc_bw, digits=3)
@@ -156,7 +142,7 @@ shapiro.test(x) # formal statistical test
 # Acer data meets assumptions, yay
 
 Anova(Acer_bw_model_2,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
-capture.output(Anova(Acer_bw_model_2,  type = "II", test.statistic = "F"), file = "Acer_bw_model_ANOVA.csv")
+#capture.output(Anova(Acer_bw_model_2,  type = "II", test.statistic = "F"), file = "Acer_bw_model_ANOVA.csv")
 ```
 
 Pcli
@@ -189,7 +175,7 @@ shapiro.test(x) # formal statistical test -- good enough (i tried every possible
 
 Anova(Pcli_bw_model_2, type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
 
-capture.output(Anova(Pcli_bw_model_2, type = "II", test.statistic = "F"), file = "Pcli_bw_model_ANOVA.csv")
+#capture.output(Anova(Pcli_bw_model_2, type = "II", test.statistic = "F"), file = "Pcli_bw_model_ANOVA.csv")
 ```
 
 ### Statistical pairwise comparisons
@@ -197,40 +183,25 @@ capture.output(Anova(Pcli_bw_model_2, type = "II", test.statistic = "F"), file =
 Acer
 ```{r}
 #colony + treatment
-bw_Acer_emms <- emmeans(Acer_bw_model_2, pairwise ~ Colony*Treatment, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(bw_Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(bw_Acer_emms$contrasts), file = "Acer_bw_Tukey_colonytreatment.csv")
+bw_Acer_emms <- emmeans(Acer_bw_model_2, pairwise ~ Colony*Treatment)
 
-# #Treatment
-# bw_Acer_emms <- emmeans(Acer_bw_model_2, pairwise ~ Treatment, weights = "proportional", adjust="none")
-# # P.value adjustment of the Bonferroni
-# rbind(bw_Acer_emms$contrasts, adjust="tukey")
-
-#For p-values of Acer treated vs. untreated, using the Anova table results
+pairs(bw_Acer_emms) 
+capture.output(pairs(bw_Acer_emms), file="Acer_percentchange_treatment_colony_emmeans.csv")
 ```
 
 Pcli
 ```{r}
 #colony + treatment
-bw_Pcli_emms <- emmeans(Pcli_bw_model_2, pairwise ~ Colony*Treatment, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(bw_Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(bw_Pcli_emms$contrasts), file = "Pcli_bw_Tukey_colonytreatment.csv")
+bw_Pcli_emms <- emmeans(Pcli_bw_model_2, pairwise ~ Colony*Treatment)
 
-#Treatment
-# bw_Pcli_emms <- emmeans(Pcli_bw_model_2, pairwise ~ Treatment, weights = "proportional", adjust="none")
-# # P.value adjustment of the Bonferroni
-# rbind(bw_Pcli_emms$contrasts, adjust="tukey")
-
-#For p-values of Pcli treated vs. untreated, using the Anova table results
+pairs(bw_Pcli_emms) 
+capture.output(pairs(bw_Pcli_emms), file="Pcli_percentchange_treatment_colony_emmeans.csv")
 ```
 
-# replot data with outliers removed
+# replot % change data with outliers removed
 
 ```{r}
 plot1 <- Pcli_calc_bw_clean %>% 
-  dplyr::select(!percent_change_transformed) %>% 
   rbind(., Acer_calc_bw_noout) %>% 
   ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
@@ -238,18 +209,18 @@ plot1 <- Pcli_calc_bw_clean %>%
    scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 15)) +
   labs(y= "% Growth") +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  facet_wrap(~Species, ncol = 1, scales = "free_x")
 ```
 
 
 ```{r}
 plot2 <- Pcli_calc_bw_clean %>% 
-  dplyr::select(!percent_change_transformed) %>% 
   rbind(., Acer_calc_bw_noout) %>% 
   ggplot(., aes(x=Colony, y = percent_change, fill = Treatment)) + 
   geom_boxplot() + 
   theme_classic() + 
-  facet_wrap(~Species, scales="free_x") +
+  facet_wrap(~Species, scales="free_x", ncol = 1) +
     scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 15)) +
   labs(y= "% Growth")
@@ -259,6 +230,159 @@ plot2 <- Pcli_calc_bw_clean %>%
 plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1, 2))
 ggsave("growthrates_species_genet_boxplot.pdf", width = 12, height = 5)
 ```
+
+# mass over time
+```{r}
+plot2<-Pcli_calc_bw_clean %>% 
+  rbind(., Acer_calc_bw_noout) %>% 
+  dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
+  pivot_longer(CalcMAir_initial:CalcMAir_final, names_to = "timepoint", values_to = "mass") %>% 
+  mutate(timepoint = case_when(timepoint == "CalcMAir_initial" ~ 0,
+                               timepoint == "CalcMAir_final" ~ 28)) %>% 
+  ggplot(., aes(x=timepoint, y = mass, color = Treatment)) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth(method="lm", se = FALSE) + 
+  theme_classic() + 
+   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  facet_wrap(~Species, ncol = 1) +
+  ylab("Mass in Air") +
+  xlab("Days in Treatment") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+
+```{r}
+plot3<-Pcli_calc_bw_clean %>% 
+  rbind(., Acer_calc_bw_noout) %>%  
+  dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
+  pivot_longer(CalcMAir_initial:CalcMAir_final, names_to = "timepoint", values_to = "mass") %>% 
+  mutate(timepoint = case_when(timepoint == "CalcMAir_initial" ~ 0,
+                               timepoint == "CalcMAir_final" ~ 28)) %>% 
+  ggplot(., aes(x=timepoint, y = mass, color = Treatment)) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth(method="lm", se = FALSE) + 
+  theme_classic() + 
+   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  facet_wrap(~Species+Colony) +
+  ylab("Mass in Air") +
+  xlab("Days in Treatment") +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position="none")
+```
+
+
+```{r}
+plot_grid(plot1, plot2, plot3, nrow = 1, rel_widths = c(1, 1, 2))
+ggsave("boxplots_time_species_genet.pdf", width = 12, height = 5)
+```
+
+## mixed effects model
+```{r}
+Acer_calc_bw %>% 
+  dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
+  pivot_longer(CalcMAir_initial:CalcMAir_final, names_to = "Timepoint", values_to="mass") %>% 
+  mutate(Timepoint = case_when(Timepoint == "CalcMAir_initial" ~ "0",
+                               Timepoint == "CalcMAir_final" ~ "28")) %>% 
+  mutate(Timepoint = as.factor(Timepoint)) -> Acer_bw_long
+
+Acer_bw_model <- lmer(mass ~ Treatment*Colony*Timepoint + (1|Treatment_Tank) + (1|ID), data = Acer_bw_long)
+summary(Acer_bw_model)
+anova(Acer_bw_model)
+
+Pcli_calc_bw %>% 
+  dplyr::select(Species:Treatment_Tank, CalcMAir_initial, CalcMAir_final) %>% 
+  pivot_longer(CalcMAir_initial:CalcMAir_final, names_to = "Timepoint", values_to="mass") %>% 
+  mutate(Timepoint = case_when(Timepoint == "CalcMAir_initial" ~ "0",
+                               Timepoint == "CalcMAir_final" ~ "28")) %>% 
+  mutate(Timepoint = as.factor(Timepoint)) -> Pcli_bw_long
+
+Pcli_bw_model <- lmer(mass ~ Treatment*Colony*Timepoint + (1|Treatment_Tank) + (1|ID), data = Pcli_bw_long)
+summary(Pcli_bw_model)
+anova(Pcli_bw_model)
+```
+
+### Model fitting and assumptions diagnostic
+
+Acer
+```{r}
+x = residuals(Acer_bw_model)
+plot(fitted(Acer_bw_model), x) 
+leveneTest(x ~ Treatment*Colony*Timepoint, data=Acer_bw_long, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test 
+car::outlierTest(Acer_bw_model) #row 27
+Acer_bw_long[-70, ] -> Acer_bw_long_noout
+
+Acer_bw_model_2 <- lmer(mass ~ Treatment*Colony*Timepoint + (1|Treatment_Tank) + (1|ID), data = Acer_bw_long_noout)
+x = residuals(Acer_bw_model_2)
+plot(fitted(Acer_bw_model_2), x) 
+leveneTest(x ~ Treatment*Colony*Timepoint, data=Acer_bw_long_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+# Acer data meets assumptions, yay
+
+Anova(Acer_bw_model_2,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+#capture.output(Anova(Acer_bw_model_2,  type = "II", test.statistic = "F"), file = "Acer_bw_model_time_ANOVA.csv")
+```
+
+Pcli
+```{r}
+x = residuals(Pcli_bw_model)
+plot(fitted(Pcli_bw_model), x) 
+leveneTest(x ~ Treatment*Colony*Timepoint, data=Pcli_bw_long, center=mean) # formal statistical test for homogeneity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test -- very significant
+# Perform Bonferroni outlier test
+bonf_outliers <- outlierTest(Pcli_bw_model, cutoff = Inf, n.max = Inf)
+
+# View all potential outliers identified with Bonferroni correction
+bonf_outliers #rows 37, 63, and 54
+
+# Indices of the rows to remove
+rows_to_remove <- c(73,74,107,108)
+
+# Remove these rows
+Pcli_bw_long_clean <- Pcli_bw_long[-rows_to_remove, ]
+
+Pcli_bw_model_2 <- lmer(mass ~ Treatment*Colony*Timepoint + (1|Treatment_Tank) + (1|ID), data = Pcli_bw_long_clean)
+x = residuals(Pcli_bw_model_2)
+plot(fitted(Pcli_bw_model_2), x) 
+leveneTest(x ~ Treatment*Colony*Timepoint, data=Pcli_bw_long_clean, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test 
+
+Anova(Pcli_bw_model_2, type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+
+#capture.output(Anova(Pcli_bw_model_2, type = "II", test.statistic = "F"), file = "Pcli_bw_model_time_ANOVA.csv")
+```
+
+### emmeans posthoc pairwise
+
+Acer
+```{r}
+bw_Acer_emms <- emmeans(Acer_bw_model_2, pairwise ~ Colony*Treatment*Timepoint)
+pairs(bw_Acer_emms)
+capture.output(pairs(bw_Acer_emms), file = "Acer_bw_Tukey_colonytreatmenttimepoint.csv")
+
+#look within colonies
+pairs(bw_Acer_emms, by = c("Colony")) #BC-8b still isn't significant between treatments at either time point
+```
+
+Pcli
+```{r}
+bw_Pcli_emms <- emmeans(Pcli_bw_model_2, pairwise ~ Colony*Treatment*Timepoint)
+pairs(bw_Pcli_emms)
+capture.output(pairs(bw_Pcli_emms), file = "Pcli_bw_Tukey_colonytreatmenttimepoint.csv")
+
+#look within colonies
+pairs(bw_Pcli_emms, by = c("Colony")) # C is not significantly different between treatments at each time point
+```
+
 
 
 

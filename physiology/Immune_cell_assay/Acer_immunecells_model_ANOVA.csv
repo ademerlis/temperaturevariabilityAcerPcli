@@ -1,0 +1,13 @@
+Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
+
+Response: log(mean_replicate_percent_perID)
+                                   F Df Df.res    Pr(>F)    
+Treatment                     0.8704  1  1.995 0.4495273    
+Genotype                      9.5352  2 50.013 0.0003103 ***
+num_days                    287.2817  2 50.013 < 2.2e-16 ***
+Treatment:Genotype            7.5975  2 50.013 0.0013147 ** 
+Treatment:num_days            1.7539  2 50.013 0.1835812    
+Genotype:num_days             4.7250  4 50.016 0.0025939 ** 
+Treatment:Genotype:num_days   1.3514  4 50.016 0.2641364    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

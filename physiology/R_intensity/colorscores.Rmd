@@ -125,12 +125,164 @@ Rintensity_withmetadata %>%
   theme(text = element_text(size = 13)) + 
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
 ```
+# boxplot for percent change
+```{r}
+Rintensity_withmetadata %>% 
+  ungroup() %>% 
+  filter(month == "03" | month == "04") %>% 
+  dplyr::select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
+  mutate(percent_change = ((`04`-`03`)/`03`)*100) -> percentchange
+
+percentchange %>% 
+  drop_na() -> percentchange
+
+plot1<- ggplot(percentchange,aes(x = Species, y= percent_change, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() +
+  labs(y = "Percent Change in R-Intensity") +
+  theme(text = element_text(size = 15)) +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  facet_wrap(~Species, scales = "free_x", ncol = 1) +
+  theme(legend.position="none") 
+```
+
+## mixed effects linear model
+```{r}
+percentchange %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_colorscore
+
+Acer_colorscore_model <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore)
+summary(Acer_colorscore_model)
+anova(Acer_colorscore_model)
+
+percentchange %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_colorscore
+
+Pcli_colorscore_model <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Pcli_colorscore)
+summary(Pcli_colorscore_model)
+anova(Pcli_colorscore_model)
+```
+
+
+### Model fitting and assumptions diagnostic
+
+Acer
+```{r}
+x = residuals(Acer_colorscore_model)
+plot(fitted(Acer_colorscore_model), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test  -- significant aka not normal
+car::outlierTest(Acer_colorscore_model) #row 30
+Acer_colorscore[-30, ] -> Acer_colorscore_noout
+
+Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
+x = residuals(Acer_colorscore_model_2)
+plot(fitted(Acer_colorscore_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+car::outlierTest(Acer_colorscore_model_2) #row 61
+Acer_colorscore_noout[-61, ] -> Acer_colorscore_noout
+
+Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
+x = residuals(Acer_colorscore_model_2)
+plot(fitted(Acer_colorscore_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+car::outlierTest(Acer_colorscore_model_2) #row 62
+Acer_colorscore_noout[-62, ] -> Acer_colorscore_noout
+
+Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
+x = residuals(Acer_colorscore_model_2)
+plot(fitted(Acer_colorscore_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+car::outlierTest(Acer_colorscore_model_2) #row 36
+Acer_colorscore_noout[-36, ] -> Acer_colorscore_noout
+
+Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
+x = residuals(Acer_colorscore_model_2)
+plot(fitted(Acer_colorscore_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+car::outlierTest(Acer_colorscore_model_2) #row 48
+Acer_colorscore_noout[-48, ] -> Acer_colorscore_noout
+
+Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
+x = residuals(Acer_colorscore_model_2)
+plot(fitted(Acer_colorscore_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+car::outlierTest(Acer_colorscore_model_2) #row 36
+Acer_colorscore_noout[-36, ] -> Acer_colorscore_noout
+
+Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
+x = residuals(Acer_colorscore_model_2)
+plot(fitted(Acer_colorscore_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+#that's the best we're gonna get
+
+Anova(Acer_colorscore_model_2,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+
+#capture.output(Anova(Acer_colorscore_model_2,  type = "II", test.statistic = "F"), file = "Acer_colorscore_percentchange_ANOVA.csv")
+```
+
+Pcli
+```{r}
+x = residuals(Pcli_colorscore_model)
+plot(fitted(Pcli_colorscore_model), x) 
+leveneTest(x ~ Treatment*Colony, data=Pcli_colorscore, center=mean) # formal statistical test for homogenity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test 
+
+Anova(Pcli_colorscore_model,  type = "II", test.statistic = "F") 
+
+capture.output(Anova(Pcli_colorscore_model,  type = "II", test.statistic = "F"), file = "Pcli_colorscore_percentchange_ANOVA.csv")
+```
+
+
+### Statistical pairwise comparisons
+
+Acer
+```{r}
+#colony + treatment
+colorscore_Acer_emms <- emmeans(Acer_colorscore_model_2, pairwise ~ Colony*Treatment)
+
+pairs(colorscore_Acer_emms) 
+capture.output(pairs(colorscore_Acer_emms), file="Acer_percentchange_treatment_colony_emmeans.csv")
+```
+
+Pcli
+```{r}
+#colony + treatment
+colorscore_Pcli_emms <- emmeans(Pcli_colorscore_model, pairwise ~ Colony*Treatment)
+
+pairs(colorscore_Pcli_emms) 
+capture.output(pairs(colorscore_Pcli_emms), file="Pcli_percentchange_treatment_colony_emmeans.csv")
+```
 
 # Line + scatterplot over time 
 
 ## Species x Treatment
 ```{r}
-plot1<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
+plot2<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
   geom_point(alpha = 0.1) +
   geom_smooth(method = "lm", se = FALSE) +
   facet_wrap(~Species,ncol = 1, nrow = 2) +
@@ -140,12 +292,12 @@ plot1<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percor
   theme(text = element_text(size = 15)) +
   labs(x="Days in Treatment") +
   theme(legend.position="none") +
-  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 10))
+  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 5))
 ```
 
 ## Colony x Treatment
 ```{r}
-plot2<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
+plot3<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
   geom_point(alpha = 0.1) +
   geom_smooth(method = "lm", se = FALSE) +
   facet_wrap(~Species+Colony) +
@@ -154,13 +306,14 @@ plot2<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percor
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
   theme(text = element_text(size = 15)) +
   labs(x="Days in Treatment") +
-  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 10))
+  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 5)) +
+  theme(legend.position="none")
 ```
 
 
 ```{r}
-plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1, 2.3))
-ggsave("colorscore_species_genet.pdf", width = 12, height = 5)
+plot_grid(plot1, plot2,plot3, nrow=1, rel_widths = c(1, 1, 2))
+ggsave("colorscore_boxplot_species_genet_lines.pdf", width = 12, height = 5)
 ```
 
 
@@ -206,7 +359,7 @@ hist(x) # histogram of residuals to check for normal distribution of residuals
 # Acer data meets assumptions, yay
 
 Anova(Acer_model, type = "II", test.statistic = "F")
-capture.output(Anova(Acer_model, type = "II", test.statistic = "F"), file = "Acer_colorscore_model_ANOVA.csv")
+#capture.output(Anova(Acer_model, type = "II", test.statistic = "F"), file = "Acer_colorscore_model_ANOVA.csv")
 ```
 
 Pcli
@@ -217,45 +370,25 @@ qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
 hist(x) # histogram of residuals to check for normal distribution of residuals
 # Pcli data meets assumptions, yay
 
-Anova(Pcli_model, type = "II", test.statistic = "F")
-capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_colorscore_model_ANOVA.csv")
+Anova(Pcli_model, type = "III", test.statistic = "F")
+#capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_colorscore_model_ANOVA.csv")
 ```
 
 ### Statistical pairwise comparisons
 
 Acer
 ```{r}
-#treatment + timepoint
-Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*time_point, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-#no significant difference between treatments at either time point
-
 #colony + treatment + timepoint
-Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*Colony*time_point, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
+Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*Colony*time_point)
+capture.output(Acer_emms$contrasts, file = "Acer_Tukey_colonytreatmenttimepoint.csv")
 ```
 
 Pcli
 ```{r}
-#treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*time_point, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-#no significant difference between treatments at either time point
-
 #colony + treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Colony*time_point, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_colonytreatmenttimepoint.csv")
+Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Colony*time_point)
+capture.output(Pcli_emms$contrasts, file = "Pcli_colonytreatmenttimepoint.csv")
 ```
-
-
-
-
 
 
 # Archive
@@ -273,9 +406,9 @@ Rintensity_withmetadata %>%
 percentchange %>% 
   drop_na() -> percentchange #7 corals were not measured in the second time point 
 
-percentchange %>% 
-  select(ID:Treatment, percent_change) %>% 
-  write_csv("treatment_Rscore.csv")
+# percentchange %>% 
+#   select(ID:Treatment, percent_change) %>% 
+#   write_csv("treatment_Rscore.csv")
 
 #sample sizes
 percentchange %>% 

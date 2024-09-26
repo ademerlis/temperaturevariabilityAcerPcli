@@ -69,6 +69,8 @@ unique_Treated_vs_Initial <- anti_join(unique_Treated_vs_Initial, MWU_result_BP_
 unique_Treated_vs_Untreated <- anti_join(MWU_result_BP_TreatedvUntreated_05, MWU_result_BP_UntreatedvInitial_05, by = "name")
 unique_Treated_vs_Untreated <- anti_join(unique_Treated_vs_Untreated, MWU_result_BP_TreatedvInitial_05,  by = "name") # 60 unique
 
+#write_csv(unique_Treated_vs_Untreated, "unique_Treated_vs_Untreated_GO_terms.csv")
+
 #there's 60 GO terms here so that's a big figure
  ggplot(unique_Treated_vs_Untreated, aes(x = reorder(name, delta.rank), y = delta.rank)) +
   geom_point(aes(size = nseqs, color = p.adj)) +

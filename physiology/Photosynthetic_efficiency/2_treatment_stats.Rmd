@@ -133,25 +133,137 @@ treatment_time_bothspecies%>%
 ```
 
 
+
+
 # 2. Normalized to initial measurement (day 0) - Treatment Fv/Fm
 
-## 2a. (for publication) --  Normalized to 1
+## 2a. percent change boxplot (for publication)
+```{r}
+p1<-treatment_normalized_bothspecies %>% 
+  ggplot(., aes(x=Species, y= fvfm_loss_norm, fill= Treatment)) +
+  geom_boxplot() + 
+  theme_classic() + 
+  labs(y = "% Change Fv/Fm", x="Species") +
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  theme(text = element_text(size = 15)) + 
+  theme(legend.position="none") +
+  facet_wrap(~Species, ncol =1, scales = "free_x")
+```
+
+### linear mixed model stats
+
+```{r}
+treatment_normalized_bothspecies %>% 
+  mutate_at(vars(Colony, Puck, Tank, Treatment, Species), factor) -> treatment_normalized_bothspecies
+
+treatment_normalized_bothspecies %>% 
+  filter(Species == "Acervicornis") -> Acer_fvfm_norm
+
+treatment_normalized_bothspecies %>% 
+  filter(Species == "Pclivosa") -> Pcli_fvfm_norm
+
+Pcli_fvfm_norm %>% 
+  drop_na(`2022-04-20`) -> Pcli_fvfm_norm
+
+Acer_model <- lmer(fvfm_loss_norm ~ Treatment*Colony + (1|Tank), data = Acer_fvfm_norm)
+summary(Acer_model)
+anova(Acer_model)
+
+Pcli_model <- lmer(fvfm_loss_norm ~ Treatment*Colony + (1|Tank), data = Pcli_fvfm_norm)
+summary(Pcli_model)
+anova(Pcli_model)
+```
+
+
+#### Model fitting and assumptions diagnostic
+
+Acer
+```{r}
+x = residuals(Acer_model)
+plot(fitted(Acer_model), x) 
+leveneTest(x ~ Treatment*Colony, data=Acer_fvfm_norm, center=mean) # formal statistical test for homogenity of variance #marginally significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test
+# removal of one outlier made the variance more significant, so leaving it as is
+
+Anova(Acer_model,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+capture.output(Anova(Acer_model,  type = "II", test.statistic = "F"), file = "Acer_model_ANOVA.csv")
+```
+
+
+Pcli
+```{r}
+x = residuals(Pcli_model)
+plot(fitted(Pcli_model), x) 
+leveneTest(x ~ Treatment*Colony, data=Pcli_fvfm_norm, center=mean) # formal statistical test for homogeneity of variance #not significant
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x) # formal statistical test 
+# Perform Bonferroni outlier test
+bonf_outliers <- outlierTest(Pcli_model, cutoff = Inf, n.max = Inf)
+
+# View all potential outliers identified with Bonferroni correction
+bonf_outliers #row 12
+
+# Indices of the rows to remove
+rows_to_remove <- c(12)
+
+# Remove these rows
+Pcli_clean <- Pcli_fvfm_norm[-rows_to_remove, ]
+
+Pcli_model_2 <- lmer(fvfm_loss_norm ~ Treatment*Colony + (1|Tank), data = Pcli_clean)
+x = residuals(Pcli_model_2)
+plot(fitted(Pcli_model_2), x) 
+leveneTest(x ~ Treatment*Colony, data=Pcli_clean, center=mean) # formal statistical test for homogenity of variance 
+qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
+hist(x) # histogram of residuals to check for normal distribution of residuals
+shapiro.test(x)
+
+Anova(Pcli_model_2, type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
+
+capture.output(Anova(Pcli_model_2, type = "II", test.statistic = "F"), file = "Pcli_model_ANOVA.csv")
+```
+
+#### Statistical pairwise comparisons
+
+Acer
+```{r}
+#colony + treatment
+Acer_emms <- emmeans(Acer_model, pairwise ~ Colony*Treatment)
+
+pairs(Acer_emms) 
+capture.output(pairs(Acer_emms), file="Acer_percentchange_treatment_colony_emmeans.csv")
+```
+
+Pcli
+```{r}
+#colony + treatment
+Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Colony*Treatment)
+
+pairs(Pcli_emms) 
+capture.output(pairs(Pcli_emms), file="Pcli_percentchange_treatment_colony_emmeans.csv")
+```
+
+
+## 2b. Linear over time (for publication) --  Normalized to 1
 ```{r, warning = FALSE}
-p1<- ipam_norm_overtime %>% 
+p2<-ipam_norm_overtime %>% 
   ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color=Treatment)) + 
-  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  geom_point(alpha=0.3) +
   geom_smooth() +
-  facet_wrap(~Species) + 
+  facet_wrap(~Species, ncol =1) + 
   theme_classic() + 
   labs(y = "Normalized Fv/Fm", x = "Days in Treatment") +
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 14)) +
-  ylim(0,1.2)
+  ylim(0.4,1.2) +
+  theme(legend.position="none")
   
-p2<- ipam_norm_overtime %>% 
+p3<-ipam_norm_overtime %>% 
   ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color=Treatment)) + 
-  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  geom_point(alpha=0.3) +
   geom_smooth() +
   facet_wrap(~Species + Colony) + 
   theme_classic() + 
@@ -159,19 +271,19 @@ p2<- ipam_norm_overtime %>%
   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
   theme(text = element_text(size = 14))+
-  ylim(0,1.2)
+  ylim(0.4,1.2) +
+  theme(legend.position="none")
 ```
 
 create combined plot
 ```{r}
-plot_grid(p1, p2, rel_widths = c(1.5,2))
-#ggsave("treatment_normfvfm_smoothline.pdf", width = 12, height = 5)
+plot_grid(p1, p2, p3, rel_widths = c(1, 1, 2), nrow=1)
+ggsave("treatment_normfvfm_boxplot_linear.pdf", width = 12, height = 5)
 ```
 
 ### Mixed effects GLMM (fixed: treatment, colony, fvfm_timepoint; random: tank and ID)
 
 Test species separately.
-
 ```{r}
 ipam_norm_overtime$fvfm_timepoint <- as.factor(ipam_norm_overtime$fvfm_timepoint)
 
@@ -241,39 +353,22 @@ capture.output(Anova(Pcli_model_2, type = "II", test.statistic = "F"), file = "P
 
 Acer
 ```{r}
-#treatment + timepoint
-Acer_emms <- emmeans(Acer_model_2, pairwise ~ Treatment*fvfm_timepoint, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-#no significant difference between treatments at either time point
-capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_treatmenttimepoint.csv")
-
-
 #colony + treatment + timepoint
-Acer_emms <- emmeans(Acer_model_2, pairwise ~ Treatment*Colony*fvfm_timepoint, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Acer_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(Acer_emms$contrasts), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
+Acer_emms <- emmeans(Acer_model_2, pairwise ~ Colony*Treatment*fvfm_timepoint)
+pairs(Acer_emms)
+capture.output(pairs(Acer_emms), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
 ```
 
 Pcli
 ```{r}
-#treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Treatment*fvfm_timepoint, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-#no significant difference between treatments at either time point
-capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_treatmenttimepoint.csv")
-
 #colony + treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Treatment*Colony*fvfm_timepoint, weights = "proportional", adjust="none")
-# P.value adjustment of the Bonferroni
-rbind(Pcli_emms$contrasts) # Tukey HSD with Bonferroni P value adjustment, and kenward-roger degrees of freedom method
-capture.output(rbind(Pcli_emms$contrasts), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
+Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Colony*Treatment*fvfm_timepoint)
+pairs(Pcli_emms)
+capture.output(pairs(Pcli_emms), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
 ```
 
 
-## 2b. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
+## 2c. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
 ```{r, warning = F}
 p1<-treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Species, y= fvfm_loss_norm, fill= Treatment)) +
@@ -413,7 +508,7 @@ oneway.test(fvfm_loss_norm ~ Treatment, data = treatment_percent_Pcli, var.equal
 
 
 
-## 2c. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
+## 2d. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
 ```{r, warning = F}
 p2<- treatment_normalized_bothspecies%>% 
   ggplot(., aes(x=Colony, y= fvfm_loss_norm, fill=Treatment)) +

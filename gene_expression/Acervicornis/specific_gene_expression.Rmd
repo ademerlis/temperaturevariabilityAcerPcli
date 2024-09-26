@@ -5,6 +5,7 @@ date: "2024-03-06"
 output: html_document
 ---
 
+# load libraries and data
 ```{r}
 library(tidyverse)
 library(DESeq2)
@@ -13,25 +14,103 @@ library(cowplot)
 TreatedvUntreated <- read_csv("results_csv/unique_Treated_vs_Untreated_annotated_KOG.csv")
 
 load("Rdata_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
-
-Acer_slowburn_survival <- read_csv("../../physiology/1_survivorship/csv_files/survival_percent_acer.csv")
+load("Rdata_files/vsd.RData")
 ```
 
-
+# vst normalized counts
 ```{r}
+metadata <- read_csv("../../physiology/metadata.csv")
+
+metadata %>% 
+  dplyr::select(Species, ID, Treatment) %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  dplyr::select(!Species) %>% 
+  dplyr::rename(Sample_ID = ID) -> metadata
+
+metadata$Formatted <- sprintf("Acer.%03d", metadata$Sample_ID)
+
+metadata %>% 
+  drop_na() %>%  
+  dplyr::select(!Sample_ID) %>% 
+  dplyr::rename(Sample_ID = Formatted) -> metadata
+
+
 TreatedvUntreated %>% 
   arrange(desc(log2FoldChange)) #Acropora_023112 = histone H2A l2fc 1.48 
 
 TreatedvUntreated %>% 
   arrange(log2FoldChange) #Acropora_019471 = 	nitric-oxide synthase activity l2fc -2.052
-``` 
-# normalize gene counts
+
+standard_error <- function(x) {
+  sd(x) / sqrt(length(x))
+}
+```
+
+## histone 2A linear plot
+```{r}
+#Acropora_023112 = histone H2A l2fc 1.48 
+plot1<-t(vsd) %>% 
+  as.data.frame() %>% 
+  dplyr::select(Acropora_023112) %>% 
+  rownames_to_column() %>% 
+  separate(rowname, into = c("Sample_ID", "Genotype", "Expression", "Treatment"), sep ="_") %>% 
+  unite("Genotype", Genotype,Expression, sep = "_") %>% 
+  mutate(Day = case_when(Treatment == "Initial" ~ 0,
+                         Treatment == "Treated" ~ 28,
+                         Treatment == "Untreated" ~ 28)) %>% 
+  dplyr::select(!Treatment) %>% 
+  full_join(., metadata) %>% 
+  drop_na() %>% 
+  # group_by(Day, Treatment, Genotype) %>% 
+  # mutate(mean_expression = mean(Acropora_023112), se = standard_error(Acropora_023112)) %>% 
+  ggplot(., aes(x=Day, y=Acropora_023112, color = Treatment, fill = Treatment)) +
+  geom_point(alpha=0.2) +
+  theme_classic() +
+  geom_smooth(method = "lm", mapping = aes(color = Treatment), se=FALSE) +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Vst-Normalized Expression Level", title = "Acropora_023112 = Histone H2A") +
+  theme(text = element_text(size = 13))+
+  theme(legend.position="none") 
+```
+
+## nitric oxide synthase activity linear plot
+```{r}
+#Acropora_019471 = 	nitric-oxide synthase activity l2fc -2.052
+plot2<-t(vsd) %>% 
+  as.data.frame() %>% 
+  dplyr::select(Acropora_019471) %>% 
+  rownames_to_column() %>% 
+  separate(rowname, into = c("Sample_ID", "Genotype", "Expression", "Treatment"), sep ="_") %>% 
+  unite("Genotype", Genotype,Expression, sep = "_") %>% 
+  mutate(Day = case_when(Treatment == "Initial" ~ 0,
+                         Treatment == "Treated" ~ 28,
+                         Treatment == "Untreated" ~ 28)) %>% 
+  dplyr::select(!Treatment) %>% 
+  full_join(., metadata) %>% 
+  drop_na() %>% 
+  ggplot(., aes(x=Day, y=Acropora_019471, color = Treatment, fill = Treatment)) +
+  geom_point(alpha=0.2) +
+  theme_classic() +
+  geom_smooth(method = "lm", mapping = aes(color = Treatment), se=FALSE) +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Vst-Normalized Expression Level", title = "Acropora_019471 = Nitric-oxide synthase activity") +
+  theme(text = element_text(size = 13)) +
+  theme(legend.position="none") 
+```
+
+```{r}
+plot_grid(plot1,plot2)
+ggsave("specific_genes_linear.pdf", width = 12, height = 5)
+```
+
+
+# dds normalized gene counts
 ```{r}
 dds <- estimateSizeFactors(dds)
 normalized_counts <- counts(dds, normalized=TRUE)
 ```
 
-# boxplot of Acropora_023112 = histone H2A 
+## boxplot of Acropora_023112 = histone H2A 
 ```{r}
 Acropora_023112_counts <- normalized_counts["Acropora_023112",]
 
@@ -54,7 +133,7 @@ full_join(design, df_Acropora_023112) %>%
 
 ```
 
-# boxplot of Acropora_019471 = 	nitric-oxide synthase activity
+## boxplot of Acropora_019471 = 	nitric-oxide synthase activity
 ```{r}
 Acropora_019471_counts <- normalized_counts["Acropora_019471",]
 
@@ -74,7 +153,8 @@ full_join(design, df_Acropora_019471) %>%
 
 ```
 
-# gene expression / slowburn survival correlations
+
+# ARCHIVE - gene expression / slowburn survival correlations
 
 ```{r}
 design %>% 
@@ -175,7 +255,7 @@ Acer_slowburn_survival %>%
   facet_wrap(~Treatment, scales="free_x")
 ```
 
-# Acropora_010783 (green fluorescent protein)
+## Acropora_010783 (green fluorescent protein)
 ```{r}
 as.data.frame(normalized_counts) %>% 
   rownames_to_column(var="gene_ID") %>% 
@@ -221,7 +301,7 @@ Acer_slowburn_survival %>%
 ```
 
 
-# Acropora_000238 = nucleosome (Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template)
+## Acropora_000238 = nucleosome (Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template)
 ```{r}
 as.data.frame(normalized_counts) %>% 
   rownames_to_column(var="gene_ID") %>% 
@@ -266,7 +346,7 @@ Acer_slowburn_survival %>%
   facet_wrap(~Treatment, scales="free_x")
 ```
 
-# Acropora_015765 = transmembrane receptor protein tyrosine kinase activity
+## Acropora_015765 = transmembrane receptor protein tyrosine kinase activity
 ```{r}
 as.data.frame(normalized_counts) %>% 
   rownames_to_column(var="gene_ID") %>% 
@@ -312,7 +392,7 @@ Acer_slowburn_survival %>%
 
 ```
 
-# Acropora_017542 = 	Belongs to the small heat shock protein (HSP20) family
+## Acropora_017542 = 	Belongs to the small heat shock protein (HSP20) family
 ```{r}
 as.data.frame(normalized_counts) %>% 
   rownames_to_column(var="gene_ID") %>% 
@@ -359,7 +439,7 @@ Acer_slowburn_survival %>%
 ```
 
 
-# plot all correlation plots together
+## plot all correlation plots together
 ```{r}
 plot_grid(p1, p2, p3, p4, p5, p6, ncol = 3)
 ggsave("specificgenes_correlationsurvivorship.pdf", width = 10, height = 6)

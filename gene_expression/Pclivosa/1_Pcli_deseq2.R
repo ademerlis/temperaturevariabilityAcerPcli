@@ -199,6 +199,16 @@ Treatment_Untreated_vs_Initial %>%
   select(gene, annot, baseMean:padj) %>% 
   write_csv("UntreatedvInitial_annotDGEs.csv")
 
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  mutate(Contrast = "Untreated vs Initial") -> untreated_vs_initial
+
 # export for GO analysis
 Treatment_Untreated_vs_Initial %>% 
   as.data.frame() %>% 
@@ -221,6 +231,16 @@ Treatment_Treated_vs_Initial %>%
   drop_na(baseMean) %>% 
   select(gene, annot, baseMean:padj) %>% 
   write_csv("TreatedvInitial_annotDGEs.csv")
+
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  mutate(Contrast = "Treated vs Initial") -> treated_vs_initial
 
 # export for GO analysis
 Treatment_Treated_vs_Initial %>% 
@@ -245,6 +265,17 @@ Treatment_Treated_vs_Untreated %>%
   select(gene, annot, baseMean:padj) %>% 
   write_csv("TreatedvUntreated_annotDGEs.csv")
 
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  mutate(Contrast = "Treated vs Untreated") -> treated_vs_untreated
+
+
 # export for GO analysis
 Treatment_Treated_vs_Untreated %>% 
   as.data.frame() %>% 
@@ -255,6 +286,28 @@ Treatment_Treated_vs_Untreated %>%
 
 
 save(Treatment,Treatment_Untreated_vs_Initial,Treatment_Treated_vs_Initial,Treatment_Treated_vs_Untreated, degs_Treatment_Untreated_vs_Initial,degs_Treatment_Treated_vs_Initial, degs_Treatment_Treated_vs_Untreated, file="Rdata_files/pvals.RData")
+
+rbind(treated_vs_untreated, treated_vs_initial, untreated_vs_initial) %>% 
+  write_csv("all_contrasts_annotDEGs.csv")
+
+## lfcThreshold=1
+# Treated vs. Untreated
+Treatment_Treated_vs_Untreated_LFC1=results(dds,contrast=c("Treatment","Treated","Untreated"), lfcThreshold=1)
+summary(Treatment_Treated_vs_Untreated_LFC1, alpha = 0.05)
+degs_Treatment_Treated_vs_Untreated_LFC1=row.names(Treatment_Treated_vs_Untreated_LFC1)[Treatment_Treated_vs_Untreated_LFC1$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated_LFC1$padj))]
+length(degs_Treatment_Treated_vs_Untreated_LFC1) #0
+
+# Treated vs. Initial
+Treatment_Treated_vs_Initial_LFC1=results(dds,contrast=c("Treatment","Treated","Initial"), lfcThreshold=1)
+summary(Treatment_Treated_vs_Initial_LFC1, alpha = 0.05)
+degs_Treatment_Treated_vs_Initial_LFC1=row.names(Treatment_Treated_vs_Initial_LFC1)[Treatment_Treated_vs_Initial_LFC1$padj<0.05 & !(is.na(Treatment_Treated_vs_Initial_LFC1$padj))]
+length(degs_Treatment_Treated_vs_Initial_LFC1) #
+
+# Untreated vs. Initial
+Treatment_Untreated_vs_Initial_LFC1=results(dds,contrast=c("Treatment","Untreated","Initial"), lfcThreshold=1)
+summary(Treatment_Untreated_vs_Initial_LFC1, alpha = 0.05)
+degs_Treatment_Untreated_vs_Initial_LFC1=row.names(Treatment_Untreated_vs_Initial_LFC1)[Treatment_Untreated_vs_Initial_LFC1$padj<0.05 & !(is.na(Treatment_Untreated_vs_Initial_LFC1$padj))]
+length(degs_Treatment_Untreated_vs_Initial_LFC1) #0
 
 
 #### VENN DIAGRAMS ####

@@ -1,0 +1,98 @@
+---
+title: "Acer_LRT"
+author: "allyson_demerlis"
+date: "2024-09-13"
+output: html_document
+---
+# load libraries
+```{r}
+library(DESeq2)
+library(arrayQualityMetrics)
+library(tidyverse)
+```
+
+# load and tidy counts matrix
+```{r}
+#read in counts
+counts = read.delim("../final_counts_matrix.txt")
+
+#select only Acropora genes, remove Symbiodinium
+counts <- counts %>% filter(!grepl("^Symbiodinium[0-9]+$", X))
+
+column_to_rownames(counts, var ="X") -> counts
+counts %>% 
+  select(!X.1) -> counts
+
+#two of the sample IDs are in all caps, need to change it to be "Acer"
+counts <- counts %>% dplyr::rename(Acer.112 = ACER.112)
+counts <- counts %>% dplyr::rename(Acer.124 = ACER.124)
+
+# filtering out low-count genes
+keep <- rowSums(counts) >= 10
+countData <- counts[keep,]
+nrow(countData) #25003
+ncol(countData) #48
+```
+
+# make counts matrix for WGCNA
+```{r}
+# for WCGNA: removing all genes with counts of <10 in more than 90 % of samples
+counts4wgcna = counts[apply(counts,1,function(x) sum(x<10))<ncol(counts)*0.9,]
+nrow(counts4wgcna) #15526
+ncol(counts4wgcna) #48
+```
+
+# load and tidy design matrix
+```{r}
+# importing a design .csv file
+metadata <- read_csv("../../../physiology/metadata.csv")
+
+design = read.csv("../../treatment_metadata.csv", head=TRUE)
+
+design %>% 
+  filter(Species == "Acer") -> design
+
+design %>% 
+  select(!Species) -> design
+
+design %>% 
+  mutate(Day = case_when(Treatment == "Initial" ~ "0",
+                         Treatment == "Treated" ~ "28",
+                         Treatment == "Untreated" ~ "28")) -> design
+
+column_to_rownames(design, var="Sample_ID") -> design
+design$Genotype <- as.factor(design$Genotype)
+design$Genotype <- factor(gsub("-", "_", design$Genotype)) #DESeq2 does not like hyphens in factor names
+design$Treatment <- as.factor(design$Treatment)
+design$Day <- as.factor(design$Day)
+
+design %>% 
+  dplyr::select(!Treatment) -> design
+
+metadata %>% 
+  dplyr::select(Species, ID, Treatment) %>% 
+  filter(Species == "Acropora cervicornis") %>% 
+  dplyr::select(!Species) %>% 
+  dplyr::rename(Sample.ID = ID) %>% 
+  mutate(Sample.ID = as.integer(Sample.ID)) %>%
+  full_join(., design) %>% 
+  drop_na() -> day_design
+```
+
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = countData, colData = day_design, design = ~ Genotype + Treatment + Day + Treatment:Day)
+
+dds_lrt_time <- DESeq(dds, test="LRT", reduced = ~ Genotype + Treatment + Day)
+
+summary(results(dds_lrt_time))
+
+resultsNames(dds_lrt_time)
+```
+
+
+
+
+
+
+

@@ -1,0 +1,103 @@
+---
+title: "specific_gene_expression"
+author: "allyson_demerlis"
+date: "2024-03-06"
+output: html_document
+---
+
+# load libraries and data
+```{r}
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+
+TreatedvUntreated <- read_csv("results_csv/unique_Treated_vs_Untreated_annotated_KOG.csv")
+
+load("Rdata_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
+load("Rdata_files/vsd.RData")
+```
+
+# vst normalized counts
+```{r}
+metadata <- read_csv("../../physiology/metadata.csv")
+
+metadata %>% 
+  dplyr::select(Species, ID, Treatment) %>% 
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  dplyr::select(!Species) %>% 
+  dplyr::rename(Sample_ID = ID) -> metadata
+
+metadata$Formatted <- sprintf("Pcli.%03d", metadata$Sample_ID)
+
+metadata %>% 
+  drop_na() %>%  
+  dplyr::select(!Sample_ID) %>% 
+  dplyr::rename(Sample_ID = Formatted) -> metadata
+
+
+TreatedvUntreated %>% 
+  arrange(desc(log2FoldChange)) #Pseudodiploria194656 = Eukaryotic peptide chain release factor subunit l2fc 1.17 
+
+TreatedvUntreated %>% 
+  arrange(log2FoldChange) #Pseudodiploria186543 = Mib_herc2 l2fc -0.91
+
+standard_error <- function(x) {
+  sd(x) / sqrt(length(x))
+}
+```
+
+## Eukaryotic peptide chain release factor subunit linear plot
+```{r}
+#Pseudodiploria194656 = Eukaryotic peptide chain release factor subunit l2fc 1.17 
+plot1<-t(vsd) %>% 
+  as.data.frame() %>% 
+  dplyr::select(Pseudodiploria194656) %>% 
+  rownames_to_column() %>% 
+  separate(rowname, into = c("Species", "Sample_ID", "Genotype", "Treatment")) %>% 
+  unite("Sample_ID", Species,Sample_ID, sep = ".") %>% 
+  mutate(Day = case_when(Treatment == "Initial" ~ 0,
+                         Treatment == "Treated" ~ 28,
+                         Treatment == "Untreated" ~ 28)) %>% 
+  dplyr::select(!Treatment) %>% 
+  full_join(., metadata) %>% 
+  drop_na() %>% 
+  ggplot(., aes(x=Day, y=Pseudodiploria194656, color = Treatment, fill = Treatment)) +
+  geom_point(alpha=0.2) +
+  theme_classic() +
+  geom_smooth(method = "lm", mapping = aes(color = Treatment), se=FALSE) +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Vst-Normalized Expression Level", title = "Pseudodiploria194656 = Eukaryotic peptide chain release factor subunit") +
+  theme(text = element_text(size = 13))+
+  theme(legend.position="none") 
+```
+
+## Mib_herc2 linear plot
+```{r}
+#Pseudodiploria186543 = Mib_herc2
+plot2<-t(vsd) %>% 
+  as.data.frame() %>% 
+  dplyr::select(Pseudodiploria186543) %>% 
+  rownames_to_column() %>% 
+  separate(rowname, into = c("Species", "Sample_ID", "Genotype", "Treatment")) %>% 
+  unite("Sample_ID", Species,Sample_ID, sep = ".") %>% 
+  mutate(Day = case_when(Treatment == "Initial" ~ 0,
+                         Treatment == "Treated" ~ 28,
+                         Treatment == "Untreated" ~ 28)) %>% 
+  dplyr::select(!Treatment) %>% 
+  full_join(., metadata) %>% 
+  drop_na() %>% 
+  ggplot(., aes(x=Day, y=Pseudodiploria186543, color = Treatment, fill = Treatment)) +
+  geom_point(alpha=0.2) +
+  theme_classic() +
+  geom_smooth(method = "lm", mapping = aes(color = Treatment), se=FALSE) +
+  scale_color_manual(values = c( "#FF3333", "#00CCCC"))+
+  labs(y = "Vst-Normalized Expression Level", title = "Pseudodiploria186543 = Mib_herc2") +
+  theme(text = element_text(size = 13))+
+  theme(legend.position="none")  
+```
+
+```{r}
+plot_grid(plot1,plot2)
+ggsave("specific_genes_linear.pdf", width = 12, height = 5)
+```
+
