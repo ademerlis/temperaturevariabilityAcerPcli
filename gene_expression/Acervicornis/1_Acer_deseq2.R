@@ -176,7 +176,6 @@ read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
 # treatment
 Treatment=results(dds) 
 summary(Treatment, alpha = 0.05) 
-
 resultsNames(dds)
 #primary ones of interest: "Treatment_Treated_vs_Initial",  "Treatment_Untreated_vs_Initial",  "Treatment_Treated_vs_Untreated"
 
@@ -188,6 +187,15 @@ Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Unt
 summary(Treatment_Treated_vs_Untreated, alpha = 0.05)
 degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
 length(degs_Treatment_Treated_vs_Untreated) #1587
+
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #200
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #207
 
 Treatment_Treated_vs_Untreated %>% 
   as.data.frame() %>% 
@@ -217,6 +225,15 @@ length(degs_Treatment_Treated_vs_Initial) #5733
 
 Treatment_Treated_vs_Initial %>% 
   as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #489
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #565
+
+Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>% 
   rownames_to_column(var = "gene") %>% 
   drop_na(padj) %>% 
   filter(padj<0.05) %>% 
@@ -241,6 +258,16 @@ Treatment_Untreated_vs_Initial=results(dds,contrast=c("Treatment","Untreated","I
 summary(Treatment_Untreated_vs_Initial, alpha = 0.05)
 degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Treatment_Untreated_vs_Initial$padj<0.05 & !(is.na(Treatment_Untreated_vs_Initial$padj))]
 length(degs_Treatment_Untreated_vs_Initial) #7272
+
+
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #1050
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #943
 
 Treatment_Untreated_vs_Initial %>% 
   as.data.frame() %>% 

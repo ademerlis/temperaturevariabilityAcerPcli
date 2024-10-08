@@ -190,6 +190,16 @@ degs_Treatment_Untreated_vs_Initial=row.names(Treatment_Untreated_vs_Initial)[Tr
 length(degs_Treatment_Untreated_vs_Initial) #132 genes
 
 Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>%
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #38
+
+Treatment_Untreated_vs_Initial %>% 
+  as.data.frame() %>%
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #23
+
+Treatment_Untreated_vs_Initial %>% 
   as.data.frame() %>% 
   rownames_to_column(var = "gene") %>% 
   drop_na(padj) %>% 
@@ -223,6 +233,16 @@ degs_Treatment_Treated_vs_Initial=row.names(Treatment_Treated_vs_Initial)[Treatm
 length(degs_Treatment_Treated_vs_Initial) #141 genes
 
 Treatment_Treated_vs_Initial %>% 
+  as.data.frame() %>%
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #33
+
+Treatment_Treated_vs_Initial%>% 
+  as.data.frame() %>%
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #31
+
+Treatment_Treated_vs_Initial %>% 
   as.data.frame() %>% 
   rownames_to_column(var = "gene") %>% 
   drop_na(padj) %>% 
@@ -254,6 +274,16 @@ Treatment_Treated_vs_Untreated=results(dds,contrast=c("Treatment","Treated","Unt
 summary(Treatment_Treated_vs_Untreated, alpha = 0.05)
 degs_Treatment_Treated_vs_Untreated=row.names(Treatment_Treated_vs_Untreated)[Treatment_Treated_vs_Untreated$padj<0.05 & !(is.na(Treatment_Treated_vs_Untreated$padj))]
 length(degs_Treatment_Treated_vs_Untreated) #21 genes
+
+Treatment_Treated_vs_Untreated %>% 
+  as.data.frame() %>%
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #3
+
+Treatment_Treated_vs_Untreated%>% 
+  as.data.frame() %>%
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #7
 
 Treatment_Treated_vs_Untreated %>% 
   as.data.frame() %>% 
