@@ -20,7 +20,7 @@ I am following any code updates made by [Dr. Michael Studivan](https://github.co
 3. Run FastQC on raw reads
 4. Cutadapt to remove adaptors and low-quality reads
 5. Download and format reference transcriptomes with bowtie2
-6. MY ADDITION - based on suggestion from Jenna Dilworth (PhD Candidate from Dr. Carly Kenkel's lab), for the Libro et al. 2013 *Acropora cervicornis* genome, concatenate the *Symbiodinium fitti* genome and run the alignment step with the concatenated file. This is because there is a lot of symbiont read contamination in the supposedly "Acer" genome.
+6. Concatenate host and symbiont transcriptome
 7. Map reads to host/symbiont transcriptomes with bowtie2
 8. Count number of mapped reads for mapping efficiency
 9. Generate read counts per gene
@@ -28,5 +28,4 @@ I am following any code updates made by [Dr. Michael Studivan](https://github.co
 
 My adaptations to above pipeline:
 1. I skipped the download/concatenate script because I had already downloaded my .fastq.gz files from Basespace. Also I don't have duplicate samples so I didn't need to concatenate any sample files.
-2. Mentioned above in #6, but restating here that I am going to concatenate the host and symbiont genomes or transcriptomes for the alignment step.
-3. I previoulsy downloaded [TrimGalore](https://github.com/FelixKrueger/TrimGalore), which is a wrapper for CutAdapt and FastQC. I'm going to try to run the cutadapt script through that since I already have the TrimGalore program locally installed to my Pegasus project space and I have gotten it to work before. The cutadapt version I have installed through TrimGalore(v0.6.10) is v4.4 .
+2. I previously downloaded [TrimGalore](https://github.com/FelixKrueger/TrimGalore), which is a wrapper for CutAdapt and FastQC. I'm going to try to run the cutadapt script through that since I already have the TrimGalore program locally installed to my Pegasus project space and I have gotten it to work before. The cutadapt version I have installed through TrimGalore(v0.6.10) is v4.4 .
