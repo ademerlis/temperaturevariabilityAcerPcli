@@ -23,25 +23,8 @@ Summary of treatment tanks (ribbons are standard error of the mean temperature a
 
 <img width="628" alt="Screen Shot 2023-04-17 at 3 54 01 PM" src="https://user-images.githubusercontent.com/56000927/232595901-f63b02c9-4e36-4ffd-a3d7-0c2a45e79afa.png">
 
-**3) CBASS**
+**3) Rapid Heat-Stress Assay**
 
-On April 21, the day before the CBASS, coral IDs were randomly assigned to a CBASS temperature and tank. The tank temperatures were randomly assigned as follows: Tank 1 = 36ºC, Tank 2 = 37ºC, Tank 3 = 32 ºC, Tank 4 = 33ºC, Tank 5 = 35ºC, Tank 6 = 30ºC, Tank 7 = 34ºC, Tank 8 = 28ºC. In order to have each coral species and treatment represented at each CBASS tank temp, Acer and Pcli were mixed together. During the one-month temp treatment, however, Acer and Pcli were kept separate.
+On April 21, the day before the rapid heat-stress assay, coral IDs were randomly assigned to a  temperature and tank. The tank temperatures were randomly assigned as follows: Tank 1 = 36ºC, Tank 2 = 37ºC, Tank 3 = 32 ºC, Tank 4 = 33ºC, Tank 5 = 35ºC, Tank 6 = 30ºC, Tank 7 = 34ºC, Tank 8 = 28ºC. In order to have each coral species and treatment represented at each tank temp, Acer and Pcli were mixed together. During the one-month temp treatment, however, Acer and Pcli were kept separate.
 
 <img width="622" alt="Screen Shot 2023-04-17 at 3 55 29 PM" src="https://user-images.githubusercontent.com/56000927/232596202-3070a64c-8c9f-4b21-92c1-9cf00ace7e7b.png">
-
-**4) Recovery**
-
-Following CBASS, corals were kept in their CBASS-assigned tanks at 28ºC until May 17, when they were randomly assigned to new recovery tanks. At this point, only tanks 3,4,6,7, and 8 were being used for recovery. tanks 1, 2, and 5 no longer had corals. 
-
-<img width="624" alt="Screen Shot 2023-04-17 at 4 05 06 PM" src="https://user-images.githubusercontent.com/56000927/232598062-5ac19c0e-1968-4fa0-92cc-8596812f571e.png">
-
-Recovery tanks combined:
-
-<img width="625" alt="Screen Shot 2023-04-17 at 4 05 19 PM" src="https://user-images.githubusercontent.com/56000927/232598102-bd476aa2-3a6c-4db8-9cdb-84cd4fdeab2c.png">
-
-
-**5) Traditional Heat-Stress Assay**
-
-On June 15, corals were again randomly assigned to a new tank for the traditional heat-stress assay. For the traditional heat stress (gradual ramp then hold at 32ºC), only tanks 3, 4, 7, and 8 were being used. 32ºC was reached on June 25, and then once corals showed signs of bleaching (color score of D1), rapid tissue loss, or were fully tissue sampled and didn't have enough surface area left, then they were moved to the recovery tank, tank 7, which was kept at 28ºC for the entire time. 
-
-
