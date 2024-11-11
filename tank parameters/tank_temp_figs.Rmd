@@ -1,7 +1,7 @@
 ---
-title: "stresshardening2022"
-author: "Allyson DeMerlis"
-date: "4/4/2022"
+title: "tank_temp_figures"
+author: "allyson_demerlis"
+date: "2024-11-11"
 output: html_document
 ---
 
@@ -25,22 +25,8 @@ april15 <- readxl::read_xlsx("Data from LabVIEW/20220415_TemperatureData.xlsx")
 april25 <- readxl::read_xlsx("Data from LabVIEW/20220425_TemperatureData (1).xlsx") #had to convert to csv because dates weren't reading in correctly
 
 CBASS <- readxl::read_xlsx("Data from LabVIEW/CBASS_labview.xlsx")
-
-may11 <- readxl::read_xlsx("Data from LabVIEW/20220511_TemperatureData.xlsx")
-may20 <- readxl::read_xlsx("Data from LabVIEW/20220520_TemperatureData.xlsx")
-june10 <- readxl::read_xlsx("Data from LabVIEW/20220610_TemperatureData - Copy.xlsx")
-june24 <- readxl::read_xlsx("Data from LabVIEW/20220624_TemperatureData (1).xlsx")
-july6 <- readxl::read_xlsx("Data from LabVIEW/20220706_TemperatureData.xlsx", 
-    col_types = c("date", "numeric", "numeric", 
-        "numeric", "numeric", "numeric", 
-        "numeric", "numeric", "numeric", 
-        "numeric", "numeric", "numeric", 
-        "numeric", "numeric", "numeric", 
-        "numeric", "numeric"))
-july8 <- readxl::read_xlsx("Data from LabVIEW/20220708_TemperatureData edited.xlsx")
-july20 <- read_csv("Data from LabVIEW/20220720_TemperatureData.csv") #had to convert to csv because dates weren't reading in correctly
-  july20$Time <- lubridate::mdy_hms(july20$Time)
 ```
+
 
 Creating subsets for different stages of experiment
 ```{r}
@@ -56,9 +42,6 @@ temptreatment[temptreatment$T1 < 22.5, "T1"]= NA
     filter(T1<23) #its gone now
 
 CBASS #april 22
-recovery <- bind_rows(april15, april25, may11, may20, june10) #recovery started april 23 and ended june 21
-  recovery %>% filter(Time >= as.Date("2022-04-23") & Time <= as.Date("2022-06-22")) -> recovery
-heatstressassay <- bind_rows(june10, june24, july6, july8, july20) #ramp up started june 21
 ```
 
 # Acclimation period
@@ -82,7 +65,6 @@ acclimation %>%
   theme(text = element_text(size = 16)) #all font sizes
 ```
 
-
 ```{r}
 #need to clean up this graph,summarize all the tanks together
 acclimation$Time <- lubridate::round_date(acclimation$Time, unit = "15 min")
@@ -105,7 +87,6 @@ acclimation %>%
   scale_y_continuous(limits = c(22, 26)) +
   theme(text = element_text(size = 16)) #all font sizes
 ```
-
 
 # Treatment period (Mar 24 - Apr 20)
 ```{r}
@@ -510,161 +491,6 @@ CBASS %>%
   summarise(count = n(), mean_temp = mean(Temp), sd = sd(Temp))
 ```
 
-
-# Recovery period
-```{r}
-recovery %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
-  ggplot(data = .,
-       aes(x = Time, y = Temp, color = Tank)) +
-  geom_point() + 
-  theme_classic() +
-  facet_wrap(~Tank) +
-  labs(title = "Tank Temperatures",
-       y = "Temperature (°C)",
-       x = "Date")
-
-#not all of these tanks were used for recovery, check metadata sheet to confirm which tanks we got rid of
-```
-
-
-```{r}
-recovery %>% 
-  dplyr::select(Time, T3, T4, T6, T7, T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  ggplot(data = .,
-       aes(x = Time, y = Temp, color = Tank)) +
-  geom_line() + 
-  theme_classic() +
-  labs(title = "Tank Temperatures",
-       y = "Temperature (°C)",
-       x = "Date") +
-  theme(text = element_text(size = 15)) 
-```
-
-
-```{r}
-#need to clean up this graph,summarize all the tanks together
-recovery$Time <- lubridate::round_date(recovery$Time, unit = "15 min")
-
-recovery %>% 
-  dplyr::filter(Time <= as.Date("2022-06-21")) %>% 
-  dplyr::select(Time, T3, T4, T6, T7, T8)  %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  drop_na(Temp) %>% 
-  dplyr::group_by(Time) %>% 
-  dplyr::summarise(avg_temp = mean(Temp), se = std.error(Temp)) %>% 
-  ggplot(., aes(x=Time, y=avg_temp)) + 
-  geom_point() +
-  geom_smooth() +
-  theme_classic() +
-  labs(title = "Tank Temperatures",
-       y = "Temperature (°C)",
-       x = "Date") +
-  scale_y_continuous(limits = c(27, 29)) +
-  theme(text = element_text(size = 16)) #all font sizes
-```
-
-
-# Slow burn heat-stress assay 
-```{r}
-heatstressassay %>% 
-  dplyr::select(Time:T8) %>% 
-  pivot_longer(T1:T8, names_to="Tank", values_to ="Temp") %>% 
-  ggplot(data = .,
-       aes(x = Time, y = Temp, color = Tank)) +
-  geom_point() + 
-  theme_classic() +
-  facet_wrap(~Tank) +
-  labs(title = "Tank Temperatures",
-       y = "Temperature (°C)",
-       x = "Date")
-
-heatstressassay %>% 
-  arrange(desc(Time)) #high temp in tank 4 goes until the very end, july 22. when do i call the "End of experiment"?
-
-#was it just tanks 3, 4, and 8 that we used as the heat stress assay tanks? What was happening in tank 1?
-```
-
-```{r}
-heatstressassay$Time <- lubridate::round_date(heatstressassay$Time, unit = "60 min")
-
-
-heatstressassay %>% 
- dplyr::select(Time, T3, T4, T7, T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
-                               Tank == "T4" ~ "heatstress",
-                               Tank == "T7" ~ "ambient",
-                               Tank == "T8" ~ "heatstress")) %>% 
-  filter(Tank == "T3") %>% 
-  filter(Temp > 31) %>% 
-  arrange(desc(Time)) #T3 went all the way to july 22
-
-heatstressassay %>% 
- dplyr::select(Time, T3, T4, T7, T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
-                               Tank == "T4" ~ "heatstress",
-                               Tank == "T7" ~ "ambient",
-                               Tank == "T8" ~ "heatstress")) %>% 
-  filter(Tank == "T4") %>% 
-  filter(Temp > 31) %>% 
-  arrange(desc(Time)) #T4 went to july 22
-
-heatstressassay %>% 
- dplyr::select(Time, T3, T4, T7, T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
-                               Tank == "T4" ~ "heatstress",
-                               Tank == "T7" ~ "ambient",
-                               Tank == "T8" ~ "heatstress")) %>% 
-  filter(Tank == "T8") %>% 
-  filter(Temp > 31) %>% 
-  arrange(desc(Time)) #T8 stopped heat stress on july 13
-
-
-heatstressassay %>% 
-  dplyr::select(Time, T3, T4, T7, T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  filter(!(Time >= "2022-07-14 00:00:00" & Tank == "T8")) %>% 
-   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
-                               Tank == "T4" ~ "heatstress",
-                               Tank == "T7" ~ "ambient",
-                               Tank == "T8" ~ "heatstress")) %>% 
-  group_by(Time, Treatment) %>% 
-  summarise(mean_temp = mean(Temp), se = std.error(Temp)) %>% 
-  filter(!Treatment == "ambient") %>% 
-  ggplot(data = .,
-       aes(x = Time, y = mean_temp, color = Treatment)) +
-  geom_point() + 
-  theme_classic() +
-  labs(y = "Temperature (°C)",
-       x = "Date") +
-  theme(text = element_text(size = 15)) +
-  geom_point() + 
-  geom_errorbar(aes(fill=Treatment, group = Treatment, ymin = mean_temp - se, ymax = mean_temp + se), alpha = 0.2) +
-  scale_color_manual(labels=c( "Heat stress"), values = c( "#F54A34"))
-  #scale_fill_manual(labels=c("Ambient", "Heat stress"), values = c( "#60DBDB", "#F54A34"))
-#ggsave("slowburnheatstress.pdf", width = 9, height = 6)
-```
-
-```{r}
-heatstressassay %>% 
-  dplyr::select(Time, T3, T4, T7, T8) %>% 
-  pivot_longer(T3:T8, names_to="Tank", values_to ="Temp") %>% 
-  filter(!(Time >= "2022-07-14 00:00:00" & Tank == "T8")) %>% 
-  filter(Time > "2022-06-25 21:00:00") %>% 
-   mutate(Treatment = case_when(Tank == "T3" ~ "heatstress",
-                               Tank == "T4" ~ "heatstress",
-                               Tank == "T7" ~ "ambient",
-                               Tank == "T8" ~ "heatstress")) %>% 
-  drop_na() %>% 
-  group_by(Treatment) %>% 
-  summarise(count=n(), mean_temp = mean(Temp), sd = sd(Temp)) 
-```
 
 
 
