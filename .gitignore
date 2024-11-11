@@ -9,7 +9,4 @@ plots_for_manuscript/
 *.RData
 *.obo
 *.tab
-archive/
-physiology/archive/
-`tank parameters`/archive/
-gene_expression/archive/
+**/archive
