@@ -10,4 +10,4 @@ plots_for_manuscript/
 *.obo
 *.tab
 **/archive
-gene_expression/archive
+**/*archive*
