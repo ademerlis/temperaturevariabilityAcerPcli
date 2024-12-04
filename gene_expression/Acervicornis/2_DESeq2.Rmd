@@ -1,0 +1,442 @@
+---
+title: "DESeq2"
+author: "allyson_demerlis"
+date: "2024-11-25"
+output: html_document
+---
+
+# Installing and loading packages
+```{r}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#   install.packages("BiocManager")
+# BiocManager::install(version = "3.15")
+# BiocManager::install("DESeq2",dependencies=T)
+# BiocManager::install("BiocParallel")
+#BiocManager::install("arrayQualityMetrics",dependencies=T)  # requires Xquartz, xquartz.org
+
+# install.packages("pheatmap")
+# install.packages("VennDiagram")
+# install.packages("gplots")
+# install.packages("vegan")
+# install.packages("plotrix")
+# install.packages("ape")
+# install.packages("ggplot2")
+
+library(DESeq2)
+library(tidyverse)
+library(ape)
+library(vegan)
+library(Biobase)
+library(arrayQualityMetrics)
+```
+
+# Read in counts matrix and initial tidying
+```{r}
+#read in counts
+counts = read.delim("final_counts_matrix.txt")
+
+#select only Acropora genes, remove Symbiodinium
+counts <- counts %>% filter(!grepl("^Symbiodinium[0-9]+$", X))
+
+column_to_rownames(counts, var ="X") -> counts
+counts %>% 
+  select(!X.1) -> counts
+
+#two of the sample IDs are in all caps, need to change it to be "Acer"
+counts <- counts %>% dplyr::rename(Acer.112 = ACER.112)
+counts <- counts %>% dplyr::rename(Acer.124 = ACER.124)
+ 
+# how many genes we have total?
+nrow(counts) #30122
+ncol(counts) #48 samples
+
+# how does the data look? 
+head(counts)
+
+colnames(counts) # sample IDs (i.e. Acer.005). You need to keep track of column names and row names of data frames throughout this analysis because they MUST MATCH 
+rownames(counts) #gene names (but not actual gene names, arbitrary gene names like Acropora000001. To get "actual" gene names, need annotation files)
+```
+
+## filtering out low-count genes
+```{r}
+keep <- rowSums(counts) >= 10 #less than 10 counts across all samples
+countData <- counts[keep,]
+nrow(countData) #25003
+ncol(countData) #48
+#write.csv(countData, file = "Acer_countdata.csv")
+```
+
+## import and tidy design file
+```{r}
+# importing a design .csv file
+design = read.csv("../treatment_metadata.csv", head=TRUE)
+
+design %>% 
+  filter(Species == "Acer") -> design
+
+design %>% 
+  select(!Species) -> design
+
+column_to_rownames(design, var="Sample_ID") -> design
+design$Genotype <- as.factor(design$Genotype)
+design$Genotype <- factor(gsub("-", "_", design$Genotype)) #DESeq2 does not like hyphens in factor names
+design$Treatment <- as.factor(design$Treatment)
+
+# check if order is the same
+all(rownames(design) == colnames(countData))
+#TRUE
+```
+
+
+# DESeq2 full model design
+```{r}
+#when making dds formula, the order of variables in the design matters. The design indicates how to model the samples, (here: design = ~batch + condition), that we want to measure the effect of the condition, controlling for batch differences. The two factor variables batch and condition should be columns of coldata.
+
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design= ~Genotype + Treatment) # I can't do an interaction term because I don't have adequate replication across genotypes in treatment groups after removing outliers
+dds=estimateSizeFactors(dds)
+plot(sort(sizeFactors(dds))) 
+
+totalCountshost=colSums(countData)
+totalCountshost
+barplot(totalCountshost)
+as.data.frame(totalCountshost)
+
+min(totalCountshost)  #301361
+max(totalCountshost) #2980832
+```
+
+## variance stabilized transformation for visualization
+```{r}
+Vsd=varianceStabilizingTransformation(dds)
+```
+
+## Outlier detection using ArrayQualityMetrics
+```{r}
+e=ExpressionSet(assay(Vsd), AnnotatedDataFrame(as.data.frame(colData(Vsd))))
+
+# running outlier detection
+arrayQualityMetrics(e,intgroup=c("Treatment", "Genotype"),force=T)
+# open the directory "arrayQualityMetrics report for e" in your working directory and open index.html
+# Array metadata and outlier detection overview gives a report of all samples, and which are likely outliers according to the 3 methods tested.
+#I typically remove the samples that violate *1 (distance between arrays).
+# Figure 2 shows a bar plot of array-to-array distances and an outlier detection threshold based on your samples. 
+#Samples above the threshold are considered outliers
+# under Figure 3: Principal Components Analyses, look for any points far away from the rest of the sample cluster
+# use the array number for removal in the following section
+
+# if there were outliers:
+outs=c(20,22,28,36) #these numbers were taken from the index.html report from arrayQualityMetrics Figure 2 "Outlier detection"
+#this corresponds to samples Acer.068, Acer.072, Acer.089, Acer.108. These four samples also happen to be the ones with the lowest total counts (<600,000)
+as.data.frame(totalCountshost) %>% 
+  arrange(totalCountshost)
+
+countData=countData[,-outs]
+Vsd=Vsd[,-outs]
+design=design[-outs,]
+
+# remaking model with outliers removed from dataset
+dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~Genotype + Treatment) # I can't do an interaction term because I don't have adequate replication across genotypes in treatment groups after removing outliers (I lost 3 out of 4 of the BC-8b control samples)
+
+# save all these dataframes as an Rdata package so you don't need to rerun each time
+save(dds,design,countData,Vsd,file="initial_fullddsdesigncountsVsdcounts.RData")
+```
+
+
+### PCA
+```{r}
+DESeq2::plotPCA(Vsd, intgroup=c("Genotype", "Treatment"))
+```
+
+### PCoA
+```{r}
+ad.pcoa=pcoa(dist(t(assay(Vsd)),method="manhattan")/1000)
+scores=ad.pcoa$vectors
+ad.pcoa$values # the % variation explained by each axis is the Relative_eig column
+conditions=design
+
+scale_color_manual(values = c("grey", "#FF3333", "#00CCCC"))
+#code by group
+pdf("PCoA_Treatment_Genotype.pdf")
+plot(scores[,1], scores[,2], pch=c(15,17,25)[as.numeric(as.factor(conditions$Genotype))], col=c("#00CCCC", "grey","#FF3333")[as.numeric(as.factor(conditions$Treatment))], xlab="PC1: 20%", ylab="PC2: 11%", main="Treatment")
+ordispider(scores[,1:2], conditions$Treatment,col=c("#00CCCC", "grey", "#FF3333"))
+legend("topright", legend=c("Initial", "Variable", "Control"), fill = c("grey","#FF3333","#00CCCC"), bty="n")
+legend("topleft", legend=c("BC-8b", "MB-B", "SI-C"), pch=c(15,17,25), bty="n")
+
+
+#analysis of variance 
+ad=adonis2(t(assay(Vsd))~Genotype+Treatment,data=conditions,method="manhattan", permutations=1e6)
+ad
+as.data.frame(ad) %>% 
+  write_csv("PERMANOVA_Acer.csv")
+```
+
+
+## create vsd
+```{r}
+# generating normalized variance-stabilized data for PCoA, heatmaps, etc
+vsd=assay(Vsd)
+colnames(vsd)
+# takes the sample IDs and factor levels from the design to create new column names for the dataframe
+snames=paste(colnames(countData),design[,1], design[,4],sep="_")
+snames
+
+# renames the column names
+colnames(vsd)=snames
+
+save(vsd,design,file="vsd.RData")
+```
+
+
+# Run DESeq2 on full model
+```{r}
+# with multi-factor, multi-level design
+load("Rdata_files/initial_fullddsdesigncountsVsdcounts.RData")
+library(DESeq2)
+library(BiocParallel)
+
+# Running full model for contrast statements
+#dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)
+rownames(design)
+colnames(countData)
+dds=DESeq(dds, parallel=TRUE)
+
+# saving all models
+save(dds,file="Rdata_files/realModels_Acer.RData")
+```
+
+
+# DESeq2 Contrasts
+
+## import gene names
+```{r}
+load("Rdata_files/realModels_Acer.RData")
+library(DESeq2)
+library(tidyverse)
+
+read.table(file = "bioinformatics/Acervicornis_iso2geneName.tab",
+                          sep = "\t",
+                          quote="", fill=FALSE) %>%
+  rename(gene = V1,
+         annot = V2) -> iso2geneName
+```
+
+## Treatment
+```{r}
+# treatment
+Treatment=results(dds) 
+summary(Treatment, alpha = 0.05) 
+resultsNames(dds)
+#primary ones of interest: "Treatment_Variable_vs_Initial",  "Treatment_Control_vs_Initial",  "Treatment_Variable_vs_Control"
+```
+
+### Variable vs. Control
+```{r}
+# Variable vs. Control
+Treatment_Variable_vs_Control=results(dds,contrast=c("Treatment","Variable","Control"))
+summary(Treatment_Variable_vs_Control, alpha = 0.05)
+degs_Treatment_Variable_vs_Control=row.names(Treatment_Variable_vs_Control)[Treatment_Variable_vs_Control$padj<0.05 & !(is.na(Treatment_Variable_vs_Control$padj))]
+length(degs_Treatment_Variable_vs_Control) #1587
+
+degs_Treatment_Variable_vs_Control_L2FC1=row.names(Treatment_Variable_vs_Control)[Treatment_Variable_vs_Control$padj<0.05 & !(is.na(Treatment_Variable_vs_Control$padj)) & abs(Treatment_Variable_vs_Control$log2FoldChange)>1]
+length(degs_Treatment_Variable_vs_Control_L2FC1) #407
+
+Treatment_Variable_vs_Control %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #200
+Treatment_Variable_vs_Control %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #207
+
+Treatment_Variable_vs_Control %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) >1) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("VariablevControl_annotDGEs.csv")
+
+Treatment_Variable_vs_Control %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) >1) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  mutate(Contrast = "Variable vs Control") -> variable_vs_control
+```
+
+### Variable vs. Initial
+```{r}
+# Treated vs. Initial
+Treatment_Variable_vs_Initial=results(dds,contrast=c("Treatment","Variable","Initial"))
+summary(Treatment_Variable_vs_Initial, alpha = 0.05)
+degs_Treatment_Variable_vs_Initial=row.names(Treatment_Variable_vs_Initial)[Treatment_Variable_vs_Initial$padj<0.05 & !(is.na(Treatment_Variable_vs_Initial$padj))]
+length(degs_Treatment_Variable_vs_Initial) #5733
+
+degs_Treatment_Variable_vs_Initial_L2FC1=row.names(Treatment_Variable_vs_Initial)[Treatment_Variable_vs_Initial$padj<0.05 & !(is.na(Treatment_Variable_vs_Initial$padj)) & abs(Treatment_Variable_vs_Initial$log2FoldChange)>1]
+length(degs_Treatment_Variable_vs_Initial_L2FC1) #1054
+
+Treatment_Variable_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #489
+Treatment_Variable_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #565
+
+Treatment_Variable_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) >1) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("VariablevInitial_annotDGEs.csv")
+
+Treatment_Variable_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) >1) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  mutate(Contrast = "Variable vs Initial") -> variable_vs_initial
+```
+
+
+### Control vs. Initial
+```{r}
+# Control vs. Initial
+Treatment_Control_vs_Initial=results(dds,contrast=c("Treatment","Control","Initial"))
+summary(Treatment_Control_vs_Initial, alpha = 0.05)
+degs_Treatment_Control_vs_Initial=row.names(Treatment_Control_vs_Initial)[Treatment_Control_vs_Initial$padj<0.05 & !(is.na(Treatment_Control_vs_Initial$padj))]
+length(degs_Treatment_Control_vs_Initial) #7272
+
+degs_Treatment_Control_vs_Initial_L2FC1=row.names(Treatment_Control_vs_Initial)[Treatment_Control_vs_Initial$padj<0.05 & !(is.na(Treatment_Control_vs_Initial$padj)) & abs(Treatment_Control_vs_Initial$log2FoldChange)>1]
+length(degs_Treatment_Control_vs_Initial_L2FC1) #1993
+
+
+Treatment_Control_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange > 1) %>% 
+  nrow() #1050
+Treatment_Control_vs_Initial %>% 
+  as.data.frame() %>% 
+  filter(padj<0.05 & log2FoldChange < -1) %>% 
+  nrow() #943
+
+Treatment_Control_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) >1) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  write_csv("ControlvInitial_annotDGEs.csv")
+
+Treatment_Control_vs_Initial %>% 
+  as.data.frame() %>% 
+  rownames_to_column(var = "gene") %>% 
+  drop_na(padj) %>% 
+  filter(padj<0.05 & abs(log2FoldChange) >1) %>% 
+  full_join(., iso2geneName, by = "gene") %>% 
+  drop_na(baseMean) %>% 
+  select(gene, annot, baseMean:padj) %>% 
+  mutate(Contrast = "Control vs Initial") -> control_vs_initial
+```
+
+### combining all contrast data frames
+```{r}
+rbind(variable_vs_control, variable_vs_initial, control_vs_initial) %>% 
+  write_csv("all_contrasts_annotDEGs.csv")
+
+save(Treatment,Treatment_Control_vs_Initial,Treatment_Variable_vs_Initial,Treatment_Variable_vs_Control, degs_Treatment_Control_vs_Initial,degs_Treatment_Variable_vs_Initial, degs_Treatment_Variable_vs_Control, file="Rdata_files/pvals.RData")
+```
+
+
+# Venn Diagrams
+```{r}
+pairwise=list("Control vs. Initial"=degs_Treatment_Control_vs_Initial, "Variable vs. Initial"=degs_Treatment_Variable_vs_Initial,"Variable vs. Control"=degs_Treatment_Variable_vs_Control)
+
+library(ggvenn)
+
+ggvenn(pairwise) + 
+  scale_fill_manual(values = c("#ca0020", "#0571b0", "#f4a582"))
+
+pairwise_LFC1=list("Control vs. Initial"=degs_Treatment_Control_vs_Initial_L2FC1, "Variable vs. Initial"=degs_Treatment_Variable_vs_Initial_L2FC1,"Variable vs. Control"=degs_Treatment_Variable_vs_Control_L2FC1)
+
+ggvenn(pairwise_LFC1) + 
+  scale_fill_manual(values = c("#ca0020", "#0571b0", "#f4a582"))
+ggsave("VennDiagram_L2FC1.pdf")
+```
+
+
+# GO/KOG Export
+```{r}
+# Control vs Initial
+# log2 fold changes:
+source=Treatment_Control_vs_Initial[!is.na(Treatment_Control_vs_Initial$padj),]
+Control_vs_Initial.fc=data.frame("gene"=row.names(source))
+Control_vs_Initial.fc$lfc=source[,"log2FoldChange"]
+head(Control_vs_Initial.fc)
+write.csv(Control_vs_Initial.fc,file="Control_vs_Initial_fc.csv",row.names=F,quote=F)
+save(Control_vs_Initial.fc,file="Rdata_files/Control_vs_Initial.fc.RData")
+
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
+Control_vs_Initial.p=data.frame("gene"=row.names(source))
+Control_vs_Initial.p$lpv=-log(source[,"padj"],10)
+Control_vs_Initial.p$lpv[source$stat<0]=Control_vs_Initial.p$lpv[source$stat<0]*-1
+head(Control_vs_Initial.p)
+write.csv(Control_vs_Initial.p,file="Control_vs_Initial_lpv.csv",row.names=F,quote=F)
+save(Control_vs_Initial.p,file="Rdata_files/Control_vs_Initial_lpv.RData")
+
+# Variable vs. Initial
+# log2 fold changes:
+source=Treatment_Variable_vs_Initial[!is.na(Treatment_Variable_vs_Initial$padj),]
+Variable_vs_Initial.fc=data.frame("gene"=row.names(source))
+Variable_vs_Initial.fc$lfc=source[,"log2FoldChange"]
+head(Variable_vs_Initial.fc)
+write.csv(Variable_vs_Initial.fc,file="Variable_vs_Initial_fc.csv",row.names=F,quote=F)
+save(Variable_vs_Initial.fc,file="Rdata_files/Variable_vs_Initial_fc.RData")
+
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
+Variable_vs_Initial.p=data.frame("gene"=row.names(source))
+Variable_vs_Initial.p$lpv=-log(source[,"padj"],10)
+Variable_vs_Initial.p$lpv[source$stat<0]=Variable_vs_Initial.p$lpv[source$stat<0]*-1
+head(Variable_vs_Initial.p)
+write.csv(Variable_vs_Initial.p,file="Variable_vs_Initial_lpv.csv",row.names=F,quote=F)
+save(Variable_vs_Initial.p,file="Rdata_files/Variable_vs_Initial_lpv.RData")
+
+#Variable vs. Control
+# log2 fold changes:
+source=Treatment_Variable_vs_Control[!is.na(Treatment_Variable_vs_Control$padj),]
+Variable_vs_Control.fc=data.frame("gene"=row.names(source))
+Variable_vs_Control.fc$lfc=source[,"log2FoldChange"]
+head(Variable_vs_Control.fc)
+write.csv(Variable_vs_Control.fc,file="Variable_vs_Control_fc.csv",row.names=F,quote=F)
+save(Variable_vs_Control.fc,file="Rdata_files/Variable_vs_Control_fc.RData")
+
+# signed log FDR-adjusted p-values: -log(p-adj)* direction:
+Variable_vs_Control.p=data.frame("gene"=row.names(source))
+Variable_vs_Control.p$lpv=-log(source[,"padj"],10)
+Variable_vs_Control.p$lpv[source$stat<0]=Variable_vs_Control.p$lpv[source$stat<0]*-1
+head(Variable_vs_Control.p)
+write.csv(Variable_vs_Control.p,file="Variable_vs_Control_lpv.csv",row.names=F,quote=F)
+save(Variable_vs_Control.p,file="Rdata_files/Variable_vs_Control_lpv.RData")
+```
+
+# Heatmap 
+
+```{r}
+
+```
+

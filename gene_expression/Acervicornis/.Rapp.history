@@ -1,0 +1,2 @@
+load("/Users/allysondemerlis/Documents/GitHub/temperaturevariability2023/gene_expression/Acervicornis/initial_fullddsdesigncountsVsdcounts.RData")
+load("/Users/allysondemerlis/Documents/GitHub/temperaturevariability2023/gene_expression/Acervicornis/vsd.RData")
