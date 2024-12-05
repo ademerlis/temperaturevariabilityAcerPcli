@@ -1,0 +1,316 @@
+---
+title: "fvfm_heat_stress_assay"
+author: "allyson_demerlis"
+date: "2023-12-22"
+output: html_document
+---
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(plotrix)
+library(lme4)
+library(ggpubr)
+library(car)
+library(rstatix)
+library(rcompanion)
+library(cowplot)
+library(dunn.test)
+```
+
+# Import and tidy data
+
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(!Treatment) -> ipam_tidy_CBASS
+
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>% 
+  dplyr::select(Tank, Puck, Colony, Treatment, Species) %>% 
+  distinct() %>% #283 rows = one coral ID per treatment, no repeats
+  mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
+                               Tank == "2" ~ "Treated",
+                               Tank == "3" ~ "Treated",
+                               Tank == "4" ~ "Untreated",
+                               Tank == "5" ~ "Treated", 
+                               Tank == "6" ~ "Untreated",
+                               Tank == "7" ~ "Untreated",
+                               Tank == "8" ~ "Treated")) %>% 
+  full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
+  drop_na() %>% 
+  dplyr::rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) -> ipam_tidy_CBASS_treatments
+
+ipam_tidy_CBASS_treatments %>% 
+  mutate_at(vars(Colony, Puck, Treatment, Species), factor) -> ipam_tidy_CBASS_treatments
+```
+
+
+# Species x Treatment
+
+boxplot
+```{r}
+ipam_tidy_CBASS_treatments %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp)) %>% 
+  ggplot(., aes(x=CBASS_temp, y= fvfm, fill = Treatment)) + 
+  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
+  geom_boxplot() +
+  facet_wrap(~Species) + 
+  theme_classic()
+```
+
+### Acer
+
+```{r}
+ipam_tidy_CBASS_treatments %>% 
+  filter(Species == "Acervicornis") %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp)) -> Acer_CBASS
+
+str(Acer_CBASS)
+```
+
+
+mean and SEM 
+```{r}
+p1<-Acer_CBASS %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp)) %>% 
+  group_by(Treatment, CBASS_temp) %>% 
+  mutate(mean_fvfm = mean(fvfm), se_fvfm = std.error(fvfm)) %>% 
+  ggplot(., aes(x=CBASS_temp, y= mean_fvfm, color = Treatment)) + 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
+  geom_errorbar(aes(ymin = mean_fvfm - se_fvfm, ymax = mean_fvfm + se_fvfm), width = 0.2) +
+  geom_point() +
+  theme_classic() +
+  labs(x="Rapid Heat-Stress Assay Temperature (ºC)", y="Fv/Fm", title = "A. cervicornis") +
+  theme(text = element_text(size = 12))
+```
+
+#### One-way ANOVA
+```{r}
+# just test the effect of variable treatment at each temp
+
+#28
+Acer_CBASS %>% 
+  filter(CBASS_temp == "28") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "28", ])) # significant
+
+Acer_28_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "28", ])
+shapiro_test(Acer_28_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "28", ]) #not significant
+
+#30
+Acer_CBASS %>% 
+  filter(CBASS_temp == "30") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=7 and control=8
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "30", ])) #not significant
+
+Acer_30_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "30", ])
+shapiro_test(Acer_30_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "30", ]) #not significant
+
+
+#32
+Acer_CBASS %>% 
+  filter(CBASS_temp == "32") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "32", ])) #not significant
+Acer_32_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "32", ])
+shapiro_test(Acer_32_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "32", ]) #not significant
+
+#33
+Acer_CBASS %>% 
+  filter(CBASS_temp == "33") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "33", ])) #significant
+Acer_33_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "33", ])
+shapiro_test(Acer_33_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "33", ]) #not significant
+
+#34
+Acer_CBASS %>% 
+  filter(CBASS_temp == "34") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=7 and control=8
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "34", ])) #significant
+Acer_34_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "34", ])
+shapiro_test(Acer_34_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "34", ]) #not significant
+
+#35
+Acer_CBASS %>% 
+  filter(CBASS_temp == "35") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "35", ])) #significant
+Acer_35_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "35", ])
+shapiro_test(Acer_35_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "35", ]) #not significant
+
+#36
+Acer_CBASS %>% 
+  filter(CBASS_temp == "36") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=9 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "36", ])) #significant
+Acer_36_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "36", ])
+shapiro_test(Acer_36_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "36", ]) #not significant
+
+#37
+Acer_CBASS %>% 
+  filter(CBASS_temp == "37") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=8
+
+summary(aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "37", ])) #not significant
+Acer_37_lm <- aov(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "37", ])
+shapiro_test(Acer_37_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Acer_CBASS[Acer_CBASS$CBASS_temp == "37", ]) #not significant
+```
+
+
+### Pcli
+```{r}
+ipam_tidy_CBASS_treatments %>% 
+  filter(Species == "Pclivosa") %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp)) -> Pcli_CBASS
+
+str(Pcli_CBASS)
+```
+
+mean and SEM 
+```{r}
+p2<- Pcli_CBASS %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp)) %>% 
+  group_by(Treatment, CBASS_temp) %>% 
+  mutate(mean_fvfm = mean(fvfm), se_fvfm = std.error(fvfm)) %>% 
+  ggplot(., aes(x=CBASS_temp, y= mean_fvfm, color = Treatment)) + 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
+  geom_errorbar(aes(ymin = mean_fvfm - se_fvfm, ymax = mean_fvfm + se_fvfm), width = 0.2) +
+  geom_point() +
+  theme_classic() +
+  labs(x="Rapid Heat-Stress Assay Temperature (ºC)", y="Fv/Fm", title = "P. clivosa") +
+  theme(text = element_text(size = 12))
+```
+
+#### One-way ANOVA
+```{r}
+# just test the effect of variable treatment at each temp
+
+#28
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "28") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=9 and control=8
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "28", ])) # not significant
+
+Pcli_28_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "28", ])
+shapiro_test(Pcli_28_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "28", ]) #not significant
+
+#30
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "30") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=11 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "30", ])) #not significant
+
+Pcli_30_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "30", ])
+shapiro_test(Pcli_30_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "30", ]) #not significant
+
+
+#32
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "32") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=10
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "32", ])) #not significant
+Pcli_32_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "32", ])
+shapiro_test(Pcli_32_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "32", ]) #not significant
+
+#33
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "33") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=9 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "33", ])) #not significant
+Pcli_33_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "33", ])
+shapiro_test(Pcli_33_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "33", ]) #not significant
+
+#34
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "34") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=10 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "34", ])) #not significant
+Pcli_34_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "34", ])
+shapiro_test(Pcli_34_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "34", ]) #not significant
+
+#35
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "35") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "35", ])) #not significant
+Pcli_35_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "35", ])
+shapiro_test(Pcli_35_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "35", ]) #not significant
+
+#36
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "36") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=8 and control=8
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "36", ])) #not significant
+Pcli_36_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "36", ])
+shapiro_test(Pcli_36_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "36", ]) #not significant
+
+#37
+Pcli_CBASS %>% 
+  filter(CBASS_temp == "37") %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=10 and control=9
+
+summary(aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "37", ])) #not significant
+Pcli_37_lm <- aov(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "37", ])
+shapiro_test(Pcli_37_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "37", ]) #not significant
+```
+
+# plot
+```{r}
+plot_grid(p1, p2, nrow=1,
+       labels = c("A", "B"),       # Add panel labels
+  label_size = 14)
+ggsave("rapidheatstressassay_bothspecies.pdf", width=10, height=5)
+```
+

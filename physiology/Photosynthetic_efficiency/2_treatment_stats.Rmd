@@ -12,55 +12,13 @@ library(plotrix)
 library(ggpubr)
 library(rstatix)
 library(cowplot)
-library(lme4)
-library(emmeans)
 library(car)
 ```
 
 
-# Import data and create tidy datasets
+# Import data and create normalized dataset
 ```{r}
 ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
-
-treatment_time_bothspecies <- ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>%
-  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
-  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
-  mutate(Date = mdy(Date)) %>% 
-  dplyr::filter(Date <= "2022-04-20") %>% 
-  pivot_wider(names_from = Date, values_from = fvfm) %>% 
-   mutate(fvfm_t0 = case_when(Species == "Acervicornis" ~ `2022-03-16`,
-                                  Species == "Pclivosa" ~ `2022-03-21`)) %>% 
-   mutate(fvfm_t1 = case_when(Species == "Acervicornis" ~ `2022-04-06`,
-                                  Species == "Pclivosa" ~ `2022-04-06`)) %>% 
-   mutate(fvfm_t2 = case_when(Species == "Acervicornis" ~ `2022-04-20`,
-                                  Species == "Pclivosa" ~ `2022-04-20`)) %>% 
-  pivot_longer(fvfm_t0:fvfm_t2, names_to = "fvfm_timepoint", values_to = "fvfm") %>% 
-  mutate(numDays = case_when(fvfm_timepoint == "fvfm_t0" ~ 0,
-                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t1" ~ 16,
-                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t1" ~ 21,
-                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t2" ~ 30,
-                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t2" ~ 35,
-                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t3" ~ 65,
-                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t3" ~ 70))
-
-#percent change
-treatment_normalized_bothspecies <- ipam_tidy_data %>% 
-  dplyr::filter(!Treatment_period == "CBASS") %>%
-  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
-  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species)  %>% 
-  mutate(Date = mdy(Date)) %>% 
-  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
-  pivot_wider(names_from = Date, values_from = fvfm) %>% 
-  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-04-20` - `2022-03-16`,
-                               Species == "Pclivosa" ~ `2022-04-20` - `2022-03-21`)) %>% 
-  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ (fvfm_loss/`2022-03-16`)*100,
-                               Species == "Pclivosa" ~ (fvfm_loss/`2022-03-21`)*100))
-
-#save data for WGCNA
-treatment_normalized_bothspecies %>% 
-  dplyr::select(Colony, Puck, Treatment, Species, fvfm_loss, fvfm_loss_norm) %>% 
-  write_csv("treatment_fvfm.csv")
 
 ipam_tidy_data %>% 
   dplyr::filter(!Treatment_period == "CBASS") %>%
@@ -85,630 +43,93 @@ ipam_tidy_data %>%
                              Species == "Acervicornis" & fvfm_timepoint == "t2" ~ 35)) %>% 
   dplyr::select(!c(`2022-04-06`:`2022-04-20`)) -> ipam_norm_overtime
 
+fvfm_norm_final <- ipam_norm_overtime %>% 
+  select(Colony:Species, fvfm_timepoint, fvfm, numDays) %>% 
+  filter(!fvfm_timepoint == "t1") #getting rid of day-7 time point for stats
 ```
 
-sample sizes for corals measured during 28-d treatment
+# Acer
 ```{r}
-treatment_time_bothspecies %>% 
-  select(Colony:Species, fvfm_timepoint, fvfm) %>% 
-  filter(fvfm_timepoint == "fvfm_t2") %>% #282 corals
-  group_by(Species, Colony, Treatment) %>% 
-  dplyr::summarise(count = n())
+p1<-fvfm_norm_final %>% 
+  filter(Species == "Acervicornis") %>% 
+  drop_na(fvfm) %>% 
+  group_by(Treatment, Species, numDays) %>% 
+  summarise(mean_fvfm = mean(fvfm), se_fvfm = std.error(fvfm)) %>% 
+  ggplot(., aes(x=numDays, y=mean_fvfm, color = Treatment)) +
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
+  geom_errorbar(aes(ymin = mean_fvfm - se_fvfm, ymax = mean_fvfm + se_fvfm), width = 0.2) +
+  geom_point() +
+  geom_line() +
+  theme_classic() +
+  labs(x="Days in Treatment", y="Fv/Fm", title = "A. cervicornis") +
+  theme(text = element_text(size = 12)) 
 ```
 
-
-
-# 1. Raw Fv/Fm over time during the 28-d temperature treatment period.
-```{r, warning = F}
-treatment_time_bothspecies %>% 
-  dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
-  mutate(numDays = as.factor(numDays)) %>% 
-  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color = Treatment)) + 
-  geom_boxplot(color = "black", outlier.shape = NA, alpha=0.3) + #not removing outliers, just removing the black dots because they are already represented in the geom_point() line
-  geom_point(position = position_jitterdodge(), alpha=0.3) +
-  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
-  facet_wrap(~Species) + 
-  theme_classic() + 
-  labs(y = "Fv/Fm", x = "Days in Treatment") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) 
-#ggsave("treatment_bothspecies_overtimeboxplots.pdf")
-```
-
-By genotype 
-```{r, warning = F}
-treatment_time_bothspecies%>% 
-  dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
-  mutate(numDays = as.factor(numDays)) %>% 
-  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment)) + 
-  geom_boxplot(color = "black") +
-  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
-  facet_wrap(~Species + Colony) + 
-  theme_classic() + 
-  labs(y = "Fv/Fm", x = "Days in Treatment") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  theme(text = element_text(size = 14))
-#ggsave("treatment_bothspecies_colonies_overtimeboxplots.pdf")
-```
-
-
-
-
-# 2. Normalized to initial measurement (day 0) - Treatment Fv/Fm
-
-## 2a. percent change boxplot (for publication)
+## One-way ANOVA
 ```{r}
-p1<-treatment_normalized_bothspecies %>% 
-  ggplot(., aes(x=Species, y= fvfm_loss_norm, fill= Treatment)) +
-  geom_boxplot() + 
-  theme_classic() + 
-  labs(y = "% Change Fv/Fm", x="Species") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) + 
-  theme(legend.position="none") +
-  facet_wrap(~Species, ncol =1, scales = "free_x")
+fvfm_norm_final %>% 
+  filter(Species == "Acervicornis") %>% 
+  filter(numDays == 35) -> fvfm_norm_Acer
+
+fvfm_norm_Acer %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=63 and control=70
+
+summary(aov(fvfm ~ Treatment, data = fvfm_norm_Acer)) #significant
+
+Acer_lm <- aov(fvfm ~ Treatment, data = fvfm_norm_Acer)
+shapiro_test(Acer_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = fvfm_norm_Acer) #significant
+
+#do welch's anova since variance is heteroschedastic
+oneway.test(fvfm ~ Treatment, data = fvfm_norm_Acer, var.equal = FALSE) #significant
+# F = 101.22, num df = 1.00, denom df = 115.99, p-value < 2.2e-16
 ```
 
-### linear mixed model stats
 
+# Pcli
 ```{r}
-treatment_normalized_bothspecies %>% 
-  mutate_at(vars(Colony, Puck, Tank, Treatment, Species), factor) -> treatment_normalized_bothspecies
-
-treatment_normalized_bothspecies %>% 
-  filter(Species == "Acervicornis") -> Acer_fvfm_norm
-
-treatment_normalized_bothspecies %>% 
-  filter(Species == "Pclivosa") -> Pcli_fvfm_norm
-
-Pcli_fvfm_norm %>% 
-  drop_na(`2022-04-20`) -> Pcli_fvfm_norm
-
-Acer_model <- lmer(fvfm_loss_norm ~ Treatment*Colony + (1|Tank), data = Acer_fvfm_norm)
-summary(Acer_model)
-anova(Acer_model)
-
-Pcli_model <- lmer(fvfm_loss_norm ~ Treatment*Colony + (1|Tank), data = Pcli_fvfm_norm)
-summary(Pcli_model)
-anova(Pcli_model)
+p2<-fvfm_norm_final %>% 
+  filter(Species == "Pclivosa") %>% 
+  drop_na(fvfm) %>% 
+  group_by(Treatment, Species, numDays) %>% 
+  summarise(mean_fvfm = mean(fvfm), se_fvfm = std.error(fvfm)) %>% 
+  ggplot(., aes(x=numDays, y=mean_fvfm, color = Treatment)) +
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
+  geom_errorbar(aes(ymin = mean_fvfm - se_fvfm, ymax = mean_fvfm + se_fvfm), width = 0.2) +
+  geom_point() +
+  geom_line() +
+  theme_classic() +
+  labs(x="Days in Treatment", y="Fv/Fm", title = "P. clivosa") +
+  theme(text = element_text(size = 12)) 
 ```
 
-
-#### Model fitting and assumptions diagnostic
-
-Acer
+## One-way ANOVA
 ```{r}
-x = residuals(Acer_model)
-plot(fitted(Acer_model), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_fvfm_norm, center=mean) # formal statistical test for homogenity of variance #marginally significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-# removal of one outlier made the variance more significant, so leaving it as is
+fvfm_norm_final %>% 
+  filter(Species == "Pclivosa") %>% 
+  filter(numDays == 30) -> fvfm_norm_Pcli
 
-Anova(Acer_model,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
-capture.output(Anova(Acer_model,  type = "II", test.statistic = "F"), file = "Acer_model_ANOVA.csv")
+fvfm_norm_Pcli %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=76 and control=73
+
+summary(aov(fvfm ~ Treatment, data = fvfm_norm_Pcli)) #significant
+
+Pcli_lm <- aov(fvfm ~ Treatment, data = fvfm_norm_Pcli)
+shapiro_test(Pcli_lm$residuals) #not significant
+leveneTest(fvfm ~ Treatment, data = fvfm_norm_Pcli) #significant
+
+#do welch's anova since variance is heteroschedastic
+oneway.test(fvfm ~ Treatment, data = fvfm_norm_Pcli, var.equal = FALSE) #significant
+# F = 16.709, num df = 1.000, denom df = 95.163, p-value = 9.104e-05
 ```
 
 
-Pcli
+# plot
 ```{r}
-x = residuals(Pcli_model)
-plot(fitted(Pcli_model), x) 
-leveneTest(x ~ Treatment*Colony, data=Pcli_fvfm_norm, center=mean) # formal statistical test for homogeneity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test 
-# Perform Bonferroni outlier test
-bonf_outliers <- outlierTest(Pcli_model, cutoff = Inf, n.max = Inf)
-
-# View all potential outliers identified with Bonferroni correction
-bonf_outliers #row 12
-
-# Indices of the rows to remove
-rows_to_remove <- c(12)
-
-# Remove these rows
-Pcli_clean <- Pcli_fvfm_norm[-rows_to_remove, ]
-
-Pcli_model_2 <- lmer(fvfm_loss_norm ~ Treatment*Colony + (1|Tank), data = Pcli_clean)
-x = residuals(Pcli_model_2)
-plot(fitted(Pcli_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Pcli_clean, center=mean) # formal statistical test for homogenity of variance 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x)
-
-Anova(Pcli_model_2, type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
-
-capture.output(Anova(Pcli_model_2, type = "II", test.statistic = "F"), file = "Pcli_model_ANOVA.csv")
+plot_grid(p1, p2, nrow=1,
+       labels = c("A", "B"),       # Add panel labels
+  label_size = 14)
+ggsave("treatmentfvfm_bothspecies.pdf", width=10, height=5)
 ```
-
-#### Statistical pairwise comparisons
-
-Acer
-```{r}
-#colony + treatment
-Acer_emms <- emmeans(Acer_model, pairwise ~ Colony*Treatment)
-
-pairs(Acer_emms) 
-capture.output(pairs(Acer_emms), file="Acer_percentchange_treatment_colony_emmeans.csv")
-```
-
-Pcli
-```{r}
-#colony + treatment
-Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Colony*Treatment)
-
-pairs(Pcli_emms) 
-capture.output(pairs(Pcli_emms), file="Pcli_percentchange_treatment_colony_emmeans.csv")
-```
-
-
-## 2b. Linear over time (for publication) --  Normalized to 1
-```{r, warning = FALSE}
-p2<-ipam_norm_overtime %>% 
-  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color=Treatment)) + 
-  geom_point(alpha=0.3) +
-  geom_smooth() +
-  facet_wrap(~Species, ncol =1) + 
-  theme_classic() + 
-  labs(y = "Normalized Fv/Fm", x = "Days in Treatment") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  theme(text = element_text(size = 14)) +
-  ylim(0.4,1.2) +
-  theme(legend.position="none")
-  
-p3<-ipam_norm_overtime %>% 
-  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color=Treatment)) + 
-  geom_point(alpha=0.3) +
-  geom_smooth() +
-  facet_wrap(~Species + Colony) + 
-  theme_classic() + 
-  labs(y = "Normalized Fv/Fm", x = "Days in Treatment") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  theme(text = element_text(size = 14))+
-  ylim(0.4,1.2) +
-  theme(legend.position="none")
-```
-
-create combined plot
-```{r}
-plot_grid(p1, p2, p3, rel_widths = c(1, 1, 2), nrow=1)
-ggsave("treatment_normfvfm_boxplot_linear.pdf", width = 12, height = 5)
-```
-
-### Mixed effects GLMM (fixed: treatment, colony, fvfm_timepoint; random: tank and ID)
-
-Test species separately.
-```{r}
-ipam_norm_overtime$fvfm_timepoint <- as.factor(ipam_norm_overtime$fvfm_timepoint)
-
-ipam_norm_overtime %>% 
-  dplyr::select(Colony:Species, fvfm_timepoint, fvfm) %>% 
-  filter(Species == "Acervicornis") ->  Acer_tidydata
-
-ipam_norm_overtime %>% 
-  dplyr::select(Colony:Species, fvfm_timepoint, fvfm) %>% 
-  filter(Species == "Pclivosa") ->  Pcli_tidydata
-```
-
-
-```{r}
-#repeated measures -- include ID in the formula as a random effect
-Acer_model <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Acer_tidydata) 
-summary(Acer_model)
-Anova(Acer_model, type = "II", test.statistic = "F")
-
-Pcli_model <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Pcli_tidydata)
-summary(Pcli_model)
-Anova(Pcli_model, type = "II", test.statistic = "F")
-```
-
-#### Model fitting and assumptions diagnostic
-
-Acer
-```{r}
-x = residuals(Acer_model)
-plot(fitted(Acer_model), x) 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-car::outlierTest(Acer_model) #row 317
-Acer_tidydata[-317, ] -> Acer_noout
-
-Acer_model_2 <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Acer_noout)
-x = residuals(Acer_model_2)
-plot(fitted(Acer_model_2), x) 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-
-Anova(Acer_model_2, type = "II", test.statistic = "F")
-capture.output(Anova(Acer_model_2, type = "II", test.statistic = "F"), file = "Acer_fvfm_model_ANOVA.csv")
-```
-
-Pcli
-```{r}
-x = residuals(Pcli_model)
-plot(fitted(Pcli_model), x) 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-car::outlierTest(Pcli_model) #rows 375, 200, 108
-rows_to_remove <- c(375, 200, 108)
-Pcli_tidydata[-rows_to_remove, ] -> Pcli_noout
-
-Pcli_model_2 <- lmer(fvfm ~ Treatment*Colony*fvfm_timepoint + (1|Tank) + (1|Puck), data = Pcli_noout)
-x = residuals(Pcli_model_2)
-plot(fitted(Pcli_model_2), x) 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-
-Anova(Pcli_model_2, type = "II", test.statistic = "F")
-capture.output(Anova(Pcli_model_2, type = "II", test.statistic = "F"), file = "Pcli_fvfm_model_ANOVA.csv")
-```
-
-### Statistical pairwise comparisons
-
-Acer
-```{r}
-#colony + treatment + timepoint
-Acer_emms <- emmeans(Acer_model_2, pairwise ~ Colony*Treatment*fvfm_timepoint)
-pairs(Acer_emms)
-capture.output(pairs(Acer_emms), file = "Acer_Tukey_colonytreatmenttimepoint.csv")
-```
-
-Pcli
-```{r}
-#colony + treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model_2, pairwise ~ Colony*Treatment*fvfm_timepoint)
-pairs(Pcli_emms)
-capture.output(pairs(Pcli_emms), file = "Pcli_Tukey_colonytreatmenttimepoint.csv")
-```
-
-
-## 2c. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
-```{r, warning = F}
-p1<-treatment_normalized_bothspecies%>% 
-  ggplot(., aes(x=Species, y= fvfm_loss_norm, fill= Treatment)) +
-  geom_boxplot() + 
-  theme_classic() + 
-  labs(y = "% Decline in Fv/Fm", x="Treatment") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) + 
-  theme(legend.position="none")
-  
-#ggsave("treatment_normalized_bothspecies_boxplot.pdf")
-```
-
-### Stats: Species x Treatments
-
-Change to factors
-```{r}
-str(treatment_normalized_bothspecies)
-#make factors: Colony, Puck, Tank, Treatment, Species
-
-treatment_normalized_bothspecies %>% 
-  mutate_at(vars(Colony, Puck, Tank, Treatment, Species), factor) -> treatment_normalized_bothspecies
-```
-
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
-```{r}
-treat_model_1 <- lm(fvfm_loss_norm ~ Treatment*Species + Colony + Tank, data = treatment_normalized_bothspecies)
-treat_model_metrics_1 <- augment(treat_model_1)
-plot(treat_model_1)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_1$.resid) # not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics_1) #not significant
-
-# identifying outliers
-treat_model_metrics_1 %>% 
-  filter(abs(.std.resid) > 3) -> treat_outliers_1
-# 2 outliers
-
-#remove outliers
-treatment_normalized_bothspecies_2wayanova <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers_1$.rownames,]
-
-#two corals were indeed removed from data frame
-```
-
-Run 2-way ANOVA
-```{r}
-aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova)
-
-summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova))
-
-#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_table.csv")
-
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies_2wayanova))
-         
-#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species, data = treatment_normalized_bothspecies)), file = "fvfm_loss_norm_bothspecies_anova_tukey.csv")
-```
-
-### Stats: species separated
-
-Acer
-```{r}
-treatment_normalized_bothspecies %>% 
-  filter(Species == "Acervicornis") -> treatment_percent_Acer
-
-treat_model_Acer <- lm(fvfm_loss_norm ~ Treatment + Colony + Tank, data = treatment_percent_Acer)
-treat_model_metrics_Acer <- augment(treat_model_Acer)
-plot(treat_model_Acer)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_Acer$.resid) # not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = treat_model_metrics_Acer) #not significant
-
-# identifying outliers
-treat_model_metrics_Acer %>% 
-  filter(abs(.std.resid) > 3)
-# 1 outlier
-
-#remove outliers
-treatment_percent_Acer %>% 
-  filter(fvfm_loss_norm < -7.6) -> treatment_percent_Acer
-
-#one coral removed from data frame
-```
-
-
-Acer 1-way ANOVA
-```{r}
-aov(fvfm_loss_norm ~ Treatment, data = treatment_percent_Acer)
-
-summary(aov(fvfm_loss_norm ~ Treatment, data = treatment_percent_Acer)) #very significant
-
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment, data = treatment_percent_Acer))
-```
-Pcli
-```{r}
-treatment_normalized_bothspecies %>% 
-  filter(Species == "Pclivosa") -> treatment_percent_Pcli
-
-treat_model_Pcli <- lm(fvfm_loss_norm ~ Treatment + Colony + Tank, data = treatment_percent_Pcli)
-treat_model_metrics_Pcli <- augment(treat_model_Pcli)
-plot(treat_model_Pcli)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_Pcli$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = treat_model_metrics_Pcli) #not significant
-
-# identifying outliers
-treat_model_metrics_Pcli %>% 
-  filter(abs(.std.resid) > 3) # 1 outlier
-
-treatment_percent_Pcli %>% 
-  filter(!(Treatment == "Untreated" & Colony == "A" & Tank == "4" & fvfm_loss_norm < -23)) -> treatment_percent_Pcli
-
-#run again
-treat_model_Pcli <- lm(fvfm_loss_norm ~ Treatment + Colony + Tank, data = treatment_percent_Pcli)
-treat_model_metrics_Pcli <- augment(treat_model_Pcli)
-plot(treat_model_Pcli)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_Pcli$.resid) # not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = treat_model_metrics_Pcli) #significant
-
-```
-Pcli Welch's ANOVA
-```{r}
-oneway.test(fvfm_loss_norm ~ Treatment, data = treatment_percent_Pcli, var.equal = FALSE)
-```
-
-
-
-## 2d. Percent reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
-```{r, warning = F}
-p2<- treatment_normalized_bothspecies%>% 
-  ggplot(., aes(x=Colony, y= fvfm_loss_norm, fill=Treatment)) +
-  geom_boxplot() + 
-  theme_classic() + labs(y = "% Decline in Fv/Fm", x="Colony") +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
-  theme(text = element_text(size = 15)) + 
-  facet_wrap(~Species, scales = "free_x")
-#ggsave("treatment_normalized_genotypes_boxplot.pdf")
-```
-
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
-```{r}
-treat_model_2 <- lm(fvfm_loss_norm ~ Treatment*Species*Colony + Tank, data = treatment_normalized_bothspecies)
-treat_model_metrics_2 <- augment(treat_model_2)
-plot(treat_model_2)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_2$.resid) # not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species*Colony, data = treat_model_metrics_2) #not significant
-
-# identifying outliers
-treat_model_metrics_2 %>% 
-  filter(abs(.std.resid) > 3) -> treat_outliers_2
-# 2 outliers
-
-#remove outliers
-treatment_normalized_bothspecies_3wayanova <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers_2$.rownames,]
-```
-
-
-Run 3-way ANOVA
-```{r}
-aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova)
-
-summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova))
-
-#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova)), file = "fvfm_loss_norm_bothspeciesgenet_anova_table.csv")
-
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova))
-         
-#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Species*Colony, data = treatment_normalized_bothspecies_3wayanova)), file = "fvfm_loss_norm_bothspeciesgenet_anova_tukey.csv")
-```
-
-
-### Stats: colony x treatment
-
-Acer
-```{r}
-treatment_normalized_bothspecies %>% 
-  filter(Species == "Acervicornis") -> treatment_percent_Acer
-
-treat_model_Acer <- lm(fvfm_loss_norm ~ Treatment*Colony + Tank, data = treatment_percent_Acer)
-treat_model_metrics_Acer <- augment(treat_model_Acer)
-plot(treat_model_Acer)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_Acer$.resid) # not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics_Acer) #not significant
-
-# identifying outliers
-treat_model_metrics_Acer %>% 
-  filter(abs(.std.resid) > 3)
-# 1 outlier
-
-#remove outliers
-treatment_percent_Acer %>% 
-  filter(fvfm_loss_norm < -7.6) -> treatment_percent_Acer
-
-#one coral removed from data frame
-```
-
-
-Acer 2-way ANOVA
-```{r}
-aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Acer)
-
-summary(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Acer))#very significant
-
-#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Acer)), file = "fvfm_loss_Acergenets_anova.csv")
-
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Acer))
-
-#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Acer)), file = "fvfmloss_Acergenets_tukey.csv")
-```
-
-Pcli 
-```{r}
-treatment_normalized_bothspecies %>% 
-  filter(Species == "Pclivosa") -> treatment_percent_Pcli
-
-treat_model_Pcli <- lm(fvfm_loss_norm ~ Treatment*Colony + Tank, data = treatment_percent_Pcli)
-treat_model_metrics_Pcli <- augment(treat_model_Pcli)
-plot(treat_model_Pcli)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_Pcli$.resid) # significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics_Pcli) #not significant
-
-# identifying outliers
-treat_model_metrics_Pcli %>% 
-  filter(abs(.std.resid) > 3) # 1 outlier
-
-treatment_percent_Pcli %>% 
-  filter(!(Treatment == "Untreated" & Colony == "A" & Tank == "4" & fvfm_loss_norm < -23)) -> treatment_percent_Pcli
-
-#run again
-treat_model_Pcli <- lm(fvfm_loss_norm ~ Treatment*Colony + Tank, data = treatment_percent_Pcli)
-treat_model_metrics_Pcli <- augment(treat_model_Pcli)
-plot(treat_model_Pcli)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_Pcli$.resid) # not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = treat_model_metrics_Pcli) #not significant
-
-#yay can do 2 way anova
-```
-
-Pcli 2-way ANOVA
-```{r}
-aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Pcli)
-
-summary(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Pcli))#very significant
-
-#capture.output(summary(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Pcli)), file = "fvfm_loss_Pcligenets_anova.csv")
-
-TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Pcli))
-
-#capture.output(TukeyHSD(aov(fvfm_loss_norm ~ Treatment*Colony, data = treatment_percent_Pcli)), file = "fvfmloss_Pcligenets_tukey.csv")
-```
-
-
-create combined plot
-```{r}
-plot_grid(p1, p2, rel_widths = c(1.5,2))
-#ggsave("percentdecline_treatment_speciesgenets.pdf", width = 12, height = 5)
-```
-
-
-
-# archive
-
-mean standard error dot plots
-```{r}
-p1<-treatment_normalized_bothspecies %>% 
-  drop_na(fvfm_loss_norm) %>% 
-  group_by(Species, Treatment) %>% 
-  mutate(mean_fvfmlossnorm = mean(fvfm_loss_norm), se_fvfmlossnorm = std.error(fvfm_loss_norm)) %>% 
-  ggplot(., aes(x = Treatment, y = mean_fvfmlossnorm)) +
-  theme_classic()+
-  geom_jitter(aes(y=fvfm_loss_norm, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.8),
-              alpha=0.1, pch = 21,
-              color = "black") +
-  geom_errorbar(aes(x = Treatment, ymax = mean_fvfmlossnorm+se_fvfmlossnorm, ymin = mean_fvfmlossnorm-se_fvfmlossnorm, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = Treatment, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  xlab("Treatment")+
-  ylab("% Decline in Fv/Fm")+
-  facet_wrap(~Species, scales = "free_x") +
-  theme(text = element_text(size = 15)) +
-  ylim(-4,40) +
-  theme(legend.position="none")
-```
-
-```{r}
-p2<-treatment_normalized_bothspecies %>% 
-  drop_na(fvfm_loss_norm) %>% 
-  group_by(Species, Treatment, Colony) %>% 
-  mutate(mean_fvfmlossnorm = mean(fvfm_loss_norm), se_fvfmlossnorm = std.error(fvfm_loss_norm)) %>% 
-  ggplot(., aes(x = Colony, y = mean_fvfmlossnorm)) +
-  theme_classic()+
-  geom_jitter(aes(y=fvfm_loss_norm, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.8),
-              alpha=0.1, pch = 21,
-              color = "black") +
-  geom_errorbar(aes(x = Colony, ymax = mean_fvfmlossnorm+se_fvfmlossnorm, ymin = mean_fvfmlossnorm-se_fvfmlossnorm, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = Colony, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  xlab("Colony")+
-  ylab("% Decline in Fv/Fm")+
-  facet_wrap(~Species, scales = "free_x") +
-  ylim(-4,40) +
-  theme(text = element_text(size = 15))
-```
-
-
-create combined plot
-```{r}
-plot_grid(p1, p2, rel_widths = c(1.5,2))
-#ggsave("treatment_percentfvfmloss_dotplot.pdf", width = 12, height = 5)
-```
-

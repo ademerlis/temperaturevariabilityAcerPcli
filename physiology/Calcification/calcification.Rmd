@@ -1,0 +1,130 @@
+---
+title: "calcification"
+author: "Allyson DeMerlis"
+date: "4/11/2022"
+output: html_document
+---
+# load libraries and data frames
+```{r}
+library(tidyverse)
+library(gsw) #for density calculation
+library(rstatix)
+library(cowplot)
+library(plotrix)
+library(car)
+
+metadata <- read_csv("../metadata.csv")
+
+buoyantweights<- metadata %>% 
+    dplyr::select(Species, ID, Colony, Treatment, Treatment_Tank, Bw_initial_raw_mass:bw_final_temp) %>% 
+    drop_na(Treatment)
+
+#sample size
+buoyantweights %>% 
+  drop_na(bw_final_raw_mass) %>% 
+  group_by(Species, Colony, Treatment) %>% 
+  summarise(count = n())
+
+#the final time point sample sizes are much lower because I didn't buoyant weigh any corals that got tissue sampled or FACS run (N=69 corals)
+```
+
+# Treatment
+
+Test species separately because it is not part of your research question whether Acer vs. Pcli grows faster (The answer is Acer).
+
+## Calculating percent change of mass in air for both species, all genotypes together
+```{r}
+#determining seawater density using temperature and salinity (from Patrick Kiel's code)
+#general equation:gsw_rho_t_exact(SA = salinity, t = temp,p = 10.1325)/1000
+
+#initial and final corrected buoyant weight calculations
+buoyantweights %>% 
+  group_by(Species, ID, Treatment, bw_initial_date) %>% 
+  mutate(SWrho_initial = gsw_rho_t_exact(SA = `bw_initial_salinity (ppt)`,
+                         t = bw_initial_temp,
+                         p = 10.1325)/1000) %>% 
+  mutate(CalcMAir_initial = Bw_initial_raw_mass/(1-SWrho_initial/2.93)) %>%  #2.93 is the density of solid aragonite
+  ungroup() %>% 
+  group_by(Species, ID, Treatment, bw_final_date) %>% 
+  mutate(SWrho_final = gsw_rho_t_exact(SA = bw_final_salinity,
+                         t = bw_final_temp,
+                         p = 10.1325)/1000) %>% 
+  mutate(CalcMAir_final = bw_final_raw_mass/(1-SWrho_final/2.93)) %>% 
+  filter(!(Species == "Acropora cervicornis" & ID == "94")) %>% #drop this one sample because it was tissue sampled
+  ungroup() %>% 
+  mutate(percent_change = ((CalcMAir_final - CalcMAir_initial)/ CalcMAir_initial)*100) %>% 
+  drop_na() -> calc_bw_bothspecies_bothtimepoints
+
+#write_csv(calc_bw_bothspecies_bothtimepoints, file = "calc_bw_bothspecies_bothtimepoints.csv")
+
+str(calc_bw_bothspecies_bothtimepoints)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  mutate_at(vars(Colony, ID, Treatment_Tank, Treatment, Species), factor) -> calc_bw_bothspecies_bothtimepoints
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  filter(Species == "Acropora cervicornis") -> Acer_calc_bw
+
+calc_bw_bothspecies_bothtimepoints %>% 
+  filter(Species == "Pseudodiploria clivosa") -> Pcli_calc_bw
+```
+
+
+## boxplot of % growth - all genotypes together
+```{r}
+calc_bw_bothspecies_bothtimepoints %>% 
+  group_by(Treatment) %>% 
+  ggplot(., aes(x=Species, y = percent_change, fill = Treatment)) + 
+  geom_boxplot() + 
+  theme_classic() + 
+   scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 15)) +
+  labs(y= "% Growth") +
+  theme(legend.position="none")
+#ggsave("percentgrowth_speciestreatments.pdf")
+```
+
+## Acer stats
+```{r}
+calc_bw_bothspecies_bothtimepoints
+
+summary(aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])) #not significant
+Acer_lm <- aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])
+shapiro_test(Acer_lm$residuals) #significant
+leveneTest(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ]) #not significant
+
+# kruskal-wallis test
+
+kruskal_test(calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ], percent_change ~ Treatment) #not significant
+```
+
+## Acer stats
+```{r}
+calc_bw_bothspecies_bothtimepoints
+
+summary(aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])) #not significant
+Acer_lm <- aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])
+shapiro_test(Acer_lm$residuals) #significant
+leveneTest(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ]) #not significant
+
+# kruskal-wallis test
+
+kruskal_test(calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ], percent_change ~ Treatment) #not significant
+```
+
+
+## Pcli stats
+```{r}
+
+summary(aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ])) #significant
+Pcli_lm <- aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ])
+shapiro_test(Pcli_lm$residuals) #significant
+leveneTest(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ]) #not significant
+
+# kruskal-wallis test
+
+kruskal_test(calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ], percent_change ~ Treatment) #barely significant
+```
+
+
