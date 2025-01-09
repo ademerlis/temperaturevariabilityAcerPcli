@@ -44,8 +44,13 @@ ipam_tidy_data %>%
   dplyr::select(!c(`2022-04-06`:`2022-04-20`)) -> ipam_norm_overtime
 
 fvfm_norm_final <- ipam_norm_overtime %>% 
-  select(Colony:Species, fvfm_timepoint, fvfm, numDays) %>% 
-  filter(!fvfm_timepoint == "t1") #getting rid of day-7 time point for stats
+  select(Colony:Species, fvfm_timepoint, fvfm) %>% 
+  filter(!fvfm_timepoint == "t1")  %>%  #getting rid of day-7 time point for stats 
+  mutate(Date = case_when(fvfm_timepoint == "t0" & Species == "Acervicornis" ~ "2022-03-16",
+                          fvfm_timepoint == "t0" & Species == "Pclivosa" ~ "2022-03-21",
+                          fvfm_timepoint == "t2" & Species == "Acervicornis" ~ "2022-04-20",
+                          fvfm_timepoint == "t2" & Species == "Pclivosa" ~ "2022-04-20")) %>% 
+  mutate(Date = as.Date(Date))
 ```
 
 # Acer
@@ -53,23 +58,25 @@ fvfm_norm_final <- ipam_norm_overtime %>%
 p1<-fvfm_norm_final %>% 
   filter(Species == "Acervicornis") %>% 
   drop_na(fvfm) %>% 
-  group_by(Treatment, Species, numDays) %>% 
+  group_by(Treatment, Date, fvfm_timepoint) %>% 
   summarise(mean_fvfm = mean(fvfm), se_fvfm = std.error(fvfm)) %>% 
-  ggplot(., aes(x=numDays, y=mean_fvfm, color = Treatment)) +
+  ggplot(., aes(x=Date, y=mean_fvfm, color = Treatment)) +
   scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
   geom_errorbar(aes(ymin = mean_fvfm - se_fvfm, ymax = mean_fvfm + se_fvfm), width = 0.2) +
   geom_point() +
   geom_line() +
   theme_classic() +
-  labs(x="Days in Treatment", y="Fv/Fm", title = "A. cervicornis") +
-  theme(text = element_text(size = 12)) 
+  labs(x="Date", y="Fv/Fm", title = "A. cervicornis") +
+  theme(text = element_text(size = 12)) +
+  ylim(0.7, 1) + 
+  geom_vline(xintercept = as.numeric(as.Date(c("2022-03-22", "2022-04-20"))), linetype = "dashed", color = "black", alpha = 0.3)
 ```
 
 ## One-way ANOVA
 ```{r}
 fvfm_norm_final %>% 
   filter(Species == "Acervicornis") %>% 
-  filter(numDays == 35) -> fvfm_norm_Acer
+  filter(fvfm_timepoint == "t2") -> fvfm_norm_Acer
 
 fvfm_norm_Acer %>% 
   group_by(Treatment) %>% 
@@ -92,23 +99,25 @@ oneway.test(fvfm ~ Treatment, data = fvfm_norm_Acer, var.equal = FALSE) #signifi
 p2<-fvfm_norm_final %>% 
   filter(Species == "Pclivosa") %>% 
   drop_na(fvfm) %>% 
-  group_by(Treatment, Species, numDays) %>% 
+  group_by(Treatment, Date, fvfm_timepoint) %>% 
   summarise(mean_fvfm = mean(fvfm), se_fvfm = std.error(fvfm)) %>% 
-  ggplot(., aes(x=numDays, y=mean_fvfm, color = Treatment)) +
+  ggplot(., aes(x=Date, y=mean_fvfm, color = Treatment)) +
   scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
   geom_errorbar(aes(ymin = mean_fvfm - se_fvfm, ymax = mean_fvfm + se_fvfm), width = 0.2) +
   geom_point() +
   geom_line() +
   theme_classic() +
-  labs(x="Days in Treatment", y="Fv/Fm", title = "P. clivosa") +
-  theme(text = element_text(size = 12)) 
+  labs(x="Date", y="Fv/Fm", title = "P. clivosa") +
+  theme(text = element_text(size = 12)) +
+  ylim(0.7, 1) + 
+  geom_vline(xintercept = as.numeric(as.Date(c("2022-03-22", "2022-04-20"))), linetype = "dashed", color = "black", alpha = 0.3)
 ```
 
 ## One-way ANOVA
 ```{r}
 fvfm_norm_final %>% 
   filter(Species == "Pclivosa") %>% 
-  filter(numDays == 30) -> fvfm_norm_Pcli
+  filter(fvfm_timepoint == "t2") -> fvfm_norm_Pcli
 
 fvfm_norm_Pcli %>% 
   group_by(Treatment) %>% 

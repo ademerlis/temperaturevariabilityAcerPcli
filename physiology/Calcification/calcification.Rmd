@@ -87,44 +87,52 @@ calc_bw_bothspecies_bothtimepoints %>%
 
 ## Acer stats
 ```{r}
-calc_bw_bothspecies_bothtimepoints
+summary(aov(percent_change ~ Treatment, data = Acer_calc_bw))
+#not significant
+Acer_lm <- aov(percent_change ~ Treatment, data = Acer_calc_bw)
 
-summary(aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])) #not significant
-Acer_lm <- aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])
-shapiro_test(Acer_lm$residuals) #significant
-leveneTest(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ]) #not significant
+car::outlierTest(Acer_lm) #row 27
+Acer_calc_bw[-27, ] -> Acer_calc_bw_noout
 
-# kruskal-wallis test
+Acer_lm_2 <- aov(percent_change ~ Treatment, data = Acer_calc_bw_noout)
 
-kruskal_test(calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ], percent_change ~ Treatment) #not significant
-```
+shapiro_test(Acer_lm_2$residuals) #not significant
+leveneTest(percent_change ~ Treatment, data = Acer_calc_bw_noout) #not significant
 
-## Acer stats
-```{r}
-calc_bw_bothspecies_bothtimepoints
-
-summary(aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])) #not significant
-Acer_lm <- aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ])
-shapiro_test(Acer_lm$residuals) #significant
-leveneTest(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ]) #not significant
-
-# kruskal-wallis test
-
-kruskal_test(calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Acropora cervicornis", ], percent_change ~ Treatment) #not significant
+summary(aov(percent_change ~ Treatment, data = Acer_calc_bw_noout)) # not significant
 ```
 
 
 ## Pcli stats
 ```{r}
+summary(aov(percent_change ~ Treatment, data = Pcli_calc_bw)) #significant
 
-summary(aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ])) #significant
-Pcli_lm <- aov(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ])
+Pcli_lm <- aov(percent_change ~ Treatment, data = Pcli_calc_bw)
+
+car::outlierTest(Pcli_lm) #row 63
+Pcli_calc_bw[-63, ] -> Pcli_calc_bw_noout
+
+Pcli_lm <- aov(percent_change ~ Treatment, data = Pcli_calc_bw_noout)
+
 shapiro_test(Pcli_lm$residuals) #significant
-leveneTest(percent_change ~ Treatment, data = calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ]) #not significant
+leveneTest(percent_change ~ Treatment, data = Pcli_calc_bw_noout) #not significant
 
 # kruskal-wallis test
-
-kruskal_test(calc_bw_bothspecies_bothtimepoints[calc_bw_bothspecies_bothtimepoints$Species == "Pseudodiploria clivosa", ], percent_change ~ Treatment) #barely significant
+kruskal_test(Pcli_calc_bw_noout, percent_change ~ Treatment) #not significant
 ```
 
-
+## mean % growth - outliers removed
+```{r}
+rbind(Acer_calc_bw_noout, Pcli_calc_bw_noout) %>% 
+  group_by(Treatment, Species) %>% 
+  mutate(mean_growth = mean(percent_change), se_growth = std.error(percent_change)) %>% 
+  ggplot(., aes(x=Species, y = mean_growth, color = Treatment)) + 
+  geom_point(position=position_dodge(width = 0.2)) + 
+  geom_errorbar(aes(ymin = mean_growth - se_growth, ymax = mean_growth + se_growth), width = 0.1, position=position_dodge(width = 0.2)) +
+  theme_classic() + 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB"))  +
+  theme(text = element_text(size = 13)) +
+  labs(y= "% Growth") +
+  ylim(0,15) 
+ggsave("percentgrowth_speciestreatments_mean.pdf", width = 6, height = 4)
+```

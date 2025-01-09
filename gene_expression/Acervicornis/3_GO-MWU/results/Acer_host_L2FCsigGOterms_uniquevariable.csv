@@ -1,0 +1,434 @@
+delta.rank,pval,level,nseqs,term,name,p.adj,GO_category,Contrast
+-367,0.00138487863462639,4,334,GO:0000375;GO:0008380;GO:0000377;GO:0000398;GO:0006397,mRNA processing,0.0207659288459161,BP,Variable_vs_Initial
+-1728,0.00352641594620855,4,12,GO:0000380,"alternative mRNA splicing, via spliceosome",0.0411391253358097,BP,Variable_vs_Initial
+-649,7.95837106411793e-4,2,114,GO:0000578;GO:0007351;GO:0008595,embryonic axis specification,0.0142599388854552,BP,Variable_vs_Initial
+-1406,0.0021821560080608,3,20,GO:0001539;GO:0060285,cilium or flagellum-dependent cell motility,0.0289337722550284,BP,Variable_vs_Initial
+-466,1.63346582753223e-4,2,287,GO:0001558,regulation of cell growth,0.00433170937967806,BP,Variable_vs_Initial
+-276,0.00367993933072956,2,499,GO:0001775;GO:0045321,cell activation,0.0423498152486922,BP,Variable_vs_Initial
+-514,1.35327704204212e-4,4,240,GO:0001817,regulation of cytokine production,0.00381850783094447,BP,Variable_vs_Initial
+-525,0.00242377069299567,2,143,GO:0001819,positive regulation of cytokine production,0.0308519078432871,BP,Variable_vs_Initial
+-944,0.003293569611434,2,41,GO:0001892,embryonic placenta development,0.0388180385479299,BP,Variable_vs_Initial
+-454,8.40426886830602e-5,4,331,GO:0001933;GO:0042326;GO:0045936;GO:0010563,negative regulation of phosphate metabolic process,0.00261628543900309,BP,Variable_vs_Initial
+-311,6.89718729449603e-4,8,543,GO:0001934;GO:0042327;GO:0045937;GO:0010562,positive regulation of phosphate metabolic process,0.0128687585742258,BP,Variable_vs_Initial
+-410,0.00300671495189603,2,227,GO:0002119,nematode larval development,0.036411127366724,BP,Variable_vs_Initial
+-338,0.00406755020295118,2,317,GO:0002164,larval development,0.0449786246380393,BP,Variable_vs_Initial
+-788,0.00353888695785012,2,58,GO:0002221,pattern recognition receptor signaling pathway,0.0412007001922063,BP,Variable_vs_Initial
+-292,0.00397945726096276,3,434,GO:0002520;GO:0030097;GO:0048534,immune system development,0.0444333941341027,BP,Variable_vs_Initial
+-557,2.6606922553341e-4,3,185,GO:0002521,leukocyte differentiation,0.00617022074435373,BP,Variable_vs_Initial
+-456,4.52647211884457e-5,4,354,GO:0002684,positive regulation of immune system process,0.00170576528268037,BP,Variable_vs_Initial
+-507,0.00051095301297514805,2,203,GO:0002694;GO:0050865;GO:0051249,regulation of cell activation,0.0103785065897931,BP,Variable_vs_Initial
+-578,1.05944032100128e-4,2,194,GO:0002697,regulation of immune effector process,0.00314428712885768,BP,Variable_vs_Initial
+-991,0.00381238054172916,4,36,GO:0002784;GO:0002759,regulation of antimicrobial humoral response,0.0435874565729035,BP,Variable_vs_Initial
+-1663,0.003481049014513,6,13,GO:0002805,regulation of antimicrobial peptide biosynthetic process,0.0407759688243977,BP,Variable_vs_Initial
+-1774,0.00413298586195136,4,11,GO:0003299;GO:0014887;GO:0014888;GO:0014898,striated muscle adaptation,0.0455264288793411,BP,Variable_vs_Initial
+471,0.00175012867458304,2,191,GO:0006066,alcohol metabolic process,0.0246308035577682,BP,Variable_vs_Initial
+-1163,0.00326186117332607,2,27,GO:0006110;GO:0030811,regulation of glycolytic process,0.0386031834727515,BP,Variable_vs_Initial
+413,8.76132177362341e-6,2,526,GO:0006259,DNA metabolic process,4.49900370874527e-4,BP,Variable_vs_Initial
+741,1.11368101028379e-5,3,151,GO:0006260,DNA replication,5.31597068908796e-4,BP,Variable_vs_Initial
+876,1.05190167385309e-5,6,108,GO:0006261,DNA-dependent DNA replication,5.10618032866991e-4,BP,Variable_vs_Initial
+2606,0.00449021917155084,3,5,GO:0006272,leading strand elongation,0.0481647479674966,BP,Variable_vs_Initial
+1344,0.00340764958656534,6,20,GO:0006277;GO:0007307,DNA amplification,0.0400471565744702,BP,Variable_vs_Initial
+434,1.78626556439142e-4,5,328,GO:0006281,DNA repair,0.00460888700578111,BP,Variable_vs_Initial
+563,9.36114707818084e-4,2,148,GO:0006302,double-strand break repair,0.0161507983324759,BP,Variable_vs_Initial
+502,0.00291917218463743,5,151,GO:0006310,DNA recombination,0.0356955378623884,BP,Variable_vs_Initial
+-852,8.10024438182779e-5,7,91,GO:0006342;GO:0045814;GO:0097549;GO:0034401,"negative regulation of gene expression, epigenetic",0.00256343645409445,BP,Variable_vs_Initial
+-421,0.00429537946349198,3,199,GO:0006403,RNA localization,0.0467755391005362,BP,Variable_vs_Initial
+823,0.00151899697130315,3,63,GO:0006414,translational elongation,0.0223671327805256,BP,Variable_vs_Initial
+1004,0.00136606165289673,3,43,GO:0006493,protein O-linked glycosylation,0.0206131423446132,BP,Variable_vs_Initial
+385,4.36368786120775e-6,3,658,GO:0006629;GO:0044255,lipid metabolic process,2.65906426265936e-4,BP,Variable_vs_Initial
+458,0.00194564049823148,2,198,GO:0006631,fatty acid metabolic process,0.026534830413976,BP,Variable_vs_Initial
+1053,5.16127554004509e-4,6,46,GO:0006635,fatty acid beta-oxidation,0.0104465675948333,BP,Variable_vs_Initial
+827,7.2068044103374e-4,3,71,GO:0006665,sphingolipid metabolic process,0.0133163147298105,BP,Variable_vs_Initial
+979,0.00229579868640703,4,41,GO:0006672,ceramide metabolic process,0.0296178713417556,BP,Variable_vs_Initial
+900,2.84705633653096e-4,3,69,GO:0006720,isoprenoid metabolic process,0.00647140424430529,BP,Variable_vs_Initial
+658,0.00108921463329111,3,105,GO:0006733;GO:0046496;GO:0019362;GO:0072524,oxidoreduction coenzyme metabolic process,0.0177339271025923,BP,Variable_vs_Initial
+-399,9.47609351017498e-4,5,301,GO:0006875;GO:0055065,metal ion homeostasis,0.0162512166545755,BP,Variable_vs_Initial
+-350,3.68739682715829e-4,4,467,GO:0006915;GO:0012501;GO:0008219,cell death,0.00809249387967919,BP,Variable_vs_Initial
+-273,0.00422886074465336,2,496,GO:0006952,defense response,0.046315323796127,BP,Variable_vs_Initial
+-915,0.0028308164606153,3,45,GO:0007009,plasma membrane organization,0.0348707885729128,BP,Variable_vs_Initial
+-1179,1.28844772863824e-5,2,58,GO:0007028;GO:0007315,cytoplasm organization,5.95179724970955e-4,BP,Variable_vs_Initial
+-995,0.00219540593854911,2,40,GO:0007044,cell-substrate junction assembly,0.0290422291362801,BP,Variable_vs_Initial
+-899,0.0018061585229304,2,51,GO:0007097;GO:0051647,nucleus localization,0.0249895556022834,BP,Variable_vs_Initial
+-406,0.00160786968394103,2,263,GO:0007155;GO:0022610,biological adhesion,0.023198684004066,BP,Variable_vs_Initial
+-281,6.37129937780322e-4,3,686,GO:0007281;GO:0007292;GO:0048477,germ cell development,0.0121245192146368,BP,Variable_vs_Initial
+-866,4.68109543092226e-5,2,94,GO:0007308;GO:0007309,oocyte construction,0.00175004905833452,BP,Variable_vs_Initial
+-1958,0.00253402458860231,2,10,GO:0007313;GO:0007378,amnioserosa formation,0.0319008633923385,BP,Variable_vs_Initial
+-1025,8.88258199956949e-5,3,62,GO:0007314;GO:0008358,"maternal determination of anterior/posterior axis, embryo",0.00272082511730129,BP,Variable_vs_Initial
+-640,0.00226460887009726,3,97,GO:0007391,dorsal closure,0.0294796979138658,BP,Variable_vs_Initial
+-485,2.04624155730143e-4,2,255,GO:0007472;GO:0007476;GO:0035114;GO:0035120;GO:0035220;GO:0048737,wing disc development,0.00510448097658296,BP,Variable_vs_Initial
+-742,0.00395834411568134,2,64,GO:0007478;GO:0007480;GO:0035218,leg disc development,0.0444104715981638,BP,Variable_vs_Initial
+-1231,5.89012692309929e-5,2,45,GO:0007602,phototransduction,0.00204476648578865,BP,Variable_vs_Initial
+-1399,0.00178963937141654,5,21,GO:0007603;GO:0016056,"phototransduction, visible light",0.0248790071460138,BP,Variable_vs_Initial
+-849,0.0038798124584378,2,49,GO:0007608,sensory perception of smell,0.0440294775552869,BP,Variable_vs_Initial
+-704,4.81082749423933e-5,2,143,GO:0007613,memory,0.00175518598006388,BP,Variable_vs_Initial
+-775,0.00112028163405879,2,75,GO:0007616,long-term memory,0.018025205617665,BP,Variable_vs_Initial
+-1069,1.54240070454992e-4,2,53,GO:0007622;GO:0045475;GO:0048512,rhythmic behavior,0.0042272111175416,BP,Variable_vs_Initial
+-615,0.00444786244185106,2,91,GO:0008344,adult locomotory behavior,0.0478897670430881,BP,Variable_vs_Initial
+1626,0.0010897944029526,2,17,GO:0008535;GO:0033617,respiratory chain complex IV assembly,0.0177339271025923,BP,Variable_vs_Initial
+-526,0.0029367011833095,2,137,GO:0008582;GO:0051963;GO:1904396,regulation of synapse assembly,0.0357902646340358,BP,Variable_vs_Initial
+-556,0.00227479512533671,2,129,GO:0008593,regulation of Notch signaling pathway,0.0294796979138658,BP,Variable_vs_Initial
+808,3.02940416222044e-4,3,85,GO:0009062;GO:0072329,monocarboxylic acid catabolic process,0.0068535751866162,BP,Variable_vs_Initial
+503,0.00153086136373167,2,171,GO:0009108;GO:0051188,cofactor biosynthetic process,0.0223693211516709,BP,Variable_vs_Initial
+1721,0.00169756005584103,3,14,GO:0009264;GO:0046386,deoxyribonucleotide catabolic process,0.0241280992552293,BP,Variable_vs_Initial
+-455,0.00152523316064823,2,210,GO:0009266,response to temperature stimulus,0.0223693211516709,BP,Variable_vs_Initial
+-329,0.00220299170798006,2,384,GO:0009314;GO:0009416,response to radiation,0.0290754297311285,BP,Variable_vs_Initial
+1216,0.00450200178345401,2,23,GO:0009394;GO:0009262;GO:0019692,deoxyribonucleotide metabolic process,0.048200871431074,BP,Variable_vs_Initial
+-583,8.21650410715422e-4,2,141,GO:0009408,response to heat,0.0145259677548702,BP,Variable_vs_Initial
+-1714,8.32686954860066e-4,2,16,GO:0009415,response to water,0.0146757873151953,BP,Variable_vs_Initial
+-354,0.0022609061797995,2,328,GO:0009617,response to bacterium,0.0294796979138658,BP,Variable_vs_Initial
+-1400,8.38623403242754e-4,2,24,GO:0009642,response to light intensity,0.0147350762385721,BP,Variable_vs_Initial
+-273,0.00120474496464868,3,651,GO:0009894;GO:0031329,regulation of catabolic process,0.018965935269085,BP,Variable_vs_Initial
+-475,3.29126834470666e-5,5,337,GO:0009896;GO:0031331,positive regulation of catabolic process,0.00129125925195067,BP,Variable_vs_Initial
+-504,0.00202557395233024,2,161,GO:0009994;GO:0048599,oocyte differentiation,0.0272999708210532,BP,Variable_vs_Initial
+-2401,0.00412842046961688,3,6,GO:0010193,response to ozone,0.0455264288793411,BP,Variable_vs_Initial
+1876,1.54872919812577e-7,5,33,GO:0010257;GO:0032981,NADH dehydrogenase complex assembly,1.64280015682674e-5,BP,Variable_vs_Initial
+-574,0.00116600392057098,2,137,GO:0010632,regulation of epithelial cell migration,0.0186101069062626,BP,Variable_vs_Initial
+-411,8.59584703019445e-4,3,288,GO:0010721;GO:0050768;GO:0051961,negative regulation of nervous system development,0.0150571901495272,BP,Variable_vs_Initial
+-1060,0.00469569361353091,3,30,GO:0010830,regulation of myotube differentiation,0.0496253376721495,BP,Variable_vs_Initial
+-1301,7.99141286576207e-4,6,28,GO:0010837;GO:0010839,regulation of keratinocyte proliferation,0.0142600663224564,BP,Variable_vs_Initial
+-320,0.00152822758978484,2,438,GO:0010942;GO:0043065;GO:0043068,positive regulation of cell death,0.0223693211516709,BP,Variable_vs_Initial
+-581,3.89052091050396e-4,4,160,GO:0010959,regulation of metal ion transport,0.00828435084586122,BP,Variable_vs_Initial
+-609,7.2464019896103e-4,3,132,GO:0010970;GO:0030705;GO:0099111,cytoskeleton-dependent intracellular transport,0.0133464278445298,BP,Variable_vs_Initial
+-382,8.71496222465099e-4,5,335,GO:0010976;GO:0031346;GO:0045666,positive regulation of cell projection organization,0.0152192998850003,BP,Variable_vs_Initial
+-652,6.05909880016336e-4,4,118,GO:0010977;GO:0031345,negative regulation of cell projection organization,0.0117586316823627,BP,Variable_vs_Initial
+-1464,0.00108357329681917,2,21,GO:0014059,regulation of dopamine secretion,0.017733450983372,BP,Variable_vs_Initial
+-1714,0.00258908138847843,5,13,GO:0014061,regulation of norepinephrine secretion,0.0324513308385218,BP,Variable_vs_Initial
+1559,0.00448036335354442,5,14,GO:0015985;GO:0015986;GO:0042776,"energy coupled proton transport, down electrochemical gradient",0.0481491956643573,BP,Variable_vs_Initial
+-1435,0.00301588937240828,2,18,GO:0016082,synaptic vesicle priming,0.0364451779011701,BP,Variable_vs_Initial
+-2440,0.00356366015122823,3,6,GO:0016191;GO:0072318;GO:0072319,clathrin coat disassembly,0.0413211444255775,BP,Variable_vs_Initial
+-315,2.32457161906308e-4,3,629,GO:0016477;GO:0048870;GO:0051674,localization of cell,0.00552495694356569,BP,Variable_vs_Initial
+-846,0.00363418351472446,3,50,GO:0016525;GO:2000181;GO:1901343,negative regulation of vasculature development,0.0420537437825085,BP,Variable_vs_Initial
+-2280,4.40807716512608e-4,6,10,GO:0016545;GO:0048065;GO:0045433,"male courtship behavior, veined wing extension",0.00918162400066989,BP,Variable_vs_Initial
+-504,0.00103086276214584,2,183,GO:0019221,cytokine-mediated signaling pathway,0.0171650636673586,BP,Variable_vs_Initial
+820,0.00121161288821287,3,66,GO:0019395;GO:0034440,lipid oxidation,0.018965935269085,BP,Variable_vs_Initial
+-1916,0.00195465038404692,3,11,GO:0021561;GO:0021610,facial nerve development,0.0265943881230897,BP,Variable_vs_Initial
+-445,3.64370437642879e-4,2,281,GO:0021700;GO:0048469,developmental maturation,0.00802736102622466,BP,Variable_vs_Initial
+-486,0.0034118387584395,5,156,GO:0023061,signal release,0.0400471565744702,BP,Variable_vs_Initial
+-1305,0.00286309773032641,2,22,GO:0030072,peptide hormone secretion,0.0351173957158665,BP,Variable_vs_Initial
+-617,3.36825040373749e-5,2,195,GO:0030100,regulation of endocytosis,0.00131247199405499,BP,Variable_vs_Initial
+1739,0.00224360137744495,3,13,GO:0030149,sphingolipid catabolic process,0.0294234530792138,BP,Variable_vs_Initial
+-1933,0.00177444711926728,2,11,GO:0030224;GO:1903131,monocyte differentiation,0.0248509366727701,BP,Variable_vs_Initial
+-903,6.13473803061468e-4,4,61,GO:0030317;GO:0097722,sperm motility,0.011808177185402,BP,Variable_vs_Initial
+-2202,3.70621339105548e-4,3,11,GO:0030322,stabilization of membrane potential,0.00810274439082664,BP,Variable_vs_Initial
+-522,5.6908730533589e-5,2,259,GO:0030335;GO:2000147;GO:0051272,positive regulation of cellular component movement,0.00198764151522194,BP,Variable_vs_Initial
+-615,0.00405631675164755,6,93,GO:0030516;GO:0061387,regulation of extent of cell growth,0.0449411650936889,BP,Variable_vs_Initial
+-1051,0.00122194399467703,5,40,GO:0030951;GO:0030952,establishment or maintenance of cytoskeleton polarity,0.0190248242922768,BP,Variable_vs_Initial
+1482,0.00385804114476735,2,16,GO:0031055;GO:0034080;GO:0061641,chromatin remodeling at centromere,0.043934114666456,BP,Variable_vs_Initial
+-1391,0.00314536038406727,2,19,GO:0031061,negative regulation of histone methylation,0.0376129943213723,BP,Variable_vs_Initial
+-1302,0.00364325059256813,2,21,GO:0031112;GO:0031116,positive regulation of microtubule polymerization or depolymerization,0.0420736681335287,BP,Variable_vs_Initial
+-495,4.37406640401444e-5,3,299,GO:0031347,regulation of defense response,0.0016592485008076,BP,Variable_vs_Initial
+-397,2.72317770627987e-4,2,372,GO:0031400,negative regulation of protein modification process,0.00626440237010887,BP,Variable_vs_Initial
+-465,0.00247949226476877,4,183,GO:0031503,protein-containing complex localization,0.0314912010922295,BP,Variable_vs_Initial
+-1080,0.00187248285150427,2,35,GO:0031646,positive regulation of neurological system process,0.0256592865392738,BP,Variable_vs_Initial
+-1034,4.32795363306696e-4,2,49,GO:0032088,negative regulation of NF-kappaB transcription factor activity,0.00904763445628013,BP,Variable_vs_Initial
+-485,0.00316237527774719,2,159,GO:0032102,negative regulation of response to external stimulus,0.0376877664313517,BP,Variable_vs_Initial
+-530,2.80691625512856e-5,2,273,GO:0032103,positive regulation of response to external stimulus,0.00113225466967439,BP,Variable_vs_Initial
+-1917,0.00311863254937347,6,10,GO:0032225,"regulation of synaptic transmission, dopaminergic",0.0373713959054628,BP,Variable_vs_Initial
+-377,0.00233028095466467,2,286,GO:0032535,regulation of cellular component size,0.0299279132473525,BP,Variable_vs_Initial
+427,3.74034011116358e-4,5,305,GO:0032787,monocarboxylic acid metabolic process,0.00814626165655703,BP,Variable_vs_Initial
+-677,0.00441190349867186,2,75,GO:0032944;GO:0070663;GO:0050670,regulation of leukocyte proliferation,0.0476718661848379,BP,Variable_vs_Initial
+-442,0.00368194971959649,3,186,GO:0032956;GO:0032970,regulation of actin filament-based process,0.0423498152486922,BP,Variable_vs_Initial
+-431,2.94277981563221e-5,4,420,GO:0034097;GO:0071345,response to cytokine,0.00117478375903465,BP,Variable_vs_Initial
+-768,0.00116638065281918,5,76,GO:0034612;GO:0071356,response to tumor necrosis factor,0.0186101069062626,BP,Variable_vs_Initial
+495,7.87311073020104e-6,2,360,GO:0034655;GO:0019439;GO:0044270;GO:0046700;GO:1901361,organic cyclic compound catabolic process,4.09974347841741e-4,BP,Variable_vs_Initial
+-1417,0.00202428306052785,2,20,GO:0034698,response to gonadotropin,0.0272999708210532,BP,Variable_vs_Initial
+-477,0.00111069081297834,3,202,GO:0034762,regulation of transmembrane transport,0.017971855866497,BP,Variable_vs_Initial
+-592,5.50740189805203e-4,2,146,GO:0034765;GO:1904062,regulation of ion transmembrane transport,0.0108780683007041,BP,Variable_vs_Initial
+-601,5.16621833860442e-5,2,196,GO:0034976,response to endoplasmic reticulum stress,0.00185103904142212,BP,Variable_vs_Initial
+-1501,0.00256187644356874,2,17,GO:0035149,"lumen formation, open tracheal system",0.0321807637472845,BP,Variable_vs_Initial
+-696,0.00388178878586241,2,73,GO:0035194;GO:0016441;GO:0031047,gene silencing by RNA,0.0440294775552869,BP,Variable_vs_Initial
+-1513,0.00175864132006747,2,18,GO:0035710;GO:0043367,"CD4-positive, alpha-beta T cell activation",0.0246899448072217,BP,Variable_vs_Initial
+-792,0.00225277242207873,3,63,GO:0035821;GO:0051817,modification of morphology or physiology of other organism,0.0294609142321164,BP,Variable_vs_Initial
+-595,0.00160569198351728,2,120,GO:0035966;GO:0035967;GO:0006986;GO:0034620,response to topologically incorrect protein,0.023198684004066,BP,Variable_vs_Initial
+-1686,1.67090141055257e-4,2,21,GO:0036003,positive regulation of transcription from RNA polymerase II promoter in response to stress,0.00435278319874212,BP,Variable_vs_Initial
+-2700,0.00126040591580765,5,6,GO:0036124,histone H3-K9 trimethylation,0.0194598519831434,BP,Variable_vs_Initial
+-1880,9.55293181972527e-4,2,13,GO:0036159,inner dynein arm assembly,0.0162854742450555,BP,Variable_vs_Initial
+-630,0.00124538170423353,2,112,GO:0036294;GO:0071453;GO:0071456,cellular response to oxygen levels,0.0193321040700533,BP,Variable_vs_Initial
+-2354,0.0023921218003551,4,7,GO:0036500,ATF6-mediated unfolded protein response,0.0305849858759688,BP,Variable_vs_Initial
+-513,3.31110685266449e-4,3,212,GO:0040029,"regulation of gene expression, epigenetic",0.00735117056281481,BP,Variable_vs_Initial
+-1397,0.0030066224736172,2,19,GO:0040034,"regulation of development, heterochronic",0.036411127366724,BP,Variable_vs_Initial
+-797,8.14544897590071e-4,2,75,GO:0042048,olfactory behavior,0.0144449324253744,BP,Variable_vs_Initial
+-577,0.00251274019380209,3,117,GO:0042110,T cell activation,0.0317402920036502,BP,Variable_vs_Initial
+1931,1.67180918946101e-4,4,16,GO:0042135,neurotransmitter catabolic process,0.00435278319874212,BP,Variable_vs_Initial
+1915,4.76993453418878e-5,6,19,GO:0042402;GO:0009310,cellular biogenic amine catabolic process,0.00175518598006388,BP,Variable_vs_Initial
+1646,4.72792681408452e-4,4,19,GO:0042447,hormone catabolic process,0.00974941888380934,BP,Variable_vs_Initial
+-761,0.00173354218815951,2,72,GO:0042490;GO:0060113,mechanoreceptor differentiation,0.0245178509969819,BP,Variable_vs_Initial
+-284,0.00131155254386363,2,585,GO:0043066;GO:0043069;GO:0060548,negative regulation of cell death,0.0200335279233357,BP,Variable_vs_Initial
+-684,0.00432171193185826,3,74,GO:0043122;GO:0043123,regulation of I-kappaB kinase/NF-kappaB signaling,0.0469729904092678,BP,Variable_vs_Initial
+-1345,0.002113192919195,2,22,GO:0043267,negative regulation of potassium ion transport,0.0282812360774508,BP,Variable_vs_Initial
+-749,0.00389590194225141,2,63,GO:0043277,apoptotic cell clearance,0.0440473260326602,BP,Variable_vs_Initial
+-429,0.00455409702732889,4,189,GO:0043405;GO:0043406,regulation of MAP kinase activity,0.0485770349581748,BP,Variable_vs_Initial
+-355,0.00139157624078525,2,358,GO:0043408,regulation of MAPK cascade,0.0208118765201512,BP,Variable_vs_Initial
+-576,0.00424690006178536,7,105,GO:0043409,negative regulation of MAPK cascade,0.046424128919669,BP,Variable_vs_Initial
+-294,0.00127453810797097,2,548,GO:0043549;GO:0051338;GO:0045859,regulation of transferase activity,0.0195886409634369,BP,Variable_vs_Initial
+734,0.00145648781646838,6,80,GO:0043648,dicarboxylic acid metabolic process,0.02172594326232,BP,Variable_vs_Initial
+-319,6.22897329427124e-4,2,521,GO:0044092,negative regulation of molecular function,0.0119133029360396,BP,Variable_vs_Initial
+446,2.02962006772513e-5,2,406,GO:0044283,small molecule biosynthetic process,8.51080745436441e-4,BP,Variable_vs_Initial
+-531,0.0012084826621611,2,160,GO:0045089;GO:0002833;GO:0031349,positive regulation of defense response,0.018965935269085,BP,Variable_vs_Initial
+-511,0.0039512745870545,3,136,GO:0045637,regulation of myeloid cell differentiation,0.0444104715981638,BP,Variable_vs_Initial
+-551,0.0013108939875664,2,146,GO:0045665,negative regulation of neuron differentiation,0.0200335279233357,BP,Variable_vs_Initial
+-724,0.00428646245819018,2,66,GO:0045746,negative regulation of Notch signaling pathway,0.046767346591454,BP,Variable_vs_Initial
+-715,0.00158585140648888,3,83,GO:0045766;GO:1904018,positive regulation of vasculature development,0.0229968528009324,BP,Variable_vs_Initial
+-517,0.00201198769229517,2,153,GO:0045785,positive regulation of cell adhesion,0.0272450721074864,BP,Variable_vs_Initial
+-646,5.00217755022578e-4,2,124,GO:0045807,positive regulation of endocytosis,0.0102330260741762,BP,Variable_vs_Initial
+795,0.00199749471113591,2,64,GO:0046165,alcohol biosynthetic process,0.0271129139938069,BP,Variable_vs_Initial
+1836,2.24974297482767e-4,2,17,GO:0046337,phosphatidylethanolamine metabolic process,0.00541450746210626,BP,Variable_vs_Initial
+1553,5.2810155173559e-4,5,21,GO:0046466,membrane lipid catabolic process,0.0106139146959349,BP,Variable_vs_Initial
+-548,0.00106730977692518,2,153,GO:0046578;GO:0051056,regulation of small GTPase mediated signal transduction,0.0176061622146528,BP,Variable_vs_Initial
+-1192,0.00148708667884619,5,30,GO:0046631;GO:0046632,alpha-beta T cell activation,0.0220482894192581,BP,Variable_vs_Initial
+-518,0.00122226524782784,4,168,GO:0046883,regulation of hormone secretion,0.0190248242922768,BP,Variable_vs_Initial
+-668,0.00251572845140663,3,87,GO:0046887,positive regulation of hormone secretion,0.0317402920036502,BP,Variable_vs_Initial
+-904,5.45610866919234e-4,2,62,GO:0048259,regulation of receptor-mediated endocytosis,0.010851593908727,BP,Variable_vs_Initial
+-677,0.00279023669937827,5,83,GO:0048814,regulation of dendrite morphogenesis,0.0344449909785317,BP,Variable_vs_Initial
+-1599,4.14983319612043e-6,3,35,GO:0050433,regulation of catecholamine secretion,2.59614320399233e-4,BP,Variable_vs_Initial
+-1073,4.70508999622059e-5,4,61,GO:0050688,regulation of defense response to virus,0.00175004905833452,BP,Variable_vs_Initial
+-1337,0.00178518888887849,2,23,GO:0050691,regulation of defense response to virus by host,0.0248790071460138,BP,Variable_vs_Initial
+-423,1.57515218317009e-4,2,352,GO:0050776,regulation of immune response,0.00425375149318136,BP,Variable_vs_Initial
+-1847,7.54870742406528e-4,4,14,GO:0050779;GO:0061157,RNA destabilization,0.0137703809315433,BP,Variable_vs_Initial
+-554,0.00307947195985602,2,122,GO:0050863;GO:1903037,regulation of T cell activation,0.037012837120715,BP,Variable_vs_Initial
+-437,0.00273829969655012,2,203,GO:0050878,regulation of body fluid levels,0.0340238192230783,BP,Variable_vs_Initial
+-1788,0.00384269658892492,2,11,GO:0050907;GO:0050911,detection of chemical stimulus involved in sensory perception,0.043846545938968,BP,Variable_vs_Initial
+-762,2.39506369343758e-4,4,99,GO:0051048;GO:1903531,negative regulation of secretion,0.005668977204963,BP,Variable_vs_Initial
+-1707,0.00269619345993142,2,13,GO:0051085,chaperone cofactor-dependent protein refolding,0.0336466146808,BP,Variable_vs_Initial
+-464,9.46695116366643e-4,2,220,GO:0051090,regulation of DNA-binding transcription factor activity,0.0162512166545755,BP,Variable_vs_Initial
+-492,2.04963447034581e-4,3,248,GO:0051098,regulation of binding,0.00510448097658296,BP,Variable_vs_Initial
+-534,0.00452517905544154,2,121,GO:0051099,positive regulation of binding,0.0483586299059126,BP,Variable_vs_Initial
+-750,7.95324190914547e-4,4,85,GO:0051101,regulation of DNA binding,0.0142599388854552,BP,Variable_vs_Initial
+-376,9.45985644479512e-5,2,485,GO:0051129,negative regulation of cellular component organization,0.00286698718072944,BP,Variable_vs_Initial
+-2647,0.00389874202139642,3,5,GO:0051208,sequestering of calcium ion,0.0440473260326602,BP,Variable_vs_Initial
+-370,2.95336699198654e-5,2,582,GO:0051248;GO:0032269,negative regulation of protein metabolic process,0.00117478375903465,BP,Variable_vs_Initial
+-423,5.73110798306112e-4,3,291,GO:0051493,regulation of cytoskeleton organization,0.0112040227054519,BP,Variable_vs_Initial
+-1947,0.00164572617329858,2,11,GO:0051567,histone H3-K9 methylation,0.0235667988016357,BP,Variable_vs_Initial
+-1200,0.00165576990193982,2,29,GO:0051602,response to electrical stimulus,0.0236122073385716,BP,Variable_vs_Initial
+-291,0.00224477112353639,3,500,GO:0051656;GO:0051640,organelle localization,0.0294234530792138,BP,Variable_vs_Initial
+-722,0.00467486172608653,2,65,GO:0051668,localization within membrane,0.0494965027116888,BP,Variable_vs_Initial
+-317,5.44723150845568e-4,3,542,GO:0051707;GO:0043207;GO:0009607,response to biotic stimulus,0.010851593908727,BP,Variable_vs_Initial
+-1018,5.20740621762459e-5,3,67,GO:0051865,protein autoubiquitination,0.00185103904142212,BP,Variable_vs_Initial
+-446,6.42844828506451e-5,3,355,GO:0060627,regulation of vesicle-mediated transport,0.00219179474862199,BP,Variable_vs_Initial
+-1380,1.14385008013973e-4,4,33,GO:0061014,positive regulation of mRNA catabolic process,0.00333912457351173,BP,Variable_vs_Initial
+-2488,6.01218852477777e-4,6,8,GO:0061158,3'-UTR-mediated mRNA destabilization,0.0117135428129004,BP,Variable_vs_Initial
+-1921,0.00306136229661005,2,10,GO:0061418,regulation of transcription from RNA polymerase II promoter in response to hypoxia,0.0369168068104892,BP,Variable_vs_Initial
+-1453,0.00462888093080331,4,16,GO:0061548,ganglion development,0.0491915212831936,BP,Variable_vs_Initial
+-1660,0.00121185969072715,3,16,GO:0061647,histone H3-K9 modification,0.018965935269085,BP,Variable_vs_Initial
+1674,7.71210944699143e-4,4,17,GO:0070129,regulation of mitochondrial translation,0.0139353195307151,BP,Variable_vs_Initial
+-697,0.001126355014952,2,93,GO:0071216;GO:0071219;GO:0071222,cellular response to biotic stimulus,0.0180721611362607,BP,Variable_vs_Initial
+-342,0.00415560171530429,5,308,GO:0071407,cellular response to organic cyclic compound,0.0456876902596218,BP,Variable_vs_Initial
+-389,0.0014896452523137,4,293,GO:0071900,regulation of protein serine/threonine kinase activity,0.0220482894192581,BP,Variable_vs_Initial
+-2514,0.00267091929287265,5,6,GO:0072383;GO:0072386,plus-end-directed organelle transport along microtubule,0.0334039862654466,BP,Variable_vs_Initial
+-306,0.0030822491806182,3,417,GO:0090066,regulation of anatomical structure size,0.037012837120715,BP,Variable_vs_Initial
+-1689,0.00434644754039032,3,12,GO:0097201,negative regulation of transcription from RNA polymerase II promoter in response to stress,0.0471523702866586,BP,Variable_vs_Initial
+-1297,0.00377708094499492,3,21,GO:0098815,modulation of excitatory postsynaptic potential,0.0432702393058618,BP,Variable_vs_Initial
+-1936,0.00174710953260539,2,11,GO:0099072,regulation of postsynaptic membrane neurotransmitter receptor levels,0.0246308035577682,BP,Variable_vs_Initial
+727,0.00210916366203878,5,76,GO:0140053;GO:0032543,mitochondrial gene expression,0.0282812360774508,BP,Variable_vs_Initial
+-1366,0.00229206409453058,2,21,GO:1900271,regulation of long-term synaptic potentiation,0.0296178713417556,BP,Variable_vs_Initial
+-690,0.00395294390667591,2,74,GO:1900407;GO:1902882,regulation of response to oxidative stress,0.0444104715981638,BP,Variable_vs_Initial
+-1239,0.00210261374040988,4,26,GO:1900424,regulation of defense response to bacterium,0.0282717640964033,BP,Variable_vs_Initial
+683,4.15890416291921e-4,4,114,GO:1901136,carbohydrate derivative catabolic process,0.00872608170153891,BP,Variable_vs_Initial
+-724,0.00179382506133095,2,79,GO:1901184;GO:0042058,regulation of ERBB signaling pathway,0.0248790071460138,BP,Variable_vs_Initial
+566,3.94550317971742e-4,2,169,GO:1901605,alpha-amino acid metabolic process,0.00836853401138682,BP,Variable_vs_Initial
+1235,0.00146213564970039,2,28,GO:1901658,glycosyl compound catabolic process,0.0217535402635944,BP,Variable_vs_Initial
+-518,0.00234173328699642,3,148,GO:1902115,regulation of organelle assembly,0.030007714245896,BP,Variable_vs_Initial
+-2799,0.00227068855008054,2,5,GO:1902430,negative regulation of amyloid-beta formation,0.0294796979138658,BP,Variable_vs_Initial
+-434,1.81495258681343e-4,2,328,GO:1902532,negative regulation of intracellular signal transduction,0.0046408955071187,BP,Variable_vs_Initial
+-383,7.00520056182162e-5,2,485,GO:1902533,positive regulation of intracellular signal transduction,0.0023194097582725,BP,Variable_vs_Initial
+-508,9.93075194521002e-4,5,181,GO:1902903,regulation of supramolecular fiber organization,0.0167303962182832,BP,Variable_vs_Initial
+-2209,0.00437244002143189,3,7,GO:1902992,negative regulation of amyloid precursor protein catabolic process,0.0473446813662795,BP,Variable_vs_Initial
+-866,0.00101236625309505,2,61,GO:1903035,negative regulation of response to wounding,0.0169556546717206,BP,Variable_vs_Initial
+-559,4.80105155679485e-5,2,230,GO:1903532;GO:0051047,positive regulation of secretion,0.00175518598006388,BP,Variable_vs_Initial
+-525,2.12073869781383e-4,2,216,GO:1903706,regulation of hemopoiesis,0.00521355848114919,BP,Variable_vs_Initial
+-384,9.53342919255309e-4,2,326,GO:1903827,regulation of cellular protein localization,0.0162854742450555,BP,Variable_vs_Initial
+-1907,5.10628371174603e-5,2,19,GO:1904385;GO:1990776,response to angiotensin,0.00185103904142212,BP,Variable_vs_Initial
+-1728,7.58308814240556e-4,3,16,GO:1904752;GO:1904754,regulation of vascular associated smooth muscle cell migration,0.013789183771333,BP,Variable_vs_Initial
+-2195,0.00132394250458999,3,9,GO:1990440,positive regulation of transcription from RNA polymerase II promoter in response to endoplasmic reticulum stress,0.0201689964529028,BP,Variable_vs_Initial
+-523,0.00355078163515044,3,133,GO:1990778,protein localization to cell periphery,0.041255329018543,BP,Variable_vs_Initial
+-409,0.00401326701503448,3,214,GO:2000241,regulation of reproductive process,0.0445503749265843,BP,Variable_vs_Initial
+-560,0.00352536687733479,2,116,GO:2000243,positive regulation of reproductive process,0.0411391253358097,BP,Variable_vs_Initial
+-2245,7.99155744287307e-5,5,13,GO:2000288;GO:2000291,regulation of myoblast proliferation,0.00254309116848761,BP,Variable_vs_Initial
+-1867,0.00400027688099158,2,10,GO:2000479,regulation of cAMP-dependent protein kinase activity,0.0444923999501355,BP,Variable_vs_Initial
+899,1.69611434256638e-7,3,115,GO:0000070;GO:0000819,sister chromatid segregation,5.44253161099977e-5,BP,Variable_vs_Control
+680,3.79191290866538e-5,4,125,GO:0000075;GO:0007093,cell cycle checkpoint,0.00513096268352147,BP,Variable_vs_Control
+660,7.10235504909377e-4,2,89,GO:0000077;GO:0031570,DNA integrity checkpoint,0.0376148997988413,BP,Variable_vs_Control
+410,1.64146388111672e-4,2,296,GO:0000280;GO:0048285,organelle fission,0.0124571614374676,BP,Variable_vs_Control
+731,3.77069638087674e-4,6,80,GO:0000724;GO:0000725,recombinational repair,0.0236426997214743,BP,Variable_vs_Control
+1001,9.63893126022911e-5,2,51,GO:0001824,blastocyst development,0.00973710556010181,BP,Variable_vs_Control
+471,5.92682296199485e-8,4,478,GO:0006259,DNA metabolic process,2.31405377341715e-5,BP,Variable_vs_Control
+1054,2.30465575177628e-11,2,137,GO:0006260,DNA replication,1.12509843466655e-7,BP,Variable_vs_Control
+1133,1.5937628503974e-9,5,96,GO:0006261,DNA-dependent DNA replication,1.08674704361473e-6,BP,Variable_vs_Control
+2715,2.72349775718598e-4,2,6,GO:0006268,DNA unwinding involved in DNA replication,0.018805924386645,BP,Variable_vs_Control
+1751,1.27903456167389e-4,2,16,GO:0006271,DNA strand elongation involved in DNA replication,0.0112534411837598,BP,Variable_vs_Control
+710,3.99048690206413e-4,2,84,GO:0006275,regulation of DNA replication,0.0244585461244492,BP,Variable_vs_Control
+478,9.64402119375032e-6,2,300,GO:0006281,DNA repair,0.00181407364178993,BP,Variable_vs_Control
+1639,2.19909066605492e-4,2,17,GO:0006297,"nucleotide-excision repair, DNA gap filling",0.015723738202533,BP,Variable_vs_Control
+1605,3.85645224609313e-5,2,22,GO:0006298,mismatch repair,0.00513096268352147,BP,Variable_vs_Control
+564,3.64573177165543e-4,3,136,GO:0006302,double-strand break repair,0.0236426997214743,BP,Variable_vs_Control
+605,1.41711990088938e-4,2,135,GO:0006310,DNA recombination,0.0119818952047346,BP,Variable_vs_Control
+803,2.00664682936823e-6,2,119,GO:0006323,DNA packaging,4.97557202463804e-4,BP,Variable_vs_Control
+738,5.92470544884658e-4,4,73,GO:0006333;GO:0031497,chromatin assembly or disassembly,0.0326457254782405,BP,Variable_vs_Control
+-424,1.13960378327902e-5,2,380,GO:0006511;GO:0019941;GO:0043632;GO:0051603;GO:0030163;GO:0044257,protein catabolic process,0.00201294284490099,BP,Variable_vs_Control
+-376,3.29234514589437e-6,2,559,GO:0006886,intracellular protein transport,7.80858381341469e-4,BP,Variable_vs_Control
+-542,4.26191618578129e-4,3,144,GO:0006909,phagocytosis,0.0258319475482633,BP,Variable_vs_Control
+407,5.16453946599701e-6,3,451,GO:0006974,cellular response to DNA damage stimulus,0.00112690251148055,BP,Variable_vs_Control
+1182,5.05272448263877e-4,2,29,GO:0007062,sister chromatid cohesion,0.0286758066260904,BP,Variable_vs_Control
+-1834,8.74208714719938e-4,4,11,GO:0007390,germ-band shortening,0.0441556346184932,BP,Variable_vs_Control
+1558,1.3941119817135e-4,3,20,GO:0008608,attachment of spindle microtubules to kinetochore,0.0119818952047346,BP,Variable_vs_Control
+562,4.65771378310889e-5,6,180,GO:0010948,negative regulation of cell cycle process,0.00590879736903698,BP,Variable_vs_Control
+-428,6.13667536798605e-4,4,221,GO:0016050,vesicle organization,0.0334755641323639,BP,Variable_vs_Control
+1427,2.53714265528571e-4,2,22,GO:0022616,DNA strand elongation,0.0177437348520302,BP,Variable_vs_Control
+2770,6.03369820266932e-5,5,7,GO:0030174,regulation of DNA-dependent DNA replication initiation,0.00671710687664513,BP,Variable_vs_Control
+981,1.14881999430318e-4,7,52,GO:0030261,chromosome condensation,0.0106217170659726,BP,Variable_vs_Control
+-816,2.21948275269485e-4,2,69,GO:0030433;GO:0036503,ERAD pathway,0.015723738202533,BP,Variable_vs_Control
+-1173,9.01151555228605e-8,4,70,GO:0030968,endoplasmic reticulum unfolded protein response,3.07236358360752e-5,BP,Variable_vs_Control
+-1688,3.48214262344949e-4,3,15,GO:0030970;GO:0032527;GO:1903513,protein exit from endoplasmic reticulum,0.0228856482059241,BP,Variable_vs_Control
+1651,4.68621389815982e-4,2,15,GO:0031055;GO:0034080;GO:0061641,chromatin remodeling at centromere,0.0271949966111296,BP,Variable_vs_Control
+1310,7.80424155081304e-4,2,22,GO:0032330,regulation of chondrocyte differentiation,0.0405448930092239,BP,Variable_vs_Control
+2340,1.21959960416132e-4,3,9,GO:0032332,positive regulation of chondrocyte differentiation,0.0110881930678333,BP,Variable_vs_Control
+979,8.73373808211693e-5,2,54,GO:0032392;GO:0032508,DNA geometric change,0.0089891587241411,BP,Variable_vs_Control
+738,7.15798680460362e-5,3,98,GO:0033045;GO:0051983,regulation of chromosome segregation,0.00780936360382255,BP,Variable_vs_Control
+818,3.28389429718118e-4,4,65,GO:0033047,regulation of mitotic sister chromatid segregation,0.0218459065745407,BP,Variable_vs_Control
+1252,1.08809659435497e-4,2,32,GO:0033260,nuclear DNA replication,0.0105741455280187,BP,Variable_vs_Control
+1711,1.1503186190841e-5,4,22,GO:0034508,centromere complex assembly,0.00201294284490099,BP,Variable_vs_Control
+-1721,6.87996122764616e-4,3,13,GO:0034975,protein folding in endoplasmic reticulum,0.0367943024478527,BP,Variable_vs_Control
+-860,4.32085847674241e-10,3,181,GO:0034976,response to endoplasmic reticulum stress,4.71405659812597e-7,BP,Variable_vs_Control
+-1079,3.99380517127151e-10,2,114,GO:0035966;GO:0035967;GO:0006986;GO:0034620,response to topologically incorrect protein,4.71405659812597e-7,BP,Variable_vs_Control
+-2895,1.03857322722601e-4,5,6,GO:0036499,PERK-mediated unfolded protein response,0.0103007580991234,BP,Variable_vs_Control
+-2023,8.95274903758793e-4,5,9,GO:0043558,regulation of translational initiation in response to stress,0.0448048128440754,BP,Variable_vs_Control
+-348,6.12339856009501e-6,3,624,GO:0044265;GO:0009057,macromolecule catabolic process,0.00128473612097378,BP,Variable_vs_Control
+1324,1.25454655732325e-6,2,45,GO:0044786,cell cycle DNA replication,3.25883403342778e-4,BP,Variable_vs_Control
+571,5.42268410450705e-5,2,171,GO:0045930,negative regulation of mitotic cell cycle,0.00643059604132303,BP,Variable_vs_Control
+434,1.64420829238803e-4,3,262,GO:0051052,regulation of DNA metabolic process,0.0124571614374676,BP,Variable_vs_Control
+643,6.60289038299321e-4,2,95,GO:0051053,negative regulation of DNA metabolic process,0.035662145583394,BP,Variable_vs_Control
+897,6.89998612819233e-6,2,85,GO:0051225,spindle assembly,0.00139405275293664,BP,Variable_vs_Control
+-1033,8.46518693734231e-4,3,35,GO:0051607,defense response to virus,0.0431566306011236,BP,Variable_vs_Control
+1053,1.63504781977784e-4,3,43,GO:0060675;GO:0072171;GO:0072078;GO:0072088;GO:0072028,nephron epithelium morphogenesis,0.0124571614374676,BP,Variable_vs_Control
+1058,2.18179166988356e-4,2,41,GO:0060840,artery development,0.015723738202533,BP,Variable_vs_Control
+1335,1.60183146781305e-5,2,35,GO:0061035,regulation of cartilage development,0.00256999725203535,BP,Variable_vs_Control
+1750,4.91280165985745e-5,2,18,GO:0061036,positive regulation of cartilage development,0.00609075751239145,BP,Variable_vs_Control
+2113,1.25382210760026e-4,3,11,GO:0061213;GO:0061217;GO:0090189;GO:0090190,regulation of mesonephros development,0.0112124583556712,BP,Variable_vs_Control
+-333,1.10490613216694e-4,5,487,GO:0070647,protein modification by small protein conjugation or removal,0.0105741455280187,BP,Variable_vs_Control
+1333,1.53108572189619e-4,4,27,GO:0070828,heterochromatin organization,0.0122824597249172,BP,Variable_vs_Control
+815,9.42062905772424e-9,5,170,GO:0071103,DNA conformation change,5.70994794554286e-6,BP,Variable_vs_Control
+-327,4.61620257030193e-4,2,408,GO:0080135,regulation of cellular response to stress,0.0271949966111296,BP,Variable_vs_Control
+1072,1.50078755242049e-4,3,42,GO:0090307,mitotic spindle assembly,0.0122190986544086,BP,Variable_vs_Control
+979,1.59200044679127e-4,5,50,GO:0090329,regulation of DNA-dependent DNA replication,0.0124571614374676,BP,Variable_vs_Control
+533,6.01128978942174e-5,2,195,GO:0098813;GO:0007059,chromosome segregation,0.00671710687664513,BP,Variable_vs_Control
+2653,3.75662297174679e-4,4,6,GO:1902969,mitotic DNA replication,0.0236426997214743,BP,Variable_vs_Control
+-1168,4.74725099827913e-4,5,30,GO:1903573,negative regulation of response to endoplasmic reticulum stress,0.0272592149427502,BP,Variable_vs_Control
+-1046,1.18082806666969e-5,2,59,GO:1905897,regulation of response to endoplasmic reticulum stress,0.00201294284490099,BP,Variable_vs_Control
+1056,0.00312014354907335,3,25,GO:0000217,DNA secondary structure binding,0.0406732998361347,MF,Variable_vs_Initial
+-1200,6.20441362363001e-4,4,26,GO:0001046,core promoter sequence-specific DNA binding,0.0157996114369183,MF,Variable_vs_Initial
+-1027,4.81209047500179e-4,2,37,GO:0001047,core promoter binding,0.0127592495432907,MF,Variable_vs_Initial
+-1705,0.00415954389263155,3,9,GO:0001223,transcription coactivator binding,0.0484542613024633,MF,Variable_vs_Initial
+-806,3.86427506037589e-5,4,84,GO:0001227;GO:0001217,"DNA-binding transcription repressor activity, RNA polymerase II-specific",0.00184309723802516,MF,Variable_vs_Initial
+-363,0.00103620726362849,2,271,GO:0003712,transcription coregulator activity,0.0206299446122399,MF,Variable_vs_Initial
+-615,0.00339949676633226,2,73,GO:0003727,single-stranded RNA binding,0.0426877855173429,MF,Variable_vs_Initial
+2134,0.0033895407111309,2,6,GO:0003857,3-hydroxyacyl-CoA dehydrogenase activity,0.0426877855173429,MF,Variable_vs_Initial
+516,0.00136023167099713,2,125,GO:0004518,nuclease activity,0.0222374325224406,MF,Variable_vs_Initial
+631,0.00346960083200321,3,69,GO:0004519,endonuclease activity,0.0426877855173429,MF,Variable_vs_Initial
+769,0.00393807090073832,3,45,GO:0004536,deoxyribonuclease activity,0.0463676089925641,MF,Variable_vs_Initial
+643,0.00206463578228402,4,74,GO:0004553;GO:0016798,"hydrolase activity, acting on glycosyl bonds",0.0305435420981439,MF,Variable_vs_Initial
+-748,4.22053095573674e-8,3,176,GO:0005216;GO:0015267;GO:0022803;GO:0005261,passive transmembrane transporter activity,8.42375221115215e-6,MF,Variable_vs_Initial
+-1698,0.00160884287312919,2,11,GO:0005248,voltage-gated sodium channel activity,0.0244678186955064,MF,Variable_vs_Initial
+-757,9.69140134789685e-4,3,61,GO:0005516,calmodulin binding,0.0201101485530953,MF,Variable_vs_Initial
+-816,0.00142872741958824,2,49,GO:0005546,"phosphatidylinositol-4,5-bisphosphate binding",0.022985909908969,MF,Variable_vs_Initial
+513,0.0013409213127812,4,127,GO:0008168;GO:0016741;GO:0008757,"transferase activity, transferring one-carbon groups",0.0222374325224406,MF,Variable_vs_Initial
+-988,0.00343987582095924,4,28,GO:0008200;GO:0016248,channel inhibitor activity,0.0426877855173429,MF,Variable_vs_Initial
+542,0.00117234410600399,2,116,GO:0008514,organic anion transmembrane transporter activity,0.0215293204441285,MF,Variable_vs_Initial
+-755,6.8263232289362e-4,4,65,GO:0015276;GO:0022834,ligand-gated channel activity,0.0159038807142237,MF,Variable_vs_Initial
+1582,9.14285485279431e-4,3,14,GO:0016229;GO:0033764,steroid dehydrogenase activity,0.0200228521276195,MF,Variable_vs_Initial
+1811,0.00232678570366904,4,9,GO:0016615,malate dehydrogenase activity,0.0330887057859428,MF,Variable_vs_Initial
+969,7.58745062750719e-7,4,84,GO:0016616;GO:0016614,"oxidoreductase activity, acting on CH-OH group of donors",7.25998032589545e-5,MF,Variable_vs_Initial
+984,9.59002456028178e-4,2,36,GO:0016765,"transferase activity, transferring alkyl or aryl (other than methyl) groups",0.0201101485530953,MF,Variable_vs_Initial
+953,0.00189238495508944,3,34,GO:0016830,carbon-carbon lyase activity,0.0283857743263416,MF,Variable_vs_Initial
+-648,0.00268477426675185,5,69,GO:0017048,Rho GTPase binding,0.035623792035319,MF,Variable_vs_Initial
+-1493,0.00256553971117578,6,13,GO:0022840;GO:0022842;GO:0022841,leak channel activity,0.0347866291540171,MF,Variable_vs_Initial
+-2524,0.00156023690639549,3,5,GO:0022848,acetylcholine-gated cation-selective channel activity,0.0240628086268037,MF,Variable_vs_Initial
+-1703,0.00155827470467378,2,11,GO:0030507,spectrin binding,0.0240628086268037,MF,Variable_vs_Initial
+-906,0.0013606465561676,2,40,GO:0030544,Hsp70 protein binding,0.0222374325224406,MF,Variable_vs_Initial
+-619,6.47332665160648e-4,3,98,GO:0031072,heat shock protein binding,0.0159038807142237,MF,Variable_vs_Initial
+-347,0.00345754319753263,5,235,GO:0031625;GO:0044389,ubiquitin-like protein ligase binding,0.0426877855173429,MF,Variable_vs_Initial
+-1556,4.89395872893343e-4,2,16,GO:0045503,dynein light chain binding,0.0127592495432907,MF,Variable_vs_Initial
+-432,7.32802205903673e-4,5,201,GO:0046873,metal ion transmembrane transporter activity,0.0166662274398254,MF,Variable_vs_Initial
+516,4.85075028402693e-4,3,149,GO:0050662,coenzyme binding,0.0127592495432907,MF,Variable_vs_Initial
+1094,0.00270025090313377,2,24,GO:0051536;GO:0051540,iron-sulfur cluster binding,0.035623792035319,MF,Variable_vs_Initial
+-1392,0.00252805782092877,2,15,GO:0051959,dynein light intermediate chain binding,0.0347866291540171,MF,Variable_vs_Initial
+713,1.79580730064229e-6,2,146,GO:0140097,"catalytic activity, acting on DNA",1.51262230323331e-4,MF,Variable_vs_Initial
+-968,0.00257325749906428,3,31,GO:1990841,promoter-specific chromatin binding,0.0347866291540171,MF,Variable_vs_Initial
+624,9.4323875897234e-5,3,100,GO:0004386;GO:0008026;GO:0070035,helicase activity,0.0178007022166272,MF,Variable_vs_Control
+-990,1.84411172809144e-4,2,36,GO:0016860,intramolecular oxidoreductase activity,0.0232819105671544,MF,Variable_vs_Control
+-1808,3.09584228026921e-4,3,10,GO:0051787,misfolded protein binding,0.031268007030719,MF,Variable_vs_Control
+937,2.31557095282646e-4,2,39,GO:0070491,repressing transcription factor binding,0.0259858518039414,MF,Variable_vs_Control
+570,3.80381178622421e-5,2,134,GO:0140097,"catalytic activity, acting on DNA",0.0128061663469548,MF,Variable_vs_Control
+694,0.00270525694511596,4,54,GO:0000313;GO:0005761,organellar ribosome,0.0230548008544882,CC,Variable_vs_Initial
+733,0.00168578984004732,4,53,GO:0005657,replication fork,0.016792218276835,CC,Variable_vs_Initial
+1916,0.00556198903242927,7,6,GO:0005658,alpha DNA polymerase:primase complex,0.0406290055987929,CC,Variable_vs_Initial
+1117,0.00515542450305129,2,18,GO:0005666,RNA polymerase III complex,0.0383903941149548,CC,Variable_vs_Initial
+1513,8.17824615971519e-6,4,25,GO:0005747;GO:0045271;GO:0030964,mitochondrial respiratory chain complex I,1.90082266803077e-4,CC,Variable_vs_Initial
+1534,0.00265986676630793,4,11,GO:0005753;GO:0045259,mitochondrial proton-transporting ATP synthase complex,0.0229809593800703,CC,Variable_vs_Initial
+-1463,2.49984073100901e-4,3,18,GO:0005858,axonemal dynein complex,0.00375407834029587,CC,Variable_vs_Initial
+-1912,0.0056785860397187,4,6,GO:0005892,acetylcholine-gated channel complex,0.0410893914383419,CC,Variable_vs_Initial
+-427,0.00266663022793515,3,145,GO:0005912;GO:0070161,anchoring junction,0.0229809593800703,CC,Variable_vs_Initial
+-324,0.00496559366729412,5,224,GO:0005938,cell cortex,0.0380861034281459,CC,Variable_vs_Initial
+1270,2.43733878644493e-4,3,24,GO:0009295;GO:0042645,mitochondrial nucleoid,0.00375407834029587,CC,Variable_vs_Initial
+-722,0.00714191913827009,2,40,GO:0014704;GO:0044291,cell-cell contact zone,0.0493500178293077,CC,Variable_vs_Initial
+-628,1.75193410965881e-4,2,104,GO:0019897,extrinsic component of plasma membrane,0.00292115970023545,CC,Variable_vs_Initial
+-415,0.00550412180764792,2,131,GO:0030016;GO:0030017,myofibril,0.0405928983314034,CC,Variable_vs_Initial
+-976,7.96874020362574e-4,2,34,GO:0030286,dynein complex,0.00970162497806499,CC,Variable_vs_Initial
+-449,0.00279309070532408,2,130,GO:0030426;GO:0030427,site of polarized growth,0.0232858757715605,CC,Variable_vs_Initial
+1228,0.00374873705625708,4,16,GO:0030894;GO:0043601,replisome,0.0299508471057206,CC,Variable_vs_Initial
+1938,0.00504844880617773,2,6,GO:0031261,DNA replication preinitiation complex,0.0381422236068507,CC,Variable_vs_Initial
+1148,0.00190662462611659,2,21,GO:0031304;GO:0031305,intrinsic component of mitochondrial inner membrane,0.0182797636028928,CC,Variable_vs_Initial
+-701,5.54014620073087e-6,2,123,GO:0031514,motile cilium,1.33448250904717e-4,CC,Variable_vs_Initial
+-716,1.16845626516027e-4,2,84,GO:0031594,neuromuscular junction,0.00203683171676802,CC,Variable_vs_Initial
+-557,0.00259867321257369,4,85,GO:0036126;GO:0097729,9+2 motile cilium,0.022910142000506,CC,Variable_vs_Initial
+1877,4.56614651480966e-4,2,10,GO:0042555,MCM complex,0.0062539899586768,CC,Variable_vs_Initial
+-620,0.00187397731927484,4,73,GO:0042734,presynaptic membrane,0.0181941848592886,CC,Variable_vs_Initial
+-602,0.00147232183572044,2,81,GO:0043195,terminal bouton,0.0156843173332997,CC,Variable_vs_Initial
+-443,0.00129516849329749,3,155,GO:0043292;GO:0044449,contractile fiber,0.0145977611354331,CC,Variable_vs_Initial
+934,0.00590755388286958,3,25,GO:0043596,nuclear replication fork,0.0421354593293905,CC,Variable_vs_Initial
+305,0.00349777647664599,2,275,GO:0044437,vacuolar part,0.0282399427114471,CC,Variable_vs_Initial
+-319,0.00145466215614781,2,300,GO:0045177,apical part of cell,0.0156843173332997,CC,Variable_vs_Initial
+-620,0.0041172503961539,2,62,GO:0045178,basal part of cell,0.0322237862637759,CC,Variable_vs_Initial
+-355,1.82036802185069e-5,4,452,GO:0048471,perinuclear region of cytoplasm,3.87839520210966e-4,CC,Variable_vs_Initial
+-655,0.007004323145399,2,49,GO:0048786,presynaptic active zone,0.0488392350229185,CC,Variable_vs_Initial
+-435,0.00593302426020101,2,117,GO:0097223,sperm part,0.0421354593293905,CC,Variable_vs_Initial
+-813,0.00245501894995117,2,40,GO:0097542,ciliary tip,0.0223340197089742,CC,Variable_vs_Initial
+-368,7.36626824731246e-4,2,251,GO:0098552,side of membrane,0.00923444632358351,CC,Variable_vs_Initial
+950,2.89070550285673e-4,5,42,GO:0098573;GO:0032592,intrinsic component of mitochondrial membrane,0.00418334173715304,CC,Variable_vs_Initial
+-567,0.00135069039765313,4,93,GO:0098858,actin-based cell projection,0.0147997076428564,CC,Variable_vs_Initial
+-2227,1.9969725438698e-4,4,8,GO:0099522;GO:0099524,region of cytosol,0.00319099571072528,CC,Variable_vs_Initial
+-352,1.08812802766347e-4,2,293,GO:0000139,Golgi membrane,0.00426088027674538,CC,Variable_vs_Control
+750,4.49661359265328e-7,5,106,GO:0000775,"chromosome, centromeric region",6.69096102586808e-5,CC,Variable_vs_Control
+725,5.49922490453747e-5,2,72,GO:0000776,kinetochore,0.00272761555265059,CC,Variable_vs_Control
+905,3.50139798330807e-4,2,36,GO:0000779;GO:0000777,"condensed chromosome, centromeric region",0.00789406090782183,CC,Variable_vs_Control
+1286,4.72573711442808e-4,3,17,GO:0000780,"condensed nuclear chromosome, centromeric region",0.01004556689467,CC,Variable_vs_Control
+699,1.07025600982664e-6,4,114,GO:0000793,condensed chromosome,1.13752924473003e-4,CC,Variable_vs_Control
+734,9.2012139571726e-5,2,66,GO:0000794,condensed nuclear chromosome,0.00380316843563134,CC,Variable_vs_Control
+1773,2.16653309139192e-4,2,10,GO:0000796,condensin complex,0.00620734714096296,CC,Variable_vs_Control
+1293,0.0046674852846364,2,11,GO:0000940,condensed chromosome outer kinetochore,0.0469271493482362,CC,Variable_vs_Control
+992,3.99493208883913e-6,3,50,GO:0005657,replication fork,3.71528684262039e-4,CC,Variable_vs_Control
+1841,0.00291406441692629,2,6,GO:0005663;GO:0031390,DNA replication factor C complex,0.0334298977967464,CC,Variable_vs_Control
+1201,0.00153904779692871,5,16,GO:0005721,pericentric heterochromatin,0.0226752307621248,CC,Variable_vs_Control
+-1916,8.22591615961524e-4,2,7,GO:0005751;GO:0045277,mitochondrial respiratory chain complex IV,0.0149270283481798,CC,Variable_vs_Control
+-1040,1.36670977127671e-4,2,31,GO:0005790,smooth endoplasmic reticulum,0.00477485732619344,CC,Variable_vs_Control
+-1069,0.00366339719488515,2,17,GO:0005839,proteasome core complex,0.0395009784491964,CC,Variable_vs_Control
+-1702,7.54319080366701e-4,4,9,GO:0008250,oligosaccharyltransferase complex,0.0144431159679641,CC,Variable_vs_Control
+-260,0.00319594619565083,3,313,GO:0012506;GO:0030659,vesicle membrane,0.0354893129785704,CC,Variable_vs_Control
+-1001,0.00249268622236247,3,21,GO:0012507,ER to Golgi transport vesicle membrane,0.0319751474040979,CC,Variable_vs_Control
+-333,0.00168173555257246,5,213,GO:0030133,transport vesicle,0.0240617548291137,CC,Variable_vs_Control
+-502,7.76511611180864e-4,5,105,GO:0030176;GO:0031227,intrinsic component of endoplasmic reticulum membrane,0.0144431159679641,CC,Variable_vs_Control
+-850,0.00155435049579081,3,32,GO:0031201,SNARE complex,0.0226752307621248,CC,Variable_vs_Control
+1994,4.99629080958944e-4,3,7,GO:0031298,replication fork protection complex,0.0103256676731515,CC,Variable_vs_Control
+-417,0.00430136791444309,2,110,GO:0031514,motile cilium,0.0444474684492453,CC,Variable_vs_Control
+-944,0.00188334967765239,4,25,GO:0033116,endoplasmic reticulum-Golgi intermediate compartment membrane,0.0254765847304251,CC,Variable_vs_Control
+-1345,9.06344817776784e-4,2,14,GO:0034663,endoplasmic reticulum chaperone complex,0.0159461833153371,CC,Variable_vs_Control
+2118,7.71786992280071e-5,2,8,GO:0042555,MCM complex,0.00337770307209631,CC,Variable_vs_Control
+1243,4.22336499430423e-5,3,25,GO:0043596,nuclear replication fork,0.00224441682554453,CC,Variable_vs_Control
+-1802,1.69764979220669e-4,2,10,GO:0044322,endoplasmic reticulum quality control compartment,0.00526271435584074,CC,Variable_vs_Control
+-236,0.00234948148338873,2,412,GO:0044431;GO:0098791,Golgi apparatus part,0.0312145397078788,CC,Variable_vs_Control
+454,0.00281534828196333,3,101,GO:0044450,microtubule organizing center part,0.0332479225679479,CC,Variable_vs_Control
+-559,0.00267695437819878,2,67,GO:0045335,phagocytic vesicle,0.0326500665144245,CC,Variable_vs_Control
+824,0.00114146419727884,4,36,GO:0051233,spindle midzone,0.0182041168056462,CC,Variable_vs_Control
+-2203,0.00114999124981905,4,5,GO:0071682,endocytic vesicle lumen,0.0182041168056462,CC,Variable_vs_Control
+506,0.00457341247622523,5,73,GO:0072686,mitotic spindle,0.0466112175659119,CC,Variable_vs_Control
+496,6.95941940110042e-6,4,196,GO:0098687,chromosomal region,5.17780803441871e-4,CC,Variable_vs_Control
+-221,0.00247931639173314,5,474,GO:0099503;GO:0030141,secretory vesicle,0.0319751474040979,CC,Variable_vs_Control

@@ -1,0 +1,8 @@
+gene,annot,baseMean,log2FoldChange,lfcSE,stat,pvalue,padj,Contrast
+Symbiodinium27982,40s ribosomal protein,10.70768273,-1.262,0.253397369,-4.981713564,6.30E-07,1.58E-04,Variable vs Initial
+Symbiodinium19887,PFAM Acetyltransferase (GNAT) family,4.04540107,1.241,0.307259028,4.04044824,5.33E-05,5.49E-03,Variable vs Initial
+Symbiodinium47634,Belongs to the peptidase S10 family,3.539024363,1.276,0.351961016,3.624013964,2.90E-04,1.90E-02,Variable vs Initial
+Symbiodinium74449,Belongs to the eukaryotic ribosomal protein eS8 family,6.00836761,1.457,0.319732702,4.556611802,5.20E-06,9.42E-04,Variable vs Initial
+Symbiodinium15132,Belongs to the AB hydrolase superfamily. Lipase family,13.58583181,1.526,0.334639488,4.560116906,5.11E-06,9.38E-04,Variable vs Initial
+Symbiodinium10122,RNA-binding protein mei2 homologue,4.029702533,1.560,0.305141358,5.111299133,3.20E-07,8.33E-05,Variable vs Initial
+,,,,,,,,

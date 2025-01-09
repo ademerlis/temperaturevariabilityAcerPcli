@@ -1,0 +1,82 @@
+---
+title: "GO_terms_tidying"
+author: "allyson_demerlis"
+date: "2024-02-22"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+```
+
+
+Treated vs Initial
+```{r}
+MWU_result_CC_TreatedvInitial <- read.csv("MWU_CC_Treated_vs_Initial_fc.csv", sep = "")
+MWU_result_CC_TreatedvInitial %>% 
+  filter(p.adj <0.05) %>%  #111 GO terms
+  mutate(GO_category = "CC") -> MWU_result_CC_TreatedvInitial_sig
+
+MWU_result_MF_TreatedvInitial <- read.csv("MWU_MF_Treated_vs_Initial_fc.csv", sep = "")
+MWU_result_MF_TreatedvInitial %>% 
+  filter(p.adj <0.05) %>%  #94 GO terms
+  mutate(GO_category = "MF") -> MWU_result_MF_TreatedvInitial_sig
+
+MWU_result_BP_TreatedvInitial <- read.csv("MWU_BP_Treated_vs_Initial_fc.csv", sep = "")
+MWU_result_BP_TreatedvInitial %>%
+  filter(p.adj <0.05) %>%  #543 GO terms
+  mutate(GO_category = "BP") -> MWU_result_BP_TreatedvInitial_sig
+
+full_join(MWU_result_CC_TreatedvInitial_sig, MWU_result_MF_TreatedvInitial_sig) %>% 
+  full_join(., MWU_result_BP_TreatedvInitial_sig) %>% 
+  write_csv("TreatedvsInitial_GOMWU_sigterms.csv")
+```
+
+
+Treated vs Untreated
+```{r}
+MWU_result_CC_TreatedvUntreated <- read.csv("MWU_CC_Treated_vs_Untreated_fc.csv", sep = "")
+MWU_result_CC_TreatedvUntreated %>% 
+  filter(p.adj <0.05) %>%  #74 GO terms
+  mutate(GO_category = "CC") -> MWU_result_CC_TreatedvUntreated_sig
+
+MWU_result_MF_TreatedvUntreated <- read.csv("MWU_MF_Treated_vs_Untreated_fc.csv", sep = "")
+MWU_result_MF_TreatedvUntreated %>% 
+  filter(p.adj <0.05) %>%  #10 GO terms
+  mutate(GO_category = "MF") -> MWU_result_MF_TreatedvUntreated_sig
+
+MWU_result_BP_TreatedvUntreated <- read.csv("MWU_BP_Treated_vs_Untreated_fc.csv", sep = "")
+MWU_result_BP_TreatedvUntreated %>%
+  filter(p.adj <0.05) %>%  #114 GO terms
+  mutate(GO_category = "BP") -> MWU_result_BP_TreatedvUntreated_sig
+
+full_join(MWU_result_CC_TreatedvUntreated_sig, MWU_result_MF_TreatedvUntreated_sig) %>% 
+  full_join(., MWU_result_BP_TreatedvUntreated_sig) %>% 
+  write_csv("TreatedvsUntreated_GOMWU_sigterms.csv")
+```
+
+Untreated vs Initial
+
+```{r}
+MWU_result_CC_UntreatedvInitial <- read.csv("MWU_CC_Untreated_vs_Initial_fc.csv", sep = "")
+MWU_result_CC_UntreatedvInitial %>% 
+  filter(p.adj <0.05) %>%  #104 GO terms
+  mutate(GO_category = "CC") -> MWU_result_CC_UntreatedvInitial_sig
+
+MWU_result_MF_UntreatedvInitial <- read.csv("MWU_MF_Untreated_vs_Initial_fc.csv", sep = "")
+MWU_result_MF_UntreatedvInitial %>% 
+  filter(p.adj <0.05) %>%  #70 GO terms
+  mutate(GO_category = "MF") -> MWU_result_MF_UntreatedvInitial_sig
+
+MWU_result_BP_UntreatedvInitial <- read.csv("MWU_BP_Untreated_vs_Initial_fc.csv", sep = "")
+MWU_result_BP_UntreatedvInitial %>%
+  filter(p.adj <0.05) %>%  #432 GO terms
+  mutate(GO_category = "BP") -> MWU_result_BP_UntreatedvInitial_sig
+
+full_join(MWU_result_CC_UntreatedvInitial_sig, MWU_result_MF_UntreatedvInitial_sig) %>% 
+  full_join(., MWU_result_BP_UntreatedvInitial_sig) %>% 
+  write_csv("UntreatedvsInitial_GOMWU_sigterms.csv")
+```
+

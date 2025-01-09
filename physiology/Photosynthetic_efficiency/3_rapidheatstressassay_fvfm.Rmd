@@ -86,7 +86,8 @@ p1<-Acer_CBASS %>%
   geom_point() +
   theme_classic() +
   labs(x="Rapid Heat-Stress Assay Temperature (ºC)", y="Fv/Fm", title = "A. cervicornis") +
-  theme(text = element_text(size = 12))
+  theme(text = element_text(size = 12)) +
+  ylim(0.05,0.58)
 ```
 
 #### One-way ANOVA
@@ -207,7 +208,8 @@ p2<- Pcli_CBASS %>%
   geom_point() +
   theme_classic() +
   labs(x="Rapid Heat-Stress Assay Temperature (ºC)", y="Fv/Fm", title = "P. clivosa") +
-  theme(text = element_text(size = 12))
+  theme(text = element_text(size = 12)) +
+  ylim(0.05,0.58)
 ```
 
 #### One-way ANOVA
@@ -309,7 +311,7 @@ leveneTest(fvfm ~ Treatment, data = Pcli_CBASS[Pcli_CBASS$CBASS_temp == "37", ])
 # plot
 ```{r}
 plot_grid(p1, p2, nrow=1,
-       labels = c("A", "B"),       # Add panel labels
+       labels = c("C", "D"),       # Add panel labels
   label_size = 14)
 ggsave("rapidheatstressassay_bothspecies.pdf", width=10, height=5)
 ```

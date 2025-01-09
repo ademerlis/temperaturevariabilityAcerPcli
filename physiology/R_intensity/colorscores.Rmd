@@ -111,707 +111,190 @@ Rintensity_withmetadata %>%
   theme_classic() +
   facet_wrap(~Species, scales = "free") +
   ylim(0, 255) +
-  labs(y = "R Intensity") +
+  labs(y = "R-Intensity", x= "Time Point") +
   theme(text = element_text(size = 13)) + 
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+  scale_fill_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB"))
 #ggsave("Rintensityovertime_byspecies.pdf")
+```
 
-  ggplot(Rintensity_withmetadata,aes(x = month, y= mean_Rintensity_percoral, fill = Treatment)) + 
-  geom_boxplot() + 
+# mean value per time point
+## Acer
+```{r}
+p1<-Rintensity_withmetadata %>%
+  filter(Species == "Acropora cervicornis") %>% 
+  mutate(month = as.numeric(as.character(month))) %>% 
+  dplyr::select(Species, Colony, Treatment, month, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  group_by(Species, Treatment, month) %>% 
+  summarise(mean_Rintensity = mean(mean_Rintensity_percoral), se_Rintensity = std.error(mean_Rintensity_percoral)) %>% 
+  ggplot(.,aes(x = month, y= mean_Rintensity, color = Treatment)) + 
+  geom_point() + 
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_Rintensity - se_Rintensity, ymax = mean_Rintensity + se_Rintensity), width = 0.1) + 
   theme_classic() +
-  facet_wrap(~Species+Colony, scales = "free") +
   ylim(0, 255) +
-  labs(y = "R Intensity") +
+  scale_x_continuous(breaks = seq(3, 4, by = 1)) +
+  labs(y = "R-Intensity", x= "Time Point", title = "A. cervicornis") +
   theme(text = element_text(size = 13)) + 
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
-```
-# boxplot for percent change
-```{r}
-Rintensity_withmetadata %>% 
-  ungroup() %>% 
-  filter(month == "03" | month == "04") %>% 
-  dplyr::select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
-  distinct() %>% 
-  pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
-  mutate(percent_change = ((`04`-`03`)/`03`)*100) -> percentchange
-
-percentchange %>% 
-  drop_na() -> percentchange
-
-plot1<- ggplot(percentchange,aes(x = Species, y= percent_change, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() +
-  labs(y = "Percent Change in R-Intensity") +
-  theme(text = element_text(size = 15)) +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  facet_wrap(~Species, scales = "free_x", ncol = 1) +
-  theme(legend.position="none") 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB"))
 ```
 
-## mixed effects linear model
+## Pcli
 ```{r}
-percentchange %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_colorscore
-
-Acer_colorscore_model <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore)
-summary(Acer_colorscore_model)
-anova(Acer_colorscore_model)
-
-percentchange %>% 
-  filter(Species == "Pseudodiploria clivosa") -> Pcli_colorscore
-
-Pcli_colorscore_model <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Pcli_colorscore)
-summary(Pcli_colorscore_model)
-anova(Pcli_colorscore_model)
-```
-
-
-### Model fitting and assumptions diagnostic
-
-Acer
-```{r}
-x = residuals(Acer_colorscore_model)
-plot(fitted(Acer_colorscore_model), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test  -- significant aka not normal
-car::outlierTest(Acer_colorscore_model) #row 30
-Acer_colorscore[-30, ] -> Acer_colorscore_noout
-
-Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
-x = residuals(Acer_colorscore_model_2)
-plot(fitted(Acer_colorscore_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-car::outlierTest(Acer_colorscore_model_2) #row 61
-Acer_colorscore_noout[-61, ] -> Acer_colorscore_noout
-
-Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
-x = residuals(Acer_colorscore_model_2)
-plot(fitted(Acer_colorscore_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-car::outlierTest(Acer_colorscore_model_2) #row 62
-Acer_colorscore_noout[-62, ] -> Acer_colorscore_noout
-
-Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
-x = residuals(Acer_colorscore_model_2)
-plot(fitted(Acer_colorscore_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-car::outlierTest(Acer_colorscore_model_2) #row 36
-Acer_colorscore_noout[-36, ] -> Acer_colorscore_noout
-
-Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
-x = residuals(Acer_colorscore_model_2)
-plot(fitted(Acer_colorscore_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-car::outlierTest(Acer_colorscore_model_2) #row 48
-Acer_colorscore_noout[-48, ] -> Acer_colorscore_noout
-
-Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
-x = residuals(Acer_colorscore_model_2)
-plot(fitted(Acer_colorscore_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-car::outlierTest(Acer_colorscore_model_2) #row 36
-Acer_colorscore_noout[-36, ] -> Acer_colorscore_noout
-
-Acer_colorscore_model_2 <- lmer(percent_change ~ Treatment*Colony + (1|Treatment_Tank), data = Acer_colorscore_noout)
-x = residuals(Acer_colorscore_model_2)
-plot(fitted(Acer_colorscore_model_2), x) 
-leveneTest(x ~ Treatment*Colony, data=Acer_colorscore_noout, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test
-#that's the best we're gonna get
-
-Anova(Acer_colorscore_model_2,  type = "II", test.statistic = "F") #you need to manually specify Satterthwaite's method, because otherwise it will give you the Wald/Chi-squared approximation and that is only appropriate for binomial or poisson distributions. Satterthwaite's method is for normal/gaussian
-
-#capture.output(Anova(Acer_colorscore_model_2,  type = "II", test.statistic = "F"), file = "Acer_colorscore_percentchange_ANOVA.csv")
-```
-
-Pcli
-```{r}
-x = residuals(Pcli_colorscore_model)
-plot(fitted(Pcli_colorscore_model), x) 
-leveneTest(x ~ Treatment*Colony, data=Pcli_colorscore, center=mean) # formal statistical test for homogenity of variance #not significant
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-shapiro.test(x) # formal statistical test 
-
-Anova(Pcli_colorscore_model,  type = "II", test.statistic = "F") 
-
-capture.output(Anova(Pcli_colorscore_model,  type = "II", test.statistic = "F"), file = "Pcli_colorscore_percentchange_ANOVA.csv")
-```
-
-
-### Statistical pairwise comparisons
-
-Acer
-```{r}
-#colony + treatment
-colorscore_Acer_emms <- emmeans(Acer_colorscore_model_2, pairwise ~ Colony*Treatment)
-
-pairs(colorscore_Acer_emms) 
-capture.output(pairs(colorscore_Acer_emms), file="Acer_percentchange_treatment_colony_emmeans.csv")
-```
-
-Pcli
-```{r}
-#colony + treatment
-colorscore_Pcli_emms <- emmeans(Pcli_colorscore_model, pairwise ~ Colony*Treatment)
-
-pairs(colorscore_Pcli_emms) 
-capture.output(pairs(colorscore_Pcli_emms), file="Pcli_percentchange_treatment_colony_emmeans.csv")
-```
-
-# Line + scatterplot over time 
-
-## Species x Treatment
-```{r}
-plot2<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
-  geom_point(alpha = 0.1) +
-  geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~Species,ncol = 1, nrow = 2) +
-  ylab("R Intensity")+
-  theme_classic() +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) +
-  labs(x="Days in Treatment") +
-  theme(legend.position="none") +
-  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 5))
-```
-
-## Colony x Treatment
-```{r}
-plot3<-ggplot(Rintensity_tidydata, aes(x=Days_Relative, y=mean_Rintensity_percoral, color = Treatment)) +
-  geom_point(alpha = 0.1) +
-  geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~Species+Colony) +
-  ylab("R Intensity")+
-  theme_classic() +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(text = element_text(size = 15)) +
-  labs(x="Days in Treatment") +
-  scale_x_continuous(limits = c(-16, 25), breaks = seq(-15, 25, by = 5)) +
-  theme(legend.position="none")
-```
-
-
-```{r}
-plot_grid(plot1, plot2,plot3, nrow=1, rel_widths = c(1, 1, 2))
-ggsave("colorscore_boxplot_species_genet_lines.pdf", width = 12, height = 5)
-```
-
-
-## Mixed effects GLMM (fixed: treatment colony, time point; random: tank, coral ID)
-
-Test species separately because it is not part of your research question whether Acer vs. Pcli has different color scores.
-
-For the time component, we really just want to compare pre-treatment vs. post-treatment to reflect the effect of time and treatment. So, all the dates in March will be encoded as "T0", and all the end measurements will be "T1". It needs to be a factor to be included as a fixed effect for the post-hoc comparisons.
-```{r}
-Rintensity_tidydata %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_tidydata
-
-Acer_tidydata %>% 
-  mutate(time_point = case_when(Date < as.Date("2022-03-30") ~ "T0",
-                                Date > as.Date("2022-04-17") ~ "T1")) -> Acer_tidydata
-
-Rintensity_tidydata %>% 
+p2<-Rintensity_withmetadata %>%
   filter(Species == "Pseudodiploria clivosa") %>% 
-  mutate(time_point = case_when(Date < as.Date("2022-03-30") ~ "T0",
-                                Date > as.Date("2022-04-17") ~ "T1")) -> Pcli_tidydata
-```
-
-
-```{r}
-#repeated measures -- include ID in the formula as a random effect
-Acer_model <- lmer(mean_Rintensity_percoral ~ Treatment*Colony*time_point + (1|Treatment_Tank) + (1|ID), data = Acer_tidydata) 
-summary(Acer_model)
-Anova(Acer_model, type = "II", test.statistic = "F")
-
-Pcli_model <- lmer(mean_Rintensity_percoral ~ Treatment*Colony*time_point + (1|Treatment_Tank) + (1|ID), data = Pcli_tidydata)
-summary(Pcli_model)
-Anova(Pcli_model, type = "II", test.statistic = "F")
-```
-
-### Model fitting and assumptions diagnostic
-
-Acer
-```{r}
-x = residuals(Acer_model)
-plot(fitted(Acer_model), x) 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-# Acer data meets assumptions, yay
-
-Anova(Acer_model, type = "II", test.statistic = "F")
-#capture.output(Anova(Acer_model, type = "II", test.statistic = "F"), file = "Acer_colorscore_model_ANOVA.csv")
-```
-
-Pcli
-```{r}
-x = residuals(Pcli_model)
-plot(fitted(Pcli_model), x) 
-qqnorm(x); qqline(x) # qq plot to check for normal distribution of residuals
-hist(x) # histogram of residuals to check for normal distribution of residuals
-# Pcli data meets assumptions, yay
-
-Anova(Pcli_model, type = "III", test.statistic = "F")
-#capture.output(Anova(Pcli_model, type = "II", test.statistic = "F"), file = "Pcli_colorscore_model_ANOVA.csv")
-```
-
-### Statistical pairwise comparisons
-
-Acer
-```{r}
-#colony + treatment + timepoint
-Acer_emms <- emmeans(Acer_model, pairwise ~ Treatment*Colony*time_point)
-capture.output(Acer_emms$contrasts, file = "Acer_Tukey_colonytreatmenttimepoint.csv")
-```
-
-Pcli
-```{r}
-#colony + treatment + timepoint
-Pcli_emms <- emmeans(Pcli_model, pairwise ~ Treatment*Colony*time_point)
-capture.output(Pcli_emms$contrasts, file = "Pcli_colonytreatmenttimepoint.csv")
-```
-
-
-# Archive
-## Calculate percent change for the treatment period 
-
-```{r}
-Rintensity_withmetadata %>% 
-  ungroup() %>% 
-  filter(month == "03" | month == "04") %>% 
-  dplyr::select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
+  mutate(month = as.numeric(as.character(month))) %>% 
+  dplyr::select(Species, Colony, Treatment, month, mean_Rintensity_percoral) %>% 
   distinct() %>% 
-  pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
-  mutate(percent_change = ((`03`-`04`)/`03`)*100) -> percentchange
-
-percentchange %>% 
-  drop_na() -> percentchange #7 corals were not measured in the second time point 
-
-# percentchange %>% 
-#   select(ID:Treatment, percent_change) %>% 
-#   write_csv("treatment_Rscore.csv")
-
-#sample sizes
-percentchange %>% 
-  group_by(Species, Colony, Treatment) %>% 
-  summarise(count = n())
-```
-
-
-```{r}
-p1<-ggplot(percentchange,aes(x = Species, y= percent_change, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() +
-  labs(y = "Percent Decline in Color Score") +
-  theme(text = element_text(size = 15)) +
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) 
-#ggsave("percentdeclinecolorscore_species.pdf")
-```
-
-```{r}
-p2<-ggplot(percentchange,aes(x = Colony, y= percent_change, fill = Treatment)) + 
-  geom_boxplot() + 
-  theme_classic() +
-  facet_wrap(~Species, scales = "free") +
-  labs(y = "Percent Decline in Color Score") +
-  theme(text = element_text(size = 15)) + 
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
-```
-
-```{r}
-plot_grid(p1, p2, ncol = 2, rel_widths = c(1.5,2))
-
-#ggsave("percentchangeRintensity_species_genets_treatment.pdf", width = 12, height = 5)
-```
-
-
-dotplots
-```{r}
-percentchange %>% 
-  group_by(Species, Treatment) %>% 
-  mutate(mean_percentchange = mean(percent_change), se_percentchange = std.error(percent_change)) %>% 
-  ggplot(., aes(x = Treatment, y = mean_percentchange)) +
-  theme_classic()+
-  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.8),
-              alpha=0.1, pch = 21,
-              color = "black") +
-  geom_errorbar(aes(x = Treatment, ymax = mean_percentchange+se_percentchange, ymin = mean_percentchange-se_percentchange, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = Treatment, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  xlab("Treatment")+
-  ylab("% Change R-Intensity")+
-  facet_wrap(~Species, scales = "free_x") +
-  theme(text = element_text(size = 15)) +
-  theme(legend.position="none")
-```
-
-
-```{r}
-percentchange %>% 
-  group_by(Species, Treatment,Colony) %>% 
-  mutate(mean_percentchange = mean(percent_change), se_percentchange = std.error(percent_change)) %>% 
-  ggplot(., aes(x = Colony, y = mean_percentchange)) +
-  theme_classic()+
-  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.8),
-              alpha=0.1, pch = 21,
-              color = "black") +
-  geom_errorbar(aes(x = Colony, ymax = mean_percentchange+se_percentchange, ymin = mean_percentchange-se_percentchange, color = Treatment), width = .1, position = position_dodge(width=0.8)) +
-  scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = Colony, fill = Treatment), size = 2.5, pch = 21, color = "black", position = position_dodge(width=0.8))+
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  xlab("Colony")+
-  ylab("% Change R-Intensity")+
-  facet_wrap(~Species, scales = "free_x") +
-  theme(text = element_text(size = 15))
-```
-
-
-## Statistics on percent change
-
-### species x treatment
-
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
-```{r}
-str(percentchange) #275 rows
-
-percentchange %>% 
-  mutate_at(vars(Colony, Treatment, Species), factor) -> percentchange
-
-treat_model_1 <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = percentchange)
-treat_model_metrics_1 <- augment(treat_model_1)
-plot(treat_model_1)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics_1$.resid) #significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics_1) #significant
-
-# identifying outliers
-treat_model_metrics_1 %>% 
-  filter(abs(.std.resid) > 3)
-# 7 outliers 
-
-percentchange %>% 
-  arrange(desc(percent_change)) # everything greater than 180 is an outlier
-
-#remove outliers
-percentchange  %>% 
-  filter(percent_change > -180) -> percentchange_edited
-
-#rerun
-treat_model_1 <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = percentchange_edited)
-treat_model_metrics_1 <- augment(treat_model_1)
-
-shapiro_test(treat_model_metrics_1$.resid) #still significant
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics_1) #still significant
-
-#run kruskal-wallis test
-
-#make interaction term
-percentchange_edited$Treatment_Species <- interaction(percentchange_edited$Treatment, percentchange_edited$Species)
-
-kruskal_test(percent_change ~ Treatment_Species, data = percentchange_edited) #significant
-
-#posthoc test
-as.data.frame(dunn.test(percentchange_edited$percent_change, percentchange_edited$Treatment_Species, method = "bonferroni")) #%>% 
-  #write_csv("changeinRintensity_posthoc_species.csv")
-
-```
-
-
-### within species
-
-#### Acer x treatment
-```{r}
-percentchange %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_R_percentchange
-
-Acer_Rtreat_model <- lm(percent_change ~ Treatment + Colony + Treatment_Tank, data = Acer_R_percentchange)
-Acer_Rtreat_model_metrics <- augment(Acer_Rtreat_model)
-plot(Acer_Rtreat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Acer_Rtreat_model_metrics$.resid) #significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = Acer_Rtreat_model_metrics) #significant
-
-# identifying outliers
-Acer_Rtreat_model_metrics %>% 
-  filter(abs(.std.resid) > 3) #1 outlier
-
-Acer_R_percentchange %>% 
-  filter(percent_change > -252) -> Acer_R_percentchange
-
-Acer_Rtreat_model <- lm(percent_change ~ Treatment + Colony + Treatment_Tank, data = Acer_R_percentchange)
-Acer_Rtreat_model_metrics <- augment(Acer_Rtreat_model)
-plot(Acer_Rtreat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Acer_Rtreat_model_metrics$.resid) #still significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = Acer_Rtreat_model_metrics) #still significant
-
-
-kruskal_test(percent_change ~ Treatment, data = Acer_R_percentchange)#significant
-
-#posthoc test
-as.data.frame(dunn.test(Acer_R_percentchange$percent_change, Acer_R_percentchange$Treatment, method = "bonferroni")) 
-```
-
-
-#### Acer colony X treatment
-```{r}
-percentchange %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_R_percentchange
-
-Acer_Rtreat_model <- lm(percent_change ~ Treatment*Colony + Treatment_Tank, data = Acer_R_percentchange)
-Acer_Rtreat_model_metrics <- augment(Acer_Rtreat_model)
-plot(Acer_Rtreat_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Acer_Rtreat_model_metrics$.resid) #significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = Acer_Rtreat_model_metrics) #significant
-
-# identifying outliers
-Acer_Rtreat_model_metrics %>% 
-  filter(abs(.std.resid) > 3) #0 outliers
-
-#run non parametric test
-
-#make interaction term
-Acer_R_percentchange$Treatment_Colony <- interaction(Acer_R_percentchange$Treatment, Acer_R_percentchange$Colony)
-
-kruskal_test(percent_change ~ Treatment_Colony, data = Acer_R_percentchange)#significant
-
-#posthoc test
-Acer_colony_colorscore_posthoc <- as.data.frame(dunn.test(Acer_R_percentchange$percent_change, Acer_R_percentchange$Treatment_Colony, method = "bonferroni")) 
-
-write_csv(Acer_colony_colorscore_posthoc, "Acer_colony_colorscore_posthoc.csv")
-```
-
-#### Pcli x treatment
-```{r}
-percentchange %>% 
-  filter(Species == "Pseudodiploria clivosa") -> Pcli_R_percentchange
-
-Pcli_Rtreat_model <- lm(percent_change ~ Treatment + Colony + Treatment_Tank, data = Pcli_R_percentchange)
-Pcli_Rtreat_model_metrics <- augment(Pcli_Rtreat_model)
-plot(Pcli_Rtreat_model)
-
-# identifying outliers
-Pcli_Rtreat_model_metrics %>% 
-  filter(abs(.std.resid) > 3) #0 outliers
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Pcli_Rtreat_model_metrics$.resid) #significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment, data = Pcli_Rtreat_model_metrics) #not significant
-
-kruskal_test(percent_change ~ Treatment, data = Pcli_R_percentchange)# not significant
-```
-
-
-#### Pcli colony x treatment
-```{r}
-percentchange %>% 
-  filter(Species == "Pseudodiploria clivosa") -> Pcli_R_percentchange
-
-Pcli_Rtreat_model <- lm(percent_change ~ Treatment*Colony + Treatment_Tank, data = Pcli_R_percentchange)
-Pcli_Rtreat_model_metrics <- augment(Pcli_Rtreat_model)
-plot(Pcli_Rtreat_model)
-
-# identifying outliers
-Pcli_Rtreat_model_metrics %>% 
-  filter(abs(.std.resid) > 3) #0 outliers
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Pcli_Rtreat_model_metrics$.resid) #not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = Pcli_Rtreat_model_metrics) #not significant
-
-# two-way anova
-summary(aov(percent_change ~ Treatment*Colony, data = Pcli_R_percentchange)) #significant
-
-capture.output(summary(aov(percent_change ~ Treatment*Colony, data = Pcli_R_percentchange)), file = "pclivosa_Rintensity_bycolony_anova.csv")
-
-
-capture.output(TukeyHSD(aov(percent_change ~ Treatment*Colony, data = Pcli_R_percentchange)), file = "pclivosa_Rintensity_bycolony_posthoc.csv")
-
-as.data.frame(pclivosa_Rintensity_bycolony_posthoc)
-  write_csv(., "pclivosa_Rintensity_bycolony_posthoc.csv")
-
-```
-
-
-```{r}
-percentchange %>% 
-  dplyr::group_by(Species, Treatment) %>% 
-  dplyr::mutate(mean_percent_change = mean(percent_change), se_percent_change = sd(percent_change)) %>% 
-  ggplot(., aes(x = Species, y = mean_percent_change))+
-  theme_classic()+
-  geom_jitter(aes(y=percent_change, color = Treatment, fill = Treatment),
-              position=position_dodge(width=0.8),
-              alpha=0.2, pch = 21,
-              color = "black") +
-  geom_errorbar(aes(x = Species, ymax = mean_percent_change+se_percent_change, ymin = mean_percent_change-se_percent_change, color = Treatment), width = .2, position = position_dodge(width=0.8)) +
-  #scale_color_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  geom_point(mapping = aes(x = Species, fill = Treatment), size = 2, pch = 21, color = "black", position = position_dodge(width=0.8))+
-  #scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  xlab("Day")+
-  #facet_wrap(~Species, scales = "free_x", dir = "v") +
-  theme(text = element_text(size = 15))
-```
-
-
-
-## Calculate percent change for the slow-burn heat stress assay
-```{r}
-Rintensity_withmetadata %>% 
   ungroup() %>% 
-  filter(month == "06" | month == "07") %>% 
-  dplyr::select(ID, Species, Colony, Treatment, Treatment_Tank, month, mean_Rintensity_percoral) %>% 
+  group_by(Species, Treatment, month) %>% 
+  summarise(mean_Rintensity = mean(mean_Rintensity_percoral), se_Rintensity = std.error(mean_Rintensity_percoral)) %>% 
+  ggplot(.,aes(x = month, y= mean_Rintensity, color = Treatment)) + 
+  geom_point() + 
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_Rintensity - se_Rintensity, ymax = mean_Rintensity + se_Rintensity), width = 0.1) + 
+  theme_classic() +
+  ylim(0, 255) +
+  scale_x_continuous(breaks = seq(3, 4, by = 1)) +
+  labs(y = "R-Intensity", x= "Time Point", title = "P. clivosa") +
+  theme(text = element_text(size = 13)) + 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB"))
+```
+
+
+# plot
+```{r}
+plot_grid(p1, p2, nrow=1,
+       labels = c("A", "B"),       # Add panel labels
+  label_size = 14)
+ggsave("treatmentRintensity_bothspecies.pdf", width=10, height=5)
+```
+
+
+# normalize to initial value
+
+## Acer
+```{r}
+p1<-Rintensity_withmetadata %>%
+  filter(Species == "Acropora cervicornis") %>% 
+  mutate(month = as.numeric(as.character(month))) %>% 
+  dplyr::select(Species, Colony, Treatment, month, mean_Rintensity_percoral) %>% 
   distinct() %>% 
-  pivot_wider(names_from = "month", values_from = "mean_Rintensity_percoral") %>% 
-  mutate(percent_change = ((`07`-`06`)/`06`)*100) -> slowburn_Rintensity
-
-slowburn_Rintensity %>% 
-  drop_na() -> slowburn_Rintensity #~60 corals were not measured in the second time point 
-```
-
-
-```{r}
-p1<- ggplot(slowburn_Rintensity,aes(x = Treatment, y= percent_change, fill = Treatment)) + 
-  geom_boxplot() + 
+  ungroup() %>% 
+  pivot_wider(names_from = month, values_from = mean_Rintensity_percoral) %>% 
+  dplyr::rename(initial_R = `3`, final_R = `4`) %>% 
+  mutate(norm_R_T0 = initial_R/initial_R, norm_R_T1 = -final_R/initial_R) %>% 
+  drop_na(norm_R_T1) %>% 
+  pivot_longer(norm_R_T0:norm_R_T1, names_to = "timepoint", values_to = "R_intensity_norm") %>% 
+  mutate(timepoint = case_when(timepoint == "norm_R_T0" ~ 0, 
+                               timepoint == "norm_R_T1" ~ 1)) %>% 
+  group_by(Species, Treatment, timepoint) %>% 
+  summarise(mean_Rintensity = mean(R_intensity_norm), se_Rintensity = std.error(R_intensity_norm)) %>% 
+  ggplot(.,aes(x = timepoint, y= mean_Rintensity, color = Treatment)) + 
+  geom_point() + 
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_Rintensity - se_Rintensity, ymax = mean_Rintensity + se_Rintensity), width = 0.1) + 
   theme_classic() +
-  facet_wrap(~Species, scales = "free") +
-  labs(y = "Percent Change in R-Intensity") +
-  theme(text = element_text(size = 15)) + 
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB")) +
-  theme(legend.position="none")
+  scale_x_continuous(breaks = seq(0, 1, by = 1)) +
+  labs(y = "Normalized R-Intensity", x= "Time Point", title = "A. cervicornis") +
+  theme(text = element_text(size = 13)) + 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
+  ylim(-2, 1)
 ```
 
+## Pcli
 ```{r}
-p2<-ggplot(slowburn_Rintensity,aes(x = Colony, y= percent_change, fill = Treatment)) + 
-  geom_boxplot() + 
+p2<-Rintensity_withmetadata %>%
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  mutate(month = as.numeric(as.character(month))) %>% 
+  dplyr::select(Species, Colony, Treatment, month, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = month, values_from = mean_Rintensity_percoral) %>% 
+  dplyr::rename(initial_R = `3`, final_R = `4`) %>% 
+  mutate(norm_R_T0 = initial_R/initial_R, norm_R_T1 = -final_R/initial_R) %>% 
+  drop_na(norm_R_T1) %>% 
+  pivot_longer(norm_R_T0:norm_R_T1, names_to = "timepoint", values_to = "R_intensity_norm") %>% 
+  mutate(timepoint = case_when(timepoint == "norm_R_T0" ~ 0, 
+                               timepoint == "norm_R_T1" ~ 1)) %>% 
+  group_by(Species, Treatment, timepoint) %>% 
+  summarise(mean_Rintensity = mean(R_intensity_norm), se_Rintensity = std.error(R_intensity_norm)) %>% 
+  ggplot(.,aes(x = timepoint, y= mean_Rintensity, color = Treatment)) + 
+  geom_point() + 
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_Rintensity - se_Rintensity, ymax = mean_Rintensity + se_Rintensity), width = 0.1) + 
   theme_classic() +
-  facet_wrap(~Species, scales = "free") +
-  labs(y = "Percent Change in R-Intensity") +
-  theme(text = element_text(size = 15)) + 
-  scale_fill_manual(labels=c("Treated", "Untreated"), values = c("#F54A34", "#60DBDB"))
+  scale_x_continuous(breaks = seq(0, 1, by = 1)) +
+  labs(y = "Normalized R-Intensity", x= "Time Point", title = "P. clivosa") +
+  theme(text = element_text(size = 13)) + 
+  scale_color_manual(labels=c("Variable", "Control"), values = c("#F54A34", "#60DBDB")) +
+  ylim(-2, 1)
 ```
 
+# plot
 ```{r}
-plot_grid(p1, p2, ncol = 2, rel_widths = c(1.5,2))
-
-#ggsave("percentchangeRintensity_species_genets_slowburn.pdf", width = 12, height = 5)
+plot_grid(p1, p2, nrow=1,
+       labels = c("A", "B"),       # Add panel labels
+  label_size = 14)
+ggsave("treatment_normalized_Rintensity_bothspecies.pdf", width=10, height=5)
 ```
 
+# Kruskal-Wallis Test
 
-## Statistics on percent change
-
-### species x treatment
-
-Create linear model to test normality of residuals and homogeneity of variance. Remove outliers
+## Acer
 ```{r}
-str(slowburn_Rintensity) #99 rows
+Rintensity_withmetadata %>%
+  filter(Species == "Acropora cervicornis") %>% 
+  mutate(month = as.numeric(as.character(month))) %>% 
+  dplyr::select(Species, Colony, Treatment, month, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = month, values_from = mean_Rintensity_percoral) %>% 
+  dplyr::rename(initial_R = `3`, final_R = `4`) %>% 
+  mutate(norm_R_T0 = initial_R/initial_R, norm_R_T1 = final_R/initial_R) %>% #don't need the negative for this -- was just for visualization
+  drop_na(norm_R_T1) %>% 
+  pivot_longer(norm_R_T0:norm_R_T1, names_to = "timepoint", values_to = "R_intensity_norm") %>% 
+  filter(timepoint == "norm_R_T1") -> Acer_R_norm
 
-slowburn_Rintensity %>% 
-  mutate_at(vars(Colony, Treatment, Species), factor) -> slowburn_Rintensity
+Acer_R_norm %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=63 and control=70
 
-treat_model <- lm(percent_change ~ Treatment*Species + Colony + Treatment_Tank, data = slowburn_Rintensity)
-treat_model_metrics <- augment(treat_model)
-plot(treat_model)
+summary(aov(R_intensity_norm ~ Treatment, data = Acer_R_norm)) #significant
 
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(treat_model_metrics$.resid) #not significant
+Acer_lm <- aov(R_intensity_norm ~ Treatment, data = Acer_R_norm)
+shapiro_test(Acer_lm$residuals) # significant
+leveneTest(R_intensity_norm ~ Treatment, data = Acer_R_norm) #significant
 
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
-
-# anova
-
-summary(aov(percent_change ~ Treatment*Species, data = slowburn_Rintensity)) #significant for species
-
-TukeyHSD(aov(percent_change ~ Treatment*Species, data = slowburn_Rintensity))
-
-#capture.output(TukeyHSD(aov(percent_change ~ Treatment*Species, data = slowburn_Rintensity)), file = "slowburn_Rintensity_treatmentspecies.csv")
+# run non-parametric Kruskal-Wallis Test
+kruskal_test(R_intensity_norm ~ Treatment, data = Acer_R_norm) # significant
 ```
-
-
-### within species colony X treatment
-
-#### Acer
+## Pcli
 ```{r}
-slowburn_Rintensity %>% 
-  filter(Species == "Acropora cervicornis") -> Acer_slowburn_Rintensity
+Rintensity_withmetadata %>%
+  filter(Species == "Pseudodiploria clivosa") %>% 
+  mutate(month = as.numeric(as.character(month))) %>% 
+  dplyr::select(Species, Colony, Treatment, month, mean_Rintensity_percoral) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = month, values_from = mean_Rintensity_percoral) %>% 
+  dplyr::rename(initial_R = `3`, final_R = `4`) %>% 
+  mutate(norm_R_T0 = initial_R/initial_R, norm_R_T1 = final_R/initial_R) %>% #don't need the negative for this -- was just for visualization
+  drop_na(norm_R_T1) %>% 
+  pivot_longer(norm_R_T0:norm_R_T1, names_to = "timepoint", values_to = "R_intensity_norm") %>% 
+  filter(timepoint == "norm_R_T1") -> Pcli_R_norm
 
-Acer_R_model <- lm(percent_change ~ Treatment*Colony + Treatment_Tank, data = Acer_slowburn_Rintensity)
-Acer_R_model_model_metrics <- augment(Acer_R_model)
-plot(Acer_R_model)
+Pcli_R_norm %>% 
+  group_by(Treatment) %>% 
+  summarise(count = n()) #variable=70 and control=72
 
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Acer_R_model_model_metrics$.resid) #not significant
+summary(aov(R_intensity_norm ~ Treatment, data = Pcli_R_norm)) # not significant
 
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = Acer_R_model_model_metrics) #not significant
+Pcli_lm <- aov(R_intensity_norm ~ Treatment, data = Pcli_R_norm)
+shapiro_test(Pcli_lm$residuals) # significant
+leveneTest(R_intensity_norm ~ Treatment, data = Pcli_R_norm) # not significant
 
-# anova
-
-summary(aov(percent_change ~ Treatment*Colony, data = Acer_slowburn_Rintensity)) 
-
-TukeyHSD(aov(percent_change ~ Treatment*Colony, data = Acer_slowburn_Rintensity))
+# run non-parametric Kruskal-Wallis Test
+kruskal_test(R_intensity_norm ~ Treatment, data = Pcli_R_norm) # not significant
 ```
-
-#### Pcli
-```{r}
-slowburn_Rintensity %>% 
-  filter(Species == "Pseudodiploria clivosa") -> Pcli_slowburn_Rintensity
-
-Pcli_R_model <- lm(percent_change ~ Treatment*Colony + Treatment_Tank, data = Pcli_slowburn_Rintensity)
-Pcli_R_model_metrics <- augment(Pcli_R_model)
-plot(Pcli_R_model)
-
-# assess normality of residuals using Shapiro-Wilk test
-shapiro_test(Pcli_R_model_metrics$.resid) #not significant
-
-# assess homogeneity of variances using Levene's Test
-levene_test(.resid ~ Treatment*Colony, data = Pcli_R_model_metrics) #not significant
-
-# two-way anova
-summary(aov(percent_change ~ Treatment*Colony, data = Pcli_slowburn_Rintensity)) #significant
-
-TukeyHSD(aov(percent_change ~ Treatment*Colony, data = Pcli_slowburn_Rintensity))
-```
-
-
-
- 
