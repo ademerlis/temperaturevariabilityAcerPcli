@@ -471,14 +471,16 @@ all_genes <- c(genes_V, genes_VvC, genes_VvI) %>%
   
 Variable_genes_annot<-left_join(all_genes, all_annotDEGs) #number is higher because the genes that overlap have two rows for each contrast
 
+#write_csv(Variable_genes_annot, "Pclivosa_variable_DEGs_annotated.csv")
+
 Variable_genes_annot %>% 
   top_n(n = 20, abs(log2FoldChange)) -> top20genes
 
 Variable_genes_annot %>% 
   top_n(n = 10, abs(log2FoldChange)) -> top10genes
 
-write_csv(top20genes, "Pcli_host_top20DEGs.csv")
-
-write_csv(top10genes, "Pcli_host_top10DEGs.csv")
+# write_csv(top20genes, "Pcli_host_top20DEGs.csv")
+# 
+# write_csv(top10genes, "Pcli_host_top10DEGs.csv")
 ```
 

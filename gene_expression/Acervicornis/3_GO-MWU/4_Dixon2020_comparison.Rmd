@@ -65,7 +65,15 @@ VariablevControl_BP_typeA_data %>%
   filter(delta.rank.x < -1340 & delta.rank.y > 1810)
 # GO:0002474 antigen processing and presentation of peptide antigen via MHC class I
 
+# VariablevControl_BP_typeA_data %>% 
+#   dplyr::rename(delta_rank_variable = delta.rank.x, delta_rank_Dixon = delta.rank.y, pval_variable = pval.x, level_variable = level.x, nseqs_variable = nseqs.x, padj_variable = p.adj.x, pval_Dixon = pval.y, level_Dixon = level.y, nseqs_Dixon = nseqs.y, padj_Dixon = p.adj.y) %>% 
+#   write_csv("Acervicornis_TypeA_GOterms_VariablevsDixon.csv")
+```
 
+
+
+
+```{r}
 # Type B
 
 # intersect() makes comparisons are made row-wise, so that in the data frame case, intersect(A,B) is a data frame with those rows that are both in A and in B.
@@ -100,6 +108,10 @@ VariablevControl_BP_typeB_data %>%
 VariablevControl_BP_typeB_data %>% 
   filter(delta.rank.x < -1540 & delta.rank.y < -2250)
 # GO:0070972	protein localization to endoplasmic reticulum
+
+# VariablevControl_BP_typeB_data %>% 
+#   dplyr::rename(delta_rank_variable = delta.rank.x, delta_rank_Dixon = delta.rank.y, pval_variable = pval.x, level_variable = level.x, nseqs_variable = nseqs.x, padj_variable = p.adj.x, pval_Dixon = pval.y, level_Dixon = level.y, nseqs_Dixon = nseqs.y, padj_Dixon = p.adj.y) %>% 
+#   write_csv("Acervicornis_TypeB_GOterms_VariablevsDixon.csv")
 ```
 
 
