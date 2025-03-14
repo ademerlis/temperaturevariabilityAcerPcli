@@ -1,0 +1,22 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = fvfm_loss_norm ~ Treatment * Species, data = treatment_normalized_bothspecies)
+
+$Treatment
+                      diff       lwr      upr    p adj
+Untreated-Treated 2.030102 0.6039803 3.456223 0.005436
+
+$Species
+                           diff       lwr       upr p adj
+Pclivosa-Acervicornis -12.13929 -13.56609 -10.71249     0
+
+$`Treatment:Species`
+                                                  diff        lwr        upr   p adj
+Untreated:Acervicornis-Treated:Acervicornis   8.726576   6.019690  11.433461 0.0e+00
+Treated:Pclivosa-Treated:Acervicornis        -5.139028  -7.828197  -2.449859 8.1e-06
+Untreated:Pclivosa-Treated:Acervicornis     -10.055702 -12.753619  -7.357785 0.0e+00
+Treated:Pclivosa-Untreated:Acervicornis     -13.865604 -16.470898 -11.260310 0.0e+00
+Untreated:Pclivosa-Untreated:Acervicornis   -18.782277 -21.396600 -16.167955 0.0e+00
+Untreated:Pclivosa-Treated:Pclivosa          -4.916674  -7.512648  -2.320699 1.0e-05
+

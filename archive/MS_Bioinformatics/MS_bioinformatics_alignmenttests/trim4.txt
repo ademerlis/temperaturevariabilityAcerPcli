@@ -1,0 +1,40 @@
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
+Pcli-076.fastq	total:3822709	goods:353006	dups:3317244	noheader:152240	N.in.header:219
+Pcli-077.fastq	total:9536367	goods:730858	dups:8488198	noheader:316791	N.in.header:520
+Pcli-079.fastq	total:3754659	goods:330001	dups:3294889	noheader:129556	N.in.header:213
+Pcli-091.fastq	total:10000767	goods:690092	dups:8962063	noheader:348090	N.in.header:522
+Pcli-094.fastq	total:10965339	goods:847478	dups:9740913	noheader:376370	N.in.header:578
+Pcli-096.fastq	total:10197898	goods:674198	dups:9175831	noheader:347389	N.in.header:480
+Pcli-101.fastq	total:3268809	goods:320059	dups:2835336	noheader:113283	N.in.header:131
+Pcli-103.fastq	total:9722436	goods:836293	dups:8564364	noheader:321270	N.in.header:509
+Pcli-105.fastq	total:16685316	goods:1267722	dups:14858184	noheader:558507	N.in.header:903
+Pcli-109.fastq	total:16128393	goods:1631974	dups:13926474	noheader:569081	N.in.header:864
+Pcli-111.fastq	total:11145711	goods:708792	dups:10078638	noheader:357706	N.in.header:575
+Pcli-114.fastq	total:473700	goods:100968	dups:355840	noheader:16870	N.in.header:22
+Pcli-115.fastq	total:10813124	goods:814116	dups:9642685	noheader:355737	N.in.header:586
+Pcli-120.fastq	total:20639733	goods:1551107	dups:18240983	noheader:846578	N.in.header:1065
+Pcli-124.fastq	total:2952368	goods:221956	dups:2488418	noheader:241856	N.in.header:138
+Pcli-126.fastq	total:20201567	goods:2104007	dups:17412413	noheader:684066	N.in.header:1081
+Pcli-128.fastq	total:23415093	goods:2634952	dups:19970386	noheader:808520	N.in.header:1235
+Pcli-130.fastq	total:23864440	goods:1516455	dups:21456770	noheader:890012	N.in.header:1203
+Pcli-132.fastq	total:506825	goods:49810	dups:408840	noheader:48153	N.in.header:22
+Pcli-135.fastq	total:3532817	goods:306970	dups:3101002	noheader:124673	N.in.header:172
+Pcli-148.fastq	total:15270107	goods:1083782	dups:13654681	noheader:530848	N.in.header:796

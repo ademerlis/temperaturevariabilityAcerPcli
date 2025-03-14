@@ -1,0 +1,11 @@
+PASS	Basic Statistics	ACER-112_S69_L001_R1_001.fastq.gz
+PASS	Per base sequence quality	ACER-112_S69_L001_R1_001.fastq.gz
+PASS	Per sequence quality scores	ACER-112_S69_L001_R1_001.fastq.gz
+FAIL	Per base sequence content	ACER-112_S69_L001_R1_001.fastq.gz
+FAIL	Per base GC content	ACER-112_S69_L001_R1_001.fastq.gz
+WARN	Per sequence GC content	ACER-112_S69_L001_R1_001.fastq.gz
+PASS	Per base N content	ACER-112_S69_L001_R1_001.fastq.gz
+PASS	Sequence Length Distribution	ACER-112_S69_L001_R1_001.fastq.gz
+FAIL	Sequence Duplication Levels	ACER-112_S69_L001_R1_001.fastq.gz
+PASS	Overrepresented sequences	ACER-112_S69_L001_R1_001.fastq.gz
+FAIL	Kmer Content	ACER-112_S69_L001_R1_001.fastq.gz

@@ -1,0 +1,432 @@
+4247857 reads; of these:
+  4247857 (100.00%) were unpaired; of these:
+    198866 (4.68%) aligned 0 times
+    2676015 (63.00%) aligned exactly 1 time
+    1372976 (32.32%) aligned >1 times
+95.32% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4845731 reads; of these:
+  4845731 (100.00%) were unpaired; of these:
+    206269 (4.26%) aligned 0 times
+    3137057 (64.74%) aligned exactly 1 time
+    1502405 (31.00%) aligned >1 times
+95.74% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4367644 reads; of these:
+  4367644 (100.00%) were unpaired; of these:
+    202807 (4.64%) aligned 0 times
+    2788705 (63.85%) aligned exactly 1 time
+    1376132 (31.51%) aligned >1 times
+95.36% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3629351 reads; of these:
+  3629351 (100.00%) were unpaired; of these:
+    199370 (5.49%) aligned 0 times
+    2203565 (60.72%) aligned exactly 1 time
+    1226416 (33.79%) aligned >1 times
+94.51% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4500345 reads; of these:
+  4500345 (100.00%) were unpaired; of these:
+    217695 (4.84%) aligned 0 times
+    2789318 (61.98%) aligned exactly 1 time
+    1493332 (33.18%) aligned >1 times
+95.16% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4408738 reads; of these:
+  4408738 (100.00%) were unpaired; of these:
+    206656 (4.69%) aligned 0 times
+    2739285 (62.13%) aligned exactly 1 time
+    1462797 (33.18%) aligned >1 times
+95.31% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4337416 reads; of these:
+  4337416 (100.00%) were unpaired; of these:
+    214472 (4.94%) aligned 0 times
+    2778219 (64.05%) aligned exactly 1 time
+    1344725 (31.00%) aligned >1 times
+95.06% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+5025037 reads; of these:
+  5025037 (100.00%) were unpaired; of these:
+    240403 (4.78%) aligned 0 times
+    3153270 (62.75%) aligned exactly 1 time
+    1631364 (32.46%) aligned >1 times
+95.22% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2987276 reads; of these:
+  2987276 (100.00%) were unpaired; of these:
+    148935 (4.99%) aligned 0 times
+    1946168 (65.15%) aligned exactly 1 time
+    892173 (29.87%) aligned >1 times
+95.01% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3727077 reads; of these:
+  3727077 (100.00%) were unpaired; of these:
+    193480 (5.19%) aligned 0 times
+    2393018 (64.21%) aligned exactly 1 time
+    1140579 (30.60%) aligned >1 times
+94.81% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+5640952 reads; of these:
+  5640952 (100.00%) were unpaired; of these:
+    260974 (4.63%) aligned 0 times
+    3553065 (62.99%) aligned exactly 1 time
+    1826913 (32.39%) aligned >1 times
+95.37% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4198117 reads; of these:
+  4198117 (100.00%) were unpaired; of these:
+    199629 (4.76%) aligned 0 times
+    2661524 (63.40%) aligned exactly 1 time
+    1336964 (31.85%) aligned >1 times
+95.24% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3183800 reads; of these:
+  3183800 (100.00%) were unpaired; of these:
+    194837 (6.12%) aligned 0 times
+    1900979 (59.71%) aligned exactly 1 time
+    1087984 (34.17%) aligned >1 times
+93.88% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3981280 reads; of these:
+  3981280 (100.00%) were unpaired; of these:
+    183468 (4.61%) aligned 0 times
+    2518760 (63.27%) aligned exactly 1 time
+    1279052 (32.13%) aligned >1 times
+95.39% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4395690 reads; of these:
+  4395690 (100.00%) were unpaired; of these:
+    207919 (4.73%) aligned 0 times
+    2883984 (65.61%) aligned exactly 1 time
+    1303787 (29.66%) aligned >1 times
+95.27% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3745497 reads; of these:
+  3745497 (100.00%) were unpaired; of these:
+    161283 (4.31%) aligned 0 times
+    2516824 (67.20%) aligned exactly 1 time
+    1067390 (28.50%) aligned >1 times
+95.69% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3395173 reads; of these:
+  3395173 (100.00%) were unpaired; of these:
+    186299 (5.49%) aligned 0 times
+    2234552 (65.82%) aligned exactly 1 time
+    974322 (28.70%) aligned >1 times
+94.51% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4216482 reads; of these:
+  4216482 (100.00%) were unpaired; of these:
+    212035 (5.03%) aligned 0 times
+    2650340 (62.86%) aligned exactly 1 time
+    1354107 (32.11%) aligned >1 times
+94.97% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+5140680 reads; of these:
+  5140680 (100.00%) were unpaired; of these:
+    228252 (4.44%) aligned 0 times
+    3220000 (62.64%) aligned exactly 1 time
+    1692428 (32.92%) aligned >1 times
+95.56% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+1458102 reads; of these:
+  1458102 (100.00%) were unpaired; of these:
+    106890 (7.33%) aligned 0 times
+    849749 (58.28%) aligned exactly 1 time
+    501463 (34.39%) aligned >1 times
+92.67% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3034018 reads; of these:
+  3034018 (100.00%) were unpaired; of these:
+    170224 (5.61%) aligned 0 times
+    1927937 (63.54%) aligned exactly 1 time
+    935857 (30.85%) aligned >1 times
+94.39% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+852712 reads; of these:
+  852712 (100.00%) were unpaired; of these:
+    71620 (8.40%) aligned 0 times
+    496944 (58.28%) aligned exactly 1 time
+    284148 (33.32%) aligned >1 times
+91.60% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2267916 reads; of these:
+  2267916 (100.00%) were unpaired; of these:
+    139978 (6.17%) aligned 0 times
+    1433348 (63.20%) aligned exactly 1 time
+    694590 (30.63%) aligned >1 times
+93.83% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4210722 reads; of these:
+  4210722 (100.00%) were unpaired; of these:
+    209143 (4.97%) aligned 0 times
+    2582023 (61.32%) aligned exactly 1 time
+    1419556 (33.71%) aligned >1 times
+95.03% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2615820 reads; of these:
+  2615820 (100.00%) were unpaired; of these:
+    152273 (5.82%) aligned 0 times
+    1552071 (59.33%) aligned exactly 1 time
+    911476 (34.84%) aligned >1 times
+94.18% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2191125 reads; of these:
+  2191125 (100.00%) were unpaired; of these:
+    116292 (5.31%) aligned 0 times
+    1410849 (64.39%) aligned exactly 1 time
+    663984 (30.30%) aligned >1 times
+94.69% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3709718 reads; of these:
+  3709718 (100.00%) were unpaired; of these:
+    167173 (4.51%) aligned 0 times
+    2316207 (62.44%) aligned exactly 1 time
+    1226338 (33.06%) aligned >1 times
+95.49% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+1197643 reads; of these:
+  1197643 (100.00%) were unpaired; of these:
+    78512 (6.56%) aligned 0 times
+    681083 (56.87%) aligned exactly 1 time
+    438048 (36.58%) aligned >1 times
+93.44% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2089329 reads; of these:
+  2089329 (100.00%) were unpaired; of these:
+    127293 (6.09%) aligned 0 times
+    1248144 (59.74%) aligned exactly 1 time
+    713892 (34.17%) aligned >1 times
+93.91% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4508437 reads; of these:
+  4508437 (100.00%) were unpaired; of these:
+    207730 (4.61%) aligned 0 times
+    2780169 (61.67%) aligned exactly 1 time
+    1520538 (33.73%) aligned >1 times
+95.39% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4728151 reads; of these:
+  4728151 (100.00%) were unpaired; of these:
+    204965 (4.33%) aligned 0 times
+    2963122 (62.67%) aligned exactly 1 time
+    1560064 (33.00%) aligned >1 times
+95.67% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+5608466 reads; of these:
+  5608466 (100.00%) were unpaired; of these:
+    254871 (4.54%) aligned 0 times
+    3533159 (63.00%) aligned exactly 1 time
+    1820436 (32.46%) aligned >1 times
+95.46% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2647726 reads; of these:
+  2647726 (100.00%) were unpaired; of these:
+    125001 (4.72%) aligned 0 times
+    1727344 (65.24%) aligned exactly 1 time
+    795381 (30.04%) aligned >1 times
+95.28% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3556875 reads; of these:
+  3556875 (100.00%) were unpaired; of these:
+    170918 (4.81%) aligned 0 times
+    2242419 (63.04%) aligned exactly 1 time
+    1143538 (32.15%) aligned >1 times
+95.19% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3636838 reads; of these:
+  3636838 (100.00%) were unpaired; of these:
+    158619 (4.36%) aligned 0 times
+    2278049 (62.64%) aligned exactly 1 time
+    1200170 (33.00%) aligned >1 times
+95.64% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+1447075 reads; of these:
+  1447075 (100.00%) were unpaired; of these:
+    101480 (7.01%) aligned 0 times
+    857808 (59.28%) aligned exactly 1 time
+    487787 (33.71%) aligned >1 times
+92.99% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4375058 reads; of these:
+  4375058 (100.00%) were unpaired; of these:
+    221759 (5.07%) aligned 0 times
+    2690007 (61.49%) aligned exactly 1 time
+    1463292 (33.45%) aligned >1 times
+94.93% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+5899108 reads; of these:
+  5899108 (100.00%) were unpaired; of these:
+    282019 (4.78%) aligned 0 times
+    3713809 (62.96%) aligned exactly 1 time
+    1903280 (32.26%) aligned >1 times
+95.22% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4090239 reads; of these:
+  4090239 (100.00%) were unpaired; of these:
+    208941 (5.11%) aligned 0 times
+    2616937 (63.98%) aligned exactly 1 time
+    1264361 (30.91%) aligned >1 times
+94.89% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2100417 reads; of these:
+  2100417 (100.00%) were unpaired; of these:
+    117232 (5.58%) aligned 0 times
+    1318086 (62.75%) aligned exactly 1 time
+    665099 (31.67%) aligned >1 times
+94.42% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2067927 reads; of these:
+  2067927 (100.00%) were unpaired; of these:
+    107099 (5.18%) aligned 0 times
+    1293931 (62.57%) aligned exactly 1 time
+    666897 (32.25%) aligned >1 times
+94.82% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3257590 reads; of these:
+  3257590 (100.00%) were unpaired; of these:
+    174428 (5.35%) aligned 0 times
+    1995619 (61.26%) aligned exactly 1 time
+    1087543 (33.38%) aligned >1 times
+94.65% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4081431 reads; of these:
+  4081431 (100.00%) were unpaired; of these:
+    174527 (4.28%) aligned 0 times
+    2634057 (64.54%) aligned exactly 1 time
+    1272847 (31.19%) aligned >1 times
+95.72% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+6307683 reads; of these:
+  6307683 (100.00%) were unpaired; of these:
+    243773 (3.86%) aligned 0 times
+    4027789 (63.86%) aligned exactly 1 time
+    2036121 (32.28%) aligned >1 times
+96.14% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+4094288 reads; of these:
+  4094288 (100.00%) were unpaired; of these:
+    173898 (4.25%) aligned 0 times
+    2631375 (64.27%) aligned exactly 1 time
+    1289015 (31.48%) aligned >1 times
+95.75% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+1895452 reads; of these:
+  1895452 (100.00%) were unpaired; of these:
+    103339 (5.45%) aligned 0 times
+    1194168 (63.00%) aligned exactly 1 time
+    597945 (31.55%) aligned >1 times
+94.55% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+2063035 reads; of these:
+  2063035 (100.00%) were unpaired; of these:
+    131107 (6.36%) aligned 0 times
+    1287666 (62.42%) aligned exactly 1 time
+    644262 (31.23%) aligned >1 times
+93.64% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)
+3702334 reads; of these:
+  3702334 (100.00%) were unpaired; of these:
+    163639 (4.42%) aligned 0 times
+    2301712 (62.17%) aligned exactly 1 time
+    1236983 (33.41%) aligned >1 times
+95.58% overall alignment rate
+Error: reads file does not look like a FASTQ file
+terminate called after throwing an instance of 'int'
+(ERR): bowtie2-align died with signal 6 (ABRT) (core dumped)

@@ -1,0 +1,740 @@
+---
+title: "KEGG_pathway_analysis"
+author: "RH and AM"
+date: "2023-01-23"
+output: html_document
+---
+
+This code is adapted from [Dr. Natalia Andrade Rodriguez](https://github.com/China2302/3_prime_RNAseq_O.faveolata/blob/main/08_functional_analysis.Rmd) 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Install packages
+```{r}
+# BiocManager::install("clusterProfiler")
+# BiocManager::install("KEGGREST")
+# BiocManager::install("pathview")
+#install.packages("viridis")
+```
+
+# load packages
+```{r}
+library(KEGGREST)
+library(tidyverse)
+library(pathview)
+library(clusterProfiler)
+library(enrichplot)
+```
+
+1) You will need a list of Kegg IDs that match your gene IDs.
+I go to https://www.genome.jp/kaas-bin/kaas_main and use filtered amino acid sequences from braker2 (I use BBH with BLAST and select specific fish genomes), but nt sequences can be used to. Or any other source of Kegg annotation.
+
+2) once the annotation is finished, download the query.ko file
+
+3) load KEGG output into R, add columns and remove empty cells, then create TERM2GENE.KEGG object
+
+# load kegg list with Acer genes
+```{r}
+kegg.list <- read.table("bioinformatics/Pclivosa_iso2kegg.tab")
+colnames(kegg.list) <- c("TranscriptID","KO")
+dim(kegg.list)
+
+kegg.list %>% 
+  rename(gene = TranscriptID) -> kegg.list
+```
+
+# Treated vs. Initial DGEs with log-2-fold change list
+
+4) Creating a dataframe containing the KO terms and log2fold change values for a sample. this can also be a matrix with multiple sample.
+```{r}
+load("RData_files/Treated_vs_Initial_fc.RData") 
+TreatedvInitial_DGEs <- read_csv("results_csv/TreatedvInitial_annotDGEs.csv") #5,733 genes 
+
+Treated_vs_Initial.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvInitial_DGEs, by = "gene") %>%  #narrow down to only the DGEs
+  select(lfc, KO) %>% 
+  na.omit() %>% #3,472 genes
+  distinct(KO, .keep_all = TRUE) %>% #2,578 distinct KEGG terms
+  column_to_rownames(var = "KO") -> TreatedvInitial_KEGG_DGEs
+```
+
+
+5) Find mapping IDs for specific pathways that you want to look at.
+Running enrichKEGG analysis on KO terms for DEGs for each contrast (based on Alisa Mihaila's code)
+```{r}
+KEGG_enrich_TvI <- enrichKEGG(
+                      gene = rownames(TreatedvInitial_KEGG_DGEs),
+                      organism = "ko",
+                      keyType = "kegg",
+                      pvalueCutoff = 0.05,
+                      pAdjustMethod = "fdr",
+                      universe = kegg.list$KO
+                      )
+
+dotplot(KEGG_enrich_TvI)
+```
+
+```{r}
+length(unique(KEGG_enrich_TvI@result$Description)) #333 unique KEGG terms
+
+unique(KEGG_enrich@result$category)
+#I don't have category in my results table
+
+KEGG_enrich_TvI@result$geneID
+pathway_ids <- rownames(KEGG_enrich_TvI@result)
+
+# Retrieve information for each pathway
+pathway_info <- lapply(pathway_ids, keggGet)
+
+# Extract pathway names and categories
+pathway_details <- sapply(pathway_info, function(x) {
+  pathway_name <- x[[1]]$NAME
+  pathway_category <- x[[1]]$CLASS
+  return(c(Name = pathway_name, Category = pathway_category))
+})
+
+# Display the pathway names and categories
+print(pathway_details)
+
+pathway_categories_df <- tibble(
+  Pathway_ID = names(pathway_details),
+  Details = pathway_details
+)
+
+pathway_categories_df <- pathway_categories_df %>%
+  mutate(Description = sapply(Details, function(x) x[1]),
+         Category = sapply(Details, function(x) x[2])) %>%
+  select(-Details) 
+
+KEGG_enrich_TvI_categories <- left_join(KEGG_enrich_TvI@result, pathway_categories_df, by = "Description")
+
+length(unique(KEGG_enrich_TvI_categories$Category)) #45 unique categories
+```
+
+### Dotplot (no Human disease)
+```{r}
+filtered_KEGG_enrich_TvI <- KEGG_enrich_TvI_categories %>% filter(!grepl("Human Diseases", Category, ignore.case = TRUE))
+str(filtered_KEGG_enrich_TvI) #247 KEGG terms
+length(unique(filtered_KEGG_enrich_TvI$Category)) #34 categories
+
+filtered_KEGG_enrich_TvI$GeneRatio <- sapply(filtered_KEGG_enrich_TvI$GeneRatio, function(x) {
+  eval(parse(text=x))
+})
+
+filtered_KEGG_enrich_TvI %>% 
+  drop_na(Category) %>% 
+  filter(p.adjust < 0.05) %>% 
+ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
+  geom_point(aes(size = Count, color = p.adjust)) +
+  theme_minimal() +
+labs(x = "MAP Description", y = "Gene Ratio", title = "Treated vs. Initial") +
+  coord_flip() +
+  scale_colour_gradient(low="blue", high="red")
+#ggsave("TreatedvsInitial_KEGGenrichment_p0.05.pdf")
+
+```
+
+
+### Separating categories
+```{r}
+filtered_KEGG_enrich_TvI %>% 
+  filter(p.adjust<0.05) #6 categories with different descriptions
+
+#Genetic Information Processing; Translation
+#Organismal Systems; Environmental adaptation
+#Cellular Processes; Cellular community - eukaryotes
+#Cellular Processes; Cell motility
+#Environmental Information Processing; Signal transduction
+#Metabolism; Energy metabolism
+
+filtered_KEGG_enrich_CP <- filtered_KEGG_enrich_TvI %>% filter(grepl("Cellular Processes", Category, ignore.case = TRUE))
+
+filtered_KEGG_enrich_CP_cgd <- filtered_KEGG_enrich_TvI %>% filter(grepl("Cell growth and death", Category, ignore.case = TRUE))
+
+str(filtered_KEGG_enrich_CP_cgd) #GeneRatio is a character right now
+
+filtered_KEGG_enrich_CP_cgd$GeneRatio <- sapply(filtered_KEGG_enrich_CP_cgd$GeneRatio, function(x) {
+  eval(parse(text=x))
+})
+
+filtered_KEGG_enrich_CP_cgd %>% 
+  filter(p.adjust < 0.05) # no significant KEGG terms
+ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
+  geom_point(aes(size = Count, color = p.adjust)) +
+  theme_minimal() +
+  labs(x = "MAP Description", y = "Gene Ratio", title = "Treated vs. Initial: Cell Growth and Death") +
+  coord_flip() +
+  scale_colour_gradient(low="blue", high="red")
+
+```
+
+## Visualizations
+6) Run pathview to show the up and down regulated genes on the chosen pathway.
+The output file will be written to your working directory.
+```{r}
+# Define a color ramp from blue to red
+blue_to_red <- colorRampPalette(c("blue", "red"))
+
+# Generate n colors from this palette
+n_colors <- blue_to_red(2) 
+
+# Set pathway of interest from above 
+filtered_KEGG_enrich_TvI %>% 
+  drop_na(Category) %>% 
+  filter(p.adjust < 0.05)
+
+# map03010				
+# map04714				
+# map04510				
+# map04810				
+# map04015				
+# map00190
+
+map_id <- "03010" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Ribosome",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04714" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Thermogenesis",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+
+map_id <- "04510" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Focal adhesion",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04810" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Regulation of actin cytoskeleton",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04015" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Rap1 signaling pathway",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "00190" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Oxidative phosphorylation",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+```
+
+If required, all pathways can be visualised on the kegg web page without doing a statistical analysis by entering the KO terms from the DGE gene list into the web page below. This will give a list of all pathways that contain any of the KO terms from the list. This is useful to visualise the pathways and associated DGE before plotting the up and down regulated genes.
+
+Just copy paste the KO terms and change hsa to reference): https://www.genome.jp/kegg/mapper/search.html
+```{r}
+# Save KO terms to file so they can be used in the search for a pathway
+write.csv(TreatedvInitial_KEGG_DGEs, "TreatedvInitial_KEGG_DGEs.csv")
+```
+
+Code to look up a map ID of the pathway of interest. The pathway ID can also be taken from the webpage above.
+```{r}
+keggFind(database = "pathway", query = "Spliceosome")
+```
+
+
+
+# Treated vs. Untreated DGEs with log-2-fold change list
+
+```{r}
+
+load("RData_files/Treated_vs_Untreated_fc.RData") 
+TreatedvUntreated_DGEs <- read_csv("results_csv/TreatedvUntreated_annotDGEs.csv") #1587 genes
+
+Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvUntreated_DGEs, by = "gene") %>%  #narrow down to only the DGEs
+  select(lfc, KO) %>% 
+  na.omit() %>% #14 genes
+  distinct(KO, .keep_all = TRUE) %>% #14 distinct KEGG terms
+  column_to_rownames(var = "KO") -> TreatedvUntreated_KEGG_DGEs
+
+Treated_vs_Untreated.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., TreatedvUntreated_DGEs, by = "gene") %>%  #narrow down to only the DGEs
+  distinct(KO, .keep_all = TRUE) %>% #15 distinct KEGG terms
+```
+
+
+```{r}
+KEGG_enrich_TvU <- enrichKEGG(
+                      gene = rownames(TreatedvUntreated_KEGG_DGEs),
+                      organism = "ko",
+                      keyType = "kegg",
+                      pvalueCutoff = 0.05,
+                      pAdjustMethod = "fdr",
+                      universe = kegg.list$KO
+                      )
+
+KEGG_enrich_TvU
+
+dotplot(KEGG_enrich_TvU)
+```
+
+```{r}
+length(unique(KEGG_enrich_TvU@result$Description)) #328 unique KEGG terms
+
+KEGG_enrich_TvU@result$geneID
+pathway_ids <- rownames(KEGG_enrich_TvU@result)
+
+# Retrieve information for each pathway
+pathway_info <- lapply(pathway_ids, keggGet)
+
+# Extract pathway names and categories
+pathway_details <- sapply(pathway_info, function(x) {
+  pathway_name <- x[[1]]$NAME
+  pathway_category <- x[[1]]$CLASS
+  return(c(Name = pathway_name, Category = pathway_category))
+})
+
+# Display the pathway names and categories
+print(pathway_details)
+
+pathway_categories_df <- tibble(
+  Pathway_ID = names(pathway_details),
+  Details = pathway_details
+)
+
+pathway_categories_df <- pathway_categories_df %>%
+  mutate(Description = sapply(Details, function(x) x[1]),
+         Category = sapply(Details, function(x) x[2])) %>%
+  select(-Details) 
+
+KEGG_enrich_TvU_categories <- left_join(KEGG_enrich_TvU@result, pathway_categories_df, by = "Description")
+
+length(unique(KEGG_enrich_TvU_categories$Category)) #45 unique categories
+```
+
+### Dotplot (no Human disease)
+```{r}
+filtered_KEGG_enrich_TvU <- KEGG_enrich_TvU_categories %>% filter(!grepl("Human Diseases", Category, ignore.case = TRUE))
+str(filtered_KEGG_enrich_TvU) #242 KEGG terms
+length(unique(filtered_KEGG_enrich_TvU$Category)) #34 categories
+
+filtered_KEGG_enrich_TvU$GeneRatio <- sapply(filtered_KEGG_enrich_TvU$GeneRatio, function(x) {
+  eval(parse(text=x))
+})
+
+filtered_KEGG_enrich_TvU %>% 
+  drop_na(Category) %>% 
+  filter(p.adjust < 0.05) %>% 
+ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
+  geom_point(aes(size = Count, color = p.adjust)) +
+  theme_minimal() +
+labs(x = "MAP Description", y = "Gene Ratio", title = "Treated vs. Untreated") +
+  coord_flip() +
+  scale_colour_gradient(low="blue", high="red")
+#ggsave("TreatedvsUntreated_KEGGenrichment_p0.05.pdf")
+
+```
+
+### Separating categories
+```{r}
+filtered_KEGG_enrich_TvU %>% 
+  filter(p.adjust<0.05) # only 3 categories and they all have different descriptions
+
+#Genetic Information Processing; Folding, sorting and degradation
+#Environmental Information Processing; Signal transduction
+#Organismal Systems; Immune system
+
+filtered_KEGG_enrich_CP <- filtered_KEGG_enrich_TvU %>% filter(grepl("Cellular Processes", Category, ignore.case = TRUE))
+
+filtered_KEGG_enrich_CP_cgd <- filtered_KEGG_enrich_TvU %>% filter(grepl("Cell growth and death", Category, ignore.case = TRUE))
+
+filtered_KEGG_enrich_CP_cgd %>% 
+  filter(p.adjust < 0.05) # no significant KEGG terms
+```
+## Visualizations
+6) Run pathview to show the up and down regulated genes on the chosen pathway.
+The output file will be written to your working directory.
+```{r}
+# Define a color ramp from blue to red
+blue_to_red <- colorRampPalette(c("blue", "red"))
+
+# Generate n colors from this palette
+n_colors <- blue_to_red(2) 
+
+# Set pathway of interest from above 
+filtered_KEGG_enrich_TvU %>% 
+  drop_na(Category) %>% 
+  filter(p.adjust < 0.05)
+
+#map04141	Protein processing in endoplasmic reticulum	
+#map04020	Calcium signaling pathway	
+#map04612	Antigen processing and presentation
+
+map_id <- "04141" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvUntreated_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Protein processing in endoplasmic reticulum_TreatedvUntreated",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04020" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvUntreated_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Calcium signaling pathway_TreatedvUntreated",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+
+map_id <- "04612" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = TreatedvUntreated_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Antigen processing and presentation_TreatedvUntreated",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+```
+
+
+```{r}
+# Save KO terms to file so they can be used in the search for a pathway
+write.csv(TreatedvUntreated_KEGG_DGEs, "TreatedvUntreated_KEGG_DGEs.csv")
+```
+
+# Untreated vs. Initial DGEs with log-2-fold change list
+
+```{r}
+load("RData_files/Untreated_vs_Initial.fc.RData") 
+UntreatedvInitial_DGEs <- read_csv("results_csv/UntreatedvInitial_annotDGEs.csv") #5,733 genes 
+
+Untreated_vs_Initial.fc %>% right_join(kegg.list, by = "gene") %>% 
+  right_join(., UntreatedvInitial_DGEs, by = "gene") %>%  #narrow down to only the DGEs
+  select(lfc, KO) %>% 
+  na.omit() %>% #4,344 genes
+  distinct(KO, .keep_all = TRUE) %>% #3,182 distinct KEGG terms
+  column_to_rownames(var = "KO") -> UntreatedvInitial_KEGG_DGEs
+```
+
+
+```{r}
+KEGG_enrich_UvI <- enrichKEGG(
+                      gene = rownames(UntreatedvInitial_KEGG_DGEs),
+                      organism = "ko",
+                      keyType = "kegg",
+                      pvalueCutoff = 0.05,
+                      pAdjustMethod = "fdr",
+                      universe = kegg.list$KO
+                      )
+
+dotplot(KEGG_enrich_UvI)
+```
+
+
+
+```{r}
+length(unique(KEGG_enrich_UvI@result$Description)) #333 unique KEGG terms
+
+
+KEGG_enrich_UvI@result$geneID
+pathway_ids <- rownames(KEGG_enrich_UvI@result)
+
+# Retrieve information for each pathway
+pathway_info <- lapply(pathway_ids, keggGet)
+
+# Extract pathway names and categories
+pathway_details <- sapply(pathway_info, function(x) {
+  pathway_name <- x[[1]]$NAME
+  pathway_category <- x[[1]]$CLASS
+  return(c(Name = pathway_name, Category = pathway_category))
+})
+
+# Display the pathway names and categories
+print(pathway_details)
+
+pathway_categories_df <- tibble(
+  Pathway_ID = names(pathway_details),
+  Details = pathway_details
+)
+
+pathway_categories_df <- pathway_categories_df %>%
+  mutate(Description = sapply(Details, function(x) x[1]),
+         Category = sapply(Details, function(x) x[2])) %>%
+  select(-Details) 
+
+KEGG_enrich_UvI_categories <- left_join(KEGG_enrich_UvI@result, pathway_categories_df, by = "Description")
+
+length(unique(KEGG_enrich_UvI_categories$Category)) #45 unique categories
+```
+
+
+### Dotplot (no Human disease)
+```{r}
+filtered_KEGG_enrich_UvI <- KEGG_enrich_UvI_categories %>% filter(!grepl("Human Diseases", Category, ignore.case = TRUE))
+str(filtered_KEGG_enrich_UvI) #247 KEGG terms
+length(unique(filtered_KEGG_enrich_UvI$Category)) #34 categories
+
+filtered_KEGG_enrich_UvI$GeneRatio <- sapply(filtered_KEGG_enrich_UvI$GeneRatio, function(x) {
+  eval(parse(text=x))
+})
+
+filtered_KEGG_enrich_UvI %>% 
+  drop_na(Category) %>% 
+  filter(p.adjust < 0.05) %>% 
+ggplot(., aes(x = reorder(Description, GeneRatio), y = GeneRatio)) +
+  geom_point(aes(size = Count, color = p.adjust)) +
+  theme_minimal() +
+labs(x = "MAP Description", y = "Gene Ratio", title = "Untreated vs. Initial") +
+  coord_flip() +
+  scale_colour_gradient(low="blue", high="red")
+#ggsave("UntreatedvsInitial_KEGGenrichment_p0.05.pdf")
+
+```
+
+### Separating categories
+```{r}
+filtered_KEGG_enrich_UvI %>% 
+  filter(p.adjust<0.05) # only 4 categories and they all have different descriptions
+
+#Genetic Information Processing; Translation
+#	Organismal Systems; Environmental adaptation
+#Environmental Information Processing; Signal transduction
+#	Cellular Processes; Cell motility
+
+filtered_KEGG_enrich_CP <- filtered_KEGG_enrich_UvI %>% filter(grepl("Cellular Processes", Category, ignore.case = TRUE))
+
+filtered_KEGG_enrich_CP_cgd <- filtered_KEGG_enrich_UvI %>% filter(grepl("Cell growth and death", Category, ignore.case = TRUE))
+
+filtered_KEGG_enrich_CP_cgd %>% 
+  filter(p.adjust < 0.05) # no significant KEGG terms
+```
+
+## Visualizations
+6) Run pathview to show the up and down regulated genes on the chosen pathway.
+The output file will be written to your working directory.
+```{r}
+# Define a color ramp from blue to red
+blue_to_red <- colorRampPalette(c("blue", "red"))
+
+# Generate n colors from this palette
+n_colors <- blue_to_red(2) 
+
+# Set pathway of interest from above 
+filtered_KEGG_enrich_UvI %>% 
+  drop_na(Category) %>% 
+  filter(p.adjust < 0.05)
+
+#map03010	Ribosome	
+#map04714	Thermogenesis	
+#map04020	Calcium signaling pathway	
+#map04810 Regulation of actin cytoskeleton
+
+map_id <- "03010" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = UntreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Ribosome_UntreatedvInitial",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04714" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = UntreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Thermogenesis_UntreatedvInitial",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04020" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = UntreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Calcium signaling pathway_UntreatedvInitial",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+
+map_id <- "04810" 
+
+# run pathview on a specific path
+pv_path <- pathview(
+  gene.data = UntreatedvInitial_KEGG_DGEs,
+  pathway.id = map_id,
+  species = "ko",
+  out.suffix = "Regulation of actin cytoskeleton_UntreatedvInitial",
+  limit = list(
+    gene = c(-1, 1), # upper and lower range of log2foldchange values
+    cpd = c(-4, 4)),
+  discrete = list(
+    gene = FALSE, # set this to true when working with discrete data
+    cpd = FALSE), 
+  low = n_colors[1],
+  mid = n_colors[4],
+  high = n_colors[2],
+  kegg.native = T # T: outputs a traditional KEGG pathway map, F: outputs a different map style
+)
+```
+
+```{r}
+# Save KO terms to file so they can be used in the search for a pathway
+write.csv(UntreatedvInitial_KEGG_DGEs, "UntreatedvInitial_KEGG_DGEs.csv")
+```
+

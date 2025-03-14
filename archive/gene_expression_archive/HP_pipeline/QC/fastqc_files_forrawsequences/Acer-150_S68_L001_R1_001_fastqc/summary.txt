@@ -1,0 +1,11 @@
+PASS	Basic Statistics	Acer-150_S68_L001_R1_001.fastq.gz
+PASS	Per base sequence quality	Acer-150_S68_L001_R1_001.fastq.gz
+PASS	Per sequence quality scores	Acer-150_S68_L001_R1_001.fastq.gz
+FAIL	Per base sequence content	Acer-150_S68_L001_R1_001.fastq.gz
+FAIL	Per base GC content	Acer-150_S68_L001_R1_001.fastq.gz
+WARN	Per sequence GC content	Acer-150_S68_L001_R1_001.fastq.gz
+PASS	Per base N content	Acer-150_S68_L001_R1_001.fastq.gz
+PASS	Sequence Length Distribution	Acer-150_S68_L001_R1_001.fastq.gz
+FAIL	Sequence Duplication Levels	Acer-150_S68_L001_R1_001.fastq.gz
+PASS	Overrepresented sequences	Acer-150_S68_L001_R1_001.fastq.gz
+FAIL	Kmer Content	Acer-150_S68_L001_R1_001.fastq.gz

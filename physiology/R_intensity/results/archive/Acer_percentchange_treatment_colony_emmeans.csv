@@ -1,0 +1,19 @@
+ contrast                             estimate    SE     df t.ratio p.value
+ (BC-8b Treated) - (MB-B Treated)       -12.64  8.08 119.01  -1.564  0.6237
+ (BC-8b Treated) - (SI-C Treated)         1.03  8.81 119.00   0.117  1.0000
+ (BC-8b Treated) - (BC-8b Untreated)    -39.73 54.04   2.05  -0.735  0.9583
+ (BC-8b Treated) - (MB-B Untreated)     -67.46 54.06   2.06  -1.248  0.7981
+ (BC-8b Treated) - (SI-C Untreated)     -69.37 54.17   2.07  -1.281  0.7856
+ (MB-B Treated) - (SI-C Treated)         13.67  8.99 119.01   1.520  0.6519
+ (MB-B Treated) - (BC-8b Untreated)     -27.09 54.07   2.06  -0.501  0.9907
+ (MB-B Treated) - (MB-B Untreated)      -54.82 54.09   2.06  -1.014  0.8826
+ (MB-B Treated) - (SI-C Untreated)      -56.73 54.20   2.08  -1.047  0.8715
+ (SI-C Treated) - (BC-8b Untreated)     -40.76 54.18   2.07  -0.752  0.9549
+ (SI-C Treated) - (MB-B Untreated)      -68.49 54.21   2.08  -1.264  0.7921
+ (SI-C Treated) - (SI-C Untreated)      -70.40 54.31   2.09  -1.296  0.7795
+ (BC-8b Untreated) - (MB-B Untreated)   -27.73  7.89 119.00  -3.515  0.0080
+ (BC-8b Untreated) - (SI-C Untreated)   -29.64  8.59 119.01  -3.451  0.0098
+ (MB-B Untreated) - (SI-C Untreated)     -1.91  8.73 119.00  -0.219  0.9999
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 6 estimates 

@@ -1,0 +1,432 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = days_to_removed ~ Treatment * Species * CBASS_temp, data = slowburn_summary_data)
+
+$Treatment
+                        diff       lwr      upr     p adj
+Untreated-Treated -0.7465201 -3.411836 1.918795 0.5767523
+
+$Species
+                                                diff     lwr      upr p adj
+Pseudodiploria clivosa-Acropora cervicornis 9.334138 6.60824 12.06004     0
+
+$CBASS_temp
+            diff        lwr      upr     p adj
+30-28 -1.6824972  -8.479250 5.114256 0.9771457
+32-28  0.7659956  -5.841204 7.373195 0.9993418
+33-28 -0.5490468  -7.156246 6.058153 0.9998711
+34-28 -3.0354501 -10.077009 4.006109 0.7978540
+35-28 -4.1285131 -13.227028 4.970002 0.7612270
+32-30  2.4484928  -3.724965 8.621951 0.8481631
+33-30  1.1334504  -5.040007 7.306908 0.9940984
+34-30 -1.3529530  -7.989221 5.283315 0.9904304
+35-30 -2.4460160 -11.234615 6.342583 0.9621273
+33-32 -1.3150424  -7.279169 4.649084 0.9863399
+34-32 -3.8014457 -10.243439 2.640547 0.5100320
+35-32 -4.8945087 -13.537350 3.748332 0.5550443
+34-33 -2.4864033  -8.928397 3.955590 0.8622503
+35-33 -3.5794663 -12.222307 5.063375 0.8234250
+35-34 -1.0930630 -10.072326 7.886200 0.9991660
+
+$`Treatment:Species`
+                                                                     diff       lwr       upr     p adj
+Untreated:Acropora cervicornis-Treated:Acropora cervicornis     -1.780235 -6.302866  2.742397 0.7248165
+Treated:Pseudodiploria clivosa-Treated:Acropora cervicornis     10.104096  4.593073 15.615119 0.0000608
+Untreated:Pseudodiploria clivosa-Treated:Acropora cervicornis    7.339888  2.620530 12.059247 0.0007306
+Treated:Pseudodiploria clivosa-Untreated:Acropora cervicornis   11.884331  6.250949 17.517712 0.0000045
+Untreated:Pseudodiploria clivosa-Untreated:Acropora cervicornis  9.120123  4.258441 13.981805 0.0000410
+Untreated:Pseudodiploria clivosa-Treated:Pseudodiploria clivosa -2.764208 -8.556715  3.028299 0.5888544
+
+$`Treatment:CBASS_temp`
+                                   diff        lwr       upr     p adj
+Untreated:28-Treated:28   -3.8909001271 -15.697910  7.916109 0.9920862
+Treated:30-Treated:28     -3.6415379463 -14.489577  7.206501 0.9908039
+Untreated:30-Treated:28   -3.3285038080 -14.176543  7.519535 0.9956380
+Treated:32-Treated:28     -2.3636897467 -12.894156  8.166776 0.9997456
+Untreated:32-Treated:28    0.2906335463 -10.239833 10.821100 1.0000000
+Treated:33-Treated:28     -0.9319155281 -13.518230 11.654399 1.0000000
+Untreated:33-Treated:28   -3.0736288729 -12.822946  6.675688 0.9945153
+Treated:34-Treated:28     -4.5655157944 -15.095982  5.964950 0.9395405
+Untreated:34-Treated:28   -5.0096298612 -17.595944  7.576685 0.9663272
+Treated:35-Treated:28     -0.9314230245 -16.851991 14.989145 1.0000000
+Untreated:35-Treated:28   -9.3885327334 -23.176149  4.399084 0.4721617
+Treated:30-Untreated:28    0.2493621808 -11.167869 11.666594 1.0000000
+Untreated:30-Untreated:28  0.5623963190 -10.854835 11.979628 1.0000000
+Treated:32-Untreated:28    1.5272103804  -9.588722 12.643142 0.9999982
+Untreated:32-Untreated:28  4.1815336734  -6.934398 15.297466 0.9776939
+Treated:33-Untreated:28    2.9589845990 -10.121097 16.039066 0.9997259
+Untreated:33-Untreated:28  0.8172712542  -9.561670 11.196212 1.0000000
+Treated:34-Untreated:28   -0.6746156673 -11.790548 10.441316 1.0000000
+Untreated:34-Untreated:28 -1.1187297341 -14.198811 11.961352 1.0000000
+Treated:35-Untreated:28    2.9594771026 -13.354251 19.273205 0.9999687
+Untreated:35-Untreated:28 -5.4976326063 -19.737422  8.742157 0.9729747
+Untreated:30-Treated:30    0.3130341382 -10.109424 10.735493 1.0000000
+Treated:32-Treated:30      1.2778481996  -8.813654 11.369350 0.9999992
+Untreated:32-Treated:30    3.9321714926  -6.159331 14.023674 0.9710979
+Treated:33-Treated:30      2.7096224182  -9.511794 14.931038 0.9997740
+Untreated:33-Treated:30    0.5679090734  -8.705541  9.841360 1.0000000
+Treated:34-Treated:30     -0.9239778481 -11.015480  9.167524 1.0000000
+Untreated:34-Treated:30   -1.3680919149 -13.589508 10.853324 0.9999998
+Treated:35-Treated:30      2.7101149218 -12.923573 18.343803 0.9999802
+Untreated:35-Treated:30   -5.7469947871 -19.202331  7.708341 0.9452321
+Treated:32-Untreated:30    0.9648140614  -9.126688 11.056316 1.0000000
+Untreated:32-Untreated:30  3.6191373544  -6.472365 13.710639 0.9844841
+Treated:33-Untreated:30    2.3965882799  -9.824828 14.618004 0.9999319
+Untreated:33-Untreated:30  0.2548749351  -9.018576  9.528325 1.0000000
+Treated:34-Untreated:30   -1.2370119863 -11.328514  8.854490 0.9999995
+Untreated:34-Untreated:30 -1.6811260531 -13.902542 10.540290 0.9999982
+Treated:35-Untreated:30    2.3970807835 -13.236607 18.030769 0.9999944
+Untreated:35-Untreated:30 -6.0600289253 -19.515365  7.395307 0.9227804
+Untreated:32-Treated:32    2.6543232930  -7.094994 12.403641 0.9984679
+Treated:33-Treated:32      1.4317742185 -10.508652 13.372201 0.9999996
+Untreated:33-Treated:32   -0.7099391262  -9.609807  8.189929 1.0000000
+Treated:34-Treated:32     -2.2018260477 -11.951143  7.547491 0.9997302
+Untreated:34-Treated:32   -2.6459401145 -14.586366  9.294486 0.9997752
+Treated:35-Treated:32      1.4322667221 -13.982757 16.847291 1.0000000
+Untreated:35-Treated:32   -7.0248429867 -20.225481  6.175795 0.8014136
+Treated:33-Untreated:32   -1.2225490744 -13.162975 10.717877 0.9999999
+Untreated:33-Untreated:32 -3.3642624192 -12.264131  5.535606 0.9768692
+Treated:34-Untreated:32   -4.8561493407 -14.605467  4.893168 0.8598628
+Untreated:34-Untreated:32 -5.3002634075 -17.240690  6.640163 0.9295705
+Treated:35-Untreated:32   -1.2220565708 -16.637081 14.192968 1.0000000
+Untreated:35-Untreated:32 -9.6791662797 -22.879804  3.521472 0.3596248
+Untreated:33-Treated:33   -2.1417133448 -13.399255  9.115829 0.9999496
+Treated:34-Treated:33     -3.6336002663 -15.574027  8.306826 0.9959340
+Untreated:34-Treated:33   -4.0777143331 -17.865331  9.709902 0.9968188
+Treated:35-Treated:33      0.0004925036 -16.885820 16.886805 1.0000000
+Untreated:35-Treated:33   -8.4566172053 -23.348945  6.435711 0.7299480
+Treated:34-Untreated:33   -1.4918869215 -10.391755  7.407981 0.9999859
+Untreated:34-Untreated:33 -1.9360009883 -13.193543  9.321541 0.9999817
+Treated:35-Untreated:33    2.1422058484 -12.750122 17.034534 0.9999971
+Untreated:35-Untreated:33 -6.3149038605 -18.901218  6.271411 0.8541531
+Untreated:34-Treated:34   -0.4441140668 -12.384540 11.496312 1.0000000
+Treated:35-Treated:34      3.6340927698 -11.780931 19.049117 0.9995942
+Untreated:35-Treated:34   -4.8230169390 -18.023655  8.377621 0.9821015
+Treated:35-Untreated:34    4.0782068367 -12.808106 20.964520 0.9994906
+Untreated:35-Untreated:34 -4.3789028722 -19.271231 10.513425 0.9969752
+Untreated:35-Treated:35   -8.4571097089 -26.256846  9.342627 0.8930179
+
+$`Species:CBASS_temp`
+                                                           diff         lwr       upr     p adj
+Pseudodiploria clivosa:28-Acropora cervicornis:28            NA          NA        NA        NA
+Acropora cervicornis:30-Acropora cervicornis:28      -2.0509783 -10.3652240  6.263267 0.9993790
+Pseudodiploria clivosa:30-Acropora cervicornis:28     8.9210307  -3.7791895 21.621251 0.4243955
+Acropora cervicornis:32-Acropora cervicornis:28      -0.5117787  -9.2757632  8.252206 1.0000000
+Pseudodiploria clivosa:32-Acropora cervicornis:28    11.8134838   2.3860153 21.240952 0.0040363
+Acropora cervicornis:33-Acropora cervicornis:28      -1.7822953 -11.6782271  8.113636 0.9999709
+Pseudodiploria clivosa:33-Acropora cervicornis:28     9.0768231   0.5572564 17.596390 0.0273615
+Acropora cervicornis:34-Acropora cervicornis:28      -1.2278969 -10.2881361  7.832342 0.9999984
+Pseudodiploria clivosa:34-Acropora cervicornis:28     3.4116046  -7.9731452 14.796354 0.9964365
+Acropora cervicornis:35-Acropora cervicornis:28              NA          NA        NA        NA
+Pseudodiploria clivosa:35-Acropora cervicornis:28     5.2176757  -5.2991057 15.734457 0.8629154
+Acropora cervicornis:30-Pseudodiploria clivosa:28            NA          NA        NA        NA
+Pseudodiploria clivosa:30-Pseudodiploria clivosa:28          NA          NA        NA        NA
+Acropora cervicornis:32-Pseudodiploria clivosa:28            NA          NA        NA        NA
+Pseudodiploria clivosa:32-Pseudodiploria clivosa:28          NA          NA        NA        NA
+Acropora cervicornis:33-Pseudodiploria clivosa:28            NA          NA        NA        NA
+Pseudodiploria clivosa:33-Pseudodiploria clivosa:28          NA          NA        NA        NA
+Acropora cervicornis:34-Pseudodiploria clivosa:28            NA          NA        NA        NA
+Pseudodiploria clivosa:34-Pseudodiploria clivosa:28          NA          NA        NA        NA
+Acropora cervicornis:35-Pseudodiploria clivosa:28            NA          NA        NA        NA
+Pseudodiploria clivosa:35-Pseudodiploria clivosa:28          NA          NA        NA        NA
+Pseudodiploria clivosa:30-Acropora cervicornis:30    10.9720089  -1.7282112 23.672229 0.1527207
+Acropora cervicornis:32-Acropora cervicornis:30       1.5391996  -7.2247849 10.303184 0.9999774
+Pseudodiploria clivosa:32-Acropora cervicornis:30    13.8644621   4.4369936 23.291931 0.0003431
+Acropora cervicornis:33-Acropora cervicornis:30       0.2686829  -9.6272489 10.164615 1.0000000
+Pseudodiploria clivosa:33-Acropora cervicornis:30    11.1278014   2.6082347 19.647368 0.0022578
+Acropora cervicornis:34-Acropora cervicornis:30       0.8230814  -8.2371578  9.883321 1.0000000
+Pseudodiploria clivosa:34-Acropora cervicornis:30     5.4625828  -5.9221670 16.847333 0.8866792
+Acropora cervicornis:35-Acropora cervicornis:30              NA          NA        NA        NA
+Pseudodiploria clivosa:35-Acropora cervicornis:30     7.2686539  -3.2481275 17.785435 0.4492521
+Acropora cervicornis:32-Pseudodiploria clivosa:30    -9.4328094 -22.4318991  3.566280 0.3751021
+Pseudodiploria clivosa:32-Pseudodiploria clivosa:30   2.8924532 -10.5628830 16.347789 0.9998323
+Acropora cervicornis:33-Pseudodiploria clivosa:30   -10.7033260 -24.4909427  3.084291 0.2784799
+Pseudodiploria clivosa:33-Pseudodiploria clivosa:30   0.1557924 -12.6797802 12.991365 1.0000000
+Acropora cervicornis:34-Pseudodiploria clivosa:30   -10.1489275 -23.3495655  3.051710 0.2916976
+Pseudodiploria clivosa:34-Pseudodiploria clivosa:30  -5.5094261 -20.4017542  9.382902 0.9803217
+Acropora cervicornis:35-Pseudodiploria clivosa:30            NA          NA        NA        NA
+Pseudodiploria clivosa:35-Pseudodiploria clivosa:30  -3.7033550 -17.9431443 10.536434 0.9989884
+Pseudodiploria clivosa:32-Acropora cervicornis:32    12.3252625   2.4988743 22.151651 0.0039838
+Acropora cervicornis:33-Acropora cervicornis:32      -1.2705166 -11.5471994  9.006166 0.9999994
+Pseudodiploria clivosa:33-Acropora cervicornis:32     9.5886018   0.6295975 18.547606 0.0261223
+Acropora cervicornis:34-Acropora cervicornis:32      -0.7161182 -10.1907515  8.758515 1.0000000
+Pseudodiploria clivosa:34-Acropora cervicornis:32     3.9233833  -7.7938378 15.640604 0.9909900
+Acropora cervicornis:35-Acropora cervicornis:32              NA          NA        NA        NA
+Pseudodiploria clivosa:35-Acropora cervicornis:32     5.7294544  -5.1463644 16.605273 0.8112879
+Acropora cervicornis:33-Pseudodiploria clivosa:32   -13.5957792 -24.4438180 -2.747740 0.0040275
+Pseudodiploria clivosa:33-Pseudodiploria clivosa:32  -2.7366607 -12.3456927  6.872371 0.9977123
+Acropora cervicornis:34-Pseudodiploria clivosa:32   -13.0413807 -23.1328828 -2.949879 0.0026308
+Pseudodiploria clivosa:34-Pseudodiploria clivosa:32  -8.4018792 -20.6232952  3.819537 0.4574599
+Acropora cervicornis:35-Pseudodiploria clivosa:32            NA          NA        NA        NA
+Pseudodiploria clivosa:35-Pseudodiploria clivosa:32  -6.5958082 -18.0130395  4.821423 0.7087513
+Pseudodiploria clivosa:33-Acropora cervicornis:33    10.8591184   0.7900668 20.928170 0.0241516
+Acropora cervicornis:34-Acropora cervicornis:33       0.5543985  -9.9760677 11.084865 1.0000000
+Pseudodiploria clivosa:34-Acropora cervicornis:33     5.1938999  -7.3924146 17.780214 0.9566282
+Acropora cervicornis:35-Acropora cervicornis:33              NA          NA        NA        NA
+Pseudodiploria clivosa:35-Acropora cervicornis:33     6.9999710  -4.8070386 18.806981 0.6752085
+Acropora cervicornis:34-Pseudodiploria clivosa:33   -10.3047200 -19.5537344 -1.055705 0.0170537
+Pseudodiploria clivosa:34-Pseudodiploria clivosa:33  -5.6652185 -17.2007663  5.870329 0.8705087
+Acropora cervicornis:35-Pseudodiploria clivosa:33            NA          NA        NA        NA
+Pseudodiploria clivosa:35-Pseudodiploria clivosa:33  -3.8591474 -14.5389894  6.820695 0.9835541
+Pseudodiploria clivosa:34-Acropora cervicornis:34     4.6395014  -7.3009249 16.579928 0.9716840
+Acropora cervicornis:35-Acropora cervicornis:34              NA          NA        NA        NA
+Pseudodiploria clivosa:35-Acropora cervicornis:34     6.4455725  -4.6703595 17.561504 0.7040730
+Acropora cervicornis:35-Pseudodiploria clivosa:34            NA          NA        NA        NA
+Pseudodiploria clivosa:35-Pseudodiploria clivosa:34   1.8060711 -11.2740106 14.886153 0.9999981
+Pseudodiploria clivosa:35-Acropora cervicornis:35            NA          NA        NA        NA
+
+$`Treatment:Species:CBASS_temp`
+                                                                                 diff         lwr        upr     p adj
+Untreated:Acropora cervicornis:28-Treated:Acropora cervicornis:28       -4.933333e+00 -18.1755422  8.3088756 0.9986330
+Treated:Pseudodiploria clivosa:28-Treated:Acropora cervicornis:28                  NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:28-Treated:Acropora cervicornis:28                NA          NA         NA        NA
+Treated:Acropora cervicornis:30-Treated:Acropora cervicornis:28         -4.000000e+00 -16.6259508  8.6259508 0.9998809
+Untreated:Acropora cervicornis:30-Treated:Acropora cervicornis:28       -4.733333e+00 -17.9755422  8.5088756 0.9992438
+Treated:Pseudodiploria clivosa:30-Treated:Acropora cervicornis:28        8.666667e+00 -14.9543244 32.2876577 0.9988982
+Untreated:Pseudodiploria clivosa:30-Treated:Acropora cervicornis:28      5.666667e+00 -12.1891242 23.5224575 0.9998775
+Treated:Acropora cervicornis:32-Treated:Acropora cervicornis:28         -2.533333e+00 -15.7755422 10.7088756 1.0000000
+Untreated:Acropora cervicornis:32-Treated:Acropora cervicornis:28       -3.333333e+00 -17.4495755 10.7829088 0.9999993
+Treated:Pseudodiploria clivosa:32-Treated:Acropora cervicornis:28        8.000000e+00  -7.4635685 23.4635685 0.9375620
+Untreated:Pseudodiploria clivosa:32-Treated:Acropora cervicornis:28      1.091667e+01  -3.1995755 25.0329088 0.3534936
+Treated:Acropora cervicornis:33-Treated:Acropora cervicornis:28         -4.333333e+00 -22.1891242 13.5224575 0.9999988
+Untreated:Acropora cervicornis:33-Treated:Acropora cervicornis:28       -3.833333e+00 -17.9495755 10.2829088 0.9999911
+Treated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:28        1.266667e+01  -5.1891242 30.5224575 0.5170876
+Untreated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:28      4.916667e+00  -6.8938288 16.7271622 0.9940348
+Treated:Acropora cervicornis:34-Treated:Acropora cervicornis:28         -2.533333e+00 -15.7755422 10.7088756 1.0000000
+Untreated:Acropora cervicornis:34-Treated:Acropora cervicornis:28       -4.666667e+00 -20.1302351 10.7969018 0.9999460
+Treated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:28        2.000000e+00 -13.4635685 17.4635685 1.0000000
+Untreated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:28     -1.333333e+00 -24.9543244 22.2876577 1.0000000
+Treated:Acropora cervicornis:35-Treated:Acropora cervicornis:28                    NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Acropora cervicornis:28                  NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:28        9.166667e+00  -8.6891242 27.0224575 0.9418064
+Untreated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:28     -1.333333e+00 -16.7969018 14.1302351 1.0000000
+Treated:Pseudodiploria clivosa:28-Untreated:Acropora cervicornis:28                NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:28-Untreated:Acropora cervicornis:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:30-Untreated:Acropora cervicornis:28        9.333333e-01 -12.3088756 14.1755422 1.0000000
+Untreated:Acropora cervicornis:30-Untreated:Acropora cervicornis:28      2.000000e-01 -13.6310361 14.0310361 1.0000000
+Treated:Pseudodiploria clivosa:30-Untreated:Acropora cervicornis:28      1.360000e+01 -10.3560573 37.5560573 0.8650000
+Untreated:Pseudodiploria clivosa:30-Untreated:Acropora cervicornis:28    1.060000e+01  -7.6967410 28.8967410 0.8432582
+Treated:Acropora cervicornis:32-Untreated:Acropora cervicornis:28        2.400000e+00 -11.4310361 16.2310361 1.0000000
+Untreated:Acropora cervicornis:32-Untreated:Acropora cervicornis:28      1.600000e+00 -13.0700291 16.2700291 1.0000000
+Treated:Pseudodiploria clivosa:32-Untreated:Acropora cervicornis:28      1.293333e+01  -3.0373715 28.9040382 0.2738953
+Untreated:Pseudodiploria clivosa:32-Untreated:Acropora cervicornis:28    1.585000e+01   1.1799709 30.5200291 0.0210291
+Treated:Acropora cervicornis:33-Untreated:Acropora cervicornis:28        6.000000e-01 -17.6967410 18.8967410 1.0000000
+Untreated:Acropora cervicornis:33-Untreated:Acropora cervicornis:28      1.100000e+00 -13.5700291 15.7700291 1.0000000
+Treated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:28      1.760000e+01  -0.6967410 35.8967410 0.0733671
+Untreated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:28    9.850000e+00  -2.6171275 22.3171275 0.3154778
+Treated:Acropora cervicornis:34-Untreated:Acropora cervicornis:28        2.400000e+00 -11.4310361 16.2310361 1.0000000
+Untreated:Acropora cervicornis:34-Untreated:Acropora cervicornis:28      2.666667e-01 -15.7040382 16.2373715 1.0000000
+Treated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:28      6.933333e+00  -9.0373715 22.9040382 0.9900631
+Untreated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:28    3.600000e+00 -20.3560573 27.5560573 1.0000000
+Treated:Acropora cervicornis:35-Untreated:Acropora cervicornis:28                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Acropora cervicornis:28                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:28      1.410000e+01  -4.1967410 32.3967410 0.3598771
+Untreated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:28    3.600000e+00 -12.3707049 19.5707049 0.9999997
+Untreated:Pseudodiploria clivosa:28-Treated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:30-Treated:Pseudodiploria clivosa:28                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:30-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:30-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:30-Treated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:32-Treated:Pseudodiploria clivosa:28                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:32-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:32-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:32-Treated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:33-Treated:Pseudodiploria clivosa:28                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:33-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:28                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:28                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Acropora cervicornis:30-Untreated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Acropora cervicornis:30-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:30-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:30-Untreated:Pseudodiploria clivosa:28            NA          NA         NA        NA
+Treated:Acropora cervicornis:32-Untreated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Acropora cervicornis:32-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:32-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:32-Untreated:Pseudodiploria clivosa:28            NA          NA         NA        NA
+Treated:Acropora cervicornis:33-Untreated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Acropora cervicornis:33-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:33-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:33-Untreated:Pseudodiploria clivosa:28            NA          NA         NA        NA
+Treated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:28            NA          NA         NA        NA
+Treated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:28                NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:28              NA          NA         NA        NA
+Untreated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:28            NA          NA         NA        NA
+Untreated:Acropora cervicornis:30-Treated:Acropora cervicornis:30       -7.333333e-01 -13.9755422 12.5088756 1.0000000
+Treated:Pseudodiploria clivosa:30-Treated:Acropora cervicornis:30        1.266667e+01 -10.9543244 36.2876577 0.9144604
+Untreated:Pseudodiploria clivosa:30-Treated:Acropora cervicornis:30      9.666667e+00  -8.1891242 27.5224575 0.9073430
+Treated:Acropora cervicornis:32-Treated:Acropora cervicornis:30          1.466667e+00 -11.7755422 14.7088756 1.0000000
+Untreated:Acropora cervicornis:32-Treated:Acropora cervicornis:30        6.666667e-01 -13.4495755 14.7829088 1.0000000
+Treated:Pseudodiploria clivosa:32-Treated:Acropora cervicornis:30        1.200000e+01  -3.4635685 27.4635685 0.3472524
+Untreated:Pseudodiploria clivosa:32-Treated:Acropora cervicornis:30      1.491667e+01   0.8004245 29.0329088 0.0273510
+Treated:Acropora cervicornis:33-Treated:Acropora cervicornis:30         -3.333333e-01 -18.1891242 17.5224575 1.0000000
+Untreated:Acropora cervicornis:33-Treated:Acropora cervicornis:30        1.666667e-01 -13.9495755 14.2829088 1.0000000
+Treated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:30        1.666667e+01  -1.1891242 34.5224575 0.0965399
+Untreated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:30      8.916667e+00  -2.8938288 20.7271622 0.3978457
+Treated:Acropora cervicornis:34-Treated:Acropora cervicornis:30          1.466667e+00 -11.7755422 14.7088756 1.0000000
+Untreated:Acropora cervicornis:34-Treated:Acropora cervicornis:30       -6.666667e-01 -16.1302351 14.7969018 1.0000000
+Treated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:30        6.000000e+00  -9.4635685 21.4635685 0.9976078
+Untreated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:30      2.666667e+00 -20.9543244 26.2876577 1.0000000
+Treated:Acropora cervicornis:35-Treated:Acropora cervicornis:30                    NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Acropora cervicornis:30                  NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:30        1.316667e+01  -4.6891242 31.0224575 0.4425636
+Untreated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:30      2.666667e+00 -12.7969018 18.1302351 1.0000000
+Treated:Pseudodiploria clivosa:30-Untreated:Acropora cervicornis:30      1.340000e+01 -10.5560573 37.3560573 0.8794714
+Untreated:Pseudodiploria clivosa:30-Untreated:Acropora cervicornis:30    1.040000e+01  -7.8967410 28.6967410 0.8637411
+Treated:Acropora cervicornis:32-Untreated:Acropora cervicornis:30        2.200000e+00 -11.6310361 16.0310361 1.0000000
+Untreated:Acropora cervicornis:32-Untreated:Acropora cervicornis:30      1.400000e+00 -13.2700291 16.0700291 1.0000000
+Treated:Pseudodiploria clivosa:32-Untreated:Acropora cervicornis:30      1.273333e+01  -3.2373715 28.7040382 0.2998569
+Untreated:Pseudodiploria clivosa:32-Untreated:Acropora cervicornis:30    1.565000e+01   0.9799709 30.3200291 0.0244739
+Treated:Acropora cervicornis:33-Untreated:Acropora cervicornis:30        4.000000e-01 -17.8967410 18.6967410 1.0000000
+Untreated:Acropora cervicornis:33-Untreated:Acropora cervicornis:30      9.000000e-01 -13.7700291 15.5700291 1.0000000
+Treated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:30      1.740000e+01  -0.8967410 35.6967410 0.0816161
+Untreated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:30    9.650000e+00  -2.8171275 22.1171275 0.3518680
+Treated:Acropora cervicornis:34-Untreated:Acropora cervicornis:30        2.200000e+00 -11.6310361 16.0310361 1.0000000
+Untreated:Acropora cervicornis:34-Untreated:Acropora cervicornis:30      6.666667e-02 -15.9040382 16.0373715 1.0000000
+Treated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:30      6.733333e+00  -9.2373715 22.7040382 0.9930212
+Untreated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:30    3.400000e+00 -20.5560573 27.3560573 1.0000000
+Treated:Acropora cervicornis:35-Untreated:Acropora cervicornis:30                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Acropora cervicornis:30                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:30      1.390000e+01  -4.3967410 32.1967410 0.3862004
+Untreated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:30    3.400000e+00 -12.5707049 19.3707049 0.9999999
+Untreated:Pseudodiploria clivosa:30-Treated:Pseudodiploria clivosa:30   -3.000000e+00 -29.7836863 23.7836863 1.0000000
+Treated:Acropora cervicornis:32-Treated:Pseudodiploria clivosa:30       -1.120000e+01 -35.1560573 12.7560573 0.9770701
+Untreated:Acropora cervicornis:32-Treated:Pseudodiploria clivosa:30     -1.200000e+01 -36.4500486 12.4500486 0.9621465
+Treated:Pseudodiploria clivosa:32-Treated:Pseudodiploria clivosa:30     -6.666667e-01 -25.9185682 24.5852349 1.0000000
+Untreated:Pseudodiploria clivosa:32-Treated:Pseudodiploria clivosa:30    2.250000e+00 -22.2000486 26.7000486 1.0000000
+Treated:Acropora cervicornis:33-Treated:Pseudodiploria clivosa:30       -1.300000e+01 -39.7836863 13.7836863 0.9661363
+Untreated:Acropora cervicornis:33-Treated:Pseudodiploria clivosa:30     -1.250000e+01 -36.9500486 11.9500486 0.9439929
+Treated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:30      4.000000e+00 -22.7836863 30.7836863 1.0000000
+Untreated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:30   -3.750000e+00 -26.9453527 19.4453527 1.0000000
+Treated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:30       -1.120000e+01 -35.1560573 12.7560573 0.9770701
+Untreated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:30     -1.333333e+01 -38.5852349 11.9185682 0.9251230
+Treated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:30     -6.666667e+00 -31.9185682 18.5852349 0.9999946
+Untreated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:30   -1.000000e+01 -40.9271370 20.9271370 0.9998352
+Treated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:30                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:30                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:30      5.000000e-01 -26.2836863 27.2836863 1.0000000
+Untreated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:30   -1.000000e+01 -35.2519016 15.2519016 0.9968592
+Treated:Acropora cervicornis:32-Untreated:Pseudodiploria clivosa:30     -8.200000e+00 -26.4967410 10.0967410 0.9856209
+Untreated:Acropora cervicornis:32-Untreated:Pseudodiploria clivosa:30   -9.000000e+00 -27.9389262  9.9389262 0.9727524
+Treated:Pseudodiploria clivosa:32-Untreated:Pseudodiploria clivosa:30    2.333333e+00 -17.6300477 22.2967144 1.0000000
+Untreated:Pseudodiploria clivosa:32-Untreated:Pseudodiploria clivosa:30  5.250000e+00 -13.6889262 24.1889262 0.9999872
+Treated:Acropora cervicornis:33-Untreated:Pseudodiploria clivosa:30     -1.000000e+01 -31.8687883 11.8687883 0.9819841
+Untreated:Acropora cervicornis:33-Untreated:Pseudodiploria clivosa:30   -9.500000e+00 -28.4389262  9.4389262 0.9531810
+Treated:Pseudodiploria clivosa:33-Untreated:Pseudodiploria clivosa:30    7.000000e+00 -14.8687883 28.8687883 0.9998596
+Untreated:Pseudodiploria clivosa:33-Untreated:Pseudodiploria clivosa:30 -7.500000e-01 -18.0387951 16.5387951 1.0000000
+Treated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:30     -8.200000e+00 -26.4967410 10.0967410 0.9856209
+Untreated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:30   -1.033333e+01 -30.2967144  9.6300477 0.9372667
+Treated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:30   -3.666667e+00 -23.6300477 16.2967144 1.0000000
+Untreated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:30 -7.000000e+00 -33.7836863 19.7836863 0.9999955
+Treated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:30                NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:30              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:30    3.500000e+00 -18.3687883 25.3687883 1.0000000
+Untreated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:30 -7.000000e+00 -26.9633811 12.9633811 0.9994298
+Untreated:Acropora cervicornis:32-Treated:Acropora cervicornis:32       -8.000000e-01 -15.4700291 13.8700291 1.0000000
+Treated:Pseudodiploria clivosa:32-Treated:Acropora cervicornis:32        1.053333e+01  -5.4373715 26.5040382 0.6528564
+Untreated:Pseudodiploria clivosa:32-Treated:Acropora cervicornis:32      1.345000e+01  -1.2200291 28.1200291 0.1126291
+Treated:Acropora cervicornis:33-Treated:Acropora cervicornis:32         -1.800000e+00 -20.0967410 16.4967410 1.0000000
+Untreated:Acropora cervicornis:33-Treated:Acropora cervicornis:32       -1.300000e+00 -15.9700291 13.3700291 1.0000000
+Treated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:32        1.520000e+01  -3.0967410 33.4967410 0.2338532
+Untreated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:32      7.450000e+00  -5.0171275 19.9171275 0.8056640
+Treated:Acropora cervicornis:34-Treated:Acropora cervicornis:32          8.881784e-16 -13.8310361 13.8310361 1.0000000
+Untreated:Acropora cervicornis:34-Treated:Acropora cervicornis:32       -2.133333e+00 -18.1040382 13.8373715 1.0000000
+Treated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:32        4.533333e+00 -11.4373715 20.5040382 0.9999808
+Untreated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:32      1.200000e+00 -22.7560573 25.1560573 1.0000000
+Treated:Acropora cervicornis:35-Treated:Acropora cervicornis:32                    NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Acropora cervicornis:32                  NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:32        1.170000e+01  -6.5967410 29.9967410 0.7056451
+Untreated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:32      1.200000e+00 -14.7707049 17.1707049 1.0000000
+Treated:Pseudodiploria clivosa:32-Untreated:Acropora cervicornis:32      1.133333e+01  -5.3692296 28.0358963 0.6013799
+Untreated:Pseudodiploria clivosa:32-Untreated:Acropora cervicornis:32    1.425000e+01  -1.2135685 29.7135685 0.1078693
+Treated:Acropora cervicornis:33-Untreated:Acropora cervicornis:32       -1.000000e+00 -19.9389262 17.9389262 1.0000000
+Untreated:Acropora cervicornis:33-Untreated:Acropora cervicornis:32     -5.000000e-01 -15.9635685 14.9635685 1.0000000
+Treated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:32      1.600000e+01  -2.9389262 34.9389262 0.2093284
+Untreated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:32    8.250000e+00  -5.1418431 21.6418431 0.7636197
+Treated:Acropora cervicornis:34-Untreated:Acropora cervicornis:32        8.000000e-01 -13.8700291 15.4700291 1.0000000
+Untreated:Acropora cervicornis:34-Untreated:Acropora cervicornis:32     -1.333333e+00 -18.0358963 15.3692296 1.0000000
+Treated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:32      5.333333e+00 -11.3692296 22.0358963 0.9998649
+Untreated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:32    2.000000e+00 -22.4500486 26.4500486 1.0000000
+Treated:Acropora cervicornis:35-Untreated:Acropora cervicornis:32                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Acropora cervicornis:32                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:32      1.250000e+01  -6.4389262 31.4389262 0.6515823
+Untreated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:32    2.000000e+00 -14.7025629 18.7025629 1.0000000
+Untreated:Pseudodiploria clivosa:32-Treated:Pseudodiploria clivosa:32    2.916667e+00 -13.7858963 19.6192296 1.0000000
+Treated:Acropora cervicornis:33-Treated:Pseudodiploria clivosa:32       -1.233333e+01 -32.2967144  7.6300477 0.7594500
+Untreated:Acropora cervicornis:33-Treated:Pseudodiploria clivosa:32     -1.183333e+01 -28.5358963  4.8692296 0.5195650
+Treated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:32      4.666667e+00 -15.2967144 24.6300477 0.9999994
+Untreated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:32   -3.083333e+00 -17.8885730 11.7219063 0.9999999
+Treated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:32       -1.053333e+01 -26.5040382  5.4373715 0.6528564
+Untreated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:32     -1.266667e+01 -30.5224575  5.1891242 0.5170876
+Treated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:32     -6.000000e+00 -23.8557908 11.8557908 0.9997000
+Untreated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:32   -9.333333e+00 -34.5852349 15.9185682 0.9987772
+Treated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:32                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:32                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:32      1.166667e+00 -18.7967144 21.1300477 1.0000000
+Untreated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:32   -9.333333e+00 -27.1891242  8.5224575 0.9315026
+Treated:Acropora cervicornis:33-Untreated:Pseudodiploria clivosa:32     -1.525000e+01 -34.1889262  3.6889262 0.2832518
+Untreated:Acropora cervicornis:33-Untreated:Pseudodiploria clivosa:32   -1.475000e+01 -30.2135685  0.7135685 0.0793802
+Treated:Pseudodiploria clivosa:33-Untreated:Pseudodiploria clivosa:32    1.750000e+00 -17.1889262 20.6889262 1.0000000
+Untreated:Pseudodiploria clivosa:33-Untreated:Pseudodiploria clivosa:32 -6.000000e+00 -19.3918431  7.3918431 0.9856695
+Treated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:32     -1.345000e+01 -28.1200291  1.2200291 0.1126291
+Untreated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:32   -1.558333e+01 -32.2858963  1.1192296 0.0969167
+Treated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:32   -8.916667e+00 -25.6192296  7.7858963 0.9176602
+Untreated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:32 -1.225000e+01 -36.7000486 12.2000486 0.9537069
+Treated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:32                NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:32              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:32   -1.750000e+00 -20.6889262 17.1889262 1.0000000
+Untreated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:32 -1.225000e+01 -28.9525629  4.4525629 0.4529103
+Untreated:Acropora cervicornis:33-Treated:Acropora cervicornis:33        5.000000e-01 -18.4389262 19.4389262 1.0000000
+Treated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:33        1.700000e+01  -4.8687883 38.8687883 0.3441364
+Untreated:Pseudodiploria clivosa:33-Treated:Acropora cervicornis:33      9.250000e+00  -8.0387951 26.5387951 0.9160965
+Treated:Acropora cervicornis:34-Treated:Acropora cervicornis:33          1.800000e+00 -16.4967410 20.0967410 1.0000000
+Untreated:Acropora cervicornis:34-Treated:Acropora cervicornis:33       -3.333333e-01 -20.2967144 19.6300477 1.0000000
+Treated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:33        6.333333e+00 -13.6300477 26.2967144 0.9998782
+Untreated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:33      3.000000e+00 -23.7836863 29.7836863 1.0000000
+Treated:Acropora cervicornis:35-Treated:Acropora cervicornis:33                    NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Acropora cervicornis:33                  NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:33        1.350000e+01  -8.3687883 35.3687883 0.7605951
+Untreated:Pseudodiploria clivosa:35-Treated:Acropora cervicornis:33      3.000000e+00 -16.9633811 22.9633811 1.0000000
+Treated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:33      1.650000e+01  -2.4389262 35.4389262 0.1684480
+Untreated:Pseudodiploria clivosa:33-Untreated:Acropora cervicornis:33    8.750000e+00  -4.6418431 22.1418431 0.6692715
+Treated:Acropora cervicornis:34-Untreated:Acropora cervicornis:33        1.300000e+00 -13.3700291 15.9700291 1.0000000
+Untreated:Acropora cervicornis:34-Untreated:Acropora cervicornis:33     -8.333333e-01 -17.5358963 15.8692296 1.0000000
+Treated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:33      5.833333e+00 -10.8692296 22.5358963 0.9994626
+Untreated:Pseudodiploria clivosa:34-Untreated:Acropora cervicornis:33    2.500000e+00 -21.9500486 26.9500486 1.0000000
+Treated:Acropora cervicornis:35-Untreated:Acropora cervicornis:33                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Acropora cervicornis:33                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:33      1.300000e+01  -5.9389262 31.9389262 0.5798254
+Untreated:Pseudodiploria clivosa:35-Untreated:Acropora cervicornis:33    2.500000e+00 -14.2025629 19.2025629 1.0000000
+Untreated:Pseudodiploria clivosa:33-Treated:Pseudodiploria clivosa:33   -7.750000e+00 -25.0387951  9.5387951 0.9855844
+Treated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:33       -1.520000e+01 -33.4967410  3.0967410 0.2338532
+Untreated:Acropora cervicornis:34-Treated:Pseudodiploria clivosa:33     -1.733333e+01 -37.2967144  2.6300477 0.1727120
+Treated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:33     -1.066667e+01 -30.6300477  9.2967144 0.9170502
+Untreated:Pseudodiploria clivosa:34-Treated:Pseudodiploria clivosa:33   -1.400000e+01 -40.7836863 12.7836863 0.9315026
+Treated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:33                  NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Treated:Pseudodiploria clivosa:33                NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:33     -3.500000e+00 -25.3687883 18.3687883 1.0000000
+Untreated:Pseudodiploria clivosa:35-Treated:Pseudodiploria clivosa:33   -1.400000e+01 -33.9633811  5.9633811 0.5391413
+Treated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:33     -7.450000e+00 -19.9171275  5.0171275 0.8056640
+Untreated:Acropora cervicornis:34-Untreated:Pseudodiploria clivosa:33   -9.583333e+00 -24.3885730  5.2219063 0.6853187
+Treated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:33   -2.916667e+00 -17.7219063 11.8885730 1.0000000
+Untreated:Pseudodiploria clivosa:34-Untreated:Pseudodiploria clivosa:33 -6.250000e+00 -29.4453527 16.9453527 0.9999922
+Treated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:33                NA          NA         NA        NA
+Untreated:Acropora cervicornis:35-Untreated:Pseudodiploria clivosa:33              NA          NA         NA        NA
+Treated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:33    4.250000e+00 -13.0387951 21.5387951 0.9999985
+Untreated:Pseudodiploria clivosa:35-Untreated:Pseudodiploria clivosa:33 -6.250000e+00 -21.0552396  8.5552396 0.9929101
+Untreated:Acropora cervicornis:34-Treated:Acropora cervicornis:34       -2.133333e+00 -18.1040382 13.8373715 1.0000000
+Treated:Pseudodiploria clivosa:34-Treated:Acropora cervicornis:34        4.533333e+00 -11.4373715 20.5040382 0.9999808
+ [ reached getOption("max.print") -- omitted 26 rows ]
+

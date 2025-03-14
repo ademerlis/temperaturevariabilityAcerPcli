@@ -1,0 +1,9 @@
+Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
+
+Response: fvfm_loss_norm
+                      F Df  Df.res  Pr(>F)    
+Treatment        5.0771  1   1.999 0.15304    
+Colony           7.7694  2 125.021 0.00066 ***
+Treatment:Colony 3.6777  2 125.024 0.02806 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

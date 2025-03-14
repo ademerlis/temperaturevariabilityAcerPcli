@@ -1,0 +1,11 @@
+PASS	Basic Statistics	Acer-045_S35_L001_R1_001.fastq.gz
+PASS	Per base sequence quality	Acer-045_S35_L001_R1_001.fastq.gz
+PASS	Per sequence quality scores	Acer-045_S35_L001_R1_001.fastq.gz
+FAIL	Per base sequence content	Acer-045_S35_L001_R1_001.fastq.gz
+FAIL	Per base GC content	Acer-045_S35_L001_R1_001.fastq.gz
+WARN	Per sequence GC content	Acer-045_S35_L001_R1_001.fastq.gz
+PASS	Per base N content	Acer-045_S35_L001_R1_001.fastq.gz
+PASS	Sequence Length Distribution	Acer-045_S35_L001_R1_001.fastq.gz
+FAIL	Sequence Duplication Levels	Acer-045_S35_L001_R1_001.fastq.gz
+PASS	Overrepresented sequences	Acer-045_S35_L001_R1_001.fastq.gz
+FAIL	Kmer Content	Acer-045_S35_L001_R1_001.fastq.gz

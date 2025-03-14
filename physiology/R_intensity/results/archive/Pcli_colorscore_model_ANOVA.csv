@@ -1,0 +1,13 @@
+Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
+
+Response: mean_Rintensity_percoral
+                                  F Df  Df.res    Pr(>F)    
+Treatment                    9.1012  1   1.975  0.096026 .  
+Colony                       9.0387  2 138.922  0.000204 ***
+time_point                  39.3633  1 152.077 3.482e-09 ***
+Treatment:Colony             3.6050  2 139.511  0.029748 *  
+Treatment:time_point         0.0552  1 152.197  0.814560    
+Colony:time_point            9.9055  2 152.432 9.027e-05 ***
+Treatment:Colony:time_point  6.9311  2 152.510  0.001315 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

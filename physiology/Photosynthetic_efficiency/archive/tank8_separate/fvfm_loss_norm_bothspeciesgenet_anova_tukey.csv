@@ -1,0 +1,223 @@
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = fvfm_loss_norm ~ Treatment * Species * Colony, data = treatment_normalized_bothspecies)
+
+$Treatment
+                         diff        lwr         upr    p adj
+Treated-tank_8    -0.08803228 -0.1150826 -0.06098192 0.00e+00
+Untreated-tank_8  -0.04867950 -0.0749719 -0.02238710 5.46e-05
+Untreated-Treated  0.03935278  0.0227310  0.05597456 2.00e-07
+
+$Species
+                            diff        lwr         upr p adj
+Pclivosa-Acervicornis -0.1014085 -0.1144102 -0.08840678     0
+
+$Colony
+                    diff          lwr          upr     p adj
+B-A        -0.0175175532 -0.049639912  0.014604805 0.6218873
+BC-8b-A    -0.0378770803 -0.070466584 -0.005287576 0.0123407
+C-A        -0.0464559887 -0.079212820 -0.013699158 0.0008703
+MB-B-A     -0.0165638940 -0.049320725  0.016192937 0.6951574
+SI-C-A     -0.0065822927 -0.041437122  0.028272536 0.9943539
+BC-8b-B    -0.0203595271 -0.051944102  0.011225048 0.4351581
+C-B        -0.0289384355 -0.060695633  0.002818762 0.0969787
+MB-B-B      0.0009536592 -0.030803538  0.032710857 0.9999993
+SI-C-B      0.0109352605 -0.022981826  0.044852347 0.9396361
+C-BC-8b    -0.0085789083 -0.040808545  0.023650728 0.9732032
+MB-B-BC-8b  0.0213131863 -0.010916450  0.053542823 0.4053054
+SI-C-BC-8b  0.0312947876 -0.003065052  0.065654628 0.0972823
+MB-B-C      0.0298920946 -0.002506727  0.062290917 0.0894589
+SI-C-C      0.0398736959  0.005355110  0.074392282 0.0131847
+SI-C-MB-B   0.0099816013 -0.024536985  0.044500188 0.9616916
+
+$`Treatment:Species`
+                                                   diff         lwr         upr
+Treated:Acervicornis-tank_8:Acervicornis    -0.07718858 -0.11716492 -0.03721224
+Untreated:Acervicornis-tank_8:Acervicornis   0.04564675  0.01096247  0.08033104
+tank_8:Pclivosa-tank_8:Acervicornis                  NA          NA          NA
+Treated:Pclivosa-tank_8:Acervicornis        -0.09300231 -0.12754519 -0.05845942
+Untreated:Pclivosa-tank_8:Acervicornis      -0.14167721 -0.17628987 -0.10706455
+Untreated:Acervicornis-Treated:Acervicornis  0.12283533  0.08967065  0.15600001
+tank_8:Pclivosa-Treated:Acervicornis                 NA          NA          NA
+Treated:Pclivosa-Treated:Acervicornis       -0.01581373 -0.04883050  0.01720304
+Untreated:Pclivosa-Treated:Acervicornis     -0.06448863 -0.09757840 -0.03139887
+tank_8:Pclivosa-Untreated:Acervicornis               NA          NA          NA
+Treated:Pclivosa-Untreated:Acervicornis     -0.13864906 -0.16501189 -0.11228623
+Untreated:Pclivosa-Untreated:Acervicornis   -0.18732396 -0.21377816 -0.16086977
+Treated:Pclivosa-tank_8:Pclivosa                     NA          NA          NA
+Untreated:Pclivosa-tank_8:Pclivosa                   NA          NA          NA
+Untreated:Pclivosa-Treated:Pclivosa         -0.04867490 -0.07494343 -0.02240637
+                                                p adj
+Treated:Acervicornis-tank_8:Acervicornis    0.0000011
+Untreated:Acervicornis-tank_8:Acervicornis  0.0026658
+tank_8:Pclivosa-tank_8:Acervicornis                NA
+Treated:Pclivosa-tank_8:Acervicornis        0.0000000
+Untreated:Pclivosa-tank_8:Acervicornis      0.0000000
+Untreated:Acervicornis-Treated:Acervicornis 0.0000000
+tank_8:Pclivosa-Treated:Acervicornis               NA
+Treated:Pclivosa-Treated:Acervicornis       0.7419175
+Untreated:Pclivosa-Treated:Acervicornis     0.0000008
+tank_8:Pclivosa-Untreated:Acervicornis             NA
+Treated:Pclivosa-Untreated:Acervicornis     0.0000000
+Untreated:Pclivosa-Untreated:Acervicornis   0.0000000
+Treated:Pclivosa-tank_8:Pclivosa                   NA
+Untreated:Pclivosa-tank_8:Pclivosa                 NA
+Untreated:Pclivosa-Treated:Pclivosa         0.0000033
+
+$`Treatment:Colony`
+                                        diff           lwr          upr     p adj
+Treated:A-tank_8:A                        NA            NA           NA        NA
+Untreated:A-tank_8:A                      NA            NA           NA        NA
+tank_8:B-tank_8:A                         NA            NA           NA        NA
+Treated:B-tank_8:A                        NA            NA           NA        NA
+Untreated:B-tank_8:A                      NA            NA           NA        NA
+tank_8:BC-8b-tank_8:A                     NA            NA           NA        NA
+Treated:BC-8b-tank_8:A                    NA            NA           NA        NA
+Untreated:BC-8b-tank_8:A                  NA            NA           NA        NA
+tank_8:C-tank_8:A                         NA            NA           NA        NA
+Treated:C-tank_8:A                        NA            NA           NA        NA
+Untreated:C-tank_8:A                      NA            NA           NA        NA
+tank_8:MB-B-tank_8:A                      NA            NA           NA        NA
+Treated:MB-B-tank_8:A                     NA            NA           NA        NA
+Untreated:MB-B-tank_8:A                   NA            NA           NA        NA
+tank_8:SI-C-tank_8:A                      NA            NA           NA        NA
+Treated:SI-C-tank_8:A                     NA            NA           NA        NA
+Untreated:SI-C-tank_8:A                   NA            NA           NA        NA
+Untreated:A-Treated:A           0.0126461583 -0.0448488287  0.070141145 0.9999984
+tank_8:B-Treated:A                        NA            NA           NA        NA
+Treated:B-Treated:A            -0.0275567658 -0.0827449912  0.027631460 0.9522968
+Untreated:B-Treated:A           0.0056406038 -0.0500633058  0.061344513 1.0000000
+tank_8:BC-8b-Treated:A          0.0420258669 -0.0286511449  0.112702879 0.8163758
+Treated:BC-8b-Treated:A        -0.0409982483 -0.1096542428  0.027657746 0.8112201
+Untreated:BC-8b-Treated:A      -0.0185178493 -0.0742217589  0.037186060 0.9994646
+tank_8:C-Treated:A                        NA            NA           NA        NA
+Treated:C-Treated:A            -0.0763124523 -0.1331650170 -0.019459888 0.0005123
+Untreated:C-Treated:A          -0.0040598818 -0.0603171153  0.052197352 1.0000000
+tank_8:MB-B-Treated:A           0.0552922383 -0.0205111813  0.131095658 0.4792214
+Treated:MB-B-Treated:A         -0.0513995967 -0.1182978283  0.015498635 0.3804260
+Untreated:MB-B-Treated:A        0.0221805113 -0.0335233983  0.077884421 0.9952089
+tank_8:SI-C-Treated:A           0.0656010013 -0.0102024182  0.141404421 0.1849512
+Treated:SI-C-Treated:A          0.0002109654 -0.0789244554  0.079346386 1.0000000
+Untreated:SI-C-Treated:A        0.0130305715 -0.0459154221  0.071976565 0.9999983
+tank_8:B-Untreated:A                      NA            NA           NA        NA
+Treated:B-Untreated:A          -0.0402029241 -0.0960527193  0.015646871 0.5045551
+Untreated:B-Untreated:A        -0.0070055545 -0.0633649810  0.049353872 1.0000000
+tank_8:BC-8b-Untreated:A        0.0293797086 -0.0418150904  0.100574508 0.9928588
+Treated:BC-8b-Untreated:A      -0.0536444066 -0.1228333146  0.015544501 0.3636086
+Untreated:BC-8b-Untreated:A    -0.0311640076 -0.0875234341  0.025195419 0.8898704
+tank_8:C-Untreated:A                      NA            NA           NA        NA
+Treated:C-Untreated:A          -0.0889586106 -0.1464535975 -0.031463624 0.0000170
+Untreated:C-Untreated:A        -0.0167060401 -0.0736124169  0.040200337 0.9998975
+tank_8:MB-B-Untreated:A         0.0426460800 -0.0336403396  0.118932500 0.8805202
+Treated:MB-B-Untreated:A       -0.0640457550 -0.1314907903  0.003399280 0.0848132
+Untreated:MB-B-Untreated:A      0.0095343531 -0.0468250734  0.065893780 1.0000000
+tank_8:SI-C-Untreated:A         0.0529548431 -0.0233315766  0.129241263 0.5732889
+Treated:SI-C-Untreated:A       -0.0124351928 -0.0920333979  0.067163012 1.0000000
+Untreated:SI-C-Untreated:A      0.0003844133 -0.0591814291  0.059950256 1.0000000
+Treated:B-tank_8:B                        NA            NA           NA        NA
+Untreated:B-tank_8:B                      NA            NA           NA        NA
+tank_8:BC-8b-tank_8:B                     NA            NA           NA        NA
+Treated:BC-8b-tank_8:B                    NA            NA           NA        NA
+Untreated:BC-8b-tank_8:B                  NA            NA           NA        NA
+tank_8:C-tank_8:B                         NA            NA           NA        NA
+Treated:C-tank_8:B                        NA            NA           NA        NA
+Untreated:C-tank_8:B                      NA            NA           NA        NA
+tank_8:MB-B-tank_8:B                      NA            NA           NA        NA
+Treated:MB-B-tank_8:B                     NA            NA           NA        NA
+Untreated:MB-B-tank_8:B                   NA            NA           NA        NA
+tank_8:SI-C-tank_8:B                      NA            NA           NA        NA
+Treated:SI-C-tank_8:B                     NA            NA           NA        NA
+Untreated:SI-C-tank_8:B                   NA            NA           NA        NA
+Untreated:B-Treated:B           0.0331973696 -0.0208068122  0.087201551 0.7735674
+tank_8:BC-8b-Treated:B          0.0695826327  0.0002373654  0.138927900 0.0481618
+Treated:BC-8b-Treated:B        -0.0134414825 -0.0807257428  0.053842778 0.9999996
+Untreated:BC-8b-Treated:B       0.0090389165 -0.0449652653  0.063043098 1.0000000
+tank_8:C-Treated:B                        NA            NA           NA        NA
+Treated:C-Treated:B            -0.0487556865 -0.1039439119  0.006432539 0.1583079
+Untreated:C-Treated:B           0.0234968840 -0.0310778576  0.078071626 0.9887192
+tank_8:MB-B-Treated:B           0.0828490041  0.0082857120  0.157412296 0.0134827
+Treated:MB-B-Treated:B         -0.0238428309 -0.0893325209  0.041646859 0.9983289
+Untreated:MB-B-Treated:B        0.0497372772 -0.0042669046  0.103741459 0.1122128
+tank_8:SI-C-Treated:B           0.0931577672  0.0185944751  0.167721059 0.0020655
+Treated:SI-C-Treated:B          0.0277677313 -0.0501805910  0.105716054 0.9987198
+Untreated:SI-C-Treated:B        0.0405873373 -0.0167551101  0.097929785 0.5366880
+tank_8:BC-8b-Untreated:B        0.0363852631 -0.0333711088  0.106141635 0.9306258
+Treated:BC-8b-Untreated:B      -0.0466388521 -0.1143467321  0.021069028 0.5875743
+Untreated:BC-8b-Untreated:B    -0.0241584531 -0.0786895175  0.030372611 0.9848136
+tank_8:C-Untreated:B                      NA            NA           NA        NA
+Treated:C-Untreated:B          -0.0819530561 -0.1376569657 -0.026249147 0.0000632
+Untreated:C-Untreated:B        -0.0097004856 -0.0647966538  0.045395683 0.9999999
+tank_8:MB-B-Untreated:B         0.0496516345 -0.0252941449  0.124597414 0.6571349
+Treated:MB-B-Untreated:B       -0.0570402005 -0.1229650427  0.008884642 0.1852306
+Untreated:MB-B-Untreated:B      0.0165399076 -0.0379911568  0.071070972 0.9998403
+tank_8:SI-C-Untreated:B         0.0599603976 -0.0149853819  0.134906177 0.3073216
+Treated:SI-C-Untreated:B       -0.0054296383 -0.0837439172  0.072884641 1.0000000
+Untreated:SI-C-Untreated:B      0.0073899677 -0.0504489604  0.065228896 1.0000000
+Treated:BC-8b-tank_8:BC-8b     -0.0830241152 -0.1635018851 -0.002546345 0.0351096
+Untreated:BC-8b-tank_8:BC-8b   -0.0605437162 -0.1303000881  0.009212656 0.1810428
+tank_8:C-tank_8:BC-8b                     NA            NA           NA        NA
+Treated:C-tank_8:BC-8b         -0.1183383192 -0.1890153309 -0.047661307 0.0000017
+Untreated:C-tank_8:BC-8b       -0.0460857487 -0.1162847671  0.024113270 0.6726139
+tank_8:MB-B-tank_8:BC-8b        0.0132663714 -0.0733891783  0.099921921 1.0000000
+Treated:MB-B-tank_8:BC-8b      -0.0934254636 -0.1724090015 -0.014441926 0.0052573
+Untreated:MB-B-tank_8:BC-8b    -0.0198453555 -0.0896017274  0.049911016 0.9999336
+tank_8:SI-C-tank_8:BC-8b        0.0235751345 -0.0630804152  0.110230684 0.9999645
+Treated:SI-C-tank_8:BC-8b      -0.0418149014 -0.1313997255  0.047769923 0.9744564
+Untreated:SI-C-tank_8:BC-8b    -0.0289952953 -0.1013669476  0.043376357 0.9948632
+Untreated:BC-8b-Treated:BC-8b   0.0224803990 -0.0452274810  0.090188279 0.9994731
+tank_8:C-Treated:BC-8b                    NA            NA           NA        NA
+Treated:C-Treated:BC-8b        -0.0353142040 -0.1039701985  0.033341790 0.9383032
+Untreated:C-Treated:BC-8b       0.0369383665 -0.0312254639  0.105102197 0.9056549
+tank_8:MB-B-Treated:BC-8b       0.0962904867  0.0112752534  0.181305720 0.0102421
+Treated:MB-B-Treated:BC-8b     -0.0104013484 -0.0875816882  0.066778991 1.0000000
+Untreated:MB-B-Treated:BC-8b    0.0631787597 -0.0045291203  0.130886640 0.0998475
+tank_8:SI-C-Treated:BC-8b       0.1065992497  0.0215840164  0.191614483 0.0019350
+Treated:SI-C-Treated:BC-8b      0.0412092138 -0.0467899129  0.129208341 0.9736384
+Untreated:SI-C-Treated:BC-8b    0.0540288199 -0.0163704815  0.124428121 0.3825206
+tank_8:C-Untreated:BC-8b                  NA            NA           NA        NA
+Treated:C-Untreated:BC-8b      -0.0577946030 -0.1134985126 -0.002090693 0.0328140
+Untreated:C-Untreated:BC-8b     0.0144579675 -0.0406382007  0.069554136 0.9999788
+tank_8:MB-B-Untreated:BC-8b     0.0738100876 -0.0011356918  0.148755867 0.0588792
+Treated:MB-B-Untreated:BC-8b   -0.0328817474 -0.0988065896  0.033043095 0.9527578
+Untreated:MB-B-Untreated:BC-8b  0.0406983607 -0.0138327037  0.095229425 0.4352903
+tank_8:SI-C-Untreated:BC-8b     0.0841188507  0.0091730713  0.159064630 0.0116827
+Treated:SI-C-Untreated:BC-8b    0.0187288148 -0.0595854641  0.097043094 0.9999945
+Untreated:SI-C-Untreated:BC-8b  0.0315484208 -0.0262905072  0.089387349 0.9007563
+Treated:C-tank_8:C                        NA            NA           NA        NA
+Untreated:C-tank_8:C                      NA            NA           NA        NA
+tank_8:MB-B-tank_8:C                      NA            NA           NA        NA
+Treated:MB-B-tank_8:C                     NA            NA           NA        NA
+Untreated:MB-B-tank_8:C                   NA            NA           NA        NA
+tank_8:SI-C-tank_8:C                      NA            NA           NA        NA
+Treated:SI-C-tank_8:C                     NA            NA           NA        NA
+Untreated:SI-C-tank_8:C                   NA            NA           NA        NA
+Untreated:C-Treated:C           0.0722525705  0.0159953371  0.128509804 0.0012371
+tank_8:MB-B-Treated:C           0.1316046907  0.0558012711  0.207408110 0.0000005
+Treated:MB-B-Treated:C          0.0249128556 -0.0419853759  0.091811087 0.9978049
+Untreated:MB-B-Treated:C        0.0984929637  0.0427890541  0.154196873 0.0000003
+tank_8:SI-C-Treated:C           0.1419134537  0.0661100341  0.217716873 0.0000000
+Treated:SI-C-Treated:C          0.0765234178 -0.0026120031  0.155658839 0.0710267
+Untreated:SI-C-Treated:C        0.0893430239  0.0303970302  0.148289018 0.0000296
+tank_8:MB-B-Untreated:C         0.0593521201 -0.0160058298  0.134710070 0.3350479
+Treated:MB-B-Untreated:C       -0.0473397149 -0.1137327536  0.019053324 0.5227306
+Untreated:MB-B-Untreated:C      0.0262403932 -0.0288557750  0.081336561 0.9690380
+tank_8:SI-C-Untreated:C         0.0696608832 -0.0056970668  0.145018833 0.1086154
+Treated:SI-C-Untreated:C        0.0042708473 -0.0744379645  0.082979659 1.0000000
+Untreated:SI-C-Untreated:C      0.0170904533 -0.0412815637  0.075462470 0.9999012
+Treated:MB-B-tank_8:MB-B       -0.1066918350 -0.1902939743 -0.023089696 0.0013958
+Untreated:MB-B-tank_8:MB-B     -0.0331117270 -0.1080575064  0.041834052 0.9852350
+tank_8:SI-C-tank_8:MB-B         0.0103087630 -0.0805763442  0.101193870 1.0000000
+Treated:SI-C-tank_8:MB-B       -0.0550812729 -0.1487634971  0.038600951 0.8295588
+Untreated:SI-C-tank_8:MB-B     -0.0422616668 -0.1196475471  0.035124214 0.8998230
+Untreated:MB-B-Treated:MB-B     0.0735801081  0.0076552659  0.139504950 0.0126556
+tank_8:SI-C-Treated:MB-B        0.1170005981  0.0333984588  0.200602737 0.0002069
+Treated:SI-C-Treated:MB-B       0.0516105622 -0.0350241544  0.138245279 0.8141334
+Untreated:SI-C-Treated:MB-B     0.0644301682 -0.0042559981  0.133116335 0.0951432
+tank_8:SI-C-Untreated:MB-B      0.0434204900 -0.0315252894  0.118366269 0.8457964
+Treated:SI-C-Untreated:MB-B    -0.0219695459 -0.1002838248  0.056344733 0.9999454
+Untreated:SI-C-Untreated:MB-B  -0.0091499398 -0.0669888679  0.048688988 1.0000000
+Treated:SI-C-tank_8:SI-C       -0.0653900359 -0.1590722602  0.028292188 0.5629901
+Untreated:SI-C-tank_8:SI-C     -0.0525704298 -0.1299563102  0.024815451 0.6128992
+Untreated:SI-C-Treated:SI-C     0.0128196061 -0.0678329258  0.093472138 1.0000000
+

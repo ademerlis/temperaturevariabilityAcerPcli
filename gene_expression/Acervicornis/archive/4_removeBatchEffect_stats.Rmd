@@ -1,0 +1,32 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(DESeq2)
+library(tidyverse)
+library(limma)
+library(vegan)
+
+load("RData_files/initial_fullddsdesigncountsVsdcountsWGCNA.RData")
+
+
+```
+
+# remove batch effect of genotype
+
+```{r}
+vsd2 <- removeBatchEffect(assay(Vsd), batch = Vsd$Genotype)
+```
+
+
+# formal analysis of variance in distance matrix (PERMANOVA)
+```{r}
+ad=adonis2(t(vsd2)~Treatment,data=design,method="manhattan",permutations=1e6)
+ad
+summary(ad)
+as.data.frame(ad) %>% 
+  write_csv("PERMANOVA_batcheffectremoved.csv")
+```
+

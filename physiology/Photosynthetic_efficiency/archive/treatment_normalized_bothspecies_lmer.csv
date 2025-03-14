@@ -1,0 +1,9 @@
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: fvfm_loss_norm
+                   Chisq Df Pr(>Chisq)   
+Treatment         0.1160  1   0.733406   
+Species           7.0611  1   0.007878 **
+Treatment:Species 2.8791  1   0.089735 . 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

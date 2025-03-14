@@ -1,0 +1,13 @@
+Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
+
+Response: mass
+                                   F Df Df.res  Pr(>F)    
+Treatment                     0.5195  1  1.685 0.55775    
+Colony                        1.9234  2 59.359 0.15511    
+Timepoint                  1220.1864  1 60.000 < 2e-16 ***
+Treatment:Colony              2.1902  2 59.391 0.12085    
+Treatment:Timepoint           0.6499  1 60.000 0.42334    
+Colony:Timepoint            100.2850  2 60.000 < 2e-16 ***
+Treatment:Colony:Timepoint    4.3212  2 60.000 0.01765 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

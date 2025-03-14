@@ -1,0 +1,225 @@
+---
+title: "CBASS_DRC_normalization"
+author: "allyson_demerlis"
+date: "2023-12-29"
+output: html_document
+---
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(plotrix)
+library(glmmTMB)
+library(emmeans)
+library(lme4)
+library(ggpubr)
+library(drc) #for the function "drm" dose-response model
+library(broom) #for the tidy function needed for dose response model
+library(car)
+library(rstatix)
+library(rcompanion)
+library(nlme)
+library(multcomp)
+library(MASS)
+library(cowplot)
+```
+
+# Import and tidy data
+
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(!Treatment) -> ipam_tidy_CBASS
+
+ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>% 
+  dplyr::select(Tank, Puck, Colony, Treatment, Species) %>% 
+  distinct() %>% #283 rows = one coral ID per treatment, no repeats
+  mutate(Treatment = case_when(Tank == "1" ~ "Untreated",
+                               Tank == "2" ~ "Treated",
+                               Tank == "3" ~ "Treated",
+                               Tank == "4" ~ "Untreated",
+                               Tank == "5" ~ "Treated", 
+                               Tank == "6" ~ "Untreated",
+                               Tank == "7" ~ "Untreated",
+                               Tank == "8" ~ "tank_8")) %>% 
+  full_join(ipam_tidy_CBASS, by = c("Puck", "Colony", "Species")) %>% 
+  drop_na() %>% 
+  rename(Treatment_Tank = Tank.x, CBASS_Tank = Tank.y) %>% 
+  dplyr::select(-c("X", "AOI", "Ft", "Fm", "file")) -> ipam_tidy_CBASS_treatments
+
+```
+
+
+
+# 4. Normalized to initial measurement (treatment day 0 - T1/T0) - CBASS
+
+```{r}
+ipam_tidy_data %>% 
+  filter(Date < "2022-03-22") %>% 
+  dplyr::select(fvfm, Puck, Colony, Date, Treatment,Species) %>% 
+  mutate(fvfm_T0 = fvfm) %>% 
+  dplyr::select(!fvfm) -> preCBASSfvfm
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(fvfm, Puck:Date, CBASS_temp, Species) %>% 
+  mutate(fvfm_T1 = fvfm) %>% 
+  dplyr::select(!fvfm) %>% 
+  left_join(preCBASSfvfm, by = c("Puck", "Colony", "Species")) %>% 
+  dplyr::select(!Date.x) %>% 
+  dplyr::select(!Date.y) %>% 
+  mutate(CBASS_normalize_fvfm = fvfm_T1/fvfm_T0) %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp))-> ipam_CBASS_normalized
+
+  ggplot(ipam_CBASS_normalized, aes(x=CBASS_temp, y = CBASS_normalize_fvfm, fill=Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species) + 
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic()
+```
+
+```{r}
+ipam_CBASS_normalized %>% 
+  mutate(CBASS_temp=as.numeric(as.character(CBASS_temp))) %>% 
+ggplot(., aes(x=CBASS_temp, y = CBASS_normalize_fvfm, color = Treatment)) +
+  geom_point() +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  geom_smooth(formula = y ~ x, method = "loess", span = 0.9)  + 
+  facet_wrap(~Species) +
+  theme_classic() +
+  labs(x="Temperature (ºC)", y = "Normalized Fv/Fm")
+```
+
+### GLM Acer
+
+```{r}
+ipam_CBASS_normalized %>% 
+  filter(Species == "Acervicornis") -> Acer_ipam_CBASS
+
+#model 1 = full model
+glmm_AcerCBASS_full <- glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp + (1|Colony), family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
+
+summary(glmm_AcerCBASS_full) 
+
+qqnorm(resid(glmm_AcerCBASS_full))
+qqline(resid(glmm_AcerCBASS_full))
+
+boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Treatment)
+boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$CBASS_temp)
+boxplot(resid(glmm_AcerCBASS_full)~Acer_ipam_CBASS$Colony)
+
+#model 2 
+AcerCBASS_GLMM <- glmmTMB::glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp, family=beta_family(link = "logit"), data=Acer_ipam_CBASS)
+summary(AcerCBASS_GLMM)
+
+#need to check normality and variance visually (boxplots of fixed effects only)
+qqnorm(resid(AcerCBASS_GLMM))
+qqline(resid(AcerCBASS_GLMM))
+
+boxplot(resid(AcerCBASS_GLMM)~Acer_ipam_CBASS$Treatment) 
+boxplot(resid(AcerCBASS_GLMM)~Acer_ipam_CBASS$CBASS_temp)
+
+lrt(AcerCBASS_GLMM, glmm_AcerCBASS_full)
+
+lrt(Acer_CBASS_GLMM_Tank, glmm_AcerCBASS_full)
+
+# GLMM Acer Full: AIC =  -323.6 
+# GLMM Acer no Colony: AIC =  -324.1
+
+# no colony is better based on AIC, and lrt p-value is not significant
+```
+
+
+```{r}
+Anova(AcerCBASS_GLMM, type = "II")
+
+Acer_CBASS_emm <- emmeans(AcerCBASS_GLMM, specs = ~ Treatment*CBASS_temp)
+
+as.data.frame(pairs(Acer_CBASS_emm))
+```
+
+
+### GLM Pcli
+
+```{r}
+ipam_CBASS_normalized %>% 
+  filter(Species == "Pclivosa") -> Pcli_ipam_CBASS
+
+#model 1 = full model
+glmm_PcliCBASS_full <- glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp + (1|Colony), family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
+
+summary(glmm_PcliCBASS_full) 
+
+qqnorm(resid(glmm_PcliCBASS_full))
+qqline(resid(glmm_PcliCBASS_full))
+
+boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Treatment)
+boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$CBASS_temp)
+boxplot(resid(glmm_PcliCBASS_full)~Pcli_ipam_CBASS$Colony)
+
+#model 2 
+PcliCBASS_GLMM <- glmmTMB::glmmTMB(CBASS_normalize_fvfm ~ Treatment*CBASS_temp, family=beta_family(link = "logit"), data=Pcli_ipam_CBASS)
+summary(PcliCBASS_GLMM)
+
+#need to check normality and variance visually (boxplots of fixed effects only)
+qqnorm(resid(PcliCBASS_GLMM))
+qqline(resid(PcliCBASS_GLMM))
+
+boxplot(resid(PcliCBASS_GLMM)~Pcli_ipam_CBASS$Treatment) 
+boxplot(resid(PcliCBASS_GLMM)~Pcli_ipam_CBASS$CBASS_temp)
+
+lrt(PcliCBASS_GLMM, glmm_PcliCBASS_full)
+
+# GLMM Pcli Full: AIC =  -355.8 
+# GLMM Pcli no Colony: AIC =  -344.3  , LRT p-value = 0.0002403821
+
+# full model is better based on AIC and p-value
+```
+
+
+```{r}
+Anova(glmm_PcliCBASS_full, type = "II")
+
+Pcli_CBASS_emm <- emmeans(glmm_PcliCBASS_full, specs = ~ Treatment*CBASS_temp)
+
+as.data.frame(pairs(Pcli_CBASS_emm))
+```
+
+
+
+
+
+
+# 5. Normalized to final treatment measurement (treatment day 28) - CBASS
+
+```{r}
+ipam_tidy_data %>% 
+  filter(Date == "2022-04-20") %>% 
+  dplyr::select(fvfm, Puck, Colony, Date, Treatment,Species) %>% 
+  mutate(fvfm_T0 = fvfm) %>% 
+  dplyr::select(!fvfm) -> preCBASSfvfm_endoftreatment
+
+ipam_tidy_data %>% 
+  dplyr::filter(Treatment_period == "CBASS") %>% 
+  dplyr::select(fvfm, Puck:Date, CBASS_temp, Species) %>% 
+  mutate(fvfm_T1 = fvfm) %>% 
+  dplyr::select(!fvfm) %>% 
+  left_join(preCBASSfvfm_endoftreatment, by = c("Puck", "Colony", "Species")) %>% 
+  dplyr::select(!Date.x) %>% 
+  dplyr::select(!Date.y) %>% 
+  mutate(CBASS_normalize_fvfm = fvfm_T1/fvfm_T0) %>% 
+  mutate(CBASS_temp = as.factor(CBASS_temp))-> ipam_CBASS_normalized_endoftreatment
+
+  ggplot(ipam_CBASS_normalized_endoftreatment, aes(x=CBASS_temp, y = CBASS_normalize_fvfm, fill=Treatment)) +
+  geom_boxplot() +
+  facet_wrap(~Species) + 
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme_classic()
+  
+  #there are a lot of values > 1 here so I can't just filter it out so the data is 0<x<1 
+```
+

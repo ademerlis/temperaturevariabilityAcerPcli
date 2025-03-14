@@ -1,0 +1,291 @@
+---
+title: "FvFm"
+author: "allyson_demerlis"
+date: "2023-08-28"
+output: html_document
+---
+# Packages
+
+```{r}
+library(tidyverse)
+library(plotrix)
+library(emmeans)
+library(lme4) 
+library(lmerTest)
+library(ggpubr)
+library(drc) #for the function "drm" dose-response model
+library(broom) #for the tidy function needed for dose response model
+library(car)
+library(rstatix)
+library(rcompanion)
+library(nlme)
+library(multcomp)
+libraryt(MASS) #for boxcox transformation
+```
+
+
+# Import data and create tidy datasets
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+treatment_time_bothspecies <- ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% 
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+   mutate(fvfm_t0 = case_when(Species == "Acervicornis" ~ `2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-03-21`)) %>% 
+   mutate(fvfm_t1 = case_when(Species == "Acervicornis" ~ `2022-04-06`,
+                                  Species == "Pclivosa" ~ `2022-04-06`)) %>% 
+   mutate(fvfm_t2 = case_when(Species == "Acervicornis" ~ `2022-04-20`,
+                                  Species == "Pclivosa" ~ `2022-04-20`)) %>% 
+  pivot_longer(fvfm_t0:fvfm_t2, names_to = "fvfm_timepoint", values_to = "fvfm") %>% 
+  mutate(numDays = case_when(fvfm_timepoint == "fvfm_t0" ~ 0,
+                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t1" ~ 16,
+                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t1" ~ 21,
+                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t2" ~ 30,
+                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t2" ~ 35,
+                             Species == "Pclivosa" & fvfm_timepoint == "fvfm_t3" ~ 65,
+                             Species == "Acervicornis" & fvfm_timepoint == "fvfm_t3" ~ 70))
+
+treatment_normalized_bothspecies <- ipam_tidy_data %>% 
+  dplyr::filter(!Treatment_period == "CBASS") %>%
+  drop_na(Colony) %>% #this is because there are some corals that never matched up to IPAM values so they're just NA
+  dplyr::select(Date, Colony, Puck, Tank, fvfm, Treatment, Species) %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  dplyr::filter(Date <= "2022-04-20") %>% #pre-CBASS time points
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+  mutate(fvfm_loss = case_when(Species == "Acervicornis" ~ `2022-03-16` - `2022-04-20`,
+                               Species == "Pclivosa" ~ `2022-03-21` - `2022-04-20`)) %>% 
+  mutate(fvfm_loss_norm = case_when(Species == "Acervicornis" ~ fvfm_loss/`2022-03-16`,
+                               Species == "Pclivosa" ~ fvfm_loss/`2022-03-21`))
+```
+
+
+# 1. (for figure) Raw Fv/Fm over time during the 28-d temperature treatment period.
+```{r, warning = F}
+treatment_time_bothspecies %>% 
+  dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
+  mutate(numDays = as.factor(numDays)) %>% 
+  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color = Treatment)) + 
+  geom_boxplot(color = "black", outlier.shape = NA, alpha=0.3) + #not removing outliers, just removing the black dots because they are already represented in the geom_point() line
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  facet_wrap(~Species) + 
+  theme_classic() + 
+  labs(y = "Fv/Fm", x = "Days in Treatment") +
+  scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 14)) 
+ggsave("treatment_bothspecies_overtimeboxplots.pdf")
+```
+
+By genotype 
+```{r, warning = F}
+treatment_time_bothspecies%>% 
+  dplyr::select(!c(`2022-04-06`:`2022-04-20`)) %>% 
+  mutate(numDays = as.factor(numDays)) %>% 
+  ggplot(., aes(x=numDays, y=fvfm, fill = Treatment, color = Treatment)) + 
+  geom_boxplot(color = "black", outlier.shape = NA,  alpha=0.3) + #not removing outliers, just removing the black dots because they are already represented in the geom_point() line
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  stat_summary(fun=mean, geom="line", aes(group=Treatment, color = Treatment), position = position_dodge(width = 0.5)) +
+  facet_wrap(~Species + Colony) + 
+  theme_classic() + 
+  labs(y = "Fv/Fm", x = "Days in Treatment") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 14))
+```
+
+# 2. (for stats) Normalized to initial measurement (day 0) - Treatment Fv/Fm
+
+## 2a. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (all genotypes combined)
+```{r, warning = F}
+treatment_normalized_bothspecies%>% 
+  ggplot(., aes(x=Treatment, y= fvfm_loss_norm, color= Treatment)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  theme_classic() + 
+  labs(y = "Normalized Reduction of Fv/Fm", x="Treatment") +
+  scale_fill_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Untreated", "Treated"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 12)) + 
+  facet_wrap(~Species, scales = "free_x")
+#ggsave("treatment_normalized_bothspecies_boxplot.pdf")
+```
+
+### Statistics
+
+Test of normality and heteroschedascity, outlier removal
+```{r}
+str(treatment_normalized_bothspecies)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+treatment_normalized_bothspecies %>% 
+  mutate_at(vars(Colony, Puck, Tank, Treatment, Species), factor) -> treatment_normalized_bothspecies
+
+
+treat_model <- lm(fvfm_loss_norm ~ Treatment*Species + Tank + Colony, data = treatment_normalized_bothspecies)
+treat_model_metrics <- augment(treat_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_metrics) #not significant
+
+# identifying outliers
+treat_model_metrics %>% 
+  filter(abs(.std.resid) > 3) -> treat_outliers
+# 2 outliers
+
+#remove outliers
+treatment_normalized_bothspecies <- treatment_normalized_bothspecies[!rownames(treatment_normalized_bothspecies) %in% treat_outliers$.rownames,]
+```
+
+
+Comparing GLMs and picking one with best fit
+
+model generation and AICs
+```{r}
+full_model <- lme4::lmer(fvfm_loss_norm ~ Treatment*Species + (1|Tank) + (1|Colony), data = treatment_normalized_bothspecies, na.action=na.exclude)
+AIC(full_model) #-832.9644
+logLik(full_model) #423.4822
+summary(full_model) # to get variance of random effects
+capture.output(Anova(full_model), file = "treatment_normalized_bothspecies_lmer.csv")
+
+no_tank_model <- lme4::lmer(fvfm_loss_norm ~ Treatment*Species + (1|Colony), data = treatment_normalized_bothspecies, na.action=na.exclude)
+AIC(no_tank_model) #-669.7489
+logLik(no_tank_model) #340.8745 
+summary(no_tank_model) # to get variance of random effects
+
+no_colony_model <- lme4::lmer(fvfm_loss_norm ~ Treatment*Species + (1|Tank), data = treatment_normalized_bothspecies, na.action=na.exclude)
+AIC(no_colony_model)#-816.7872
+logLik(no_colony_model) #414.3936
+summary(no_colony_model)
+```
+
+
+
+
+## 2b. Reduction of Fv/Fm over 28-d Treatment, normalized to initial measurement (genotypes separated)
+```{r, warning = F}
+treatment_normalized_bothspecies%>% 
+  ggplot(., aes(x=Colony, y= fvfm_loss_norm, color= Treatment)) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(), alpha=0.3) +
+  theme_classic() + labs(y = "Normalized Reduction of Fv/Fm", x="Genotype") +
+  scale_fill_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34"))  +
+  scale_color_manual(labels=c("Control", "Variable"), values = c( "#60DBDB", "#F54A34")) +
+  theme(text = element_text(size = 12)) + 
+  facet_wrap(~Species, scales = "free_x")
+#ggsave("treatment_normalized_genotypes_boxplot.pdf")
+```
+
+### Statistics
+
+Test of normality and heteroschedascity, outlier removal
+```{r}
+str(treatment_normalized_bothspecies)
+#make factors: Colony, Puck, Tank, Treatment, Species
+
+treatment_normalized_bothspecies %>% 
+  mutate_at(vars(Colony, Puck, Tank, Treatment, Species), factor) -> treatment_normalized_bothspecies
+```
+
+Testing inclusion of colony as a fixed effect
+```{r}
+treat_model_colonyfixed <- lm(fvfm_loss_norm ~ Treatment*Species*Colony + Tank, data = treatment_normalized_bothspecies)
+treat_model_colonyfixed_metrics <- augment(treat_model_colonyfixed)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(treat_model_colonyfixed_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Species, data = treat_model_colonyfixed_metrics) #not significant
+
+# identifying outliers
+treat_model_colonyfixed_metrics %>% 
+  filter(abs(.std.resid) > 3)
+# 0 outliers
+
+full_model <- lme4::lmer(fvfm_loss_norm ~ Treatment*Species*Colony + (1|Tank), data = treatment_normalized_bothspecies, na.action=na.exclude)
+AIC(full_model) #-790.3172
+logLik(full_model) #409.1586 
+summary(full_model) # to get variance of random effects
+#capture.output(Anova(full_model), file = "treatment_normalized_bothspecies_lmer.csv")
+
+Anova(full_model)
+
+#recreate full model but with Treatment*Species as one variable so that the next function can interpret results
+treatment_normalized_bothspecies$treat_species_colony <- interaction(treatment_normalized_bothspecies$Treatment,treatment_normalized_bothspecies$Species, treatment_normalized_bothspecies$Colony)
+
+full_model_combTreatSpeciesColony <- lme4::lmer(fvfm_loss_norm ~ treat_species_colony + (1|Tank), data = treatment_normalized_bothspecies, na.action=na.exclude)
+#double check you get the same AIC as before
+AIC(full_model_combTreatSpeciesColony)
+
+summary(glht(full_model_combTreatSpeciesColony,linfct=mcp(treat_species_colony="Tukey")), test = adjusted(type = "bonferroni"))
+```
+
+
+
+Just Acer genotypes
+```{r}
+#subset to test genotypes within each species
+Acer <- treatment_normalized_bothspecies[treatment_normalized_bothspecies$Species=='Acervicornis',]
+
+Acer_model <- lm(fvfm_loss_norm ~ Treatment*Colony + Tank, data = Acer)
+Acer_model_metrics <- augment(Acer_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Acer_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Colony, data = Acer_model_metrics) #significant
+
+#create model but with Treatment*Colony as one variable
+Acer$treat_colony <- interaction(Acer$Treatment,Acer$Colony)
+
+full_model <- lme4::lmer(fvfm_loss_norm ~ treat_colony + (1|Tank), data = Acer, na.action=na.exclude)
+AIC(full_model) #-790.3172
+logLik(full_model) #409.1586 
+summary(full_model) # to get variance of random effects
+#capture.output(Anova(full_model), file = "treatment_normalized_bothspecies_lmer.csv")
+
+Anova(full_model)
+
+summary(glht(full_model,linfct=mcp(treat_colony="Tukey")), test = adjusted(type = "bonferroni"))
+# i get a slightly lower p value for Control.MB-B - Control.BC-8b  (p = 0.002) but it was also significant in the model above where colony was fixed (p = 0.008)
+```
+
+
+Just Pcli genotypes
+```{r}
+#subset to test genotypes within each species
+Pcli <- treatment_normalized_bothspecies[treatment_normalized_bothspecies$Species=='Pclivosa',]
+
+Pcli_model <- lm(fvfm_loss_norm ~ Treatment*Colony + Tank, data = Pcli)
+Pcli_model_metrics <- augment(Pcli_model)
+
+# assess normality of residuals using Shapiro-Wilk test
+shapiro_test(Pcli_model_metrics$.resid) # not significant
+
+# assess homogeneity of variances using Levene's Test
+levene_test(.resid ~ Treatment*Colony, data = Pcli_model_metrics) #not significant
+
+#create model but with Treatment*Colony as one variable
+Pcli$treat_colony <- interaction(Pcli$Treatment,Pcli$Colony)
+
+full_model <- lme4::lmer(fvfm_loss_norm ~ treat_colony + (1|Tank), data = Pcli, na.action=na.exclude)
+AIC(full_model) #-434.447
+logLik(full_model) #225.2235 
+summary(full_model) # to get variance of random effects
+
+Anova(full_model)
+
+summary(glht(full_model,linfct=mcp(treat_colony="Tukey")), test = adjusted(type = "bonferroni"))
+# i get only one significant difference here: Variable.C - Variable.A == 0 (p < 0.001), and this matches the above model that got the same
+```
+

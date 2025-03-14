@@ -1,0 +1,19 @@
+ contrast                  estimate    SE    df t.ratio p.value
+ A Treated - B Treated        1.857 0.548 57.24   3.386  0.0155
+ A Treated - C Treated       -2.433 0.612 58.82  -3.974  0.0026
+ A Treated - A Untreated     -0.475 0.609 10.43  -0.781  0.9651
+ A Treated - B Untreated      1.287 0.628 10.83   2.048  0.3772
+ A Treated - C Untreated     -2.995 0.603 10.73  -4.964  0.0046
+ B Treated - C Treated       -4.290 0.568 58.99  -7.556  <.0001
+ B Treated - A Untreated     -2.332 0.573  8.59  -4.071  0.0258
+ B Treated - B Untreated     -0.570 0.593  9.02  -0.960  0.9196
+ B Treated - C Untreated     -4.852 0.567  8.85  -8.557  0.0001
+ C Treated - A Untreated      1.958 0.619  9.92   3.164  0.0804
+ C Treated - B Untreated      3.720 0.638 10.32   5.832  0.0015
+ C Treated - C Untreated     -0.562 0.613 10.20  -0.916  0.9336
+ A Untreated - B Untreated    1.762 0.570 57.24   3.093  0.0345
+ A Untreated - C Untreated   -2.520 0.566 58.56  -4.449  0.0005
+ B Untreated - C Untreated   -4.282 0.589 58.99  -7.268  <.0001
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 6 estimates 

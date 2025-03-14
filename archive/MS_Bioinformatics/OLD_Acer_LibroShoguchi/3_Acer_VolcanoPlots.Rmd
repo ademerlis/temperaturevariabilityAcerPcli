@@ -1,0 +1,163 @@
+---
+title: "Acer_VolcanoPlot"
+author: "allyson_demerlis"
+date: "2023-09-16"
+output: html_document
+---
+
+```{r}
+library(EnhancedVolcano)
+library(tidyverse)
+```
+
+
+```{r}
+load("RData_files/pvals.RData")
+```
+
+
+Control Day 0 vs Control Day 29
+```{r}
+control0_control29_annotated <- as.data.frame(control0_control29) %>%
+  rownames_to_column(var="gene") %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene"))
+str(control0_control29_annotated) #47,882 x 8
+
+  keyvals <- ifelse(
+    control0_control29_annotated$log2FoldChange < -2 & control0_control29_annotated$padj < 0.05, 'royalblue',
+      ifelse(control0_control29_annotated$log2FoldChange > 2 & control0_control29_annotated$padj < 0.05, 'red',
+        'grey'))
+  keyvals[is.na(keyvals)] <- 'grey'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
+  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+
+pdf(file="volcano_control0control29.pdf", width = 12, height = 6)  
+  EnhancedVolcano(control0_control29_annotated,
+    lab = NA,
+    title = "Control Day 0 vs. Control Day 29",
+    x = 'log2FoldChange',
+    y = 'padj',
+    ylab = bquote(~-Log[10]~ 'FDR P-adjusted'),
+    legendPosition = 'right',
+    pCutoff = 10e-2,
+    FCcutoff = 2.0,
+    legendIconSize = 5.0,
+    labSize = 6.0,
+    colCustom = keyvals,
+    colAlpha = 0.5) 
+```
+
+
+Variable Day 0 vs Control Day 0
+```{r}
+variable0_control0_annotated <- as.data.frame(variable0_control0) %>%
+  rownames_to_column(var="gene") %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene"))
+
+keyvals <- ifelse(
+    variable0_control0_annotated$log2FoldChange < -2 & variable0_control0_annotated$padj < 0.05, 'royalblue',
+      ifelse(variable0_control0_annotated$log2FoldChange > 2 & variable0_control0_annotated$padj < 0.05, 'red',
+        'grey'))
+  keyvals[is.na(keyvals)] <- 'grey'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
+  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+
+pdf(file="volcano_variable0control0.pdf", width = 12, height = 6)  
+  EnhancedVolcano(variable0_control0_annotated,
+    lab = NA,
+    title = "Variable Day 0 vs. Control Day 0",
+    x = 'log2FoldChange',
+    y = 'padj',
+    legendPosition = 'right',
+    pCutoff = 10e-2,
+    FCcutoff = 2.0,
+    legendIconSize = 5.0,
+    labSize = 6.0,
+   colCustom = keyvals,
+    colAlpha = 0.5) 
+```
+
+
+Variable Day 0 vs Variable Day 29
+```{r}
+variable0_variable29_annotated <- as.data.frame(variable0_variable29) %>%
+  rownames_to_column(var="gene") %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene")) 
+
+keyvals <- ifelse(
+    variable0_variable29_annotated$log2FoldChange < -2 & variable0_variable29_annotated$padj < 0.05, 'royalblue',
+      ifelse(variable0_variable29_annotated$log2FoldChange > 2 & variable0_variable29_annotated$padj < 0.05, 'red',
+        'grey'))
+  keyvals[is.na(keyvals)] <- 'grey'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
+  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+
+pdf(file="volcano_variable0variable29.pdf", width = 12, height = 6)  
+  EnhancedVolcano(variable0_variable29_annotated,
+    lab = NA,
+    title = "Variable Day 0 vs. Variable Day 29",
+    x = 'log2FoldChange',
+    y = 'padj',
+    legendPosition = 'right',
+    pCutoff = 10e-2,
+    FCcutoff = 2.0,
+    legendIconSize = 5.0,
+    labSize = 6.0,
+   colCustom = keyvals,
+    colAlpha = 0.5)
+```
+
+
+Variable Day 29 vs. Control Day 29
+```{r}
+variable29_control29_annotated <- as.data.frame(variable29_control29) %>%
+  rownames_to_column(var="gene") %>% 
+  left_join(read.table(file = "~/OneDrive - University of Miami/NOAA ERL/stress hardening 2022/gene expression/Acervicornis_annotatedTranscriptome/Acervicornis_iso2geneName.tab",
+                       sep = "\t",
+                       quote="", fill=FALSE) %>%
+              mutate(gene = V1,
+                     annot = V2) %>%
+              dplyr::select(-V1, -V2), by = c("gene" = "gene"))
+
+keyvals <- ifelse(
+    variable29_control29_annotated$log2FoldChange < -2 & variable29_control29_annotated$padj < 0.05, 'royalblue',
+      ifelse(variable29_control29_annotated$log2FoldChange > 2 & variable29_control29_annotated$padj < 0.05, 'red',
+        'grey'))
+  keyvals[is.na(keyvals)] <- 'grey'
+  names(keyvals)[keyvals == 'red'] <- 'significantly high (padj < 0.05 and L2FC > 2)'
+  names(keyvals)[keyvals == 'grey'] <- '-2 < L2FC < 2 and padj > 0.05'
+  names(keyvals)[keyvals == 'royalblue'] <- 'significantly low (padj < 0.05 and L2FC < -2)'
+
+pdf(file="volcano_variable29control29.pdf", width = 12, height = 6)  
+  EnhancedVolcano(variable29_control29_annotated,
+    title = "Variable Day 29 vs. Control Day 29",
+    lab = NA,
+    x = 'log2FoldChange',
+    y = 'padj',
+    legendPosition = 'right',
+    pCutoff = 10e-2,
+    FCcutoff = 2.0,
+    legendIconSize = 5.0,
+    labSize = 6.0,
+   colCustom = keyvals,
+    colAlpha = 0.5)
+```
+

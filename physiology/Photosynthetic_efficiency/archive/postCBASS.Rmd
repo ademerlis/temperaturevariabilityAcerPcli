@@ -1,0 +1,66 @@
+---
+title: "postCBASS"
+author: "allyson_demerlis"
+date: "2023-10-13"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+ipam_tidy_data <- read.csv("ipam_tidy_data.csv")
+
+#one coral was measured twice on May 25th (P91), take the average measurement and keep that
+
+ipam_tidy_data %>% drop_na(Tank)
+
+str(ipam_tidy_data)
+
+#need to add treatment data to May 25 corals, because that column is empty
+
+ipam_tidy_data %>% 
+  filter(Date == "2022-04-20") %>% 
+  dplyr::select(Species, Puck, Colony, Tank, Treatment) -> treatment_info
+
+ipam_tidy_data %>% 
+  filter(Date == "2022-05-25") %>% 
+  dplyr::select(Species, Puck, Colony, Tank, Date, fvfm) %>% 
+  filter(Puck != "P91") %>% 
+  inner_join(treatment_info, by = c("Species", "Puck", "Colony", "Tank")) -> may25_fvfm
+
+ipam_tidy_data %>% 
+  filter( Date <= "2022-04-20") %>% 
+  dplyr::select(Species, Puck, Colony, Tank, Treatment, Date, fvfm) %>% 
+  rbind(may25_fvfm) %>% 
+  drop_na(Colony) -> fvfm_raw_alldates
+
+```
+
+
+```{r}
+fvfm_raw_alldates %>% 
+  dplyr::filter(fvfm < 0.75) %>% #filter out the outliers, 0.75 was set in Cunning et al 2021
+  pivot_wider(names_from = Date, values_from = fvfm) %>% 
+   mutate(normalized_fvfm_t0 = case_when(Species == "Acervicornis" ~ `2022-03-16`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-03-21`/`2022-03-21`)) %>% 
+  mutate(normalized_fvfm_t1 = case_when(Species == "Acervicornis" ~ `2022-04-06`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-06`/`2022-03-21`)) %>% 
+  mutate(normalized_fvfm_t2 = case_when(Species == "Acervicornis" ~ `2022-04-20`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-04-20`/`2022-03-21`)) %>% 
+  mutate(normalized_fvfm_t3 = case_when(Species == "Acervicornis" ~ `2022-05-25`/`2022-03-16`,
+                                  Species == "Pclivosa" ~ `2022-05-25`/`2022-03-21`)) %>% 
+  pivot_longer(normalized_fvfm_t0:normalized_fvfm_t3, names_to = "fvfm_timepoint", values_to = "normalized_fvfm") %>% 
+  mutate(numDays = case_when(fvfm_timepoint == "normalized_fvfm_t0" ~ 0,
+                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_t1" ~ 16,
+                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_t1" ~ 21,
+                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_t2" ~ 30,
+                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_t2" ~ 35,
+                             Species == "Pclivosa" & fvfm_timepoint == "normalized_fvfm_t3" ~ 65,
+                             Species == "Acervicornis" & fvfm_timepoint == "normalized_fvfm_t3" ~ 70)) %>% 
+  dplyr::select(!c(`2022-04-06`:`2022-05-25`, fvfm_timepoint)) %>% 
+  pivot_wider(names_from = numDays, values_from = normalized_fvfm)
+
+```
