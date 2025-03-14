@@ -8,6 +8,6 @@
 #plots_for_manuscript/
 #*.RData
 #*.obo
-#*.tab
+*.tab
 #**/archive
 #**/*archive*
