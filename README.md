@@ -25,14 +25,6 @@ These repository contains all data and code used to study the impact of thermal 
   - **1_importtidyPAMdata.Rmd** includes the function to import raw IPAM data into R, and creates a format file that matches coral fragment metadata to the area of interest (AOI) and YII (photosynthetic efficiency) values to the IPAM image metadata files. The raw files for this can be found in the **ipam_data** subfolder.
   - 
 
-
-#### 5.Symbiodiniaceae:
-* **SH_cell_code.Rmd:** has all the code needed for Figure 3. It sources the qPCR data from the **Data** subfolder and the sample metadata from the **Metadata.csv** file. Statistical summaries and plots are saved in the **Outputs** subfolder.
-* **Data:** has all the raw data exported from the qPCR machine.
-
-#### 6.Metadata:
-* This folder has copies of the metadata files, but are actually not used by any code. 
-
 </br>
 
 #### Notes
