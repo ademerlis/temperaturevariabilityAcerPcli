@@ -23,7 +23,12 @@ These repository contains all data and code used to study the impact of thermal 
 * In the subfolder **R_intensity**, **colorscores.Rmd** has all the code needed for Supplementary Figure 2 and Table S4 statistics.
 * The subfolder **Photosynthetic Efficiency** has several R files that are important for analysis.
   - **1_importtidyPAMdata.Rmd** includes the function to import raw IPAM data into R, and creates a format file that matches coral fragment metadata to the area of interest (AOI) and YII (photosynthetic efficiency) values to the IPAM image metadata files. The raw files for this can be found in the **ipam_data** subfolder.
-  - 
+  - **2_treatment_stats.Rmd** has code needed for Figure 2 and Table S4 statistics.
+  - **3_rapidheatstressassay_fvfm.Rmd** has code needed for Figure 2 and Table S5 statistics.
+ 
+#### Gene Expression:
+* The raw sequence .fastq files are available on the National Center for Biotechnology Information (NCBI) Sequence Read Archive (SRA) under BioProject PRJNA1196005.
+* 
 
 </br>
 
