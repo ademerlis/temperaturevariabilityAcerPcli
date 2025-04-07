@@ -1,5 +1,0 @@
-Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
-
-Response: relative_activity
-               F Df Df.res Pr(>F)
-Treatment 0.0034  1      2 0.9588
