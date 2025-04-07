@@ -1,0 +1,13 @@
+**/.DS_Store
+*.DS_Store
+*.png
+*.ai
+*.pdf
+dissertation_figures/
+map/
+plots_for_manuscript/
+*.RData
+*.obo
+*.tab
+**/archive
+**/*archive*
