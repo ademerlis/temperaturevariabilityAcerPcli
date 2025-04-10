@@ -41,6 +41,13 @@ These repository contains all data and code used to study the impact of thermal 
   - **3_GO-MWU** subfolder contains the R markdown files and functions necessary for running the specific method of Gene Ontology (GO) enrichment analysis used in this study. This has the code needed for Figures 5 and 6, as well as Supplementary Tables 10, 15, 16, and 17.
   - **results_csv** subfolder contains all the results files for the *A. cervicornis* host and symbiont differential gene expression.
 * In **Pclivosa**:
+  - **1_bioinformatics** subfolder contains the file, **tagSeq_processing_README.txt**, which contains the pipeline run by Dr. Michael Studivan on the HPC at FAU, which uses a SLURM resource manager. The bioinformatics pipeline is the same as for *A. cervicornis*: FastQC > Cutadapt > bowtie2 > samtools
+      - The reason the two species were run on different platforms is due to the timing of genome/transcriptome availability for each species. The two species were initially run together on the FAU HPC, but when the newest *A. cervicornis* genome was released, those samples were re-run on Pegasus HPC using the newest genome.
+  - **2_DESeq2_host.Rmd** R markdown file for analyzing *P. clivosa* host differential gene expression as a result of the variable temperature treatment. This has the code needed for Figures 3 and 4, as well as Supplementary Tables 8, 9, and 13.
+  - **2_DESeq2_symbiont.Rmd** R markdown file for analyzing *P. clivosa* symbiont differential gene expression as a result of the variable temperature treatment. This has the code needed for Figures 3 and 4, as well as Supplementary Tables 8, 9, and 14.
+  - **2_outlier_detection** subfolder for the *ArrayQualityMetrics* outlier detection method used for removing samples based on gene expression patterns.
+  - **3_GO-MWU** subfolder contains the R markdown files and functions necessary for running the specific method of Gene Ontology (GO) enrichment analysis used in this study. Note that there were not enough differentially expressed genes in *P. clivosa* to generate results from this analysis.
+  - **results_csv** subfolder contains all the results files for the *P. clivosa* host and symbiont differential gene expression.
 
 </br>
 
