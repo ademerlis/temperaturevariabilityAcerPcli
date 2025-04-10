@@ -49,6 +49,8 @@ These repository contains all data and code used to study the impact of thermal 
   - **3_GO-MWU** subfolder contains the R markdown files and functions necessary for running the specific method of Gene Ontology (GO) enrichment analysis used in this study. Note that there were not enough differentially expressed genes in *P. clivosa* to generate results from this analysis.
   - **results_csv** subfolder contains all the results files for the *P. clivosa* host and symbiont differential gene expression.
 
+#### Figures:
+* This folder contains all the manuscript figures.
 </br>
 
 #### Notes
