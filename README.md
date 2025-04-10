@@ -29,8 +29,19 @@ These repository contains all data and code used to study the impact of thermal 
   - **3_rapidheatstressassay_fvfm.Rmd** has code needed for Figure 2 and Table S5 statistics.
  
 #### Gene Expression:
-* The raw sequence .fastq files are available on the National Center for Biotechnology Information (NCBI) Sequence Read Archive (SRA) under BioProject PRJNA1196005.
-* 
+* The raw sequence .fastq files will be made publicly available on the National Center for Biotechnology Information (NCBI) Sequence Read Archive (SRA) under BioProject PRJNA1196005, upon publication.
+* The file **readcounts_rawtrimmedaligned_summary.csv** has a description of the raw, trimmed, and aligned reads for *A. cervicornis* and *P. clivosa*.
+* The file **treatment_metadata.csv** has the sample metadata, including date sampled, treatment group, and genotype.
+* For each species, there is a corresponding subfolder.
+* In **Acervicornis**:
+  - **1_bioinformatics**
+      - blah bal
+  - **2_outlier_detection**
+  - **2_DESeq2_host.Rmd**
+  - **2_DESeq2_symbiont.Rmd**
+  - **3_GO-MWU**
+  - **results_csv**
+* In **Pclivosa**:
 
 </br>
 
