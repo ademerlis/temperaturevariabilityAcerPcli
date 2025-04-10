@@ -1,5 +1,7 @@
 #[![DOI](https://zenodo.org/.svg)](https://zenodo.org/doi)
 
+[Authorea link](https://www.authorea.com/users/906749/articles/1280948-species-level-differences-in-molecular-responses-to-a-thermally-variable-stress-hardening-treatment-for-caribbean-corals)
+
 This repository contains data and analysis scripts for the manuscript:
 
 ## Species-level differences in molecular responses to a thermally variable stress-hardening treatment for Caribbean corals
