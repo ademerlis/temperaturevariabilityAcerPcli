@@ -1,4 +1,4 @@
-# Bioinformatics pipeline for *P.clivosa*
+# Bioinformatics pipeline for *Pseudodiploria clivosa*
 
 
 Last updated: 2025-06-19
@@ -23,7 +23,7 @@ The pipeline is as follows:
 
 ## Differential Gene Expression Results (R)
 
-Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariability2023/blob/main/gene_expression/MS_bioinformatics/Pcli_Rmd/Pcli_deseq2.R). 
+Code to create these graphs is from [this R file](https://github.com/ademerlis/temperaturevariabilityAcerPcli/blob/main/Gene%20Expression/Pclivosa/2_DESeq2_host.Rmd). 
 
 `dds = DESeqDataSetFromMatrix(countData=countData, colData=design, design=~ Genotype + Treatment)`
 
