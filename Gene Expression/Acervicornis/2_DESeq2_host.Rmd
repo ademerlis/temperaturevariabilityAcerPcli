@@ -8,12 +8,11 @@ output: html_document
 # Installing and loading packages
 ```{r}
 # if (!requireNamespace("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
+#install.packages("BiocManager")
 # BiocManager::install(version = "3.15")
-# BiocManager::install("DESeq2",dependencies=T)
+#BiocManager::install("DESeq2",dependencies=T)
 # BiocManager::install("BiocParallel")
-#BiocManager::install("arrayQualityMetrics",dependencies=T)  # requires Xquartz, xquartz.org
-
+BiocManager::install("arrayQualityMetrics",dependencies=T)  # requires Xquartz, xquartz.org
 # install.packages("pheatmap")
 # install.packages("VennDiagram")
 # install.packages("gplots")
@@ -168,6 +167,20 @@ ad=adonis2(t(assay(Vsd))~Genotype+Treatment,data=conditions,method="manhattan", 
 ad
 as.data.frame(ad) %>% 
   write_csv("PERMANOVA_Acer.csv")
+
+#analysis of dispersion (within-group variation)
+conditions$Geno_Treatment <- paste(conditions$Genotype, conditions$Treatment, sep="_")
+
+# Test for differences in dispersion by genotype
+dist_mat <- (dist(t(assay(Vsd)),method="manhattan")/1000)
+dispersion_genotype <- betadisper(dist_mat, group = conditions$Genotype)
+anova(dispersion_genotype)
+permutest(dispersion_genotype)
+
+# You can also visualize
+plot(dispersion_genotype)
+
+TukeyHSD(dispersion_genotype)
 ```
 
 
