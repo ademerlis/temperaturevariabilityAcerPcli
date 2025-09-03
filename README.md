@@ -1,12 +1,10 @@
-#[![DOI](https://zenodo.org/.svg)](https://zenodo.org/doi)
-
 [Authorea link](https://www.authorea.com/users/906749/articles/1280948-species-level-differences-in-molecular-responses-to-a-thermally-variable-stress-hardening-treatment-for-caribbean-corals)
 
 This repository contains data and analysis scripts for the manuscript:
 
 ## Species-level differences in molecular responses to a thermally variable stress-hardening treatment for Caribbean corals
 #### **Authors:** Allyson DeMerlis, Michael S. Studivan, Kevin Wong, Nash Soderberg, David Ehrens, Lys M. Isma, Katrina Rosing, Katrina Sophia Cocson, Rowan Thomas, Danielle Dvorkin, Patrick M. Kiel, Joseph D. Unsworth, Martine D’Alessandro, Ana M. Palacio-Castro, Diego Lirman, Andrew C. Baker, Erinn M. Muller, Nikki Traylor-Knowles, Ian C. Enochs
-#### **Journal:** _Submitted to Ecology and Evolution_ [doi:XXX](http://dx.doi.org/XXX)  
+#### **Journal:** _Ecology and Evolution_ [doi:[10.1002/ece3.72108]
 
 -----
 
