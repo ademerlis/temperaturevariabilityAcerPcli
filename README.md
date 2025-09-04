@@ -1,5 +1,9 @@
 [Authorea link](https://www.authorea.com/users/906749/articles/1280948-species-level-differences-in-molecular-responses-to-a-thermally-variable-stress-hardening-treatment-for-caribbean-corals)
 
+[Archived on Zenodo here](https://doi.org/10.5281/zenodo.17055645)
+
+[Sequencing data on NCBI SRA under BioProject PRJNA1196005](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1196005)
+
 This repository contains data and analysis scripts for the manuscript:
 
 ## Species-level differences in molecular responses to a thermally variable stress-hardening treatment for Caribbean corals
